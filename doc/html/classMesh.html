@@ -62,6 +62,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="annotated.html"><span>Liste&#160;des&#160;classes</span></a></li>
+      <li><a href="inherits.html"><span>Hiérarchie&#160;des&#160;classes</span></a></li>
       <li><a href="functions.html"><span>Membres&#160;de&#160;classe</span></a></li>
     </ul>
   </div>
@@ -70,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>Tout</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Espaces de nommage</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Fichiers</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Fonctions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>Tout</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Espaces de nommage</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Fichiers</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Fonctions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Énumérations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Valeurs énumérées</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -475,7 +476,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>Définition à la ligne <a class="el" href="Mesh_8cxx_source.html#l00703">703</a> du fichier <a class="el" href="Mesh_8cxx_source.html">Mesh.cxx</a>.</p>
 
-<p>Référencé par <a class="el" href="Mesh_8cxx_source.html#l00053">Mesh()</a>, et <a class="el" href="Mesh_8cxx_source.html#l00741">operator=()</a>.</p>
+<p>Référencé par <a class="el" href="Patch_8cxx_source.html#l00152">Patch::computeMesh()</a>, <a class="el" href="Mesh_8cxx_source.html#l00053">Mesh()</a>, et <a class="el" href="Mesh_8cxx_source.html#l00741">operator=()</a>.</p>
 
 </div>
 </div>
@@ -659,7 +660,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>Définition à la ligne <a class="el" href="Mesh_8cxx_source.html#l00719">719</a> du fichier <a class="el" href="Mesh_8cxx_source.html">Mesh.cxx</a>.</p>
 
-<p>Référencé par <a class="el" href="Mesh_8cxx_source.html#l00053">Mesh()</a>, et <a class="el" href="Mesh_8cxx_source.html#l00741">operator=()</a>.</p>
+<p>Référencé par <a class="el" href="Patch_8cxx_source.html#l00152">Patch::computeMesh()</a>, <a class="el" href="Mesh_8cxx_source.html#l00053">Mesh()</a>, et <a class="el" href="Mesh_8cxx_source.html#l00741">operator=()</a>.</p>
 
 </div>
 </div>
@@ -701,7 +702,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>Définition à la ligne <a class="el" href="Mesh_8cxx_source.html#l00671">671</a> du fichier <a class="el" href="Mesh_8cxx_source.html">Mesh.cxx</a>.</p>
 
-<p>Référencé par <a class="el" href="Mesh_8cxx_source.html#l00053">Mesh()</a>, et <a class="el" href="Mesh_8cxx_source.html#l00741">operator=()</a>.</p>
+<p>Référencé par <a class="el" href="Mesh_8cxx_source.html#l00053">Mesh()</a>, <a class="el" href="Mesh_8cxx_source.html#l00741">operator=()</a>, et <a class="el" href="Patch_8cxx_source.html#l00086">Patch::Patch()</a>.</p>
 
 </div>
 </div>
@@ -766,7 +767,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 
 <p>Définition à la ligne <a class="el" href="Mesh_8cxx_source.html#l00631">631</a> du fichier <a class="el" href="Mesh_8cxx_source.html">Mesh.cxx</a>.</p>
 
-<p>Référencé par <a class="el" href="Mesh_8cxx_source.html#l00053">Mesh()</a>, et <a class="el" href="Mesh_8cxx_source.html#l00741">operator=()</a>.</p>
+<p>Référencé par <a class="el" href="Patch_8cxx_source.html#l00234">Patch::computeFieldFlag()</a>, <a class="el" href="Patch_8cxx_source.html#l00152">Patch::computeMesh()</a>, <a class="el" href="Mesh_8cxx_source.html#l00053">Mesh()</a>, <a class="el" href="Mesh_8cxx_source.html#l00741">operator=()</a>, et <a class="el" href="Patch_8cxx_source.html#l00086">Patch::Patch()</a>.</p>
 
 </div>
 </div>
@@ -1290,7 +1291,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Généré le Mardi Mars 26 2013 16:43:12 pour CDMATH par &#160;<a href="http://www.doxygen.org/index.html">
+Généré le Mercredi Mars 27 2013 00:45:52 pour CDMATH par &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

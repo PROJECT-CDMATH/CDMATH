@@ -62,6 +62,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="annotated.html"><span>Liste&#160;des&#160;classes</span></a></li>
+      <li><a href="inherits.html"><span>Hiérarchie&#160;des&#160;classes</span></a></li>
       <li><a href="functions.html"><span>Membres&#160;de&#160;classe</span></a></li>
     </ul>
   </div>
@@ -70,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>Tout</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Espaces de nommage</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Fichiers</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Fonctions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>Tout</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Espaces de nommage</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Fichiers</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Fonctions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Énumérations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Valeurs énumérées</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -102,9 +103,9 @@ Graphe de collaboration de Field:</div>
 <tr class="heading"><td colspan="2"><h2><a name="pub-methods"></a>
 Fonctions membres publiques</h2></td></tr>
 <tr class="memitem:ac0c6485e9e4605cbe5c067c0e8daa123"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#ac0c6485e9e4605cbe5c067c0e8daa123">Field</a> (void)</td></tr>
-<tr class="memitem:a503ee44ac78f56af9350fc0199fefa97"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#a503ee44ac78f56af9350fc0199fefa97">Field</a> (const std::string fieldName, ParaMEDMEM::TypeOfField type, const <a class="el" href="classMesh.html">Mesh</a> &amp;mesh, int numberOfComponents, double time)</td></tr>
-<tr class="memitem:adc54299f91cf9890bd379d8210aaded4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#adc54299f91cf9890bd379d8210aaded4">Field</a> (const std::string fieldName, ParaMEDMEM::TypeOfField type, const <a class="el" href="classMesh.html">Mesh</a> &amp;mesh, int numberOfComponents)</td></tr>
-<tr class="memitem:a7b0e1ee24cccab0ebfbf3527e8808d56"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#a7b0e1ee24cccab0ebfbf3527e8808d56">Field</a> (const std::string fieldName, ParaMEDMEM::TypeOfField type, const <a class="el" href="classMesh.html">Mesh</a> &amp;mesh)</td></tr>
+<tr class="memitem:a17726ba00fb44c6900684f8c83034a22"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#a17726ba00fb44c6900684f8c83034a22">Field</a> (const std::string fieldName, <a class="el" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a> type, const <a class="el" href="classMesh.html">Mesh</a> &amp;mesh, int numberOfComponents, double time)</td></tr>
+<tr class="memitem:a56890cfdb9e50d4a21da57a2e09e07f1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#a56890cfdb9e50d4a21da57a2e09e07f1">Field</a> (const std::string fieldName, <a class="el" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a> type, const <a class="el" href="classMesh.html">Mesh</a> &amp;mesh, int numberOfComponents)</td></tr>
+<tr class="memitem:a72ac449e256ac0e991f8d98de846ec3b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#a72ac449e256ac0e991f8d98de846ec3b">Field</a> (const std::string fieldName, <a class="el" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a> type, const <a class="el" href="classMesh.html">Mesh</a> &amp;mesh)</td></tr>
 <tr class="memitem:a519b9f5552a65902bf851de529111e16"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#a519b9f5552a65902bf851de529111e16">~Field</a> (void)</td></tr>
 <tr class="memitem:a72ebbf8a9843cfd7844aa76698ea1541"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#a72ebbf8a9843cfd7844aa76698ea1541">Field</a> (const <a class="el" href="classField.html">Field</a> &amp;field)</td></tr>
 <tr class="memitem:a07eab81f490b0d479fc319e8e6c64200"><td class="memItemLeft" align="right" valign="top">double &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#a07eab81f490b0d479fc319e8e6c64200">operator[]</a> (int i)</td></tr>
@@ -118,7 +119,7 @@ Fonctions membres publiques</h2></td></tr>
 <tr class="memitem:ab68a79e2edd627dfc5da2ed0bbd3fea3"><td class="memItemLeft" align="right" valign="top">const std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#ab68a79e2edd627dfc5da2ed0bbd3fea3">getName</a> (void) const </td></tr>
 <tr class="memitem:afa8a4673479bf43d241418ddb0f28ff7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classMesh.html">Mesh</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#afa8a4673479bf43d241418ddb0f28ff7">getMesh</a> (void) const </td></tr>
 <tr class="memitem:a728bf6ec6c642d139be75c28314ddfc8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#a728bf6ec6c642d139be75c28314ddfc8">getNumberOfElements</a> (void) const </td></tr>
-<tr class="memitem:a218349353e6fc4e01ff76cceb15d69c8"><td class="memItemLeft" align="right" valign="top">ParaMEDMEM::TypeOfField&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#a218349353e6fc4e01ff76cceb15d69c8">getTypeOfField</a> (void) const </td></tr>
+<tr class="memitem:a068c3ae1a8badbdb3db377aea560ae4e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#a068c3ae1a8badbdb3db377aea560ae4e">getTypeOfField</a> (void) const </td></tr>
 <tr class="memitem:a67ecd3bf4d1b3b0b91a77b5cf2a0cdbd"><td class="memItemLeft" align="right" valign="top">ParaMEDMEM::MEDCouplingFieldDouble *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#a67ecd3bf4d1b3b0b91a77b5cf2a0cdbd">getField</a> (void) const </td></tr>
 <tr class="memitem:a66b630bd687b376196bb9ec5bc6893e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#a66b630bd687b376196bb9ec5bc6893e2">setField</a> (ParaMEDMEM::MEDCouplingFieldDouble *field)</td></tr>
 <tr class="memitem:a10c33c461a7ddf68dd14cf665a19d9a1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classField.html#a10c33c461a7ddf68dd14cf665a19d9a1">setTime</a> (double time, int iter)</td></tr>
@@ -148,7 +149,7 @@ Attributs protégés</h2></td></tr>
 <li>........ </li>
 </ul>
 
-<p>Définition à la ligne <a class="el" href="Field_8hxx_source.html#l00025">25</a> du fichier <a class="el" href="Field_8hxx_source.html">Field.hxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8hxx_source.html#l00030">30</a> du fichier <a class="el" href="Field_8hxx_source.html">Field.hxx</a>.</p>
 </div><h2>Documentation des constructeurs et destructeur</h2>
 <a class="anchor" id="ac0c6485e9e4605cbe5c067c0e8daa123"></a>
 <div class="memitem">
@@ -169,7 +170,7 @@ Attributs protégés</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a503ee44ac78f56af9350fc0199fefa97"></a>
+<a class="anchor" id="a17726ba00fb44c6900684f8c83034a22"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -182,7 +183,7 @@ Attributs protégés</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ParaMEDMEM::TypeOfField&#160;</td>
+          <td class="paramtype"><a class="el" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a>&#160;</td>
           <td class="paramname"><em>type</em>, </td>
         </tr>
         <tr>
@@ -223,7 +224,7 @@ Attributs protégés</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="adc54299f91cf9890bd379d8210aaded4"></a>
+<a class="anchor" id="a56890cfdb9e50d4a21da57a2e09e07f1"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -236,7 +237,7 @@ Attributs protégés</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ParaMEDMEM::TypeOfField&#160;</td>
+          <td class="paramtype"><a class="el" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a>&#160;</td>
           <td class="paramname"><em>type</em>, </td>
         </tr>
         <tr>
@@ -270,7 +271,7 @@ Attributs protégés</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a7b0e1ee24cccab0ebfbf3527e8808d56"></a>
+<a class="anchor" id="a72ac449e256ac0e991f8d98de846ec3b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -283,7 +284,7 @@ Attributs protégés</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ParaMEDMEM::TypeOfField&#160;</td>
+          <td class="paramtype"><a class="el" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a>&#160;</td>
           <td class="paramname"><em>type</em>, </td>
         </tr>
         <tr>
@@ -350,9 +351,9 @@ Attributs protégés</h2></td></tr>
   </dd>
 </dl>
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00082">82</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00096">96</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
-<p>Références <a class="el" href="Field_8cxx_source.html#l00091">getField()</a>, et <a class="el" href="Field_8cxx_source.html#l00205">getMesh()</a>.</p>
+<p>Références <a class="el" href="Field_8cxx_source.html#l00105">getField()</a>, et <a class="el" href="Field_8cxx_source.html#l00219">getMesh()</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe d'appel pour cette fonction :</div>
@@ -381,9 +382,9 @@ Voici le graphe d'appel pour cette fonction :</div>
 </div><div class="memdoc">
 <p>return the mesh MEDCoupling return _mesh </p>
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00091">91</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00105">105</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
-<p>Référencé par <a class="el" href="Field_8cxx_source.html#l00082">Field()</a>, <a class="el" href="Field_8cxx_source.html#l00270">operator+=()</a>, <a class="el" href="Field_8cxx_source.html#l00280">operator-=()</a>, et <a class="el" href="Field_8cxx_source.html#l00258">operator=()</a>.</p>
+<p>Référencé par <a class="el" href="Patch_8cxx_source.html#l00234">Patch::computeFieldFlag()</a>, <a class="el" href="Field_8cxx_source.html#l00096">Field()</a>, <a class="el" href="Field_8cxx_source.html#l00287">operator+=()</a>, <a class="el" href="Field_8cxx_source.html#l00297">operator-=()</a>, et <a class="el" href="Field_8cxx_source.html#l00275">operator=()</a>.</p>
 
 </div>
 </div>
@@ -401,9 +402,9 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00205">205</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00219">219</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
-<p>Référencé par <a class="el" href="Field_8cxx_source.html#l00082">Field()</a>, et <a class="el" href="Field_8cxx_source.html#l00258">operator=()</a>.</p>
+<p>Référencé par <a class="el" href="Patch_8cxx_source.html#l00234">Patch::computeFieldFlag()</a>, <a class="el" href="Field_8cxx_source.html#l00096">Field()</a>, et <a class="el" href="Field_8cxx_source.html#l00275">operator=()</a>.</p>
 
 </div>
 </div>
@@ -421,7 +422,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00197">197</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00211">211</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -439,9 +440,9 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00181">181</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00195">195</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
-<p>Référencé par <a class="el" href="Field_8cxx_source.html#l00230">operator+()</a>, et <a class="el" href="Field_8cxx_source.html#l00244">operator-()</a>.</p>
+<p>Référencé par <a class="el" href="Field_8cxx_source.html#l00247">operator+()</a>, et <a class="el" href="Field_8cxx_source.html#l00261">operator-()</a>.</p>
 
 </div>
 </div>
@@ -459,7 +460,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00173">173</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00187">187</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -477,16 +478,16 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00164">164</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00178">178</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a218349353e6fc4e01ff76cceb15d69c8"></a>
+<a class="anchor" id="a068c3ae1a8badbdb3db377aea560ae4e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">TypeOfField Field::getTypeOfField </td>
+          <td class="memname"><a class="el" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a> Field::getTypeOfField </td>
           <td>(</td>
           <td class="paramtype">void&#160;</td>
           <td class="paramname"></td><td>)</td>
@@ -495,7 +496,11 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00213">213</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00227">227</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+
+<p>Références <a class="el" href="Field_8hxx_source.html#l00018">CELLS</a>, et <a class="el" href="Field_8hxx_source.html#l00019">NODES</a>.</p>
+
+<p>Référencé par <a class="el" href="Patch_8cxx_source.html#l00234">Patch::computeFieldFlag()</a>.</p>
 
 </div>
 </div>
@@ -513,7 +518,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00189">189</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00203">203</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -531,7 +536,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00109">109</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00123">123</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -549,7 +554,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00125">125</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00139">139</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -577,7 +582,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00141">141</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00155">155</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -605,7 +610,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00149">149</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00163">163</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -623,7 +628,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00290">290</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00307">307</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -641,9 +646,9 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00230">230</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00247">247</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
-<p>Références <a class="el" href="Field_8cxx_source.html#l00181">getNumberOfComponents()</a>.</p>
+<p>Références <a class="el" href="Field_8cxx_source.html#l00195">getNumberOfComponents()</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe d'appel pour cette fonction :</div>
@@ -670,9 +675,9 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00270">270</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00287">287</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
-<p>Références <a class="el" href="Field_8cxx_source.html#l00091">getField()</a>.</p>
+<p>Références <a class="el" href="Field_8cxx_source.html#l00105">getField()</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe d'appel pour cette fonction :</div>
@@ -699,7 +704,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00329">329</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00346">346</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -717,9 +722,9 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00244">244</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00261">261</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
-<p>Références <a class="el" href="Field_8cxx_source.html#l00181">getNumberOfComponents()</a>.</p>
+<p>Références <a class="el" href="Field_8cxx_source.html#l00195">getNumberOfComponents()</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe d'appel pour cette fonction :</div>
@@ -746,9 +751,9 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00280">280</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00297">297</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
-<p>Références <a class="el" href="Field_8cxx_source.html#l00091">getField()</a>.</p>
+<p>Références <a class="el" href="Field_8cxx_source.html#l00105">getField()</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe d'appel pour cette fonction :</div>
@@ -775,7 +780,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00316">316</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00333">333</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -793,7 +798,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00303">303</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00320">320</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -811,9 +816,9 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00258">258</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00275">275</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
-<p>Références <a class="el" href="Field_8cxx_source.html#l00091">getField()</a>, et <a class="el" href="Field_8cxx_source.html#l00205">getMesh()</a>.</p>
+<p>Références <a class="el" href="Field_8cxx_source.html#l00105">getField()</a>, et <a class="el" href="Field_8cxx_source.html#l00219">getMesh()</a>.</p>
 
 <p><div class="dynheader">
 Voici le graphe d'appel pour cette fonction :</div>
@@ -840,7 +845,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00117">117</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00131">131</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -858,7 +863,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00133">133</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00147">147</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -876,7 +881,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00099">99</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00113">113</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -894,7 +899,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00221">221</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00238">238</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -922,7 +927,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00157">157</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00171">171</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -982,7 +987,7 @@ Voici le graphe d'appel pour cette fonction :</div>
       </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00342">342</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8cxx_source.html#l00359">359</a> du fichier <a class="el" href="Field_8cxx_source.html">Field.cxx</a>.</p>
 
 </div>
 </div>
@@ -1005,7 +1010,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8hxx_source.html#l00132">132</a> du fichier <a class="el" href="Field_8hxx_source.html">Field.hxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8hxx_source.html#l00137">137</a> du fichier <a class="el" href="Field_8hxx_source.html">Field.hxx</a>.</p>
 
 </div>
 </div>
@@ -1027,7 +1032,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 </table>
 </div><div class="memdoc">
 
-<p>Définition à la ligne <a class="el" href="Field_8hxx_source.html#l00133">133</a> du fichier <a class="el" href="Field_8hxx_source.html">Field.hxx</a>.</p>
+<p>Définition à la ligne <a class="el" href="Field_8hxx_source.html#l00138">138</a> du fichier <a class="el" href="Field_8hxx_source.html">Field.hxx</a>.</p>
 
 </div>
 </div>
@@ -1038,7 +1043,7 @@ Voici le graphe d'appel pour cette fonction :</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Généré le Mardi Mars 26 2013 16:43:12 pour CDMATH par &#160;<a href="http://www.doxygen.org/index.html">
+Généré le Mercredi Mars 27 2013 00:45:52 pour CDMATH par &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>
