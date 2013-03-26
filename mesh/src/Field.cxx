@@ -29,50 +29,64 @@ Field::~Field( void )
 	_field->decrRef();
 }
 
-Field::Field( const string fieldName, TypeOfField type, const Mesh& mesh , int numberOfComponents, double time )
+Field::Field( const string fieldName, TypeField type, const Mesh& mesh , int numberOfComponents, double time )
 {
 	_mesh=mesh ;
-	_field=MEDCouplingFieldDouble::New(type);
+	DataArrayDouble *array=DataArrayDouble::New();
+	if (type==CELLS)
+	{
+		_field=MEDCouplingFieldDouble::New(ON_CELLS);
+		array->alloc(mesh.getNumberOfCells(),numberOfComponents);
+	}
+	if (type==NODES)
+	{
+		_field=MEDCouplingFieldDouble::New(ON_NODES);
+		array->alloc(mesh.getNumberOfNodes(),numberOfComponents);
+	}
 	_field->setName(fieldName.c_str()) ;
 	_field->setMesh(mesh.getMeshU());
-	DataArrayDouble *array=DataArrayDouble::New();
-	if (type==ON_CELLS)
-	   array->alloc(mesh.getNumberOfCells(),numberOfComponents);
-	if (type==ON_NODES)
-	   array->alloc(mesh.getNumberOfNodes(),numberOfComponents);
-	
 	_field->setArray(array);
 	_field->setTime(time,0,0);
 	array->decrRef();
 }
 
-Field::Field( const string fieldName, TypeOfField type, const Mesh& mesh , int numberOfComponents)
+Field::Field( const string fieldName, TypeField type, const Mesh& mesh , int numberOfComponents)
 {
 	_mesh=mesh ;
-	_field=MEDCouplingFieldDouble::New(type);
+	DataArrayDouble *array=DataArrayDouble::New();
+	if (type==CELLS)
+	{
+		_field=MEDCouplingFieldDouble::New(ON_CELLS);
+		array->alloc(mesh.getNumberOfCells(),numberOfComponents);
+	}
+	if (type==NODES)
+	{
+		_field=MEDCouplingFieldDouble::New(ON_NODES);
+		array->alloc(mesh.getNumberOfNodes(),numberOfComponents);
+	}
 	_field->setName(fieldName.c_str()) ;
 	_field->setMesh(mesh.getMeshU());
-	DataArrayDouble *array=DataArrayDouble::New();
-	if (type==ON_CELLS)
-	   array->alloc(mesh.getNumberOfCells(),numberOfComponents);
-	if (type==ON_NODES)
-	   array->alloc(mesh.getNumberOfNodes(),numberOfComponents);
 	_field->setArray(array);
 	_field->setTime(0.0,0,0);
 	array->decrRef();
 }
 
-Field::Field( const string fieldName, TypeOfField type, const Mesh& mesh)
+Field::Field( const string fieldName, TypeField type, const Mesh& mesh)
 {
 	_mesh=mesh ;
-	_field=MEDCouplingFieldDouble::New(type);
+	DataArrayDouble *array=DataArrayDouble::New();
+	if (type==CELLS)
+	{
+		_field=MEDCouplingFieldDouble::New(ON_CELLS);
+		array->alloc(mesh.getNumberOfCells(),1);
+	}
+	if (type==NODES)
+	{
+		_field=MEDCouplingFieldDouble::New(ON_NODES);
+		array->alloc(mesh.getNumberOfNodes(),1);
+	}
 	_field->setName(fieldName.c_str()) ;
 	_field->setMesh(mesh.getMeshU());
-	DataArrayDouble *array=DataArrayDouble::New();
-	if (type==ON_CELLS)
-	   array->alloc(mesh.getNumberOfCells(),1);
-	if (type==ON_NODES)
-	   array->alloc(mesh.getNumberOfNodes(),1);
 	_field->setArray(array);
 	_field->setTime(0.0,0,0);
 	array->decrRef();
@@ -209,11 +223,14 @@ Field::getMesh ( void ) const
 }
 
 //----------------------------------------------------------------------
-TypeOfField
+TypeField
 Field::getTypeOfField ( void ) const
 //----------------------------------------------------------------------
 {
-	return _field->getTypeOfField() ;
+	if (_field->getTypeOfField()==ON_CELLS)
+		return CELLS;
+	else
+		return NODES;
 }
 
 //----------------------------------------------------------------------

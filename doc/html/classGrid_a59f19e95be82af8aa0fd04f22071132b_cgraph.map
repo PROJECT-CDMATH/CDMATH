@@ -1,0 +1,7 @@
+<map id="Grid::Grid" name="Grid::Grid">
+<area shape="rect" id="node3" href="$classGrid.html#a0e036d627c7d8f43311f849f1876eb98" title="Grid::getCoefRefinementX" alt="" coords="131,5,301,33"/>
+<area shape="rect" id="node5" href="$classGrid.html#a1f8050842c65b6d7289a95c18d87ea1a" title="Grid::getCoefRefinementY" alt="" coords="131,55,301,83"/>
+<area shape="rect" id="node7" href="$classGrid.html#aa669ffcee8d57ef5d78f0b9cddfce2b9" title="Grid::getLevel" alt="" coords="167,106,265,134"/>
+<area shape="rect" id="node9" href="$classGrid.html#ae9833eb17840c7d6555a22d00075ba84" title="Grid::getNumberOfPatchs" alt="" coords="132,157,300,185"/>
+<area shape="rect" id="node11" href="$classGrid.html#a5d216f8dcf2e81f32d58f49409e35c9c" title="Grid::getPatch" alt="" coords="164,207,268,235"/>
+</map>

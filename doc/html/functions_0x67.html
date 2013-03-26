@@ -62,6 +62,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="annotated.html"><span>Liste&#160;des&#160;classes</span></a></li>
+      <li><a href="inherits.html"><span>Hiérarchie&#160;des&#160;classes</span></a></li>
       <li class="current"><a href="functions.html"><span>Membres&#160;de&#160;classe</span></a></li>
     </ul>
   </div>
@@ -76,8 +77,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
     <ul class="tablist">
       <li><a href="functions.html#index__"><span>_</span></a></li>
       <li><a href="functions_0x61.html#index_a"><span>a</span></a></li>
+      <li><a href="functions_0x62.html#index_b"><span>b</span></a></li>
       <li><a href="functions_0x63.html#index_c"><span>c</span></a></li>
       <li><a href="functions_0x64.html#index_d"><span>d</span></a></li>
+      <li><a href="functions_0x65.html#index_e"><span>e</span></a></li>
       <li><a href="functions_0x66.html#index_f"><span>f</span></a></li>
       <li class="current"><a href="functions_0x67.html#index_g"><span>g</span></a></li>
       <li><a href="functions_0x69.html#index_i"><span>i</span></a></li>
@@ -100,7 +103,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>Tout</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Espaces de nommage</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Fichiers</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Fonctions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>Tout</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Espaces de nommage</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Fichiers</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Fonctions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Énumérations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Valeurs énumérées</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -120,6 +123,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
 <li>getCell()
 : <a class="el" href="classMesh.html#aa45800286a862e71d0b592b8a12086ba">Mesh</a>
 </li>
+<li>getCellLeftHighCorner()
+: <a class="el" href="classPatch.html#aea8b6709baf7c7194f130037b06daadc">Patch</a>
+</li>
+<li>getCellLeftLowCorner()
+: <a class="el" href="classPatch.html#a307821b3f6b1de34058095ccfac791af">Patch</a>
+</li>
+<li>getCellRightHighCorner()
+: <a class="el" href="classPatch.html#af0c0d63b8b587e0d62d2db8ab2b33fbe">Patch</a>
+</li>
+<li>getCellRightLowCorner()
+: <a class="el" href="classPatch.html#afc064adde2d1cd20bedbccb9fb2914ea">Patch</a>
+</li>
 <li>getCells()
 : <a class="el" href="classMesh.html#a8395b07a164d38d4a1b82033164789e2">Mesh</a>
 </li>
@@ -127,8 +142,25 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
 : <a class="el" href="classFace.html#ab793c13146b55da503657b00ae9adb29">Face</a>
 , <a class="el" href="classNode.html#a0897024145d0d045d5c8cc129ca3ff77">Node</a>
 </li>
+<li>getCoefRefinementX()
+: <a class="el" href="classAlgoAMR.html#ae534b77a1e2b6d43c7933f9cd5ae17d0">AlgoAMR</a>
+, <a class="el" href="classGrid.html#a0e036d627c7d8f43311f849f1876eb98">Grid</a>
+, <a class="el" href="classPatch.html#a5afb09f063a2e73d39aaf84eff08cb7a">Patch</a>
+</li>
+<li>getCoefRefinementY()
+: <a class="el" href="classPatch.html#af425e6176cd1f7977aab615504660cf6">Patch</a>
+, <a class="el" href="classAlgoAMR.html#a19b92e12113e7e43b8c968db28a2dd9a">AlgoAMR</a>
+, <a class="el" href="classGrid.html#a1f8050842c65b6d7289a95c18d87ea1a">Grid</a>
+</li>
 <li>getDim()
 : <a class="el" href="classMesh.html#a9b31b8ac3b0ded198edbe8d620133834">Mesh</a>
+</li>
+<li>getEfficiency()
+: <a class="el" href="classAlgoAMR.html#a91818e339c2fe6d852c74ac6fe06336f">AlgoAMR</a>
+, <a class="el" href="classPatch.html#a06dee8e9f55e1bc9988b834db8f48c07">Patch</a>
+</li>
+<li>getEfficiencySnd()
+: <a class="el" href="classAlgoAMR.html#a1dd7e3095616b9785baf82daa0c93c13">AlgoAMR</a>
 </li>
 <li>getFace()
 : <a class="el" href="classMesh.html#acf4d932ea786eecd56cd8e2226fec2c7">Mesh</a>
@@ -143,11 +175,48 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
 <li>getField()
 : <a class="el" href="classField.html#a67ecd3bf4d1b3b0b91a77b5cf2a0cdbd">Field</a>
 </li>
+<li>getFieldFlag()
+: <a class="el" href="classPatch.html#a930a8b3b969d919b158ca64bb1f38cc8">Patch</a>
+</li>
+<li>getGrid()
+: <a class="el" href="classAlgoAMR.html#a3a426eed63883bec0d052cf657f10ed3">AlgoAMR</a>
+</li>
+<li>getGrids()
+: <a class="el" href="classAlgoAMR.html#a17566e5f1a911d3773bec5e989ad3386">AlgoAMR</a>
+</li>
 <li>getGroupName()
 : <a class="el" href="classFace.html#ab6689c588d8823e28f4bb72a15cce195">Face</a>
 </li>
+<li>getIndex()
+: <a class="el" href="classPatch.html#aa7df4f460bb5028d713f26305754f7e2">Patch</a>
+</li>
+<li>getIndexCellLeftHighCorner()
+: <a class="el" href="classPatch.html#aba148ee5ef56a54f2238d0d2f002e8e9">Patch</a>
+</li>
+<li>getIndexCellLeftLowCorner()
+: <a class="el" href="classPatch.html#ae76df0cbc74fdbb6b4be716ed9a39fdc">Patch</a>
+</li>
+<li>getIndexCellRightHighCorner()
+: <a class="el" href="classPatch.html#a4c1ea0c60effdf501ed8e32767df402e">Patch</a>
+</li>
+<li>getIndexCellRightLowCorner()
+: <a class="el" href="classPatch.html#a3dad23937045b8e330fc414a5f7d8866">Patch</a>
+</li>
+<li>getIndexCorners()
+: <a class="el" href="classPatch.html#a6192b126a704f9d012868de0aad512e2">Patch</a>
+</li>
 <li>getIndexFacePeriodic()
 : <a class="el" href="classMesh.html#a03411ed39000b45c1b40bcc4162af52d">Mesh</a>
+</li>
+<li>getLevel()
+: <a class="el" href="classGrid.html#aa669ffcee8d57ef5d78f0b9cddfce2b9">Grid</a>
+, <a class="el" href="classPatch.html#a342b3a2be49ebb14739f1e7017d7c63f">Patch</a>
+</li>
+<li>getMaxCells()
+: <a class="el" href="classAlgoAMR.html#a1ff64ab3a3b54fe07dc17ab23e473e79">AlgoAMR</a>
+</li>
+<li>getMaxLevel()
+: <a class="el" href="classAlgoAMR.html#af00c7a6d2ba604328244dfe74f252434">AlgoAMR</a>
 </li>
 <li>getMeasure()
 : <a class="el" href="classCell.html#ab5f76139f91d941a842d88c06333285e">Cell</a>
@@ -155,9 +224,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
 </li>
 <li>getMesh()
 : <a class="el" href="classField.html#afa8a4673479bf43d241418ddb0f28ff7">Field</a>
+, <a class="el" href="classPatch.html#ad7cbca8aad38573d5febe217b3124957">Patch</a>
 </li>
 <li>getMeshU()
 : <a class="el" href="classMesh.html#a4d1d19c1a611e4f961711b82c320db9e">Mesh</a>
+</li>
+<li>getMinCellDirection()
+: <a class="el" href="classAlgoAMR.html#a73b52600791c8e1eb52e01e401da13fe">AlgoAMR</a>
 </li>
 <li>getName()
 : <a class="el" href="classField.html#ab68a79e2edd627dfc5da2ed0bbd3fea3">Field</a>
@@ -182,9 +255,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
 : <a class="el" href="classCell.html#a1efc2900a7cbf98987d5f319cf15b22c">Cell</a>
 </li>
 <li>getNumberOfCells()
-: <a class="el" href="classFace.html#a0a2b3c58de1e202ec194334274eb6b8b">Face</a>
+: <a class="el" href="classPatch.html#acddd86f82a88a5083867f2a9e48cfdeb">Patch</a>
+, <a class="el" href="classFace.html#a0a2b3c58de1e202ec194334274eb6b8b">Face</a>
 , <a class="el" href="classMesh.html#a656d39f89611b93af228f5d742e7a449">Mesh</a>
 , <a class="el" href="classNode.html#ae0cad6412483e434f774a56dfb127d05">Node</a>
+</li>
+<li>getNumberOfCellsFlags()
+: <a class="el" href="classPatch.html#a3ad8a4dbe7711e0da0a69ce7b62fe598">Patch</a>
 </li>
 <li>getNumberOfComponents()
 : <a class="el" href="classField.html#a4cb4a46e4815174ac3d467454c560019">Field</a>
@@ -197,19 +274,33 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
 , <a class="el" href="classMesh.html#a007884a8b75b5d2d1990e1730176983e">Mesh</a>
 , <a class="el" href="classNode.html#aea7799c5c03759f2342923c0938c7e92">Node</a>
 </li>
+<li>getNumberOfGrids()
+: <a class="el" href="classAlgoAMR.html#a593254305f3057a1b1edce866e05f9b1">AlgoAMR</a>
+</li>
 <li>getNumberOfNodes()
-: <a class="el" href="classCell.html#a7d490715adcb1958bf69c471d6ffde58">Cell</a>
+: <a class="el" href="classFace.html#ad5974ee55d079bb2f3c7778db0a6077c">Face</a>
+, <a class="el" href="classCell.html#a7d490715adcb1958bf69c471d6ffde58">Cell</a>
 , <a class="el" href="classMesh.html#a2417fb1c45f9e7dce48ab6ae9710c3f0">Mesh</a>
-, <a class="el" href="classFace.html#ad5974ee55d079bb2f3c7778db0a6077c">Face</a>
+</li>
+<li>getNumberOfPatchs()
+: <a class="el" href="classGrid.html#ae9833eb17840c7d6555a22d00075ba84">Grid</a>
 </li>
 <li>getNx()
 : <a class="el" href="classMesh.html#a726e2e9bcc9de22e1cf88f7333e225a8">Mesh</a>
+, <a class="el" href="classPatch.html#a9bdcab92f51bbfd29ae6097a21857c93">Patch</a>
 </li>
 <li>getNy()
 : <a class="el" href="classMesh.html#ae37e674ca54d39fc931206070e853f82">Mesh</a>
+, <a class="el" href="classPatch.html#a4ac191e66540c3ce1e68cdf7076e8d42">Patch</a>
 </li>
 <li>getNz()
 : <a class="el" href="classMesh.html#abef7f9887478ceaad521cb2f67ca4a8c">Mesh</a>
+</li>
+<li>getPatch()
+: <a class="el" href="classGrid.html#a5d216f8dcf2e81f32d58f49409e35c9c">Grid</a>
+</li>
+<li>getPatchs()
+: <a class="el" href="classGrid.html#adfa30a392ba531c5554946b6af45f30a">Grid</a>
 </li>
 <li>getPoint()
 : <a class="el" href="classNode.html#aaf54778ad5746a796fe31020dd9433fa">Node</a>
@@ -218,25 +309,40 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
 : <a class="el" href="classIntTab.html#a2aa82e2b723b8281096700e9ec6d0d11">IntTab</a>
 , <a class="el" href="classDoubleTab.html#a296eece872ba2a87807effd6b3d2b423">DoubleTab</a>
 </li>
+<li>getPosCellX()
+: <a class="el" href="classPatch.html#addb6551c7f29124d07bbcec84edbf9c8">Patch</a>
+</li>
+<li>getPosCellY()
+: <a class="el" href="classPatch.html#a86668fc1231256419fad1772e7274dda">Patch</a>
+</li>
 <li>getRegion()
 : <a class="el" href="classFace.html#ac751161df47f947435f5c3651ebe5deb">Face</a>
+</li>
+<li>getSignatureX()
+: <a class="el" href="classPatch.html#a2d0ea902bf892d22e01998db104815b6">Patch</a>
+</li>
+<li>getSignatureY()
+: <a class="el" href="classPatch.html#ade4da03cab95b196e9269479691036fc">Patch</a>
 </li>
 <li>getTime()
 : <a class="el" href="classField.html#a6ef0ca0448dff2c272fa8e4f8109782b">Field</a>
 </li>
 <li>getTypeOfField()
-: <a class="el" href="classField.html#a218349353e6fc4e01ff76cceb15d69c8">Field</a>
+: <a class="el" href="classField.html#a068c3ae1a8badbdb3db377aea560ae4e">Field</a>
 </li>
 <li>getValues()
-: <a class="el" href="classDoubleTab.html#a5e6abdfec183db07eb57336664ba1769">DoubleTab</a>
+: <a class="el" href="classField.html#a5c73d725c7dfce47b21dcd8fc99b7bc9">Field</a>
+, <a class="el" href="classDoubleTab.html#a5e6abdfec183db07eb57336664ba1769">DoubleTab</a>
 , <a class="el" href="classIntTab.html#ac86c764f9d49e1f4a25078ff37011823">IntTab</a>
-, <a class="el" href="classField.html#a5c73d725c7dfce47b21dcd8fc99b7bc9">Field</a>
+</li>
+<li>Grid()
+: <a class="el" href="classGrid.html#a59f19e95be82af8aa0fd04f22071132b">Grid</a>
 </li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Généré le Mardi Mars 26 2013 16:43:12 pour CDMATH par &#160;<a href="http://www.doxygen.org/index.html">
+Généré le Mercredi Mars 27 2013 00:45:52 pour CDMATH par &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

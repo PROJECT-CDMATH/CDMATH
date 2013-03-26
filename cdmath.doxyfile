@@ -569,7 +569,7 @@ WARN_LOGFILE =
 # with spaces.
 
 #INPUT = 007_cfd_visu 007_cfd_finite_volume 007_cfd_mesh 
-INPUT = mesh
+INPUT = mesh amr 
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 

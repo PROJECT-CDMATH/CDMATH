@@ -1,7 +1,11 @@
 <map id="mesh/inc/Field.hxx" name="mesh/inc/Field.hxx">
-<area shape="rect" id="node3" href="$FieldOnCell_8hxx.html" title="mesh/inc/FieldOnCell.hxx" alt="" coords="5,83,171,111"/>
-<area shape="rect" id="node7" href="$FieldOnNode_8hxx.html" title="mesh/inc/FieldOnNode.hxx" alt="" coords="195,83,368,111"/>
-<area shape="rect" id="node11" href="$Field_8cxx.html" title="mesh/src/Field.cxx" alt="" coords="392,83,520,111"/>
-<area shape="rect" id="node5" href="$FieldOnCell_8cxx.html" title="mesh/src/FieldOnCell.cxx" alt="" coords="5,161,171,189"/>
-<area shape="rect" id="node9" href="$FieldOnNode_8cxx.html" title="mesh/src/FieldOnNode.cxx" alt="" coords="195,161,368,189"/>
+<area shape="rect" id="node3" href="$Field_8cxx.html" title="mesh/src/Field.cxx" alt="" coords="5,83,133,111"/>
+<area shape="rect" id="node5" href="$Patch_8hxx.html" title="amr/inc/Patch.hxx" alt="" coords="157,83,283,111"/>
+<area shape="rect" id="node9" href="$AlgoAMR_8hxx.html" title="amr/inc/AlgoAMR.hxx" alt="" coords="201,238,348,266"/>
+<area shape="rect" id="node7" href="$Grid_8hxx.html" title="amr/inc/Grid.hxx" alt="" coords="19,161,133,189"/>
+<area shape="rect" id="node19" href="$Patch_8cxx.html" title="amr/src/Patch.cxx" alt="" coords="157,161,283,189"/>
+<area shape="rect" id="node17" href="$Grid_8cxx.html" title="amr/src/Grid.cxx" alt="" coords="19,238,133,266"/>
+<area shape="rect" id="node11" href="$BergerAlgoAMR_8hxx.html" title="amr/inc/BergerAlgoAMR.hxx" alt="" coords="88,315,272,343"/>
+<area shape="rect" id="node15" href="$AlgoAMR_8cxx.html" title="amr/src/AlgoAMR.cxx" alt="" coords="296,315,443,343"/>
+<area shape="rect" id="node13" href="$BergerAlgoAMR_8cxx.html" title="amr/src/BergerAlgoAMR.cxx" alt="" coords="88,393,272,421"/>
 </map>

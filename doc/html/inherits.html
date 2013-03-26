@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
-<title>007_CFD_TOOLBOX: Hiérarchie des classes</title>
+<title>CDMATH: Hiérarchie des classes</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,7 +21,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">007_CFD_TOOLBOX
+   <div id="projectname">CDMATH
    &#160;<span id="projectnumber">0.1</span>
    </div>
    <div id="projectbrief">MECANIQUE DES FLUIDES</div>
@@ -72,7 +72,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>Tout</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Espaces de nommage</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Fichiers</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Fonctions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>Tout</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Espaces de nommage</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Fichiers</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Fonctions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Énumérations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Valeurs énumérées</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Macros</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -89,35 +89,47 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
 <div class="textblock">
 <p><a href="hierarchy.html">Aller à la hiérarchie des classes en mode texte</a></p>
 </div><table border="0" cellspacing="10" cellpadding="0">
-<tr><td><img src="inherit_graph_0.png" border="0" alt="" usemap="#Cell"/>
+<tr><td><img src="inherit_graph_0.png" border="0" alt="" usemap="#AlgoAMR"/>
+<map name="AlgoAMR" id="AlgoAMR">
+<area shape="rect" id="node1" href="classAlgoAMR.html" title="AlgoAMR" alt="" coords="5,5,83,33"/><area shape="rect" id="node3" href="classBergerAlgoAMR.html" title="BergerAlgoAMR" alt="" coords="131,5,245,33"/></map>
+</td></tr>
+<tr><td><img src="inherit_graph_1.png" border="0" alt="" usemap="#Cell"/>
 <map name="Cell" id="Cell">
 <area shape="rect" id="node1" href="classCell.html" title="Cell" alt="" coords="7,5,49,33"/></map>
 </td></tr>
-<tr><td><img src="inherit_graph_1.png" border="0" alt="" usemap="#DoubleTab"/>
+<tr><td><img src="inherit_graph_2.png" border="0" alt="" usemap="#DoubleTab"/>
 <map name="DoubleTab" id="DoubleTab">
 <area shape="rect" id="node1" href="classDoubleTab.html" title="DoubleTab" alt="" coords="7,5,89,33"/></map>
 </td></tr>
-<tr><td><img src="inherit_graph_2.png" border="0" alt="" usemap="#Face"/>
+<tr><td><img src="inherit_graph_3.png" border="0" alt="" usemap="#Face"/>
 <map name="Face" id="Face">
 <area shape="rect" id="node1" href="classFace.html" title="Face" alt="" coords="5,5,56,33"/></map>
 </td></tr>
-<tr><td><img src="inherit_graph_3.png" border="0" alt="" usemap="#Field"/>
+<tr><td><img src="inherit_graph_4.png" border="0" alt="" usemap="#Field"/>
 <map name="Field" id="Field">
-<area shape="rect" id="node1" href="classField.html" title="Field" alt="" coords="5,30,56,58"/><area shape="rect" id="node3" href="classFieldOnCell.html" title="FieldOnCell" alt="" coords="109,5,197,33"/><area shape="rect" id="node5" href="classFieldOnNode.html" title="FieldOnNode" alt="" coords="105,55,201,83"/></map>
+<area shape="rect" id="node1" href="classField.html" title="Field" alt="" coords="5,5,56,33"/></map>
 </td></tr>
-<tr><td><img src="inherit_graph_4.png" border="0" alt="" usemap="#IntTab"/>
+<tr><td><img src="inherit_graph_5.png" border="0" alt="" usemap="#Grid"/>
+<map name="Grid" id="Grid">
+<area shape="rect" id="node1" href="classGrid.html" title="Grid" alt="" coords="7,5,52,33"/></map>
+</td></tr>
+<tr><td><img src="inherit_graph_6.png" border="0" alt="" usemap="#IntTab"/>
 <map name="IntTab" id="IntTab">
 <area shape="rect" id="node1" href="classIntTab.html" title="IntTab" alt="" coords="5,5,64,33"/></map>
 </td></tr>
-<tr><td><img src="inherit_graph_5.png" border="0" alt="" usemap="#Mesh"/>
+<tr><td><img src="inherit_graph_7.png" border="0" alt="" usemap="#Mesh"/>
 <map name="Mesh" id="Mesh">
 <area shape="rect" id="node1" href="classMesh.html" title="Mesh" alt="" coords="5,5,59,33"/></map>
 </td></tr>
-<tr><td><img src="inherit_graph_6.png" border="0" alt="" usemap="#Node"/>
+<tr><td><img src="inherit_graph_8.png" border="0" alt="" usemap="#Node"/>
 <map name="Node" id="Node">
 <area shape="rect" id="node1" href="classNode.html" title="Node" alt="" coords="7,5,57,33"/></map>
 </td></tr>
-<tr><td><img src="inherit_graph_7.png" border="0" alt="" usemap="#Point"/>
+<tr><td><img src="inherit_graph_9.png" border="0" alt="" usemap="#Patch"/>
+<map name="Patch" id="Patch">
+<area shape="rect" id="node1" href="classPatch.html" title="Patch" alt="" coords="5,5,61,33"/></map>
+</td></tr>
+<tr><td><img src="inherit_graph_10.png" border="0" alt="" usemap="#Point"/>
 <map name="Point" id="Point">
 <area shape="rect" id="node1" href="classPoint.html" title="Point" alt="" coords="7,5,57,33"/></map>
 </td></tr>
@@ -125,7 +137,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Généré le Jeudi Mars 21 2013 23:44:04 pour 007_CFD_TOOLBOX par &#160;<a href="http://www.doxygen.org/index.html">
+Généré le Mercredi Mars 27 2013 00:45:52 pour CDMATH par &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

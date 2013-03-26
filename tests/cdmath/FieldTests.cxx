@@ -18,7 +18,7 @@ FieldTests::testClassField( void )
 {
 	Mesh M(0.0,1.0,10,0.,1.,5);
 
-	Field conc1("CONCENTRATION",ON_CELLS,M,2,1.2) ;
+	Field conc1("CONCENTRATION",CELLS,M,2,1.2) ;
 	CPPUNIT_ASSERT_EQUAL( 1.2, conc1.getTime() );
     for (int i=0;i<conc1.getNumberOfElements();i++)
     	conc1(0,i)=i*1.0;
@@ -36,7 +36,7 @@ FieldTests::testClassField( void )
 	CPPUNIT_ASSERT_EQUAL( 50, conc1.getNumberOfElements() );
 	CPPUNIT_ASSERT_EQUAL( 2.3, conc1.getTime() );
 
-	Field conc1n("CONCENTRATION",ON_NODES,M,2,1.2) ;
+	Field conc1n("CONCENTRATION",NODES,M,2,1.2) ;
 	CPPUNIT_ASSERT_EQUAL( 1.2, conc1n.getTime() );
     for (int i=0;i<conc1n.getNumberOfElements();i++)
     	conc1n(0,i)=i*1.0;
@@ -54,7 +54,7 @@ FieldTests::testClassField( void )
 	CPPUNIT_ASSERT_EQUAL( 66, conc1n.getNumberOfElements() );
 	CPPUNIT_ASSERT_EQUAL( 2.3, conc1n.getTime() );
 
-	Field conc6("CONCENTRATION",ON_CELLS,M,2);
+	Field conc6("CONCENTRATION",CELLS,M,2);
     for (int i=0;i<conc6.getNumberOfComponents();i++)
     	for (int j=0;j<conc6.getNumberOfElements();j++)
     		conc6(i,j)=i*1.0+2.*j;
@@ -66,7 +66,7 @@ FieldTests::testClassField( void )
     CPPUNIT_ASSERT_EQUAL( 2, conc6.getNumberOfComponents() );
 	CPPUNIT_ASSERT_EQUAL( 50, conc6.getNumberOfElements() );
 
-	Field conc6n("CONCENTRATION",ON_NODES,M,2);
+	Field conc6n("CONCENTRATION",NODES,M,2);
     for (int i=0;i<conc6n.getNumberOfComponents();i++)
     	for (int j=0;j<conc6n.getNumberOfElements();j++)
     		conc6n(i,j)=i*1.0+2.*j;
@@ -116,7 +116,7 @@ FieldTests::testClassField( void )
 	CPPUNIT_ASSERT_EQUAL( 2, conc6.getNumberOfComponents() );
 	CPPUNIT_ASSERT_EQUAL( 50, conc6.getNumberOfElements() );
 
-	Field conc7("CONCENTRATION",ON_CELLS,M,2) ;
+	Field conc7("CONCENTRATION",CELLS,M,2) ;
 	conc7.setField(conc1.getField());
     conc7.setName("CONC");
     for (int i=0;i<conc7.getNumberOfElements();i++)
@@ -128,7 +128,7 @@ FieldTests::testClassField( void )
 	CPPUNIT_ASSERT_EQUAL( 50, conc7.getNumberOfElements() );
 	CPPUNIT_ASSERT( conc7.getName().compare("CONC")==0 );
 
-	Field conc8("CONCENTRATION",ON_CELLS,M) ;
+	Field conc8("CONCENTRATION",CELLS,M) ;
     for (int i=0;i<conc8.getNumberOfElements();i++)
     	conc8[i]=i*1.0;
     for (int i=0;i<conc8.getNumberOfElements();i++)
@@ -139,7 +139,7 @@ FieldTests::testClassField( void )
 	CPPUNIT_ASSERT_EQUAL( 1, conc8.getNumberOfComponents() );
 	CPPUNIT_ASSERT_EQUAL( 50, conc8.getNumberOfElements() );
 
-	Field conc8n("CONCENTRATION",ON_NODES,M) ;
+	Field conc8n("CONCENTRATION",NODES,M) ;
     for (int i=0;i<conc8n.getNumberOfElements();i++)
     	conc8n[i]=i*1.0;
     for (int i=0;i<conc8n.getNumberOfElements();i++)

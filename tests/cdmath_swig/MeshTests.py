@@ -83,13 +83,13 @@ class MeshTest(unittest.TestCase):
     def testClassField(self):
         M=Mesh(0.0,1.0,10,0.,1.,5);
 
-        conc1=Field("CONCENTRATION",ON_CELLS,M,2,1.2) ;
+        conc1=Field("CONCENTRATION",CELLS,M,2,1.2) ;
         self.assertTrue( 1.2==conc1.getTime() );
         for i in range(conc1.getNumberOfElements()):
             conc1[0,i]=i*1.0;
             pass
 
-        conc1n=Field("CONCENTRATION",ON_NODES,M,2,1.2) ;
+        conc1n=Field("CONCENTRATION",NODES,M,2,1.2) ;
         self.assertTrue( 1.2==conc1n.getTime() );
         for i in range(conc1n.getNumberOfElements()):
             conc1n[0,i]=i*1.0;
@@ -125,7 +125,7 @@ class MeshTest(unittest.TestCase):
         self.assertTrue( 66==conc1n.getNumberOfElements() );
         self.assertTrue( 2.3==conc1n.getTime() );
 
-        conc6=Field("CONCENTRATION",ON_NODES,M,2);
+        conc6=Field("CONCENTRATION",NODES,M,2);
         for i in range(conc6.getNumberOfComponents()):
             for j in range(conc6.getNumberOfElements()):
                 conc6[i,j]=i*1.0+2.*j;
@@ -138,7 +138,7 @@ class MeshTest(unittest.TestCase):
                 pass
             pass
 
-        conc6=Field("CONCENTRATION",ON_CELLS,M,2);
+        conc6=Field("CONCENTRATION",CELLS,M,2);
         for i in range(conc6.getNumberOfComponents()):
             for j in range(conc6.getNumberOfElements()):
                 conc6[i,j]=i*1.0+2.*j;
@@ -199,7 +199,7 @@ class MeshTest(unittest.TestCase):
         self.assertTrue( 2 == conc6.getNumberOfComponents() );
         self.assertTrue( 50 == conc6.getNumberOfElements() );
 
-        conc7=Field("CONCENTRATION",ON_NODES,M,2) ;
+        conc7=Field("CONCENTRATION",NODES,M,2) ;
         conc7.setField(conc1n.getField());
         conc7.setName("CONC")
         self.assertTrue( conc7.getName() == "CONC" );
@@ -209,7 +209,7 @@ class MeshTest(unittest.TestCase):
         self.assertTrue( 2 == conc7.getNumberOfComponents() );
         self.assertTrue( 66 == conc7.getNumberOfElements() );
 
-        conc7=Field("CONCENTRATION",ON_CELLS,M,2) ;
+        conc7=Field("CONCENTRATION",CELLS,M,2) ;
         conc7.setField(conc1.getField());
         conc7.setName("CONC")
         self.assertTrue( conc7.getName() == "CONC" );
@@ -219,7 +219,7 @@ class MeshTest(unittest.TestCase):
         self.assertTrue( 2 == conc7.getNumberOfComponents() );
         self.assertTrue( 50 == conc7.getNumberOfElements() );
 
-        conc8=Field("CONCENTRATION",ON_CELLS,M) ;
+        conc8=Field("CONCENTRATION",CELLS,M) ;
         for i in range(conc8.getNumberOfElements()):
             conc8[i]=i*1.0;
             pass
@@ -229,7 +229,7 @@ class MeshTest(unittest.TestCase):
         self.assertTrue( 1 == conc8.getNumberOfComponents() );
         self.assertTrue( 50 == conc8.getNumberOfElements() );
 
-        conc8=Field("CONCENTRATION",ON_NODES,M) ;
+        conc8=Field("CONCENTRATION",NODES,M) ;
         for i in range(conc8.getNumberOfElements()):
             conc8[i]=i*1.0;
             pass
@@ -239,7 +239,7 @@ class MeshTest(unittest.TestCase):
         self.assertTrue( 1 == conc8.getNumberOfComponents() );
         self.assertTrue( 66 == conc8.getNumberOfElements() );
 
-        conc9=Field("CONCENTRATION",ON_CELLS,M) ;
+        conc9=Field("CONCENTRATION",CELLS,M) ;
         for i in range(conc9.getNumberOfElements()):
             conc9[i]=i*1.0;
             pass
