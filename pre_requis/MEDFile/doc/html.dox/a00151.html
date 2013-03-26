@@ -1,0 +1,308 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: c/2.3.6/test5.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+<h1>c/2.3.6/test5.c</h1><div class="fragment"><pre class="fragment"><span class="comment">/*  This file is part of MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<span class="comment"> *  (at your option) any later version.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="comment"> */</span>
+
+
+<span class="comment">/******************************************************************************</span>
+<span class="comment"> * - Nom du fichier : test5.c</span>
+<span class="comment"> *</span>
+<span class="comment"> * - Description : lecture des noeuds d&apos;un maillage MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *****************************************************************************/</span>
+
+<span class="preprocessor">#include &lt;med.h&gt;</span>
+<span class="preprocessor">#define MESGERR 1</span>
+<span class="preprocessor"></span><span class="preprocessor">#include &quot;med_utils.h&quot;</span>
+<span class="preprocessor">#include &lt;string.h&gt;</span>
+
+<span class="preprocessor">#ifdef DEF_LECT_ECR</span>
+<span class="preprocessor"></span><span class="preprocessor">#define MODE_ACCES MED_LECTURE_ECRITURE</span>
+<span class="preprocessor"></span><span class="preprocessor">#elif DEF_LECT_AJOUT</span>
+<span class="preprocessor"></span><span class="preprocessor">#define MODE_ACCES MED_LECTURE_AJOUT</span>
+<span class="preprocessor"></span><span class="preprocessor">#else</span>
+<span class="preprocessor"></span><span class="preprocessor">#define MODE_ACCES MED_CREATION</span>
+<span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<span class="preprocessor"></span>
+<span class="keywordtype">int</span> <a name="a0"></a><a class="code" href="a00750_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv)
+
+
+{
+  <a name="a1"></a><a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> ret = 0;
+  <a name="a2"></a><a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid;
+  <span class="comment">/* la dimension du maillage */</span>
+  <a name="a3"></a><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> mdim;
+  <span class="comment">/* nom du maillage de longueur maxi MED_TAILLE_NOM */</span>
+  <span class="keywordtype">char</span> maa[<a name="a4"></a><a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>+1];
+  <span class="comment">/* le nombre de noeuds */</span>
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nnoe = 0;
+  <span class="comment">/* table des coordonnees */</span>
+  <a name="a5"></a><a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *coo1,*coo2;
+  <span class="comment">/* tables des noms et des unites des coordonnees </span>
+<span class="comment">     profil : (dimension*MED_TAILLE_PNOM+1) */</span>
+  <span class="keywordtype">char</span> nomcoo[2*<a name="a6"></a><a class="code" href="a00320_aa91a291a9736ce1ad33b5be657106edb.html#aa91a291a9736ce1ad33b5be657106edb">MED_TAILLE_PNOM</a>+1];
+  <span class="keywordtype">char</span> unicoo[2*<a class="code" href="a00320_aa91a291a9736ce1ad33b5be657106edb.html#aa91a291a9736ce1ad33b5be657106edb">MED_TAILLE_PNOM</a>+1];
+  <span class="comment">/* tables des noms, numeros, numeros de familles des noeuds</span>
+<span class="comment">     autant d&apos;elements que de noeuds - les noms ont pout longueur</span>
+<span class="comment">     MED_TAILLE_PNOM */</span>
+  <span class="keywordtype">char</span> *nomnoe;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *numnoe;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *nufano; 
+  <a class="code" href="a00320_a5bae89719f710abae216ad1e820fc447.html#a5bae89719f710abae216ad1e820fc447">med_repere</a> rep;
+  <a class="code" href="a00320_a48edc2e2691fff06637b6206deff390f.html#a48edc2e2691fff06637b6206deff390f">med_booleen</a> inonoe,inunoe;
+  <span class="keywordtype">char</span> <a name="a7"></a><a class="code" href="a00318_ad8ab729381f270b100f3d05b6c6676fc.html#ad8ab729381f270b100f3d05b6c6676fc">str</a>[<a class="code" href="a00320_aa91a291a9736ce1ad33b5be657106edb.html#aa91a291a9736ce1ad33b5be657106edb">MED_TAILLE_PNOM</a>+1];
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> i;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> profil[2] = { 2, 3 };
+  <span class="keywordtype">char</span> desc[<a name="a8"></a><a class="code" href="a00320_aecfdcbb63702f8a9b97643d05cc63888.html#aecfdcbb63702f8a9b97643d05cc63888">MED_TAILLE_DESC</a>+1];
+  <a class="code" href="a00320_a921e2f33296e6bef48bbce3be3ae005a.html#a921e2f33296e6bef48bbce3be3ae005a">med_maillage</a> type;
+
+  <span class="comment">/* Ouverture du fichier &quot;test4.med&quot; en lecture seule */</span>
+  fid = <a name="a9"></a><a class="code" href="a00346_ae0cab324e1ab23d9cf780427f0ad561b.html#ae0cab324e1ab23d9cf780427f0ad561b">MEDouvrir</a>(<span class="stringliteral">&quot;test4.med&quot;</span>,<a name="a10"></a><a class="code" href="a00320_a6412dbfba9619f1b121a97a4ccfaff00.html#a6412dbfba9619f1b121a97a4ccfaff00a1e1c70755b1014521efa67ec9e0eff9b">MED_LECTURE</a>);
+  <span class="keywordflow">if</span> (fid &lt; 0) {
+    <a name="a11"></a><a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a l&apos;ouverture du fichier test4.med&quot;</span>);
+    <span class="keywordflow">return</span> -1;
+  }
+
+  <span class="comment">/* Lecture des infos concernant le premier maillage */</span>
+  <span class="keywordflow">if</span> (<a name="a12"></a><a class="code" href="a00346_ae3f79506613f66c077578ff43d3ea4d5.html#ae3f79506613f66c077578ff43d3ea4d5">MEDmaaInfo</a>(fid,1,maa,&amp;mdim,&amp;type,desc) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture des informations sur le maillage : &quot;</span>);<a name="a13"></a><a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(maa);
+    <span class="keywordflow">return</span> -1;
+  } <span class="keywordflow">else</span>
+    printf(<span class="stringliteral">&quot;Maillage de nom : %s et de dimension : %d \n&quot;</span>,maa,mdim);
+
+  <span class="comment">/* Combien de noeuds a lire ? */</span>
+  nnoe = <a name="a14"></a><a class="code" href="a00346_ab44248903040eef960e014d37a72791b.html#ab44248903040eef960e014d37a72791b">MEDnEntMaa</a>(fid,maa,<a name="a15"></a><a class="code" href="a00320_a646b5c79451d55ea9cda40bd16f090dd.html#a646b5c79451d55ea9cda40bd16f090ddad43fad674e69c95d9e5e90b031ddc346">MED_COOR</a>,<a name="a16"></a><a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08a1403b108df73119422ccabd619560c4c">MED_NOEUD</a>,0,0);
+  <span class="keywordflow">if</span> (nnoe &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture du nombre de noeuds dans : &quot;</span>);
+    ret = -1;
+  } <span class="keywordflow">else</span>
+    printf(<span class="stringliteral">&quot;Nombre de noeuds : &quot;</span><a name="a17"></a><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; \n&quot;</span>,nnoe);
+
+  <span class="comment">/* Allocations memoires */</span>
+  <span class="keywordflow">if</span> (nnoe &gt; 0) {
+    <span class="comment">/* table des coordonnees </span>
+<span class="comment">       profil : (dimension * nombre de noeuds ) */</span>
+    coo1 = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>*) calloc(nnoe*mdim,<span class="keyword">sizeof</span>(<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>));
+    coo2 = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>*) calloc(nnoe*mdim,<span class="keyword">sizeof</span>(<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>));
+    <span class="comment">/* table des des numeros, des numeros de familles des noeuds</span>
+<span class="comment">       profil : (nombre de noeuds) */</span>
+    numnoe = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>*) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>)*nnoe);
+    nufano = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>*) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>)*nnoe);
+    <span class="comment">/* table des noms des noeuds </span>
+<span class="comment">       profil : (nnoe*MED_TAILLE_PNOM+1) */</span>
+    nomnoe = (<span class="keywordtype">char</span>*) malloc(<a class="code" href="a00320_aa91a291a9736ce1ad33b5be657106edb.html#aa91a291a9736ce1ad33b5be657106edb">MED_TAILLE_PNOM</a>*nnoe+1);
+  }
+
+  <span class="comment">/* Lecture des composantes n°2 des coordonnees des noeuds */</span>
+  <span class="keywordflow">if</span> (nnoe &gt; 0) {
+    <span class="keywordflow">if</span> (<a name="a18"></a><a class="code" href="a00346_ab3917b8328777964e96cbfb8b02d4aa5.html#ab3917b8328777964e96cbfb8b02d4aa5">MEDcoordLire</a>(fid,maa,mdim,coo1,<a name="a19"></a><a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>,2,NULL,0,
+                     &amp;rep,nomcoo,unicoo) &lt; 0) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture des coordonnees des noeuds&quot;</span>);
+      ret = -1;
+    } <span class="keywordflow">else</span> {
+      printf(<span class="stringliteral">&quot;Valeur de coo1 : &quot;</span>);
+      <span class="keywordflow">for</span> (i=0;i&lt;nnoe*mdim;i++)
+        printf(<span class="stringliteral">&quot;%4.2f &quot;</span>,coo1[i]);
+      printf(<span class="stringliteral">&quot;\n&quot;</span>);
+    }
+  }
+
+  <span class="comment">/* Lecture des composantes n°1 des coordonnees des noeuds */</span>
+  <span class="keywordflow">if</span> (nnoe &gt; 0) {
+    <span class="keywordflow">if</span> (<a class="code" href="a00346_ab3917b8328777964e96cbfb8b02d4aa5.html#ab3917b8328777964e96cbfb8b02d4aa5">MEDcoordLire</a>(fid,maa,mdim,coo1,<a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>,1,NULL,0,
+                       &amp;rep,nomcoo,unicoo) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture des coordonnees des noeuds&quot;</span>);
+    ret = -1;
+    } <span class="keywordflow">else</span> {
+      printf(<span class="stringliteral">&quot;Valeur de coo1 : &quot;</span>);
+      <span class="keywordflow">for</span> (i=0;i&lt;nnoe*mdim;i++)
+        printf(<span class="stringliteral">&quot;%4.2f &quot;</span>,coo1[i]);
+      printf(<span class="stringliteral">&quot;\n&quot;</span>);
+    }
+  }
+
+  <span class="comment">/* Lecture des composantes n°1 des coordonnees des noeuds du profil */</span>
+  <span class="keywordflow">if</span> (nnoe &gt; 0) { 
+    <span class="keywordflow">if</span> (<a class="code" href="a00346_ab3917b8328777964e96cbfb8b02d4aa5.html#ab3917b8328777964e96cbfb8b02d4aa5">MEDcoordLire</a>(fid,maa,mdim,coo2,<a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>,2,profil,2,
+                       &amp;rep,nomcoo,unicoo) &lt; 0) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture des coordonnees des noeuds&quot;</span>);
+      ret = -1;
+    } <span class="keywordflow">else</span> {
+      printf(<span class="stringliteral">&quot;Valeur de coo2 : &quot;</span>);
+      <span class="keywordflow">for</span> (i=0;i&lt;nnoe*mdim;i++)
+        printf(<span class="stringliteral">&quot;%4.2f &quot;</span>,coo2[i]);
+      printf(<span class="stringliteral">&quot;\n&quot;</span>);
+    }
+  }
+
+  <span class="comment">/* Lecture des composantes n°2 des coordonnees des noeuds du profil */</span>
+  <span class="keywordflow">if</span> (nnoe &gt; 0) {
+    <span class="keywordflow">if</span> (<a class="code" href="a00346_ab3917b8328777964e96cbfb8b02d4aa5.html#ab3917b8328777964e96cbfb8b02d4aa5">MEDcoordLire</a>(fid,maa,mdim,coo2,<a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>,1,profil,2,
+                       &amp;rep,nomcoo,unicoo) &lt; 0) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture des coordonnees des noeuds&quot;</span>);
+      ret = -1;
+    } <span class="keywordflow">else</span> {
+      printf(<span class="stringliteral">&quot;Valeur de coo2 : &quot;</span>);
+      <span class="keywordflow">for</span> (i=0;i&lt;nnoe*mdim;i++) {
+        printf(<span class="stringliteral">&quot;%4.2f &quot;</span>,coo2[i]);
+        coo2[i] = 0.0;
+      }
+      printf(<span class="stringliteral">&quot;\n&quot;</span>);
+    }
+  }
+
+  <span class="comment">/* Lecture de toutes les composantes des coordonnees des noeuds du profil */</span>
+  <span class="keywordflow">if</span> (nnoe &gt; 0) {
+    <span class="keywordflow">if</span> (<a class="code" href="a00346_ab3917b8328777964e96cbfb8b02d4aa5.html#ab3917b8328777964e96cbfb8b02d4aa5">MEDcoordLire</a>(fid,maa,mdim,coo2,<a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>,<a name="a20"></a><a class="code" href="a00320_a35be9cde013c9b7c347dfd0e821a1bcb.html#a35be9cde013c9b7c347dfd0e821a1bcb">MED_ALL</a>,profil,2,
+                       &amp;rep,nomcoo,unicoo) &lt; 0) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture des coordonnees des noeuds&quot;</span>);
+      ret = -1;
+    } <span class="keywordflow">else</span> {
+      printf(<span class="stringliteral">&quot;Valeur de coo2 : &quot;</span>);
+      <span class="keywordflow">for</span> (i=0;i&lt;nnoe*mdim;i++) {
+        printf(<span class="stringliteral">&quot;%4.2f &quot;</span>,coo2[i]);
+        coo2[i] = 0.0;
+      }
+      printf(<span class="stringliteral">&quot;\n&quot;</span>);
+    }
+  }
+
+  <span class="comment">/* Lecture des composantes des coordonnees des noeuds */</span>
+  <span class="keywordflow">if</span> (nnoe &gt; 0) {
+    <span class="keywordflow">if</span> (<a class="code" href="a00346_ab3917b8328777964e96cbfb8b02d4aa5.html#ab3917b8328777964e96cbfb8b02d4aa5">MEDcoordLire</a>(fid,maa,mdim,coo2,<a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>,<a class="code" href="a00320_a35be9cde013c9b7c347dfd0e821a1bcb.html#a35be9cde013c9b7c347dfd0e821a1bcb">MED_ALL</a>,NULL,0,
+                       &amp;rep,nomcoo,unicoo) &lt; 0) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture des coordonnees des noeuds&quot;</span>);
+      ret = -1;
+    } <span class="keywordflow">else</span> {
+      printf(<span class="stringliteral">&quot;Valeur de coo2 : &quot;</span>);
+      <span class="keywordflow">for</span> (i=0;i&lt;nnoe*mdim;i++)
+        printf(<span class="stringliteral">&quot;%4.2f &quot;</span>,coo2[i]);
+      printf(<span class="stringliteral">&quot;\n&quot;</span>);
+    }
+  }
+
+  <span class="comment">/* Lecture des noms des noeuds (optionnel dans un maillage MED) */</span>
+  <span class="keywordflow">if</span> ((nnoe &gt; 0)) {
+    <span class="keywordflow">if</span> (<a name="a21"></a><a class="code" href="a00346_a78f4e82306b9d7bf0df7326098a51af8.html#a78f4e82306b9d7bf0df7326098a51af8">MEDnomLire</a>(fid,maa,nomnoe,nnoe,<a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08a1403b108df73119422ccabd619560c4c">MED_NOEUD</a>,0) &lt; 0)
+      inonoe = <a name="a22"></a><a class="code" href="a00320_a48edc2e2691fff06637b6206deff390f.html#a48edc2e2691fff06637b6206deff390fa5d1ae7578de41e45d28cb465ac97dd8b">MED_FAUX</a>;
+    <span class="keywordflow">else</span>
+      inonoe = <a name="a23"></a><a class="code" href="a00320_a48edc2e2691fff06637b6206deff390f.html#a48edc2e2691fff06637b6206deff390fa9c1332ae1891dc5c8f5ea9604c3e7136">MED_VRAI</a>;
+  }
+
+  <span class="comment">/* Lecture des numeros des noeuds (optionnel dans un maillage MED) */</span>
+  <span class="keywordflow">if</span> ((nnoe &gt; 0)) {
+    <span class="keywordflow">if</span> (<a name="a24"></a><a class="code" href="a00346_a18a6e97304f902dceb087b237e5eb9b0.html#a18a6e97304f902dceb087b237e5eb9b0">MEDnumLire</a>(fid,maa,numnoe,nnoe,<a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08a1403b108df73119422ccabd619560c4c">MED_NOEUD</a>,0) &lt; 0)
+      inunoe = <a class="code" href="a00320_a48edc2e2691fff06637b6206deff390f.html#a48edc2e2691fff06637b6206deff390fa5d1ae7578de41e45d28cb465ac97dd8b">MED_FAUX</a>;
+    <span class="keywordflow">else</span>
+      inunoe = <a class="code" href="a00320_a48edc2e2691fff06637b6206deff390f.html#a48edc2e2691fff06637b6206deff390fa9c1332ae1891dc5c8f5ea9604c3e7136">MED_VRAI</a>;
+  }
+
+  <span class="comment">/* Lecture des numeros de familles des noeuds */</span>            
+  <span class="keywordflow">if</span> ((nnoe &gt; 0))
+    <span class="keywordflow">if</span> (<a name="a25"></a><a class="code" href="a00346_a3e6c8b8a760f297e91934f46c4b9fd17.html#a3e6c8b8a760f297e91934f46c4b9fd17">MEDfamLire</a>(fid,maa,nufano,nnoe,<a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08a1403b108df73119422ccabd619560c4c">MED_NOEUD</a>,0) &lt; 0) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture des numeros de famille des noeuds&quot;</span>);
+      ret = -1;
+    } 
+
+  <span class="comment">/* Fermeture du fichier */</span>
+  <span class="keywordflow">if</span> (<a name="a26"></a><a class="code" href="a00346_ac4f893f1942397b74f4fb57f5ff99ca6.html#ac4f893f1942397b74f4fb57f5ff99ca6">MEDfermer</a>(fid) &lt; 0){
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la fermeture du fichier&quot;</span>);
+      ret = -1;
+    } 
+
+  <span class="comment">/* Affichage des resulats */</span>
+  <span class="keywordflow">if</span> (ret == 0 &amp;&amp; nnoe &gt; 0)
+    {
+      printf(<span class="stringliteral">&quot;Type de repere : %d \n&quot;</span>,rep);
+      printf(<span class="stringliteral">&quot;Nom des coordonnees : \n&quot;</span>);
+      <span class="keywordflow">for</span> (i=0;i&lt;mdim;i++)
+        {
+          strncpy(str,nomcoo+i*<a class="code" href="a00320_aa91a291a9736ce1ad33b5be657106edb.html#aa91a291a9736ce1ad33b5be657106edb">MED_TAILLE_PNOM</a>,MED_TAILLE_PNOM);
+          str[MED_TAILLE_PNOM] = <span class="charliteral">&apos;\0&apos;</span>;
+          printf(<span class="stringliteral">&quot;%s &quot;</span>,str);
+        }
+      printf(<span class="stringliteral">&quot;\nUnites des coordonnees : \n&quot;</span>);
+      <span class="keywordflow">for</span> (i=0;i&lt;mdim;i++)
+        {
+          strncpy(str,unicoo+i*<a class="code" href="a00320_aa91a291a9736ce1ad33b5be657106edb.html#aa91a291a9736ce1ad33b5be657106edb">MED_TAILLE_PNOM</a>,MED_TAILLE_PNOM);
+          str[MED_TAILLE_PNOM] = <span class="charliteral">&apos;\0&apos;</span>;
+          printf(<span class="stringliteral">&quot;%s &quot;</span>,str);
+        }     
+      printf(<span class="stringliteral">&quot;\nCoordonnees des noeuds : \n&quot;</span>);
+      <span class="keywordflow">for</span> (i=0;i&lt;nnoe*mdim;i++)
+        printf(<span class="stringliteral">&quot;%f &quot;</span>,*(coo2+i));
+      <span class="keywordflow">if</span> (inonoe)
+        {
+          printf(<span class="stringliteral">&quot;\nNoms des noeuds : \n&quot;</span>);
+          <span class="keywordflow">for</span> (i=0;i&lt;nnoe;i++)
+            {
+              strncpy(str,nomnoe+i*<a class="code" href="a00320_aa91a291a9736ce1ad33b5be657106edb.html#aa91a291a9736ce1ad33b5be657106edb">MED_TAILLE_PNOM</a>,MED_TAILLE_PNOM);
+              str[MED_TAILLE_PNOM] = <span class="charliteral">&apos;\0&apos;</span>;
+              printf(<span class="stringliteral">&quot; %s &quot;</span>,str);
+            }
+        }
+      <span class="keywordflow">if</span> (inunoe)
+        {
+          printf(<span class="stringliteral">&quot;\nNumeros des noeuds : \n&quot;</span>);
+          <span class="keywordflow">for</span> (i=0;i&lt;nnoe;i++)
+              printf(<a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; &quot;</span>,*(numnoe+i));
+        }
+      printf(<span class="stringliteral">&quot;\nNumeros des familles des noeuds : \n&quot;</span>);
+      <span class="keywordflow">for</span> (i=0;i&lt;nnoe;i++)
+        printf(<a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; &quot;</span>,*(nufano+i));
+      printf(<span class="stringliteral">&quot;\n&quot;</span>);
+    }
+
+  <span class="comment">/* liberation memoire */</span>
+  <span class="keywordflow">if</span> (nnoe &gt; 0) {
+    free(coo1);
+    free(coo2);
+    free(nomnoe);
+    free(numnoe);
+    free(nufano);
+  }
+
+  <span class="keywordflow">return</span> ret;
+}
+
+
+
+
+</pre></div> </div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:33 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

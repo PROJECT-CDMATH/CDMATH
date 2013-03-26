@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: parallel/generateFilterArray.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+<h1>parallel/generateFilterArray.c</h1><div class="fragment"><pre class="fragment"><span class="comment">/*  This file is part of MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<span class="comment"> *  (at your option) any later version.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="comment"> */</span>
+
+<span class="preprocessor">#include &lt;med.h&gt;</span>
+<span class="preprocessor">#define MESGERR 1</span>
+<span class="preprocessor"></span><span class="preprocessor">#include &quot;med_utils.h&quot;</span>
+<span class="preprocessor">#include &lt;string.h&gt;</span>
+
+<span class="preprocessor">#include &lt;unistd.h&gt;</span>
+<span class="preprocessor">#include &lt;time.h&gt;</span>
+<span class="preprocessor">#include &lt;assert.h&gt;</span>
+<span class="preprocessor">#include &lt;stdlib.h&gt;</span>
+
+<span class="keyword">static</span> <span class="keywordtype">int</span> <a name="a0"></a><a class="code" href="a00282_ad9b9441c91feaac7e744f01438b01016.html#ad9b9441c91feaac7e744f01438b01016">cmp</a>(<span class="keyword">const</span> <a name="a1"></a><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *p1, <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *p2) { <span class="keywordflow">return</span> *p1-*p2; }
+
+<a name="a2"></a><a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> <a name="a3"></a><a class="code" href="a00282_a388c7cc13e2d139b5518828c5979b041.html#a388c7cc13e2d139b5518828c5979b041">generateFilterArray</a>( <span class="keyword">const</span> <a name="a4"></a><a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> nentities, <span class="keyword">const</span> <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> nvaluesperentity, <span class="keyword">const</span> <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> nconstituentpervalue,
+                             <span class="keyword">const</span> <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> profilearraysize, <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> * <span class="keyword">const</span> profilearray,
+                             <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>  * <span class="keyword">const</span> nentitiesfiltered, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> **filterarray ) {
+
+
+  <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a>    _ret=-1;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>    _nentitiesfiltered=0,_maxfilternentities=0;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>    *_indexarray=NULL;
+  <span class="keywordtype">int</span>        _i=0;
+  <span class="keyword">struct </span>tm  *_tm ;
+  time_t _tt=time(0);
+
+  _tm = localtime(&amp;_tt);
+
+
+  <span class="comment">/*Taille du tableau des numéros d&apos;entités à filtrer */</span>
+  <span class="keywordflow">if</span> ( profilearraysize ) {
+    _maxfilternentities = profilearraysize;
+  } <span class="keywordflow">else</span> {
+    _maxfilternentities = nentities;
+  }
+
+  <span class="comment">/* Allocation du tableau de filtre */</span>
+
+  srandom((*_tm).tm_sec * (*_tm).tm_min );
+  _nentitiesfiltered         = 1 + (int) ((<span class="keywordtype">float</span>)(_maxfilternentities) * (random() / (RAND_MAX + 1.0)));
+  <span class="comment">/*       _nentitiesfiltered         = 2; */</span>
+
+  (*filterarray)         = malloc(_nentitiesfiltered*<span class="keyword">sizeof</span>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>));
+
+<span class="comment">/*   if ( profilearraysize) { */</span>
+<span class="comment">/*     _indexarray     = malloc(_nentitiesfiltered*sizeof(med_int)); */</span>
+<span class="comment">/*   } else { */</span>
+<span class="comment">/*     _indexarray=(*filterarray); */</span>
+<span class="comment">/*   } */</span>
+
+  _indexarray=(*filterarray);
+
+  <span class="keywordflow">for</span> (_i=0; _i &lt; _nentitiesfiltered; ++_i ) {
+    _indexarray[_i] =  1 + (int) ((<span class="keywordtype">double</span>)(_maxfilternentities) * (random() / (RAND_MAX + 1.0)));
+  }
+
+  <span class="comment">/*N&apos;enlève pas les doublons, mais celà fonctionne*/</span>
+  qsort(_indexarray, _nentitiesfiltered, <span class="keyword">sizeof</span>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>), (<span class="keywordtype">int</span>(*)(<span class="keyword">const</span> <span class="keywordtype">void</span> *, <span class="keyword">const</span> <span class="keywordtype">void</span> *) ) <a class="code" href="a00282_ad9b9441c91feaac7e744f01438b01016.html#ad9b9441c91feaac7e744f01438b01016">cmp</a>);
+
+<span class="comment">/*   for (_i=0; _i &lt; _nentitiesfiltered; ++_i ) { */</span>
+<span class="comment">/*     ISCRUTE(_indexarray[_i]); */</span>
+<span class="comment">/*   } */</span>
+
+  <span class="comment">/* Cette indirection ne doit jamais être faite car le tableau filtre contient des indices de profils.*/</span>
+<span class="comment">/*   if ( profilearraysize) */</span>
+<span class="comment">/*     for (_i=0; _i &lt; _nentitiesfiltered; ++_i ) { */</span>
+<span class="comment">/*       (*filterarray)[_i] = profilearray[_indexarray[_i]]; */</span>
+<span class="comment">/*       ISCRUTE((*filterarray)[_i]); */</span>
+<span class="comment">/*     } */</span>
+
+  *nentitiesfiltered=_nentitiesfiltered;
+
+  _ret=0;
+
+ ERROR:
+<span class="comment">/*   if ( profilearraysize) free(_indexarray); */</span>
+
+  <span class="keywordflow">return</span> _ret;
+
+}
+</pre></div> </div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:33 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

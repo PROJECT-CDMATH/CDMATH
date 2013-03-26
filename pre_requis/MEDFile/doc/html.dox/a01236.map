@@ -1,0 +1,22 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$a00334.html" title="med_config.h" alt="" coords="5,246,104,277"/>
+<area shape="rect" id="node5" href="$a00321.html" title="med.h" alt="" coords="511,246,569,277"/>
+<area shape="rect" id="node13" href="$a00345.html" title="med_outils.h" alt="" coords="360,86,456,117"/>
+<area shape="rect" id="node43" href="$a00327.html" title="2.3.6/med23v30.h" alt="" coords="824,166,949,197"/>
+<area shape="rect" id="node46" href="$a00330.html" title="2.3.6/med23v30_proto.h" alt="" coords="687,246,849,277"/>
+<area shape="rect" id="node51" href="$a00329.html" title="2.3.6/med23v30_misc.h" alt="" coords="773,86,933,117"/>
+<area shape="rect" id="node57" href="$a00482.html" title="MEDimport.h" alt="" coords="1272,86,1371,117"/>
+<area shape="rect" id="node61" href="$a00317.html" title="MAJ_version.h" alt="" coords="1395,86,1504,117"/>
+<area shape="rect" id="node63" href="$a00296.html" title="MAJ_21_22.h" alt="" coords="1528,86,1629,117"/>
+<area shape="rect" id="node65" href="$a00305.html" title="MAJ_231_232.h" alt="" coords="1653,86,1768,117"/>
+<area shape="rect" id="node67" href="$a00306.html" title="MAJ_236_300.h" alt="" coords="1792,86,1907,117"/>
+<area shape="rect" id="node9" href="$a00347.html" title="med_proto.h" alt="" coords="501,326,595,357"/>
+<area shape="rect" id="node11" href="$a00364.html" title="medC_win_dll.h" alt="" coords="492,406,604,437"/>
+<area shape="rect" id="node16" href="$a00350.html" title="med_vargs.h" alt="" coords="69,166,165,197"/>
+<area shape="rect" id="node21" href="$a00343.html" title="med_misc.h" alt="" coords="445,166,539,197"/>
+<area shape="rect" id="node29" href="$a00339.html" title="med_hdfi.h" alt="" coords="563,166,648,197"/>
+<area shape="rect" id="node32" href="$a00349.html" title="med_utils.h" alt="" coords="189,166,277,197"/>
+<area shape="rect" id="node26" href="$a00337.html" title="med_exit_if.h" alt="" coords="388,246,487,277"/>
+<area shape="rect" id="node37" href="$a00335.html" title="med_err.h" alt="" coords="261,246,341,277"/>
+<area shape="rect" id="node59" href="$a00484.html" title="medimport_win_dll.h" alt="" coords="1252,166,1391,197"/>
+</map>

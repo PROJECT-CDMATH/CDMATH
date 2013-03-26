@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de MEDstructureCoordEcr.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_6d8408d9855f99d1b33e274ba7d15ec1.html">src</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_f28a13a54b2ea19aa3beea3b98c6f442.html">2.3.6</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_0ee583a61dcfc27056bc3bd5b0f76fbb.html">ci</a>
+  </div>
+</div>
+<div class="contents">
+<h1>MEDstructureCoordEcr.c</h1><a href="a00705.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment"> *</span>
+<a name="l00003"></a>00003 <span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment"> *  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment"> *</span>
+<a name="l00009"></a>00009 <span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment"> *</span>
+<a name="l00014"></a>00014 <span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment"> */</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019 <span class="preprocessor">#include &lt;<a class="code" href="a00321.html">med.h</a>&gt;</span>
+<a name="l00020"></a>00020 <span class="preprocessor">#include &lt;<a class="code" href="a00334.html">med_config.h</a>&gt;</span>
+<a name="l00021"></a>00021 <span class="preprocessor">#include &lt;<a class="code" href="a00345.html">med_outils.h</a>&gt;</span>
+<a name="l00022"></a>00022 
+<a name="l00023"></a>00023 <span class="preprocessor">#include &lt;stdlib.h&gt;</span>
+<a name="l00024"></a>00024 <span class="preprocessor">#include &lt;string.h&gt;</span>
+<a name="l00025"></a>00025 
+<a name="l00026"></a>00026 <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a>
+<a name="l00027"></a><a class="code" href="a00705_aafa78cc9508d5c69c3dce33d9b5558ec.html#aafa78cc9508d5c69c3dce33d9b5558ec">00027</a> <a class="code" href="a00346_aa1b44ef391def5a50db352da70370ec9.html#aa1b44ef391def5a50db352da70370ec9">MEDstructureCoordEcr</a>(<a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid,<span class="keywordtype">char</span> *maillage,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> mdim,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *<a class="code" href="a00318_a9e421150cc3c6f73ffe91d329fcf018e.html#a9e421150cc3c6f73ffe91d329fcf018e">structure</a>)
+<a name="l00028"></a>00028 {
+<a name="l00029"></a>00029   <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> maaid, noeid, dataset;
+<a name="l00030"></a>00030   <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> ret;
+<a name="l00031"></a>00031   <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> dimd[1];
+<a name="l00032"></a>00032   <span class="keywordtype">char</span> chemin[<a class="code" href="a00344_ae7cf7e9299436565bcc7ebfe4820da01.html#ae7cf7e9299436565bcc7ebfe4820da01">MED_TAILLE_MAA</a>+<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>+1];
+<a name="l00033"></a>00033   <span class="keywordtype">char</span> nom_dataset[<a class="code" href="a00344_a297272b5640494706d977f1a9f8ed27d.html#a297272b5640494706d977f1a9f8ed27d">MED_TAILLE_NOM_ENTITE</a>+1];
+<a name="l00034"></a>00034   <span class="keywordtype">char</span> nom_attribut[<a class="code" href="a00344_a297272b5640494706d977f1a9f8ed27d.html#a297272b5640494706d977f1a9f8ed27d">MED_TAILLE_NOM_ENTITE</a>+1];
+<a name="l00035"></a>00035   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> att;
+<a name="l00036"></a>00036   <a class="code" href="a00320_a921e2f33296e6bef48bbce3be3ae005a.html#a921e2f33296e6bef48bbce3be3ae005a">med_maillage</a> maillage_type;
+<a name="l00037"></a>00037   <a class="code" href="a00320_a2ffa035f48fcbb83e25edab5f19cbaf9.html#a2ffa035f48fcbb83e25edab5f19cbaf9">med_type_grille</a> type;
+<a name="l00038"></a>00038   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> i;
+<a name="l00039"></a>00039 
+<a name="l00040"></a>00040   <span class="comment">/*</span>
+<a name="l00041"></a>00041 <span class="comment">   * On inhibe le gestionnaire d&apos;erreur HDF</span>
+<a name="l00042"></a>00042 <span class="comment">   */</span>
+<a name="l00043"></a>00043   <a class="code" href="a00338_aa645db37de32784a120a8deb350095e1.html#aa645db37de32784a120a8deb350095e1">_MEDmodeErreurVerrouiller</a>();
+<a name="l00044"></a>00044 <span class="keywordflow">if</span> (<a class="code" href="a00342_abd440542a0ffed874ed0d25bfb18f914.html#abd440542a0ffed874ed0d25bfb18f914">MEDcheckVersion</a>(fid) &lt; 0) <span class="keywordflow">return</span> -1;
+<a name="l00045"></a>00045 
+<a name="l00046"></a>00046 
+<a name="l00047"></a>00047   <span class="comment">/*</span>
+<a name="l00048"></a>00048 <span class="comment">   * Si le maillage n&apos;existe pas =&gt; erreur</span>
+<a name="l00049"></a>00049 <span class="comment">   */</span>
+<a name="l00050"></a>00050   strcpy(chemin,<a class="code" href="a00344_af9de1807c569f067769f17249fc35c8b.html#af9de1807c569f067769f17249fc35c8b">MED_MAA</a>);
+<a name="l00051"></a>00051   strcat(chemin,maillage);
+<a name="l00052"></a>00052   <span class="keywordflow">if</span> ((maaid = <a class="code" href="a00338_a0d7b9bf5192f404a570f775351a8a536.html#a0d7b9bf5192f404a570f775351a8a536">_MEDdatagroupOuvrir</a>(fid,chemin)) &lt; 0)
+<a name="l00053"></a>00053       <span class="keywordflow">return</span> -1;
+<a name="l00054"></a>00054 
+<a name="l00055"></a>00055   <span class="comment">/*</span>
+<a name="l00056"></a>00056 <span class="comment">   * Si le maillage est de type MED_NON_STRUCTURE =&gt; erreur </span>
+<a name="l00057"></a>00057 <span class="comment">   */</span>
+<a name="l00058"></a>00058   <span class="keywordflow">if</span> ((ret = <a class="code" href="a00338_a652ae7052a4ac03bc148797be71d789d.html#a652ae7052a4ac03bc148797be71d789d">_MEDattrEntierLire</a>(maaid,<a class="code" href="a00344_a975f2929c095d3a428cff4412176d47c.html#a975f2929c095d3a428cff4412176d47c">MED_NOM_TYP</a>,&amp;att)) &lt; 0)
+<a name="l00059"></a>00059     <span class="keywordflow">return</span> -1;
+<a name="l00060"></a>00060   maillage_type = (<a class="code" href="a00320_a921e2f33296e6bef48bbce3be3ae005a.html#a921e2f33296e6bef48bbce3be3ae005a">med_maillage</a>) att;
+<a name="l00061"></a>00061   <span class="keywordflow">if</span> (maillage_type == <a class="code" href="a00320_a921e2f33296e6bef48bbce3be3ae005a.html#a921e2f33296e6bef48bbce3be3ae005aab7d4f368e2ca5acd022e6e16fefafcb7">MED_NON_STRUCTURE</a>)
+<a name="l00062"></a>00062     <span class="keywordflow">return</span> -1;
+<a name="l00063"></a>00063 
+<a name="l00064"></a>00064   <span class="comment">/*</span>
+<a name="l00065"></a>00065 <span class="comment">   * Si la grille n&apos;est pas de type MED_GRILLE_STANDARD  </span>
+<a name="l00066"></a>00066 <span class="comment">   * =&gt; erreur</span>
+<a name="l00067"></a>00067 <span class="comment">   */</span>
+<a name="l00068"></a>00068   <span class="keywordflow">if</span> ((ret = <a class="code" href="a00338_a652ae7052a4ac03bc148797be71d789d.html#a652ae7052a4ac03bc148797be71d789d">_MEDattrEntierLire</a>(maaid,<a class="code" href="a00344_aa4e0e0b832b9acdfcc5fb96a8a6fef8c.html#aa4e0e0b832b9acdfcc5fb96a8a6fef8c">MED_NOM_GTY</a>,&amp;att)) &lt; 0)
+<a name="l00069"></a>00069     <span class="keywordflow">return</span> -1;
+<a name="l00070"></a>00070   type = (<a class="code" href="a00320_a2ffa035f48fcbb83e25edab5f19cbaf9.html#a2ffa035f48fcbb83e25edab5f19cbaf9">med_type_grille</a>) att;
+<a name="l00071"></a>00071   <span class="keywordflow">if</span> (type != <a class="code" href="a00320_a2ffa035f48fcbb83e25edab5f19cbaf9.html#a2ffa035f48fcbb83e25edab5f19cbaf9a9acbd3706c73ceab69499fc1e8c6bd78">MED_GRILLE_STANDARD</a>)
+<a name="l00072"></a>00072     <span class="keywordflow">return</span> -1;
+<a name="l00073"></a>00073 
+<a name="l00074"></a>00074   <span class="comment">/*</span>
+<a name="l00075"></a>00075 <span class="comment">   * Si le groupe HDF &quot;NOE&quot; n&apos;existe pas on le cree</span>
+<a name="l00076"></a>00076 <span class="comment">   */</span>
+<a name="l00077"></a>00077   <span class="keywordflow">if</span> ((noeid = <a class="code" href="a00338_a0d7b9bf5192f404a570f775351a8a536.html#a0d7b9bf5192f404a570f775351a8a536">_MEDdatagroupOuvrir</a>(maaid,<a class="code" href="a00344_af8d5521e51d637f9e5fca248a8eb4ae4.html#af8d5521e51d637f9e5fca248a8eb4ae4">MED_NOM_NOE</a>)) &lt; 0)
+<a name="l00078"></a>00078     <span class="keywordflow">if</span> ((noeid = <a class="code" href="a00338_a035c29f443adaee7c8aa4550ef59b807.html#a035c29f443adaee7c8aa4550ef59b807">_MEDdatagroupCreer</a>(maaid,<a class="code" href="a00344_af8d5521e51d637f9e5fca248a8eb4ae4.html#af8d5521e51d637f9e5fca248a8eb4ae4">MED_NOM_NOE</a>)) &lt; 0)
+<a name="l00079"></a>00079       <span class="keywordflow">return</span> -1;
+<a name="l00080"></a>00080   
+<a name="l00081"></a>00081   <span class="comment">/*</span>
+<a name="l00082"></a>00082 <span class="comment">   * On ouvre le dataset HDF pour y placer les attributs</span>
+<a name="l00083"></a>00083 <span class="comment">   * (taille de chaque dimension)</span>
+<a name="l00084"></a>00084 <span class="comment">   */</span>
+<a name="l00085"></a>00085   strcpy(nom_dataset,<a class="code" href="a00344_a57c0261a60b02e092702a75de824f39f.html#a57c0261a60b02e092702a75de824f39f">MED_NOM_COO</a>);
+<a name="l00086"></a>00086   <span class="keywordflow">if</span> ((dataset = <a class="code" href="a00338_ae51c738b7cd88c8caa21d8e4f2a9f1b0.html#ae51c738b7cd88c8caa21d8e4f2a9f1b0">_MEDdatasetOuvrir</a>(noeid,nom_dataset)) &lt; 0)
+<a name="l00087"></a>00087     <span class="keywordflow">return</span> -1;
+<a name="l00088"></a>00088 
+<a name="l00089"></a>00089   
+<a name="l00090"></a>00090   <span class="comment">/*</span>
+<a name="l00091"></a>00091 <span class="comment">   * Attribut NBR (taille du tableau d&apos;indices)</span>
+<a name="l00092"></a>00092 <span class="comment">   */</span>
+<a name="l00093"></a>00093   <span class="keywordflow">for</span> (i=0;i&lt;mdim;i++) {
+<a name="l00094"></a>00094 
+<a name="l00095"></a>00095     <span class="keywordflow">switch</span>(i) {
+<a name="l00096"></a>00096     <span class="keywordflow">case</span> 0 :
+<a name="l00097"></a>00097       strcpy(nom_attribut,<a class="code" href="a00344_ac0c677861066182821b2c77bfe512ab0.html#ac0c677861066182821b2c77bfe512ab0">MED_NOM_IN1</a>);
+<a name="l00098"></a>00098       <span class="keywordflow">break</span>;
+<a name="l00099"></a>00099       
+<a name="l00100"></a>00100     <span class="keywordflow">case</span> 1 :
+<a name="l00101"></a>00101       strcpy(nom_attribut,<a class="code" href="a00344_a02493b5739cb499e6e0b65857439ec29.html#a02493b5739cb499e6e0b65857439ec29">MED_NOM_IN2</a>);
+<a name="l00102"></a>00102       <span class="keywordflow">break</span>;
+<a name="l00103"></a>00103 
+<a name="l00104"></a>00104     <span class="keywordflow">case</span> 2 :
+<a name="l00105"></a>00105       strcpy(nom_attribut,<a class="code" href="a00344_a9775636faa2abec18d3d8c1eab1697f9.html#a9775636faa2abec18d3d8c1eab1697f9">MED_NOM_IN3</a>);
+<a name="l00106"></a>00106       <span class="keywordflow">break</span>;
+<a name="l00107"></a>00107 
+<a name="l00108"></a>00108     <span class="keywordflow">default</span> :
+<a name="l00109"></a>00109       <span class="keywordflow">return</span> -1;
+<a name="l00110"></a>00110     }
+<a name="l00111"></a>00111 
+<a name="l00112"></a>00112     att = *(structure+i);
+<a name="l00113"></a>00113     <span class="keywordflow">if</span> ((ret = <a class="code" href="a00338_a99537f106bc622b016c85f7f4d7f387f.html#a99537f106bc622b016c85f7f4d7f387f">_MEDattrEntierEcrire</a>(dataset,nom_attribut,&amp;att)) &lt; 0)
+<a name="l00114"></a>00114       <span class="keywordflow">return</span> -1;
+<a name="l00115"></a>00115   }
+<a name="l00116"></a>00116 
+<a name="l00117"></a>00117   <span class="comment">/*</span>
+<a name="l00118"></a>00118 <span class="comment">   * On ferme tout</span>
+<a name="l00119"></a>00119 <span class="comment">   */</span>
+<a name="l00120"></a>00120   <span class="keywordflow">if</span> ((ret = <a class="code" href="a00338_a80045cece261986ef1aafc898da2b7f6.html#a80045cece261986ef1aafc898da2b7f6">_MEDdatasetFermer</a>(dataset)) &lt; 0)
+<a name="l00121"></a>00121     <span class="keywordflow">return</span> -1;
+<a name="l00122"></a>00122   <span class="keywordflow">if</span> ((ret = <a class="code" href="a00338_ae3ba55fd16381090e93f0ee8e3f9e6c6.html#ae3ba55fd16381090e93f0ee8e3f9e6c6">_MEDdatagroupFermer</a>(noeid)) &lt; 0)
+<a name="l00123"></a>00123     <span class="keywordflow">return</span> -1;
+<a name="l00124"></a>00124   <span class="keywordflow">if</span> ((ret = <a class="code" href="a00338_ae3ba55fd16381090e93f0ee8e3f9e6c6.html#ae3ba55fd16381090e93f0ee8e3f9e6c6">_MEDdatagroupFermer</a>(maaid)) &lt; 0)
+<a name="l00125"></a>00125     <span class="keywordflow">return</span> -1;
+<a name="l00126"></a>00126 
+<a name="l00127"></a>00127   <span class="keywordflow">return</span> 0; 
+<a name="l00128"></a>00128 }
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:35 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

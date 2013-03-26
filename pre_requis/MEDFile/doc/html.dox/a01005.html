@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: Guide de référence du module MEDfile</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+<h1>Guide de référence du module MEDfile</h1><table border="0" cellpadding="0" cellspacing="0">
+<tr><td colspan="2"><h2>Fonctions</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00321_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a01005_ga12a0e901c376be997a41a073ce426283.html#ga12a0e901c376be997a41a073ce426283">MEDfileClose</a> (<a class="el" href="a00321_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Fermeture d'un fichier MED.  <a href="#ga12a0e901c376be997a41a073ce426283"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00321_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a01005_ga9c728192b1e39a31a7da0005fb4a8a41.html#ga9c728192b1e39a31a7da0005fb4a8a41">MEDfileCommentRd</a> (const <a class="el" href="a00321_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid, char *const comment)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Lecture d'un descripteur dans un fichier MED.  <a href="#ga9c728192b1e39a31a7da0005fb4a8a41"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00321_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a01005_ga08d625f5403fefb9deb7d47f9a915c41.html#ga08d625f5403fefb9deb7d47f9a915c41">MEDfileCommentWr</a> (const <a class="el" href="a00321_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid, const char *const comment)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Ecriture d'un descripteur dans un fichier MED.  <a href="#ga08d625f5403fefb9deb7d47f9a915c41"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00321_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a01005_gac3e0eb335c4d611cbbeaf7688050f054.html#gac3e0eb335c4d611cbbeaf7688050f054">MEDfileCompatibility</a> (const char *const filename, <a class="el" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a> *const hdfok, <a class="el" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a> *const medok)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Vérification de la compatibilité d'un fichier avec HDF et MED.  <a href="#gac3e0eb335c4d611cbbeaf7688050f054"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00321_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a01005_gaec83c9561b5640ca32a12e58c5d2e10d.html#gaec83c9561b5640ca32a12e58c5d2e10d">MEDfileNumVersionRd</a> (const <a class="el" href="a00321_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid, <a class="el" href="a00321_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *const major, <a class="el" href="a00321_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *const minor, <a class="el" href="a00321_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *const release)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Lecture du numéro de version de la bibliothèque MED utilisée pour créer le fichier.  <a href="#gaec83c9561b5640ca32a12e58c5d2e10d"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00321_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a01005_ga48b7eb3761d58928eb0e0b12d481e05a.html#ga48b7eb3761d58928eb0e0b12d481e05a">MEDfileObjectsMount</a> (const <a class="el" href="a00321_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid, const char *const mountfilename, const <a class="el" href="a00321_a5e06cfaa421118c530bd15f0628dc648.html#a5e06cfaa421118c530bd15f0628dc648">med_class</a> medclass)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Cette routine permet de monter dans le fichier courant un type de données (exemples les maillages, les champs) d'un autre fichier MED.  <a href="#ga48b7eb3761d58928eb0e0b12d481e05a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00321_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a01005_ga73ad912a369c3da7f22caf482093e47b.html#ga73ad912a369c3da7f22caf482093e47b">MEDfileObjectsUnmount</a> (const <a class="el" href="a00321_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid, const <a class="el" href="a00321_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> mid, const <a class="el" href="a00321_a5e06cfaa421118c530bd15f0628dc648.html#a5e06cfaa421118c530bd15f0628dc648">med_class</a> medclass)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Une fois le démontage effectué, les données précédemment montées ne sont plus accessibles.  <a href="#ga73ad912a369c3da7f22caf482093e47b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00321_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a01005_ga9376a1654b7bf099c3f8941074c5fdfb.html#ga9376a1654b7bf099c3f8941074c5fdfb">MEDfileOpen</a> (const char *const filename, const <a class="el" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85">med_access_mode</a> accessmode)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Ouverture d'un fichier MED.  <a href="#ga9376a1654b7bf099c3f8941074c5fdfb"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00321_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a01005_gab157547245a875e72a53847f64468855.html#gab157547245a875e72a53847f64468855">MEDfileStrVersionRd</a> (const <a class="el" href="a00321_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid, char *const medversion)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Lecture du numéro de version de la bibliothèque MED utilisée pour créer le fichier (renvoyé sous la forme d'une chaîne de caractères).  <a href="#gab157547245a875e72a53847f64468855"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00321_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a01005_gad5a6655e312d3e5146f358c42c7c904f.html#gad5a6655e312d3e5146f358c42c7c904f">MEDparFileOpen</a> (const char *const filename, const <a class="el" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85">med_access_mode</a> accessmode, const MPI_Comm comm, const MPI_Info info)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Ouverture d'un fichier MED pour une utilisation parallèle.  <a href="#gad5a6655e312d3e5146f358c42c7c904f"></a><br/></td></tr>
+</table>
+</div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:46 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

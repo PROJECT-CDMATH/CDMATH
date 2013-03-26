@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de MEDmeshGridStructWr.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_6d8408d9855f99d1b33e274ba7d15ec1.html">src</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_fcfa33514a0b2dc319c6500a3d06641e.html">ci</a>
+  </div>
+</div>
+<div class="contents">
+<h1>MEDmeshGridStructWr.c</h1><a href="a00568.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment"> *</span>
+<a name="l00003"></a>00003 <span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment"> *  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment"> *</span>
+<a name="l00009"></a>00009 <span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment"> *</span>
+<a name="l00014"></a>00014 <span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment"> */</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019 <span class="preprocessor">#include &lt;<a class="code" href="a00321.html">med.h</a>&gt;</span>
+<a name="l00020"></a>00020 <span class="preprocessor">#include &lt;<a class="code" href="a00334.html">med_config.h</a>&gt;</span>
+<a name="l00021"></a>00021 <span class="preprocessor">#include &lt;<a class="code" href="a00345.html">med_outils.h</a>&gt;</span>
+<a name="l00022"></a>00022 <span class="preprocessor">#include &lt;string.h&gt;</span>
+<a name="l00023"></a>00023 <span class="preprocessor">#include &lt;stdlib.h&gt;</span>
+<a name="l00024"></a>00024 
+<a name="l00037"></a>00037 <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a>
+<a name="l00038"></a><a class="code" href="a01011_ga8096dfdacfbaf8d876c057956f249dee.html#ga8096dfdacfbaf8d876c057956f249dee">00038</a> <a class="code" href="a01011_ga8096dfdacfbaf8d876c057956f249dee.html#ga8096dfdacfbaf8d876c057956f249dee" title="Cette routine définit la structure (nombre de points sur chaque axe du repère)...">MEDmeshGridStructWr</a>(<span class="keyword">const</span> <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>               fid,
+<a name="l00039"></a>00039                     <span class="keyword">const</span> <span class="keywordtype">char</span>*  <span class="keyword">const</span>          meshname,
+<a name="l00040"></a>00040                     <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>               numdt,
+<a name="l00041"></a>00041                     <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>               numit,
+<a name="l00042"></a>00042                     <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>             dt,
+<a name="l00043"></a>00043                     <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> * <span class="keyword">const</span>       gridstruct)
+<a name="l00044"></a>00044 {
+<a name="l00045"></a>00045   <a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85">med_access_mode</a> _MED_ACCESS_MODE;
+<a name="l00046"></a>00046   <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>         _meshid=0;
+<a name="l00047"></a>00047   <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a>         _ret         = -1;
+<a name="l00048"></a>00048   <a class="code" href="a00321_a25ee4b3675737fc23511b28b3245c61b.html#a25ee4b3675737fc23511b28b3245c61b">med_data_type</a>   _datatype    = <a class="code" href="a00321_a25ee4b3675737fc23511b28b3245c61b.html#a25ee4b3675737fc23511b28b3245c61bab36865870154d1aa71cda04491911275">MED_UNDEF_DATATYPE</a>;
+<a name="l00049"></a>00049   <a class="code" href="a00321_a517833b8b925b9187607241f1c6ddbb9.html#a517833b8b925b9187607241f1c6ddbb9">med_grid_type</a>   _gridtype    = <a class="code" href="a00321_a517833b8b925b9187607241f1c6ddbb9.html#a517833b8b925b9187607241f1c6ddbb9a365043cbc918b349d1085c191faf9375">MED_UNDEF_GRID_TYPE</a>;
+<a name="l00050"></a>00050   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>         _intgridtype = 0;
+<a name="l00051"></a>00051   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>         _meshdim     = 0;
+<a name="l00052"></a>00052   <span class="keywordtype">char</span>            _meshpath[<a class="code" href="a00344_ae7cf7e9299436565bcc7ebfe4820da01.html#ae7cf7e9299436565bcc7ebfe4820da01">MED_TAILLE_MAA</a>+<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1]=<a class="code" href="a00344_af9de1807c569f067769f17249fc35c8b.html#af9de1807c569f067769f17249fc35c8b">MED_MAA</a>;
+<a name="l00053"></a>00053   <span class="keywordtype">int</span>             _i=0;
+<a name="l00054"></a>00054 
+<a name="l00055"></a>00055   <span class="comment">/*</span>
+<a name="l00056"></a>00056 <span class="comment">   * On inhibe le gestionnaire d&apos;erreur HDF 5</span>
+<a name="l00057"></a>00057 <span class="comment">   */</span>
+<a name="l00058"></a>00058   <a class="code" href="a00338_aa645db37de32784a120a8deb350095e1.html#aa645db37de32784a120a8deb350095e1">_MEDmodeErreurVerrouiller</a>();
+<a name="l00059"></a>00059  <span class="keywordflow">if</span> (<a class="code" href="a00343_a02375afd4bb9afe51c45df39d321a252.html#a02375afd4bb9afe51c45df39d321a252">_MEDcheckVersion30</a>(fid) &lt; 0) <span class="keywordflow">goto</span> ERROR;
+<a name="l00060"></a>00060 
+<a name="l00061"></a>00061   <span class="keywordflow">if</span> ( (_MED_ACCESS_MODE = <a class="code" href="a00342_a9041638d8648f7e5b2596000974d9e6e.html#a9041638d8648f7e5b2596000974d9e6e">_MEDmodeAcces</a>(fid) ) == <a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a1fbd497dd0343db55bc31ef90d1dcb40">MED_ACC_UNDEF</a> ) {
+<a name="l00062"></a>00062     <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_add62721a58cc720bd2cdea796d56df80.html#add62721a58cc720bd2cdea796d56df80">MED_ERR_UNRECOGNIZED</a>,<a class="code" href="a00335_a13579736db8ffd37161c68a31d53416c.html#a13579736db8ffd37161c68a31d53416c">MED_ERR_ACCESSMODE</a>,<a class="code" href="a00335_ad824855b4091cf4da765648675f531c3.html#ad824855b4091cf4da765648675f531c3">MED_ERR_FILE_MSG</a>);
+<a name="l00063"></a>00063     <span class="keywordflow">goto</span> ERROR;
+<a name="l00064"></a>00064   }
+<a name="l00065"></a>00065 
+<a name="l00066"></a>00066   <span class="keywordflow">if</span> ( _MED_ACCESS_MODE == <a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a616bf8345c622a34f0787f42eb400f25">MED_ACC_RDONLY</a>) {
+<a name="l00067"></a>00067     <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_a5a17f3bad93080ab05839ddef1420c9e.html#a5a17f3bad93080ab05839ddef1420c9e">MED_ERR_INVALID</a>,<a class="code" href="a00335_a13579736db8ffd37161c68a31d53416c.html#a13579736db8ffd37161c68a31d53416c">MED_ERR_ACCESSMODE</a>,<a class="code" href="a00335_ad824855b4091cf4da765648675f531c3.html#ad824855b4091cf4da765648675f531c3">MED_ERR_FILE_MSG</a>);
+<a name="l00068"></a>00068     <a class="code" href="a00348_ae7ba0433e91c450cd44c3808c2acb497.html#ae7ba0433e91c450cd44c3808c2acb497">ISCRUTE_int</a>(_MED_ACCESS_MODE);
+<a name="l00069"></a>00069     <span class="keywordflow">goto</span> ERROR;
+<a name="l00070"></a>00070   }
+<a name="l00071"></a>00071 
+<a name="l00072"></a>00072   strcat(_meshpath,meshname);
+<a name="l00073"></a>00073   <span class="keywordflow">if</span> ((_meshid = <a class="code" href="a00338_a0d7b9bf5192f404a570f775351a8a536.html#a0d7b9bf5192f404a570f775351a8a536">_MEDdatagroupOuvrir</a>(fid,_meshpath)) &lt; 0) {
+<a name="l00074"></a>00074     <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_a0bbda4699e6c5e9a9c3189b702e6f6e6.html#a0bbda4699e6c5e9a9c3189b702e6f6e6">MED_ERR_OPEN</a>,<a class="code" href="a00335_a3e3ac48003b7eac5a1aecac139bcc201.html#a3e3ac48003b7eac5a1aecac139bcc201">MED_ERR_DATAGROUP</a>,<a class="code" href="a00335_a543edbef3a7d3fbb35e4ef0a21b321c4.html#a543edbef3a7d3fbb35e4ef0a21b321c4">MED_ERR_MESH_MSG</a>);
+<a name="l00075"></a>00075     <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(meshname);<a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(_meshpath); <span class="keywordflow">goto</span> ERROR;
+<a name="l00076"></a>00076   }
+<a name="l00077"></a>00077 
+<a name="l00078"></a>00078   <span class="comment">/* Lecture de l&apos;attribut MED_NOM_DIM  */</span>
+<a name="l00079"></a>00079   <span class="keywordflow">if</span> (<a class="code" href="a00338_a652ae7052a4ac03bc148797be71d789d.html#a652ae7052a4ac03bc148797be71d789d">_MEDattrEntierLire</a>(_meshid,<a class="code" href="a00344_a250e3f0930b3cfbb1dd27506e705e610.html#a250e3f0930b3cfbb1dd27506e705e610">MED_NOM_DIM</a>,&amp;_meshdim) &lt; 0) {
+<a name="l00080"></a>00080     <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_ac3d72eee2022402ffdc5851d2dc98584.html#ac3d72eee2022402ffdc5851d2dc98584">MED_ERR_READ</a>,<a class="code" href="a00335_a839396052811187e23547f71d50ab39b.html#a839396052811187e23547f71d50ab39b">MED_ERR_ATTRIBUTE</a>,<a class="code" href="a00335_a543edbef3a7d3fbb35e4ef0a21b321c4.html#a543edbef3a7d3fbb35e4ef0a21b321c4">MED_ERR_MESH_MSG</a>);
+<a name="l00081"></a>00081     <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(meshname);<a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(<a class="code" href="a00344_a250e3f0930b3cfbb1dd27506e705e610.html#a250e3f0930b3cfbb1dd27506e705e610">MED_NOM_DIM</a>);<a class="code" href="a00348_a818470a84d2ad18a3fbb48170296cd95.html#a818470a84d2ad18a3fbb48170296cd95">ISCRUTE</a>(_meshdim);<span class="keywordflow">goto</span> ERROR;
+<a name="l00082"></a>00082   }
+<a name="l00083"></a>00083 
+<a name="l00084"></a>00084   <span class="comment">/*</span>
+<a name="l00085"></a>00085 <span class="comment">   * Lecture du type de grille (attribut MED_NOM_GTY)</span>
+<a name="l00086"></a>00086 <span class="comment">   */</span>
+<a name="l00087"></a>00087   <span class="keywordflow">if</span> (<a class="code" href="a00338_a652ae7052a4ac03bc148797be71d789d.html#a652ae7052a4ac03bc148797be71d789d">_MEDattrEntierLire</a>(_meshid,<a class="code" href="a00344_aa4e0e0b832b9acdfcc5fb96a8a6fef8c.html#aa4e0e0b832b9acdfcc5fb96a8a6fef8c">MED_NOM_GTY</a>,&amp;_intgridtype) &lt; 0) {
+<a name="l00088"></a>00088     <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_ac3d72eee2022402ffdc5851d2dc98584.html#ac3d72eee2022402ffdc5851d2dc98584">MED_ERR_READ</a>,<a class="code" href="a00335_a839396052811187e23547f71d50ab39b.html#a839396052811187e23547f71d50ab39b">MED_ERR_ATTRIBUTE</a>,<a class="code" href="a00335_a543edbef3a7d3fbb35e4ef0a21b321c4.html#a543edbef3a7d3fbb35e4ef0a21b321c4">MED_ERR_MESH_MSG</a>);
+<a name="l00089"></a>00089     <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(meshname);<a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(<a class="code" href="a00344_aa4e0e0b832b9acdfcc5fb96a8a6fef8c.html#aa4e0e0b832b9acdfcc5fb96a8a6fef8c">MED_NOM_GTY</a>);<a class="code" href="a00348_ae7ba0433e91c450cd44c3808c2acb497.html#ae7ba0433e91c450cd44c3808c2acb497">ISCRUTE_int</a>(_gridtype);<span class="keywordflow">goto</span> ERROR;
+<a name="l00090"></a>00090   }
+<a name="l00091"></a>00091   _gridtype=(<a class="code" href="a00321_a517833b8b925b9187607241f1c6ddbb9.html#a517833b8b925b9187607241f1c6ddbb9">med_grid_type</a>) _intgridtype;
+<a name="l00092"></a>00092 
+<a name="l00093"></a>00093   <span class="keywordflow">if</span> ((_gridtype != <a class="code" href="a00321_a517833b8b925b9187607241f1c6ddbb9.html#a517833b8b925b9187607241f1c6ddbb9af486ea0b9b71e610e9a03694d730c05e">MED_CURVILINEAR_GRID</a>)) {
+<a name="l00094"></a>00094     <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_acd0fe131855d42614cfd4be148090790.html#acd0fe131855d42614cfd4be148090790">MED_ERR_RANGE</a>,<a class="code" href="a00335_ab0342a1162c071af790330b44a05d5da.html#ab0342a1162c071af790330b44a05d5da">MED_ERR_GRIDTYPE</a>,<a class="code" href="a00335_a543edbef3a7d3fbb35e4ef0a21b321c4.html#a543edbef3a7d3fbb35e4ef0a21b321c4">MED_ERR_MESH_MSG</a>);
+<a name="l00095"></a>00095     <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(meshname);<a class="code" href="a00348_ae7ba0433e91c450cd44c3808c2acb497.html#ae7ba0433e91c450cd44c3808c2acb497">ISCRUTE_int</a>(_gridtype);<span class="keywordflow">goto</span> ERROR;
+<a name="l00096"></a>00096   }
+<a name="l00097"></a>00097 
+<a name="l00098"></a>00098   <span class="comment">/*</span>
+<a name="l00099"></a>00099 <span class="comment">   * Attribut NBR (taille du tableau d&apos;indices)</span>
+<a name="l00100"></a>00100 <span class="comment">   */</span>
+<a name="l00101"></a>00101   <span class="keywordflow">for</span> (_i=0;_i&lt;_meshdim;++_i) {
+<a name="l00102"></a>00102 
+<a name="l00103"></a>00103     <span class="keywordflow">switch</span>(_i) {
+<a name="l00104"></a>00104      <span class="keywordflow">case</span> 0 :
+<a name="l00105"></a>00105       _datatype = <a class="code" href="a00321_a25ee4b3675737fc23511b28b3245c61b.html#a25ee4b3675737fc23511b28b3245c61ba79668597c50e29e46f722fb1d88e2fb4">MED_COORDINATE_AXIS1</a>;
+<a name="l00106"></a>00106       <span class="keywordflow">break</span>;
+<a name="l00107"></a>00107     <span class="keywordflow">case</span> 1 :
+<a name="l00108"></a>00108       _datatype = <a class="code" href="a00321_a25ee4b3675737fc23511b28b3245c61b.html#a25ee4b3675737fc23511b28b3245c61ba7d7a0caeff458115841339469b8cc164">MED_COORDINATE_AXIS2</a>;
+<a name="l00109"></a>00109       <span class="keywordflow">break</span>;
+<a name="l00110"></a>00110     <span class="keywordflow">case</span> 2 :
+<a name="l00111"></a>00111       _datatype = <a class="code" href="a00321_a25ee4b3675737fc23511b28b3245c61b.html#a25ee4b3675737fc23511b28b3245c61badd95a9c98bd9747972693dc90152e529">MED_COORDINATE_AXIS3</a>;
+<a name="l00112"></a>00112       <span class="keywordflow">break</span>;
+<a name="l00113"></a>00113     <span class="keywordflow">default</span> :
+<a name="l00114"></a>00114       <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_acd0fe131855d42614cfd4be148090790.html#acd0fe131855d42614cfd4be148090790">MED_ERR_RANGE</a>,<a class="code" href="a00335_ab0342a1162c071af790330b44a05d5da.html#ab0342a1162c071af790330b44a05d5da">MED_ERR_GRIDTYPE</a>,<a class="code" href="a00335_a543edbef3a7d3fbb35e4ef0a21b321c4.html#a543edbef3a7d3fbb35e4ef0a21b321c4">MED_ERR_MESH_MSG</a>);
+<a name="l00115"></a>00115       <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(meshname);<a class="code" href="a00348_ae7ba0433e91c450cd44c3808c2acb497.html#ae7ba0433e91c450cd44c3808c2acb497">ISCRUTE_int</a>(_gridtype);<span class="keywordflow">goto</span> ERROR;
+<a name="l00116"></a>00116     }
+<a name="l00117"></a>00117 
+<a name="l00118"></a>00118     <span class="keywordflow">if</span> (<a class="code" href="a00347_a5df229bdc89ae007e28cba8b82f80264.html#a5df229bdc89ae007e28cba8b82f80264">_MEDmeshAdvancedWr</a>(fid,
+<a name="l00119"></a>00119                            meshname,
+<a name="l00120"></a>00120                            _datatype,
+<a name="l00121"></a>00121                            <a class="code" href="a00321_afd1f2684a3484575283e2a46f2d809da.html#afd1f2684a3484575283e2a46f2d809da">MED_NO_NAME</a>,
+<a name="l00122"></a>00122                            <a class="code" href="a00321_a9e37f31e6c445d096158e87f07911845.html#a9e37f31e6c445d096158e87f07911845a272cd78f24373ef1d2519f359909838e">MED_INTERNAL_INT</a>,
+<a name="l00123"></a>00123                            numdt,
+<a name="l00124"></a>00124                            numit,
+<a name="l00125"></a>00125                            dt,
+<a name="l00126"></a>00126                            <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a>,
+<a name="l00127"></a>00127                            <a class="code" href="a00321_a9a2843c7d6eacffdd9377b5bfb8a6de3.html#a9a2843c7d6eacffdd9377b5bfb8a6de3">MED_NONE</a>,
+<a name="l00128"></a>00128                            <a class="code" href="a00321_afcd26ca66a179b9aa82f5c90602c4ed8.html#afcd26ca66a179b9aa82f5c90602c4ed8a2b1e772016688b78b808e96a44d1ee02">MED_NO_CMODE</a>,
+<a name="l00129"></a>00129                            <a class="code" href="a00321_a3f7b3a3c5ddcaba3fa1741a367503c8d.html#a3f7b3a3c5ddcaba3fa1741a367503c8da1d61fac0ada3cd4e77ded20e1e0a26d1">MED_UNDEF_PFLMODE</a>,
+<a name="l00130"></a>00130                            <a class="code" href="a00321_aaa89a5e5e6d32de69614b70cf74e29cc.html#aaa89a5e5e6d32de69614b70cf74e29cc">MED_NO_PROFILE</a>,
+<a name="l00131"></a>00131                            <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>,
+<a name="l00132"></a>00132                            <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>,
+<a name="l00133"></a>00133                            NULL,
+<a name="l00134"></a>00134                            1,
+<a name="l00135"></a>00135                            (gridstruct+_i)) &lt; 0 ) {
+<a name="l00136"></a>00136       <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot;_MEDmeshAdvancedWr&quot;</span>);
+<a name="l00137"></a>00137       <span class="keywordflow">goto</span> ERROR;
+<a name="l00138"></a>00138     }
+<a name="l00139"></a>00139 
+<a name="l00140"></a>00140   }
+<a name="l00141"></a>00141 
+<a name="l00142"></a>00142  _ret = 0;
+<a name="l00143"></a>00143 
+<a name="l00144"></a>00144  ERROR:
+<a name="l00145"></a>00145 
+<a name="l00146"></a>00146   <span class="keywordflow">if</span> (_meshid&gt;0)            <span class="keywordflow">if</span> (<a class="code" href="a00338_ae3ba55fd16381090e93f0ee8e3f9e6c6.html#ae3ba55fd16381090e93f0ee8e3f9e6c6">_MEDdatagroupFermer</a>(_meshid) &lt; 0) {
+<a name="l00147"></a>00147     <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_a444c5e2cb5b9f60b769909297300ac14.html#a444c5e2cb5b9f60b769909297300ac14">MED_ERR_CLOSE</a>,<a class="code" href="a00335_a3e3ac48003b7eac5a1aecac139bcc201.html#a3e3ac48003b7eac5a1aecac139bcc201">MED_ERR_DATAGROUP</a>,_meshpath);
+<a name="l00148"></a>00148     <a class="code" href="a00348_a842c3eacac6f6ea4c36848cd7cd955c2.html#a842c3eacac6f6ea4c36848cd7cd955c2">ISCRUTE_id</a>(_meshid);
+<a name="l00149"></a>00149   }
+<a name="l00150"></a>00150 
+<a name="l00151"></a>00151   <span class="keywordflow">return</span> _ret;
+<a name="l00152"></a>00152 
+<a name="l00153"></a>00153 }
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:34 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

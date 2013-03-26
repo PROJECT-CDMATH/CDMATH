@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de MEDnPasdetemps.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_6d8408d9855f99d1b33e274ba7d15ec1.html">src</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_f28a13a54b2ea19aa3beea3b98c6f442.html">2.3.6</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_0ee583a61dcfc27056bc3bd5b0f76fbb.html">ci</a>
+  </div>
+</div>
+<div class="contents">
+<h1>MEDnPasdetemps.c</h1><a href="a00639.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment"> *</span>
+<a name="l00003"></a>00003 <span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment"> *  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment"> *</span>
+<a name="l00009"></a>00009 <span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment"> *</span>
+<a name="l00014"></a>00014 <span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment"> */</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019 <span class="preprocessor">#include &lt;<a class="code" href="a00321.html">med.h</a>&gt;</span>
+<a name="l00020"></a>00020 <span class="preprocessor">#include &lt;<a class="code" href="a00334.html">med_config.h</a>&gt;</span>
+<a name="l00021"></a>00021 <span class="preprocessor">#include &lt;<a class="code" href="a00345.html">med_outils.h</a>&gt;</span>
+<a name="l00022"></a>00022 
+<a name="l00023"></a>00023 <span class="preprocessor">#include &lt;string.h&gt;</span>
+<a name="l00024"></a>00024 <span class="preprocessor">#include &lt;stdlib.h&gt;</span>
+<a name="l00025"></a>00025 
+<a name="l00026"></a>00026 <span class="comment">/*</span>
+<a name="l00027"></a>00027 <span class="comment"> * Nombre de Couple (PDT,NOR) pour le champ &lt;cha&gt;</span>
+<a name="l00028"></a>00028 <span class="comment"> */</span>
+<a name="l00029"></a>00029 
+<a name="l00030"></a>00030 <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> 
+<a name="l00031"></a><a class="code" href="a00639_ab94bccc5549488b14339d7e0d10f9918.html#ab94bccc5549488b14339d7e0d10f9918">00031</a> <a class="code" href="a00346_a179806a8b0d2835762dd425e4d7e3ddd.html#a179806a8b0d2835762dd425e4d7e3ddd">MEDnPasdetemps</a>(<a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid,<span class="keywordtype">char</span> *cha,<a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08">med_entite_maillage</a> type_ent, 
+<a name="l00032"></a>00032                <a class="code" href="a00320_ab93ab4475f81e2db98705aca718115a9.html#ab93ab4475f81e2db98705aca718115a9">med_geometrie_element</a> type_geo)
+<a name="l00033"></a>00033 
+<a name="l00034"></a>00034 {
+<a name="l00035"></a>00035   <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> ret;
+<a name="l00036"></a>00036   <span class="keywordtype">int</span> n1;
+<a name="l00037"></a>00037   <span class="keywordtype">char</span> nomdatagroup1[<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>+1];
+<a name="l00038"></a>00038   <span class="keywordtype">char</span> tmp1         [<a class="code" href="a00344_a297272b5640494706d977f1a9f8ed27d.html#a297272b5640494706d977f1a9f8ed27d">MED_TAILLE_NOM_ENTITE</a>+1];
+<a name="l00039"></a>00039   <span class="keywordtype">char</span> chemin       [<a class="code" href="a00344_a946e73da702a9124f741da789561d75c.html#a946e73da702a9124f741da789561d75c">MED_TAILLE_CHA</a>+(<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>+1)+<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>+1];
+<a name="l00040"></a>00040 
+<a name="l00041"></a>00041   <span class="comment">/*</span>
+<a name="l00042"></a>00042 <span class="comment">   * On inhibe le gestionnaire d&apos;erreur HDF 5</span>
+<a name="l00043"></a>00043 <span class="comment">   */</span>
+<a name="l00044"></a>00044   <a class="code" href="a00338_aa645db37de32784a120a8deb350095e1.html#aa645db37de32784a120a8deb350095e1">_MEDmodeErreurVerrouiller</a>();
+<a name="l00045"></a>00045 <span class="keywordflow">if</span> (<a class="code" href="a00342_abd440542a0ffed874ed0d25bfb18f914.html#abd440542a0ffed874ed0d25bfb18f914">MEDcheckVersion</a>(fid) &lt; 0) <span class="keywordflow">return</span> -1;
+<a name="l00046"></a>00046 
+<a name="l00047"></a>00047   
+<a name="l00048"></a>00048   <span class="comment">/* </span>
+<a name="l00049"></a>00049 <span class="comment">   * Creation du chemin d&apos;accès aux différents (PDT,NOR) pour les différents &lt;type_ent&gt;[.&lt;type_geo&gt;]</span>
+<a name="l00050"></a>00050 <span class="comment">   */</span>
+<a name="l00051"></a>00051   strcpy(chemin,<a class="code" href="a00344_a85e63d51cfcc44545c55f6941555c5df.html#a85e63d51cfcc44545c55f6941555c5df">MED_CHA</a>);
+<a name="l00052"></a>00052   strcat(chemin,cha);
+<a name="l00053"></a>00053   strcat(chemin,<span class="stringliteral">&quot;/&quot;</span>);
+<a name="l00054"></a>00054 
+<a name="l00055"></a>00055   <span class="keywordflow">if</span> ((ret = <a class="code" href="a00329_aecea9ce7979ccc45fb2c56896993511a.html#aecea9ce7979ccc45fb2c56896993511a">_MEDnomEntite</a>(nomdatagroup1,type_ent)) &lt; 0)
+<a name="l00056"></a>00056     <span class="keywordflow">return</span> -1;
+<a name="l00057"></a>00057   <span class="keywordflow">if</span> ((type_ent != <a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08a1403b108df73119422ccabd619560c4c">MED_NOEUD</a>))
+<a name="l00058"></a>00058     {
+<a name="l00059"></a>00059       <span class="keywordflow">if</span> ((ret = <a class="code" href="a00329_a314319efe602621ddcc72b43feb644e0.html#a314319efe602621ddcc72b43feb644e0">_MEDnomGeometrie30</a>(tmp1,type_geo)) &lt; 0)
+<a name="l00060"></a>00060         <span class="keywordflow">return</span> -1;
+<a name="l00061"></a>00061       strcat(nomdatagroup1,<span class="stringliteral">&quot;.&quot;</span>);
+<a name="l00062"></a>00062       strcat(nomdatagroup1,tmp1);
+<a name="l00063"></a>00063     }
+<a name="l00064"></a>00064   strcat(chemin,nomdatagroup1);
+<a name="l00065"></a>00065 
+<a name="l00066"></a>00066   n1 =0;
+<a name="l00067"></a>00067   <a class="code" href="a00338_a53a598540b189068e5b56a67dfe1320a.html#a53a598540b189068e5b56a67dfe1320a">_MEDnObjets</a>(fid,chemin,&amp;n1);
+<a name="l00068"></a>00068       
+<a name="l00069"></a>00069   <span class="keywordflow">return</span> (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>) n1;
+<a name="l00070"></a>00070 
+<a name="l00071"></a>00071 }
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:34 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

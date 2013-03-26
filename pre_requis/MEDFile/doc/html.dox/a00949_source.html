@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de UsesCase_MEDfield_10.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_ba46011aeafd781e3c350f50ac4ad407.html">tests</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_9a395515a435a9986fd8a1dd7050dffb.html">usecases</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_358be61bc0fd4057433ed64ed56bcbbe.html">c</a>
+  </div>
+</div>
+<div class="contents">
+<h1>UsesCase_MEDfield_10.c</h1><a href="a00949.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment"> *</span>
+<a name="l00003"></a>00003 <span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment"> *  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment"> *</span>
+<a name="l00009"></a>00009 <span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment"> *</span>
+<a name="l00014"></a>00014 <span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment"> */</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 <span class="comment">/* </span>
+<a name="l00019"></a>00019 <span class="comment"> * Field use case 10 : write a field in a MED file with computing steps,</span>
+<a name="l00020"></a>00020 <span class="comment"> *                     profiles, integration points and interpolation families</span>
+<a name="l00021"></a>00021 <span class="comment"> */</span>
+<a name="l00022"></a>00022 
+<a name="l00023"></a>00023 <span class="preprocessor">#include &lt;<a class="code" href="a00321.html">med.h</a>&gt;</span>
+<a name="l00024"></a><a class="code" href="a00949_a8e315da8f14d473c025c8a1f6af2f979.html#a8e315da8f14d473c025c8a1f6af2f979">00024</a> <span class="preprocessor">#define MESGERR 1</span>
+<a name="l00025"></a>00025 <span class="preprocessor"></span><span class="preprocessor">#include &lt;<a class="code" href="a00349.html">med_utils.h</a>&gt;</span>
+<a name="l00026"></a>00026 
+<a name="l00027"></a>00027 <span class="preprocessor">#include &lt;string.h&gt;</span>
+<a name="l00028"></a>00028 
+<a name="l00029"></a>00029 
+<a name="l00030"></a><a class="code" href="a00949_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">00030</a> <span class="keywordtype">int</span> <a class="code" href="a00750_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv) {
+<a name="l00031"></a>00031   <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid;
+<a name="l00032"></a>00032   <span class="keyword">const</span> <span class="keywordtype">char</span> meshname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1] = <span class="stringliteral">&quot;2D unstructured mesh&quot;</span>;
+<a name="l00033"></a>00033   <span class="keyword">const</span> <span class="keywordtype">char</span> fieldname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1] = <span class="stringliteral">&quot;TEMPERATURE_FIELD&quot;</span>;
+<a name="l00034"></a>00034   <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ncomponent = 1;
+<a name="l00035"></a>00035   <span class="keyword">const</span> <span class="keywordtype">char</span> componentname[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1] = <span class="stringliteral">&quot;TEMPERATURE&quot;</span>;
+<a name="l00036"></a>00036   <span class="keyword">const</span> <span class="keywordtype">char</span> componentunit[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1] = <span class="stringliteral">&quot;C&quot;</span>;
+<a name="l00037"></a>00037   <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> tria3values_step1_profile1[9] = {1000.,1010.,1020.,    
+<a name="l00038"></a>00038                                                    4000.,4010.,4020.,    
+<a name="l00039"></a>00039                                                    8000.,8010.,8020. };
+<a name="l00040"></a>00040   <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> tria3values_step2_profile1[24] = {1500.,1510.,1520.,    
+<a name="l00041"></a>00041                                                     0.,   0.,   0.,
+<a name="l00042"></a>00042                                                     0.,   0.,   0.,
+<a name="l00043"></a>00043                                                     4500.,4510,4520.,
+<a name="l00044"></a>00044                                                     0.,   0.,   0.,
+<a name="l00045"></a>00045                                                     0.,   0.,   0.,
+<a name="l00046"></a>00046                                                     0.,   0.,   0.,
+<a name="l00047"></a>00047                                                     8500., 8510, 8520 };
+<a name="l00048"></a>00048   <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> tria3values_step2_profile2[32] = {   0.,   0.,   0.,  0.,
+<a name="l00049"></a>00049                                                        2500.,2510.,2520,2530., 
+<a name="l00050"></a>00050                                                        3500.,3510.,3520.,3530.,    
+<a name="l00051"></a>00051                                                        0.,   0.,   0.,  0.,
+<a name="l00052"></a>00052                                                        5500.,5510.,5520.,5530., 
+<a name="l00053"></a>00053                                                        6500.,6510.,6520.,6530., 
+<a name="l00054"></a>00054                                                        7500.,7510.,7520.,7530.,   
+<a name="l00055"></a>00055                                                        0.,   0.,   0.,   0. };
+<a name="l00056"></a>00056   <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ntria3 = 8;
+<a name="l00057"></a>00057   <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nquad4 = 4;
+<a name="l00058"></a>00058   <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> quad4values_step1[4] = {10000., 20000., 30000., 40000.};
+<a name="l00059"></a>00059   <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> quad4values_step2[4] = {15000., 25000., 35000., 45000.};
+<a name="l00060"></a>00060   <span class="keyword">const</span> <span class="keywordtype">char</span> profile1name[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1] = <span class="stringliteral">&quot;MED_TRIA3_PROFILE1&quot;</span>;
+<a name="l00061"></a>00061   <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> profile1[3] = {1, 4, 8}; 
+<a name="l00062"></a>00062   <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> profile1size = 3;
+<a name="l00063"></a>00063   <span class="keyword">const</span> <span class="keywordtype">char</span> profile2name[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1] = <span class="stringliteral">&quot;MED_TRIA3_PROFILE2&quot;</span>;
+<a name="l00064"></a>00064   <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> profile2[5] = {2, 3, 5, 6, 7}; 
+<a name="l00065"></a>00065   <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> profile2size = 5;
+<a name="l00066"></a>00066   <span class="keyword">const</span> <span class="keywordtype">char</span> localization1name[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1] = <span class="stringliteral">&quot;TRIA3_INTEGRATION_POINTS_3&quot;</span>;
+<a name="l00067"></a>00067   <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> weight1[3] = {1.0/6, 1.0/6, 1.0/6};
+<a name="l00068"></a>00068   <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> elementcoordinate[6] = {0.0, 0.0,  1.0, 0.0,  0.0,1.0};
+<a name="l00069"></a>00069   <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> ipoint1coordinate[6] = {1.0/6, 1.0/6,  2.0/3, 1.0/6,  1.0/6, 2.0/6};
+<a name="l00070"></a>00070   <span class="keyword">const</span> <span class="keywordtype">char</span> localization2name[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1] = <span class="stringliteral">&quot;TRIA3_INTEGRATION_POINTS_4&quot;</span>;
+<a name="l00071"></a>00071   <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> weight2[6] = {25.0/(24*4), 25.0/(24*4), 25.0/(24*4), -27.0/(24*4)};
+<a name="l00072"></a>00072   <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> ipoint2coordinate[8] = {1.0/5, 1.0/5,  3.0/5, 1.0/5,  1.0/5, 3.0/5,  1.0/3, 1.0/3};
+<a name="l00073"></a>00073   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nipoint, spacedim;
+<a name="l00074"></a>00074   <span class="keyword">const</span> <span class="keywordtype">char</span> interpname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1] = <span class="stringliteral">&quot;MED_TRIA3 interpolation family&quot;</span>;
+<a name="l00075"></a>00075   <span class="keywordtype">int</span> ret=-1;
+<a name="l00076"></a>00076 
+<a name="l00077"></a>00077   <span class="comment">/* file creation */</span>
+<a name="l00078"></a>00078   fid = <a class="code" href="a01005_ga9376a1654b7bf099c3f8941074c5fdfb.html#ga9376a1654b7bf099c3f8941074c5fdfb" title="Ouverture d&amp;#39;un fichier MED.">MEDfileOpen</a>(<span class="stringliteral">&quot;UsesCase_MEDfield_10.med&quot;</span>,<a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85aa23dd1c18b596924d5f50c8402b84c8e">MED_ACC_CREAT</a>);
+<a name="l00079"></a>00079   <span class="keywordflow">if</span> (fid &lt; 0) {
+<a name="l00080"></a>00080     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : file creation ...&quot;</span>);
+<a name="l00081"></a>00081     <span class="keywordflow">goto</span> ERROR;
+<a name="l00082"></a>00082   }
+<a name="l00083"></a>00083 
+<a name="l00084"></a>00084   <span class="comment">/* create mesh link */</span>
+<a name="l00085"></a>00085   <span class="keywordflow">if</span> (<a class="code" href="a01009_ga08d1c8b15fbab77a11c6b59a0c600c4e.html#ga08d1c8b15fbab77a11c6b59a0c600c4e" title="Cette routine permet d&amp;#39;écrire un lien dans un fichier MED.">MEDlinkWr</a>(fid,meshname,<span class="stringliteral">&quot;./UsesCase_MEDmesh_1.med&quot;</span>) &lt; 0) {
+<a name="l00086"></a>00086     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : create mesh link ...&quot;</span>);
+<a name="l00087"></a>00087     <span class="keywordflow">goto</span> ERROR;
+<a name="l00088"></a>00088   }
+<a name="l00089"></a>00089   
+<a name="l00090"></a>00090   <span class="comment">/* create the profiles in the file */</span>
+<a name="l00091"></a>00091   <span class="keywordflow">if</span> (<a class="code" href="a01013_gaf7ec6ed01898dcfe98556f399ed044d1.html#gaf7ec6ed01898dcfe98556f399ed044d1" title="Cette routine permet d&amp;#39;écrire un profil dans un fichier MED.">MEDprofileWr</a>(fid, profile1name, profile1size, profile1 ) &lt; 0) {
+<a name="l00092"></a>00092     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : create profile ...&quot;</span>);
+<a name="l00093"></a>00093     <span class="keywordflow">goto</span> ERROR; 
+<a name="l00094"></a>00094   }
+<a name="l00095"></a>00095 
+<a name="l00096"></a>00096   <span class="keywordflow">if</span> (<a class="code" href="a01013_gaf7ec6ed01898dcfe98556f399ed044d1.html#gaf7ec6ed01898dcfe98556f399ed044d1" title="Cette routine permet d&amp;#39;écrire un profil dans un fichier MED.">MEDprofileWr</a>(fid, profile2name, profile2size, profile2 ) &lt; 0) {
+<a name="l00097"></a>00097     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : create profile ...&quot;</span>);
+<a name="l00098"></a>00098     <span class="keywordflow">goto</span> ERROR; 
+<a name="l00099"></a>00099   }
+<a name="l00100"></a>00100 
+<a name="l00101"></a>00101   <span class="comment">/* create the localization elements for integration points */</span>
+<a name="l00102"></a>00102   spacedim = 2;
+<a name="l00103"></a>00103   nipoint = 3;
+<a name="l00104"></a>00104   <span class="keywordflow">if</span> (<a class="code" href="a01010_ga77e9d9cfe12058f20762fe61fbf14172.html#ga77e9d9cfe12058f20762fe61fbf14172" title="Cette routine permet l&amp;#39;écriture d&amp;#39;une localisation localizationname de points...">MEDlocalizationWr</a>(fid, localization1name, <a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>, spacedim, 
+<a name="l00105"></a>00105                         elementcoordinate, <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, 
+<a name="l00106"></a>00106                         nipoint, ipoint1coordinate, weight1,
+<a name="l00107"></a>00107                         <a class="code" href="a00321_a3e7915fabbbc5946451ebbb836ca0816.html#a3e7915fabbbc5946451ebbb836ca0816">MED_NO_INTERPOLATION</a>, <a class="code" href="a00321_aeb44e16b6ecf0f5f8aeefab3e60a1a2c.html#aeb44e16b6ecf0f5f8aeefab3e60a1a2c">MED_NO_MESH_SUPPORT</a>) &lt; 0) {
+<a name="l00108"></a>00108     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : create famlily of integration points ...&quot;</span>);
+<a name="l00109"></a>00109     <span class="keywordflow">goto</span> ERROR; 
+<a name="l00110"></a>00110   }
+<a name="l00111"></a>00111 
+<a name="l00112"></a>00112   spacedim = 2;
+<a name="l00113"></a>00113   nipoint = 4;
+<a name="l00114"></a>00114   <span class="keywordflow">if</span> (<a class="code" href="a01010_ga77e9d9cfe12058f20762fe61fbf14172.html#ga77e9d9cfe12058f20762fe61fbf14172" title="Cette routine permet l&amp;#39;écriture d&amp;#39;une localisation localizationname de points...">MEDlocalizationWr</a>(fid, localization2name, <a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>, spacedim, 
+<a name="l00115"></a>00115                         elementcoordinate, <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, 
+<a name="l00116"></a>00116                         nipoint, ipoint2coordinate, weight2, 
+<a name="l00117"></a>00117                         <a class="code" href="a00321_a3e7915fabbbc5946451ebbb836ca0816.html#a3e7915fabbbc5946451ebbb836ca0816">MED_NO_INTERPOLATION</a>, <a class="code" href="a00321_aeb44e16b6ecf0f5f8aeefab3e60a1a2c.html#aeb44e16b6ecf0f5f8aeefab3e60a1a2c">MED_NO_MESH_SUPPORT</a>) &lt; 0) {
+<a name="l00118"></a>00118     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : create famlily of integration points ...&quot;</span>);
+<a name="l00119"></a>00119     <span class="keywordflow">goto</span> ERROR; 
+<a name="l00120"></a>00120   }
+<a name="l00121"></a>00121 
+<a name="l00122"></a>00122   <span class="comment">/* </span>
+<a name="l00123"></a>00123 <span class="comment">   * Temperature field  creation : </span>
+<a name="l00124"></a>00124 <span class="comment">   * - 1 component </span>
+<a name="l00125"></a>00125 <span class="comment">   * - component unit : celsius degree</span>
+<a name="l00126"></a>00126 <span class="comment">   * - mesh is the 2D unstructured mesh of UsecaseMEDmesh_1.c use case.</span>
+<a name="l00127"></a>00127 <span class="comment">   * - computation step unit in &apos;ms&apos;</span>
+<a name="l00128"></a>00128 <span class="comment">   */</span> 
+<a name="l00129"></a>00129   <span class="keywordflow">if</span> (<a class="code" href="a01004_ga8f73c6eb1a1b85f5e1e8bc1823c01ab9.html#ga8f73c6eb1a1b85f5e1e8bc1823c01ab9" title="Cette routine permet de créer un champ dans un fichier.">MEDfieldCr</a>(fid, fieldname, <a class="code" href="a00320_a7d730da9417184bffcdccc90a1749e27.html#a7d730da9417184bffcdccc90a1749e27ad44e111629f7a5811626b87c8b42b3ea">MED_FLOAT64</a>, 
+<a name="l00130"></a>00130                  ncomponent, componentname, componentunit,
+<a name="l00131"></a>00131                  <span class="stringliteral">&quot;ms&quot;</span>, meshname) &lt; 0) {
+<a name="l00132"></a>00132     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : create field&quot;</span>);
+<a name="l00133"></a>00133     <span class="keywordflow">goto</span> ERROR;
+<a name="l00134"></a>00134   }
+<a name="l00135"></a>00135 
+<a name="l00136"></a>00136   <span class="comment">/* write interpolation family name for MED_TRIA3 cell type */</span>
+<a name="l00137"></a>00137   <span class="comment">/* The interpolation family &quot;interpname&quot; is created in the UsesCase_MEDinterp_1 </span>
+<a name="l00138"></a>00138 <span class="comment">     use case */</span>
+<a name="l00139"></a>00139   <span class="keywordflow">if</span> (<a class="code" href="a01004_ga24dcf45f4323786d26ad93dceeb67d06.html#ga24dcf45f4323786d26ad93dceeb67d06" title="Cette routine associe une fonction d&amp;#39;interpolation interpname au champ résultat...">MEDfieldInterpWr</a>(fid,fieldname,interpname) &lt;0) {
+<a name="l00140"></a>00140     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : write field interpolation family name ...&quot;</span>);
+<a name="l00141"></a>00141     <span class="keywordflow">goto</span> ERROR;
+<a name="l00142"></a>00142   }  
+<a name="l00143"></a>00143   
+<a name="l00144"></a>00144   <span class="comment">/* two computation steps */</span>
+<a name="l00145"></a>00145   <span class="comment">/* write values at cell centers : 8 MED_TRIA3 and 4 MED_QUAD4 */</span>
+<a name="l00146"></a>00146 
+<a name="l00147"></a>00147   <span class="comment">/* STEP 1 : dt1 = 5.5, it = 1*/</span>
+<a name="l00148"></a>00148   <span class="comment">/* MED_TRIA3 : with a profile of 3 values in compact memory storage mode </span>
+<a name="l00149"></a>00149 <span class="comment">     and a family of 3 integration points */</span>
+<a name="l00150"></a>00150   <span class="keywordflow">if</span> (<a class="code" href="a01004_gac369c1fc64c95923cadfc39e41ea8f8d.html#gac369c1fc64c95923cadfc39e41ea8f8d" title="Cette routine permet d&amp;#39;écrire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueWithProfileWr</a>(fid, fieldname, 1, 1, 5.5, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>,<a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>, 
+<a name="l00151"></a>00151                                  <a class="code" href="a00321_a3f7b3a3c5ddcaba3fa1741a367503c8d.html#a3f7b3a3c5ddcaba3fa1741a367503c8da285ff6474ec39fcb4c49b66a9376ec92">MED_COMPACT_PFLMODE</a>, profile1name, localization1name,    
+<a name="l00152"></a>00152                                  <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>, 
+<a name="l00153"></a>00153                                  ntria3, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) tria3values_step1_profile1) &lt; 0) {
+<a name="l00154"></a>00154     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : write field values on MED_TRIA3&quot;</span>);
+<a name="l00155"></a>00155     <span class="keywordflow">goto</span> ERROR;
+<a name="l00156"></a>00156   }
+<a name="l00157"></a>00157    <span class="comment">/* MED_QUAD4  : with no profile */</span> 
+<a name="l00158"></a>00158   <span class="keywordflow">if</span> (<a class="code" href="a01004_gac369c1fc64c95923cadfc39e41ea8f8d.html#gac369c1fc64c95923cadfc39e41ea8f8d" title="Cette routine permet d&amp;#39;écrire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueWithProfileWr</a>(fid, fieldname, 1, 1, 5.5, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, <a class="code" href="a00321_a24ea9c52f5bde41d9a072925249ec06c.html#a24ea9c52f5bde41d9a072925249ec06c">MED_QUAD4</a>, 
+<a name="l00159"></a>00159                                  <a class="code" href="a00321_a3f7b3a3c5ddcaba3fa1741a367503c8d.html#a3f7b3a3c5ddcaba3fa1741a367503c8da285ff6474ec39fcb4c49b66a9376ec92">MED_COMPACT_PFLMODE</a>, <a class="code" href="a00321_aaa89a5e5e6d32de69614b70cf74e29cc.html#aaa89a5e5e6d32de69614b70cf74e29cc">MED_NO_PROFILE</a>, <a class="code" href="a00321_a2acd5f0b336ddb4026fe1dd314fbd1e0.html#a2acd5f0b336ddb4026fe1dd314fbd1e0">MED_NO_LOCALIZATION</a>,
+<a name="l00160"></a>00160                                  <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>, 
+<a name="l00161"></a>00161                                  nquad4, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) quad4values_step1) &lt; 0) {
+<a name="l00162"></a>00162     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : write field values on MED_QUAD4 &quot;</span>);
+<a name="l00163"></a>00163     <span class="keywordflow">goto</span> ERROR;
+<a name="l00164"></a>00164   }
+<a name="l00165"></a>00165 
+<a name="l00166"></a>00166   <span class="comment">/* STEP 2 : dt2 = 8.9, it = 1*/</span>
+<a name="l00167"></a>00167   <span class="comment">/* MED_TRIA3 : with a profile of 3 values then a profile of 5 values in global memory storage mode </span>
+<a name="l00168"></a>00168 <span class="comment">   * For each profile, a family of 3 and then 4 integration points */</span>
+<a name="l00169"></a>00169   <span class="keywordflow">if</span> (<a class="code" href="a01004_gac369c1fc64c95923cadfc39e41ea8f8d.html#gac369c1fc64c95923cadfc39e41ea8f8d" title="Cette routine permet d&amp;#39;écrire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueWithProfileWr</a>(fid, fieldname, 2 , 1 , 8.9 , <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, <a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>, 
+<a name="l00170"></a>00170                                  <a class="code" href="a00321_a3f7b3a3c5ddcaba3fa1741a367503c8d.html#a3f7b3a3c5ddcaba3fa1741a367503c8da56cfcdcbbab7ddfc577de288697cd291">MED_GLOBAL_PFLMODE</a>, profile1name, localization1name,    
+<a name="l00171"></a>00171                                  <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>,  
+<a name="l00172"></a>00172                                  ntria3, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) tria3values_step2_profile1) &lt; 0) {
+<a name="l00173"></a>00173     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : write field values on MED_TRIA3 ...&quot;</span>);
+<a name="l00174"></a>00174     <span class="keywordflow">goto</span> ERROR;
+<a name="l00175"></a>00175   }
+<a name="l00176"></a>00176   <span class="keywordflow">if</span> (<a class="code" href="a01004_gac369c1fc64c95923cadfc39e41ea8f8d.html#gac369c1fc64c95923cadfc39e41ea8f8d" title="Cette routine permet d&amp;#39;écrire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueWithProfileWr</a>(fid, fieldname, 2 , 1 , 8.9 , <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, <a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>, 
+<a name="l00177"></a>00177                                  <a class="code" href="a00321_a3f7b3a3c5ddcaba3fa1741a367503c8d.html#a3f7b3a3c5ddcaba3fa1741a367503c8da56cfcdcbbab7ddfc577de288697cd291">MED_GLOBAL_PFLMODE</a>, profile2name, localization2name,    
+<a name="l00178"></a>00178                                  <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>,  
+<a name="l00179"></a>00179                                  ntria3, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) tria3values_step2_profile2) &lt; 0) {
+<a name="l00180"></a>00180     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : write field values on MED_TRIA3 ...&quot;</span>);
+<a name="l00181"></a>00181     <span class="keywordflow">goto</span> ERROR;
+<a name="l00182"></a>00182   }
+<a name="l00183"></a>00183 
+<a name="l00184"></a>00184   <span class="comment">/* MED_QUAD4 : with no profile */</span>
+<a name="l00185"></a>00185   <span class="keywordflow">if</span> (<a class="code" href="a01004_gac369c1fc64c95923cadfc39e41ea8f8d.html#gac369c1fc64c95923cadfc39e41ea8f8d" title="Cette routine permet d&amp;#39;écrire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueWithProfileWr</a>(fid, fieldname, 2, 1, 8.9, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, <a class="code" href="a00321_a24ea9c52f5bde41d9a072925249ec06c.html#a24ea9c52f5bde41d9a072925249ec06c">MED_QUAD4</a>, 
+<a name="l00186"></a>00186                                  <a class="code" href="a00321_a3f7b3a3c5ddcaba3fa1741a367503c8d.html#a3f7b3a3c5ddcaba3fa1741a367503c8da285ff6474ec39fcb4c49b66a9376ec92">MED_COMPACT_PFLMODE</a>, <a class="code" href="a00321_aaa89a5e5e6d32de69614b70cf74e29cc.html#aaa89a5e5e6d32de69614b70cf74e29cc">MED_NO_PROFILE</a>, <a class="code" href="a00321_a2acd5f0b336ddb4026fe1dd314fbd1e0.html#a2acd5f0b336ddb4026fe1dd314fbd1e0">MED_NO_LOCALIZATION</a>,
+<a name="l00187"></a>00187                                  <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>,  
+<a name="l00188"></a>00188                                  nquad4, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) quad4values_step2) &lt; 0) {
+<a name="l00189"></a>00189     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : write field values on MED_QUAD4 ... &quot;</span>);
+<a name="l00190"></a>00190     <span class="keywordflow">goto</span> ERROR;
+<a name="l00191"></a>00191   }
+<a name="l00192"></a>00192 
+<a name="l00193"></a>00193   ret=0;
+<a name="l00194"></a>00194  ERROR:
+<a name="l00195"></a>00195   
+<a name="l00196"></a>00196   <span class="comment">/* close file */</span>
+<a name="l00197"></a>00197   <span class="keywordflow">if</span> (<a class="code" href="a01005_ga12a0e901c376be997a41a073ce426283.html#ga12a0e901c376be997a41a073ce426283" title="Fermeture d&amp;#39;un fichier MED.">MEDfileClose</a>(fid) &lt; 0) {
+<a name="l00198"></a>00198     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : close file ...&quot;</span>);             
+<a name="l00199"></a>00199     ret=-1; 
+<a name="l00200"></a>00200   } 
+<a name="l00201"></a>00201   
+<a name="l00202"></a>00202   <span class="keywordflow">return</span> ret;
+<a name="l00203"></a>00203 }
+<a name="l00204"></a>00204 
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:35 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

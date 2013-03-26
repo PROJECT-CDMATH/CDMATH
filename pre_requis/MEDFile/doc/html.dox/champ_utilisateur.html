@@ -1,0 +1,835 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: Concepts et fonctionnalit&eacute; de base pour cr&eacute;er et lire un champ de r&eacute;sultat</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li class="current"><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+
+
+<h1><a class="anchor" id="champ_utilisateur">Concepts et fonctionnalit&eacute; de base pour cr&eacute;er et lire un champ de r&eacute;sultat </a></h1><p><a class="anchor" id="____Concepts et fonctionnalit&eacute; de base pour cr&eacute;er et lire un champ de r&eacute;sultat____"></a>  </p>
+<p><a href="#1.">Cr&eacute;er un champ de r&eacute;sultat</a>  </p>
+<p><a href="#2.">Lire un champ de r&eacute;sultats</a>  </p>
+<p><a href="#3.">Cr&eacute;er des s&eacute;quences de calcul dans un champ de r&eacute;sultats</a>  </p>
+<p><a href="#4.">Lire un champ de r&eacute;sultats avec des s&eacute;quences de calcul</a>  </p>
+<h3><a class="anchor" id="1."></a>Cr&eacute;er un champ de r&eacute;sultat</h3>
+<p>La routine <a class="el" href="a01004_ga8f73c6eb1a1b85f5e1e8bc1823c01ab9.html#ga8f73c6eb1a1b85f5e1e8bc1823c01ab9">MEDfieldCr</a> / <a class="el" href="a01019_ga39b999f360260e193e45dfa771b03de1.html#ga39b999f360260e193e45dfa771b03de1">mfdcre</a> permet de cr&eacute;er un champ de r&eacute;sultat dans un fichier MED. Un champ est identifi&eacute; par son nom qui est une cha&icirc;ne de <a class="el" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a> caract&egrave;res. Un champ de r&eacute;sultat est constitu&eacute; d'une ou plusieurs composantes scalaires. A un champ est associ&eacute; un type et les valeurs correspondant aux diff&eacute;rentes composantes sont toutes du m&ecirc;me type qui peut &ecirc;tre <a class="el" href="a00321_a5615eeaf85e0b3f40b74bdd24178f2cd.html#a5615eeaf85e0b3f40b74bdd24178f2cdad44e111629f7a5811626b87c8b42b3ea">MED_FLOAT64</a> (r&eacute;el), <a class="el" href="a00321_a5615eeaf85e0b3f40b74bdd24178f2cd.html#a5615eeaf85e0b3f40b74bdd24178f2cda68b79221679f7b78dc1aec384ef30340">MED_INT</a> (entier). Chaque composante se voit attribuer un nom et une unit&eacute;. Les valeurs du champ sont associ&eacute;e aux entit&eacute;s d'un seul maillage. </p>
+<p>La routine <a class="el" href="a01004_gaf525ac6dbe9b3f81a129c0f0866f5313.html#gaf525ac6dbe9b3f81a129c0f0866f5313">MEDfieldValueWr</a> / <a class="el" href="a01019_ga26e92d93157118f6d1296a843e924bd5.html#ga26e92d93157118f6d1296a843e924bd5">mfdrvw</a> <a class="el" href="a01019_ga9e63248c4791bea319fec4411d559b2e.html#ga9e63248c4791bea319fec4411d559b2e">mfdivw</a> permet d'&eacute;crire dans un champ des valeurs correspondant &agrave; un r&eacute;sultat portant sur un type d'entit&eacute; g&eacute;om&eacute;trique d'un maillage donn&eacute;. Si le champ porte sur plusieurs types d'entit&eacute;, il faut donc appeler cette routine autant de fois qu'il y a de types diff&eacute;rents. Les valeurs du champ peuvent porter sur les noeuds, les &eacute;l&eacute;ments, les points de Gauss des &eacute;l&eacute;ments, les noeuds par &eacute;l&eacute;ment. Nous ne traitons dans un premier temps que les champs aux noeuds et aux &eacute;l&eacute;ments. </p>
+<p>Le cas d'utilisation suivant permet de cr&eacute;er un champ Temp&eacute;rature &agrave; une composante. Les r&eacute;sultats de ce champ portent sur les noeuds et les &eacute;l&eacute;ments du maillage. A noter que le maillage se trouvant dans un fichier diff&eacute;rent de celui du champ, il est possible d'indiquer le nom et le chemin d'acc&egrave;s au fichier contenant le maillage en cr&eacute;ant un lien avec la routine <a class="el" href="a01009_ga08d1c8b15fbab77a11c6b59a0c600c4e.html#ga08d1c8b15fbab77a11c6b59a0c600c4e">MEDlinkWr</a> / <a class="el" href="a01024_gae59398cfad0c204510a33b8e31634103.html#gae59398cfad0c204510a33b8e31634103">mlnliw</a>. Le lien porte alors le nom du maillage. </p>
+<div class="fragment"><pre class="fragment"><span class="comment">/*  This file is part of MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<span class="comment"> *  (at your option) any later version.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="comment"> */</span>
+
+<span class="comment">/* </span>
+<span class="comment"> * Field use case 1 : write a field on mesh vertices and elements</span>
+<span class="comment"> */</span>
+
+<span class="preprocessor">#include &lt;med.h&gt;</span>
+<span class="preprocessor">#define MESGERR 1</span>
+<span class="preprocessor"></span><span class="preprocessor">#include &lt;med_utils.h&gt;</span>
+
+<span class="preprocessor">#include &lt;string.h&gt;</span>
+
+
+<span class="keywordtype">int</span> <a class="code" href="a00750_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv) {
+  <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid;
+  <span class="keyword">const</span> <span class="keywordtype">char</span> meshname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1] = <span class="stringliteral">&quot;2D unstructured mesh&quot;</span>;
+  <span class="keyword">const</span> <span class="keywordtype">char</span> fieldname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1] = <span class="stringliteral">&quot;TEMPERATURE_FIELD&quot;</span>;
+  <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ncomponent = 1;
+  <span class="keyword">const</span> <span class="keywordtype">char</span> componentname[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1] = <span class="stringliteral">&quot;TEMPERATURE&quot;</span>;
+  <span class="keyword">const</span> <span class="keywordtype">char</span> componentunit[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1] = <span class="stringliteral">&quot;C&quot;</span>;
+  <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> verticesvalues[15] = {  0.,   100., 200.,  300.,  400., 
+                                          500.,   600., 700.,  800.,  900,
+                                          1000., 1100, 1200., 1300., 1500. };
+  <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nnodes = 15;
+  <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> tria3values[8] = {1000., 2000., 3000., 4000., 
+                                    5000., 6000., 7000., 8000.};
+  <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ntria3 = 8;
+  <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> quad4values[4] = {10000., 20000., 30000., 4000.};
+  <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nquad4 = 4;
+  <span class="keywordtype">int</span> ret=-1;
+
+  <span class="comment">/* file creation */</span>
+  fid = <a class="code" href="a01005_ga9376a1654b7bf099c3f8941074c5fdfb.html#ga9376a1654b7bf099c3f8941074c5fdfb" title="Ouverture d&amp;#39;un fichier MED.">MEDfileOpen</a>(<span class="stringliteral">&quot;UsesCase_MEDfield_1.med&quot;</span>,<a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85aa23dd1c18b596924d5f50c8402b84c8e">MED_ACC_CREAT</a>);
+  <span class="keywordflow">if</span> (fid &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : file creation ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  
+  <span class="comment">/* field creation : temperature field  : 1 component in celsius degree</span>
+<span class="comment">   *                  the mesh is the 2D unstructured mesh of UsecaseMEDmesh_1.c</span>
+<span class="comment">   */</span> 
+
+  <span class="comment">/* create mesh link */</span>
+  <span class="keywordflow">if</span> (<a class="code" href="a01009_ga08d1c8b15fbab77a11c6b59a0c600c4e.html#ga08d1c8b15fbab77a11c6b59a0c600c4e" title="Cette routine permet d&amp;#39;écrire un lien dans un fichier MED.">MEDlinkWr</a>(fid,meshname,<span class="stringliteral">&quot;./UsesCase_MEDmesh_1.med&quot;</span>) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : create mesh link ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  
+  <span class="keywordflow">if</span> (<a class="code" href="a01004_ga8f73c6eb1a1b85f5e1e8bc1823c01ab9.html#ga8f73c6eb1a1b85f5e1e8bc1823c01ab9" title="Cette routine permet de créer un champ dans un fichier.">MEDfieldCr</a>(fid, fieldname, <a class="code" href="a00320_a7d730da9417184bffcdccc90a1749e27.html#a7d730da9417184bffcdccc90a1749e27ad44e111629f7a5811626b87c8b42b3ea">MED_FLOAT64</a>, 
+                 ncomponent, componentname, componentunit,<span class="stringliteral">&quot;&quot;</span>, 
+                 meshname) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : create field&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  
+  <span class="comment">/* write field values at vertices */</span>
+  <span class="keywordflow">if</span> (<a class="code" href="a01004_gaf525ac6dbe9b3f81a129c0f0866f5313.html#gaf525ac6dbe9b3f81a129c0f0866f5313" title="Cette routine permet d&amp;#39;écrire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueWr</a>(fid, fieldname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, 0.0, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a>,
+                      <a class="code" href="a00321_a9a2843c7d6eacffdd9377b5bfb8a6de3.html#a9a2843c7d6eacffdd9377b5bfb8a6de3">MED_NONE</a>, <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>,
+                      nnodes,(<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) verticesvalues) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : write field values on vertices&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  
+  <span class="comment">/* write values at cell centers : 8 MED_TRIA3 and 4 MED_QUAD4 */</span>
+  <span class="comment">/* MED_TRIA3 */</span>
+  <span class="keywordflow">if</span> (<a class="code" href="a01004_gaf525ac6dbe9b3f81a129c0f0866f5313.html#gaf525ac6dbe9b3f81a129c0f0866f5313" title="Cette routine permet d&amp;#39;écrire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueWr</a>(fid, fieldname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, 0.0, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>,
+                      <a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>, <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>, 
+                      ntria3, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) tria3values) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : write field values on MED_TRIA3&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  <span class="comment">/* MED_QUAD4 */</span>
+  <span class="keywordflow">if</span> (<a class="code" href="a01004_gaf525ac6dbe9b3f81a129c0f0866f5313.html#gaf525ac6dbe9b3f81a129c0f0866f5313" title="Cette routine permet d&amp;#39;écrire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueWr</a>(fid, fieldname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, 0.0, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>,
+                      <a class="code" href="a00321_a24ea9c52f5bde41d9a072925249ec06c.html#a24ea9c52f5bde41d9a072925249ec06c">MED_QUAD4</a>, <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>, 
+                      nquad4, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) quad4values) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : write field values on MED_QUAD4 &quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  ret=0;
+ ERROR :
+  
+  <span class="comment">/* close file */</span>
+  <span class="keywordflow">if</span> (<a class="code" href="a01005_ga12a0e901c376be997a41a073ce426283.html#ga12a0e901c376be997a41a073ce426283" title="Fermeture d&amp;#39;un fichier MED.">MEDfileClose</a>(fid) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : close file ...&quot;</span>);             
+    ret = -1; 
+  } 
+  
+  <span class="keywordflow">return</span> ret;
+}
+
+</pre></div> <h3><a class="anchor" id="2."></a>Lire un champ de r&eacute;sultats</h3>
+<p>Comme pour les maillages, l'acc&egrave;s aux champs stock&eacute;s dans un fichier se fait via deux approches possibles : acc&egrave;s par le nom ou via un it&eacute;rateur. La routine <a class="el" href="a01004_ga948789fb749c61a9bb7908e7d3b286c7.html#ga948789fb749c61a9bb7908e7d3b286c7">MEDfieldInfoByName</a> / <a class="el" href="a01019_ga11db28928630976b11d0eeb2ef07cd8e.html#ga11db28928630976b11d0eeb2ef07cd8e">mfdfin</a> permet de lire les informations relatives &agrave; un champ dont on conna&icirc;t le nom. Les informations lues correspondent &agrave; celles &eacute;crites par la routine <a class="el" href="a01004_ga8f73c6eb1a1b85f5e1e8bc1823c01ab9.html#ga8f73c6eb1a1b85f5e1e8bc1823c01ab9">MEDfieldCr</a> / <a class="el" href="a01019_ga39b999f360260e193e45dfa771b03de1.html#ga39b999f360260e193e45dfa771b03de1">mfdcre</a>. </p>
+<p>Il est ensuite n&eacute;cessaire pour chaque type d'entit&eacute; pr&eacute;sent dans le maillage de conna&icirc;tre le nombre de valeurs &agrave; lire avec la routine <a class="el" href="a01004_gad56d2c61cf0a4c55bc9834f5c2d9875e.html#gad56d2c61cf0a4c55bc9834f5c2d9875e">MEDfieldnValue</a> / <a class="el" href="a01019_gae0eb1552519338d85b361ec9986fe251.html#gae0eb1552519338d85b361ec9986fe251">mfdnva</a>. Le nombre de valeurs ainsi obtenu, permet de calculer la z&ocirc;ne m&eacute;moire &agrave; allouer en vue de lire ces donn&eacute;es (&agrave; savoir le nombre de valeurs * nombre de composantes du champ). Enfin la routine <a class="el" href="a01004_ga3222b711fa5f6660f0fb3edff1ac9b29.html#ga3222b711fa5f6660f0fb3edff1ac9b29">MEDfieldValueRd</a> / <a class="el" href="a01019_ga5f2227db9b1ee0243833f8a975a38c69.html#ga5f2227db9b1ee0243833f8a975a38c69">mfdrvr</a> <a class="el" href="a01019_ga168215596ff157c9b2cc0f62c6ed7bef.html#ga168215596ff157c9b2cc0f62c6ed7bef">mfdivr</a> permet de lire les valeurs associ&eacute;es &agrave; un type d'entit&eacute; donn&eacute;. </p>
+<p>Le cas d'utilisation suivant montre comment lire les donn&eacute;es du champ &eacute;crites dans le cas d'utilisation pr&eacute;c&eacute;dent.  </p>
+<div class="fragment"><pre class="fragment"><span class="comment">/*  This file is part of MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<span class="comment"> *  (at your option) any later version.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="comment"> */</span>
+
+<span class="comment">/* </span>
+<span class="comment"> * Field use case 2 : read the field of use case 1</span>
+<span class="comment"> */</span>
+
+
+<span class="preprocessor">#include &lt;med.h&gt;</span>
+<span class="preprocessor">#define MESGERR 1</span>
+<span class="preprocessor"></span><span class="preprocessor">#include &lt;med_utils.h&gt;</span>
+
+<span class="preprocessor">#include &lt;string.h&gt;</span>
+
+<span class="keywordtype">int</span> <a class="code" href="a00750_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv) {
+  <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid;
+  <span class="keywordtype">char</span> meshname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+  <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a> localmesh;
+  <span class="keyword">const</span> <span class="keywordtype">char</span> fieldname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1] = <span class="stringliteral">&quot;TEMPERATURE_FIELD&quot;</span>;
+  <a class="code" href="a00321_a5615eeaf85e0b3f40b74bdd24178f2cd.html#a5615eeaf85e0b3f40b74bdd24178f2cd">med_field_type</a> fieldtype;
+  <span class="keywordtype">char</span> componentname[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+  <span class="keywordtype">char</span> componentunit[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+  <span class="keywordtype">char</span> dtunit[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+  <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *verticesvalues = NULL;
+  <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *tria3values = NULL;
+  <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *quad4values = NULL;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nstep, nvalues;
+  <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ncomponent = 1;
+  <span class="keywordtype">int</span> ret=-1;
+
+  <span class="comment">/* file creation */</span>
+  fid = <a class="code" href="a01005_ga9376a1654b7bf099c3f8941074c5fdfb.html#ga9376a1654b7bf099c3f8941074c5fdfb" title="Ouverture d&amp;#39;un fichier MED.">MEDfileOpen</a>(<span class="stringliteral">&quot;UsesCase_MEDfield_1.med&quot;</span>,<a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a616bf8345c622a34f0787f42eb400f25">MED_ACC_RDONLY</a>);
+  <span class="keywordflow">if</span> (fid &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : open file ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  <span class="comment">/* </span>
+<span class="comment">   * ... we know that the MED file has only one field with one component , </span>
+<span class="comment">   * a real code working would check ... </span>
+<span class="comment">   */</span>
+
+  <span class="comment">/*</span>
+<span class="comment">   * if you know the field name, direct access to field informations</span>
+<span class="comment">   */</span>
+  <span class="keywordflow">if</span> (<a class="code" href="a01004_ga948789fb749c61a9bb7908e7d3b286c7.html#ga948789fb749c61a9bb7908e7d3b286c7" title="Cette routine permet de lire les informations d&amp;#39;indentification d&amp;#39;un champ...">MEDfieldInfoByName</a>(fid, fieldname, meshname, &amp;localmesh, &amp;fieldtype,
+                         componentname, componentunit, dtunit, &amp;nstep) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : Field info by name ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  } 
+  
+  <span class="comment">/* </span>
+<span class="comment">   * ... we know that the field values are defined on vertices and MED_TRIA3 </span>
+<span class="comment">   * and MED_QUAD4 cells, a real code working would check ... </span>
+<span class="comment">   */</span>
+
+  <span class="comment">/* MED_NODE */</span>
+  <span class="keywordflow">if</span> ((nvalues = <a class="code" href="a01004_gad56d2c61cf0a4c55bc9834f5c2d9875e.html#gad56d2c61cf0a4c55bc9834f5c2d9875e" title="Cette routine permet de lire le nombre de valeurs dans un champ pour une séquence...">MEDfieldnValue</a>(fid, fieldname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a>, <a class="code" href="a00321_a9a2843c7d6eacffdd9377b5bfb8a6de3.html#a9a2843c7d6eacffdd9377b5bfb8a6de3">MED_NONE</a>)) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read number of values ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  <span class="keywordflow">if</span> ((verticesvalues = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>)*nvalues*ncomponent)) == NULL) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  <span class="keywordflow">if</span> (<a class="code" href="a01004_ga3222b711fa5f6660f0fb3edff1ac9b29.html#ga3222b711fa5f6660f0fb3edff1ac9b29" title="Cette routine permet de lire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueRd</a>(fid, fieldname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a>, <a class="code" href="a00321_a9a2843c7d6eacffdd9377b5bfb8a6de3.html#a9a2843c7d6eacffdd9377b5bfb8a6de3">MED_NONE</a>,
+                      <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) verticesvalues) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read fields values on vertices ...&quot;</span>);
+    free(verticesvalues);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  free(verticesvalues);
+  
+  <span class="comment">/* MED_TRIA3 */</span>
+  <span class="keywordflow">if</span> ((nvalues = <a class="code" href="a01004_gad56d2c61cf0a4c55bc9834f5c2d9875e.html#gad56d2c61cf0a4c55bc9834f5c2d9875e" title="Cette routine permet de lire le nombre de valeurs dans un champ pour une séquence...">MEDfieldnValue</a>(fid, fieldname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, 
+                                <a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>)) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read number of values ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  <span class="keywordflow">if</span> ((tria3values = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>)*nvalues*ncomponent)) == NULL) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  <span class="keywordflow">if</span> (<a class="code" href="a01004_ga3222b711fa5f6660f0fb3edff1ac9b29.html#ga3222b711fa5f6660f0fb3edff1ac9b29" title="Cette routine permet de lire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueRd</a>(fid, fieldname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, <a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>,
+                      <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) tria3values) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read fields values for MED_TRIA3 cells ...&quot;</span>);
+    free(tria3values);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  free(tria3values);
+
+  <span class="comment">/* MED_QUAD4 */</span>
+  <span class="keywordflow">if</span> ((nvalues = <a class="code" href="a01004_gad56d2c61cf0a4c55bc9834f5c2d9875e.html#gad56d2c61cf0a4c55bc9834f5c2d9875e" title="Cette routine permet de lire le nombre de valeurs dans un champ pour une séquence...">MEDfieldnValue</a>(fid, fieldname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, 
+                                <a class="code" href="a00321_a24ea9c52f5bde41d9a072925249ec06c.html#a24ea9c52f5bde41d9a072925249ec06c">MED_QUAD4</a>)) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read number of values ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  <span class="keywordflow">if</span> ((quad4values = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>)*nvalues*ncomponent)) == NULL) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  <span class="keywordflow">if</span> (<a class="code" href="a01004_ga3222b711fa5f6660f0fb3edff1ac9b29.html#ga3222b711fa5f6660f0fb3edff1ac9b29" title="Cette routine permet de lire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueRd</a>(fid, fieldname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, <a class="code" href="a00321_a24ea9c52f5bde41d9a072925249ec06c.html#a24ea9c52f5bde41d9a072925249ec06c">MED_QUAD4</a>,
+                      <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) quad4values) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read fields values for MED_QUAD4 cells ...&quot;</span>);
+    free(quad4values);
+    <span class="keywordflow">goto</span> ERROR;
+  }  
+  free(quad4values);
+
+  ret=0;
+ ERROR:
+
+  <span class="comment">/* close file */</span>
+  <span class="keywordflow">if</span> (<a class="code" href="a01005_ga12a0e901c376be997a41a073ce426283.html#ga12a0e901c376be997a41a073ce426283" title="Fermeture d&amp;#39;un fichier MED.">MEDfileClose</a>(fid) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : close file ...&quot;</span>);
+    ret=-1;
+  } 
+
+  <span class="keywordflow">return</span> ret;
+}
+</pre></div> <p>Une approche plus g&eacute;n&eacute;rique dans la lecture d'un champ est donn&eacute;e dans l'exemple suivant. La routine <a class="el" href="a01004_ga0d8be6c1b6b24ff150a5adcb58831d93.html#ga0d8be6c1b6b24ff150a5adcb58831d93">MEDnField</a> / <a class="el" href="a01019_gab3f938bf89ffceff9981225942d16514.html#gab3f938bf89ffceff9981225942d16514">mfdnfd</a> va lire le nombre de champ dans le fichier. Il s'agit ensuite d'it&eacute;rer sur ces champs. La routine <a class="el" href="a01004_gaf2169b6d6505a28d7ee5f8599d2fb25e.html#gaf2169b6d6505a28d7ee5f8599d2fb25e">MEDfieldInfo</a> / <a class="el" href="a01019_ga4bb0475575242cb96e98d79025f5da0a.html#ga4bb0475575242cb96e98d79025f5da0a">mfdfdi</a> permet de lire les informations relatives &agrave; un champ &agrave; partir d'un it&eacute;rateur. La routine <a class="el" href="a01004_gabe6258ebc74592af81c9b51379b7b7af.html#gabe6258ebc74592af81c9b51379b7b7af">MEDfieldnComponent</a> / <a class="el" href="a01019_gaba0c5e98f838ac894ecdb8b2d160d045.html#gaba0c5e98f838ac894ecdb8b2d160d045">mfdnfc</a> permet de r&eacute;cup&eacute;rer le nombre de composante du champ en vue de dimensionner la taille des param&egrave;tres utiles &agrave; la routine MEDfieldInfo. </p>
+<p>Une fois les informations g&eacute;n&eacute;rales du champ connues, il est n&eacute;cessaire pour chaque type d'entit&eacute; pr&eacute;sent dans le maillage de conna&icirc;tre le nombre de valeurs &agrave; lire avec la routine <a class="el" href="a01004_gad56d2c61cf0a4c55bc9834f5c2d9875e.html#gad56d2c61cf0a4c55bc9834f5c2d9875e">MEDfieldnValue</a> / <a class="el" href="a01019_gae0eb1552519338d85b361ec9986fe251.html#gae0eb1552519338d85b361ec9986fe251">mfdnva</a>. Le nombre de valeurs ainsi obtenu, permet de calculer la z&ocirc;ne m&eacute;moire &agrave; allouer en vue de lire ces donn&eacute;es (&agrave; savoir le nombre de valeurs * nombre de composantes du champ). Enfin la routine <a class="el" href="a01004_ga3222b711fa5f6660f0fb3edff1ac9b29.html#ga3222b711fa5f6660f0fb3edff1ac9b29">MEDfieldValueRd</a> / <a class="el" href="a01019_ga5f2227db9b1ee0243833f8a975a38c69.html#ga5f2227db9b1ee0243833f8a975a38c69">mfdrvr</a> <a class="el" href="a01019_ga168215596ff157c9b2cc0f62c6ed7bef.html#ga168215596ff157c9b2cc0f62c6ed7bef">mfdivr</a> permet de lire les valeurs associ&eacute;es &agrave; un type d'entit&eacute; donn&eacute;. Pour les mailles et le cas &eacute;ch&eacute;ant les faces et les ar&ecirc;tes, il est possible d'it&eacute;rer sur le nombre de type g&eacute;om&eacute;trique pr&eacute;-d&eacute;fini dans le mod&egrave;le. Par exemple pour les mailles, cette valeur est fix&eacute;e par le param&egrave;tre constant <a class="el" href="a00321_abd42d91233c317ca8eb9b592e4502053.html#abd42d91233c317ca8eb9b592e4502053">MED_N_CELL_FIXED_GEO</a>. </p>
+<div class="fragment"><pre class="fragment"><span class="comment">/*  This file is part of MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<span class="comment"> *  (at your option) any later version.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="comment"> */</span>
+
+<span class="preprocessor">#include &lt;med.h&gt;</span>
+<span class="preprocessor">#define MESGERR 1</span>
+<span class="preprocessor"></span><span class="preprocessor">#include &lt;med_utils.h&gt;</span>
+
+<span class="preprocessor">#include &lt;string.h&gt;</span>
+
+<span class="preprocessor">#include &lt;med.h&gt;</span>
+<span class="preprocessor">#define MESGERR 1</span>
+<span class="preprocessor"></span><span class="preprocessor">#include &lt;med_utils.h&gt;</span>
+
+<span class="preprocessor">#include &lt;string.h&gt;</span>
+
+<span class="comment">/* </span>
+<span class="comment"> * Field use case 3 : read a field (generic approach)</span>
+<span class="comment"> */</span>
+
+
+<span class="keywordtype">int</span> <a class="code" href="a00750_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv) {
+  <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid;
+  <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> nfield, i, j;
+  <span class="keywordtype">char</span> meshname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+  <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a> localmesh;
+  <span class="keywordtype">char</span> fieldname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+  <a class="code" href="a00321_a5615eeaf85e0b3f40b74bdd24178f2cd.html#a5615eeaf85e0b3f40b74bdd24178f2cd">med_field_type</a> fieldtype;
+  <span class="keywordtype">char</span> *componentname = NULL;
+  <span class="keywordtype">char</span> *componentunit = NULL;
+  <span class="keywordtype">char</span> dtunit[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+  <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *values = NULL;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nstep, nvalues;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ncomponent;
+  <a class="code" href="a00321_a1043613afc3cd2e24785dfc7c0452ab8.html#a1043613afc3cd2e24785dfc7c0452ab8">med_geometry_type</a> geotype;
+  <a class="code" href="a00321_a1043613afc3cd2e24785dfc7c0452ab8.html#a1043613afc3cd2e24785dfc7c0452ab8">med_geometry_type</a> *geotypes = <a class="code" href="a00499_a54c2e34174a890046d0a204fa1a918a8.html#a54c2e34174a890046d0a204fa1a918a8">MED_GET_CELL_GEOMETRY_TYPE</a>;
+  <span class="keywordtype">int</span> ret=-1;
+
+  <span class="comment">/* file creation */</span>
+  fid = <a class="code" href="a01005_ga9376a1654b7bf099c3f8941074c5fdfb.html#ga9376a1654b7bf099c3f8941074c5fdfb" title="Ouverture d&amp;#39;un fichier MED.">MEDfileOpen</a>(<span class="stringliteral">&quot;UsesCase_MEDfield_1.med&quot;</span>,<a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a616bf8345c622a34f0787f42eb400f25">MED_ACC_RDONLY</a>);
+  <span class="keywordflow">if</span> (fid &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : open file ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  <span class="comment">/*</span>
+<span class="comment">   * generic approach : how many fields in the file and identification</span>
+<span class="comment">   * of each field.</span>
+<span class="comment">   */</span>
+  <span class="keywordflow">if</span> ((nfield = <a class="code" href="a01004_ga0d8be6c1b6b24ff150a5adcb58831d93.html#ga0d8be6c1b6b24ff150a5adcb58831d93" title="Cette routine permet de lire le nombre de champs dans un fichier.">MEDnField</a>(fid)) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : How many fields in the file ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  <span class="keywordflow">for</span> (i=0; i&lt;nfield; i++) {
+
+    <span class="comment">/* field information </span>
+<span class="comment">     * ... we know that the field has no computation step </span>
+<span class="comment">     * and that the field values type is MED_FLOAT64, a real code working would check ... </span>
+<span class="comment">     */</span>
+    <span class="keywordflow">if</span> ((ncomponent = <a class="code" href="a01004_gabe6258ebc74592af81c9b51379b7b7af.html#gabe6258ebc74592af81c9b51379b7b7af" title="Cette routine lit le nombre de composantes d&amp;#39;un champ.">MEDfieldnComponent</a>(fid,i+1)) &lt; 0) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : number of field component ...&quot;</span>);
+      <span class="keywordflow">goto</span> ERROR;
+    }
+
+    <span class="keywordflow">if</span> ((componentname = (<span class="keywordtype">char</span> *) malloc(ncomponent*<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1)) == NULL) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+      <span class="keywordflow">goto</span> ERROR;
+    }
+
+    <span class="keywordflow">if</span> ((componentunit = (<span class="keywordtype">char</span> *) malloc(ncomponent*<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1)) == NULL) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+      <span class="keywordflow">goto</span> ERROR;
+    }    
+
+    <span class="keywordflow">if</span> (<a class="code" href="a01004_gaf2169b6d6505a28d7ee5f8599d2fb25e.html#gaf2169b6d6505a28d7ee5f8599d2fb25e" title="Cette routine permet de lire les informations d&amp;#39;indentification d&amp;#39;un champ...">MEDfieldInfo</a>(fid, i+1, fieldname, meshname, &amp;localmesh, &amp;fieldtype,
+                     componentname, componentunit, dtunit, &amp;nstep) &lt; 0) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : Field info ...&quot;</span>);
+      free(componentname); free(componentunit);
+      <span class="keywordflow">goto</span> ERROR;
+    }
+    free(componentname); free(componentunit);
+
+    <span class="comment">/* read field values for nodes and cells */</span>
+    
+    <span class="comment">/* MED_NODE */</span>
+    <span class="keywordflow">if</span> ((nvalues = <a class="code" href="a01004_gad56d2c61cf0a4c55bc9834f5c2d9875e.html#gad56d2c61cf0a4c55bc9834f5c2d9875e" title="Cette routine permet de lire le nombre de valeurs dans un champ pour une séquence...">MEDfieldnValue</a>(fid, fieldname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a>, <a class="code" href="a00321_a9a2843c7d6eacffdd9377b5bfb8a6de3.html#a9a2843c7d6eacffdd9377b5bfb8a6de3">MED_NONE</a>)) &lt; 0) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read number of values ...&quot;</span>);
+      <span class="keywordflow">goto</span> ERROR;
+    }
+
+    <span class="keywordflow">if</span> (nvalues) {
+      <span class="keywordflow">if</span> ((values = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>)*nvalues*ncomponent)) == NULL) {
+        <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+        <span class="keywordflow">goto</span> ERROR;
+      }
+      <span class="keywordflow">if</span> (<a class="code" href="a01004_ga3222b711fa5f6660f0fb3edff1ac9b29.html#ga3222b711fa5f6660f0fb3edff1ac9b29" title="Cette routine permet de lire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueRd</a>(fid, fieldname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a>, <a class="code" href="a00321_a9a2843c7d6eacffdd9377b5bfb8a6de3.html#a9a2843c7d6eacffdd9377b5bfb8a6de3">MED_NONE</a>,
+                          <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) values) &lt; 0) {
+        <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read fields values defined on vertices ...&quot;</span>);
+        free(values);
+        <span class="keywordflow">goto</span> ERROR;
+      }
+      free(values);
+    }
+
+    <span class="comment">/* MED_CELL */</span>
+    <span class="keywordflow">for</span> (j=1; j&lt;=<a class="code" href="a00321_abd42d91233c317ca8eb9b592e4502053.html#abd42d91233c317ca8eb9b592e4502053">MED_N_CELL_FIXED_GEO</a>; j++) {
+      geotype = geotypes[j];
+  
+      <span class="keywordflow">if</span> ((nvalues = <a class="code" href="a01004_gad56d2c61cf0a4c55bc9834f5c2d9875e.html#gad56d2c61cf0a4c55bc9834f5c2d9875e" title="Cette routine permet de lire le nombre de valeurs dans un champ pour une séquence...">MEDfieldnValue</a>(fid, fieldname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, 
+                                    geotype)) &lt; 0) {
+        <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read number of values ...&quot;</span>);
+        <span class="keywordflow">goto</span> ERROR;
+      }
+
+      <span class="keywordflow">if</span> (nvalues) {
+        <span class="keywordflow">if</span> ((values = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>)*nvalues*ncomponent)) == NULL) {
+          <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+          <span class="keywordflow">goto</span> ERROR;
+        }
+        <span class="keywordflow">if</span> (<a class="code" href="a01004_ga3222b711fa5f6660f0fb3edff1ac9b29.html#ga3222b711fa5f6660f0fb3edff1ac9b29" title="Cette routine permet de lire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueRd</a>(fid, fieldname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, geotype,
+                            <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) values) &lt; 0) {
+          <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read fields values for cells ...&quot;</span>);
+          free(values);
+          <span class="keywordflow">goto</span> ERROR;
+        }  
+        free(values);
+      }
+    }
+  }
+  
+  ret=0;
+ ERROR:
+
+  <span class="comment">/* close file */</span>
+  <span class="keywordflow">if</span> (<a class="code" href="a01005_ga12a0e901c376be997a41a073ce426283.html#ga12a0e901c376be997a41a073ce426283" title="Fermeture d&amp;#39;un fichier MED.">MEDfileClose</a>(fid) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : close file ...&quot;</span>);             
+    ret=-1; 
+  } 
+  
+  <span class="keywordflow">return</span> ret;
+}
+</pre></div> <h3><a class="anchor" id="3."></a>Cr&eacute;er des s&eacute;quences de calcul dans un champ de r&eacute;sultats</h3>
+<p>Une s&eacute;quence de calcul correspond &agrave; une date (pas de temps) et/ou une &eacute;tape it&eacute;rative (num&eacute;ro d'ordre). Les valeurs d'un champ peuvent porter sur une s&eacute;quence de calcul autre que la s&eacute;quence initiale (<a class="el" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="el" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>) utilis&eacute;e par d&eacute;faut. La d&eacute;finition de la s&eacute;quence de calcul se fait lors de la l'&eacute;criture des valeurs du champ avec la routine <a class="el" href="a01004_gaf525ac6dbe9b3f81a129c0f0866f5313.html#gaf525ac6dbe9b3f81a129c0f0866f5313">MEDfieldValueWr</a> / <a class="el" href="a01019_ga26e92d93157118f6d1296a843e924bd5.html#ga26e92d93157118f6d1296a843e924bd5">mfdrvw</a> <a class="el" href="a01019_ga9e63248c4791bea319fec4411d559b2e.html#ga9e63248c4791bea319fec4411d559b2e">mfdivw</a> qui prend en param&egrave;tres le pas de temps et le num&eacute;ro d'ordre. </p>
+<p>Il est possible de r&eacute;f&eacute;rencer l'&eacute;tape d'&eacute;volution d'un maillage &agrave; laquelle l'&eacute;tape de calcul correspond le cas &eacute;ch&eacute;ant avec la routine <a class="el" href="a01004_gad5e044ab63e012f677ea732d37c9ef92.html#gad5e044ab63e012f677ea732d37c9ef92">MEDfieldComputingStepMeshWr</a> / <a class="el" href="a01019_ga8aae13d5501c214872fb2f8b3a9a415d.html#ga8aae13d5501c214872fb2f8b3a9a415d">mfdcmw</a>. Par d&eacute;faut les valeurs du champ se rapportent au maillage initial (MED_NO_DT, MED_NO_IT). </p>
+<div class="fragment"><pre class="fragment"><span class="comment">/*  This file is part of MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<span class="comment"> *  (at your option) any later version.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="comment"> */</span>
+
+<span class="comment">/* </span>
+<span class="comment"> * Field use case 4 : write a field with computing steps</span>
+<span class="comment"> */</span>
+
+
+<span class="preprocessor">#include &lt;med.h&gt;</span>
+<span class="preprocessor">#define MESGERR 1</span>
+<span class="preprocessor"></span><span class="preprocessor">#include &lt;med_utils.h&gt;</span>
+
+<span class="preprocessor">#include &lt;string.h&gt;</span>
+
+
+<span class="keywordtype">int</span> <a class="code" href="a00750_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv) {
+  <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid;
+  <span class="keyword">const</span> <span class="keywordtype">char</span> meshname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1] = <span class="stringliteral">&quot;2D unstructured mesh&quot;</span>;
+  <span class="keyword">const</span> <span class="keywordtype">char</span> fieldname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1] = <span class="stringliteral">&quot;TEMPERATURE_FIELD&quot;</span>;
+  <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ncomponent = 1;
+  <span class="keyword">const</span> <span class="keywordtype">char</span> componentname[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1] = <span class="stringliteral">&quot;TEMPERATURE&quot;</span>;
+  <span class="keyword">const</span> <span class="keywordtype">char</span> componentunit[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1] = <span class="stringliteral">&quot;C&quot;</span>;
+  <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ntria3 = 8;
+  <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nquad4 = 4;
+  <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> tria3values_step1[8] = {1000., 2000., 3000., 4000., 
+                                          5000., 6000., 7000., 8000.};
+  <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> quad4values_step1[4] = {10000., 20000., 30000., 4000.};
+  <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> tria3values_step2[8] = {1500., 2500., 3500., 4500., 
+                                          5500., 6500., 7500., 8500.};
+  <span class="keyword">const</span> <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> quad4values_step2[4] = {15000., 25000., 35000., 45000.};
+  <span class="keywordtype">int</span> ret=-1;
+
+  <span class="comment">/* file creation */</span>
+  fid = <a class="code" href="a01005_ga9376a1654b7bf099c3f8941074c5fdfb.html#ga9376a1654b7bf099c3f8941074c5fdfb" title="Ouverture d&amp;#39;un fichier MED.">MEDfileOpen</a>(<span class="stringliteral">&quot;UsesCase_MEDfield_4.med&quot;</span>,<a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85aa23dd1c18b596924d5f50c8402b84c8e">MED_ACC_CREAT</a>);
+  <span class="keywordflow">if</span> (fid &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : file creation ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  <span class="comment">/* create mesh link */</span>
+  <span class="keywordflow">if</span> (<a class="code" href="a01009_ga08d1c8b15fbab77a11c6b59a0c600c4e.html#ga08d1c8b15fbab77a11c6b59a0c600c4e" title="Cette routine permet d&amp;#39;écrire un lien dans un fichier MED.">MEDlinkWr</a>(fid,meshname,<span class="stringliteral">&quot;./UsesCase_MEDmesh_1.med&quot;</span>) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : create mesh link ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  
+  <span class="comment">/* field creation : temperature field  : 1 component in celsius degree</span>
+<span class="comment">   *                  the mesh is the 2D unstructured mesh of UsecaseMEDmesh_1.c</span>
+<span class="comment">   *                  use case. Computation step unit in &apos;ms&apos;</span>
+<span class="comment">   */</span> 
+  <span class="keywordflow">if</span> (<a class="code" href="a01004_ga8f73c6eb1a1b85f5e1e8bc1823c01ab9.html#ga8f73c6eb1a1b85f5e1e8bc1823c01ab9" title="Cette routine permet de créer un champ dans un fichier.">MEDfieldCr</a>(fid, fieldname, <a class="code" href="a00320_a7d730da9417184bffcdccc90a1749e27.html#a7d730da9417184bffcdccc90a1749e27ad44e111629f7a5811626b87c8b42b3ea">MED_FLOAT64</a>, 
+                 ncomponent, componentname, componentunit,<span class="stringliteral">&quot;ms&quot;</span>, meshname) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : create field&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  
+  <span class="comment">/* two computation steps :</span>
+<span class="comment">   *  - first  on meshname MED_NO_DT,MED_NO_IT mesh computation step</span>
+<span class="comment">   *  - second on meshname 1,3 mesh computation step */</span>
+  <span class="comment">/* write values at cell centers : 8 MED_TRIA3 and 4 MED_QUAD4 */</span>
+
+  <span class="comment">/* STEP 1 : dt1 = 5.5, it = 1*/</span>
+  <span class="comment">/* MED_TRIA3 */</span>
+  <span class="keywordflow">if</span> (<a class="code" href="a01004_gaf525ac6dbe9b3f81a129c0f0866f5313.html#gaf525ac6dbe9b3f81a129c0f0866f5313" title="Cette routine permet d&amp;#39;écrire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueWr</a>(fid, fieldname, 1, 1, 5.5, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, <a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>, <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, 
+                      <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>, ntria3, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) tria3values_step1) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : write field values on MED_TRIA3&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+   <span class="comment">/* MED_QUAD4 */</span> 
+  <span class="keywordflow">if</span> (<a class="code" href="a01004_gaf525ac6dbe9b3f81a129c0f0866f5313.html#gaf525ac6dbe9b3f81a129c0f0866f5313" title="Cette routine permet d&amp;#39;écrire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueWr</a>(fid, fieldname, 1, 1, 5.5, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>,<a class="code" href="a00321_a24ea9c52f5bde41d9a072925249ec06c.html#a24ea9c52f5bde41d9a072925249ec06c">MED_QUAD4</a>, <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, 
+                      <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>, nquad4, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) quad4values_step1) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : write field values on MED_QUAD4 &quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  <span class="comment">/* STEP 2 : dt2 = 8.9, it = 1*/</span>
+  <span class="comment">/* MED_TRIA3 */</span>
+  <span class="keywordflow">if</span> (<a class="code" href="a01004_gaf525ac6dbe9b3f81a129c0f0866f5313.html#gaf525ac6dbe9b3f81a129c0f0866f5313" title="Cette routine permet d&amp;#39;écrire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueWr</a>(fid, fieldname, 2 , 1 , 8.9 , <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, <a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>, <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, 
+                      <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>, ntria3,  (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*)tria3values_step2) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : write field values on MED_TRIA3&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  <span class="comment">/* MED_QUAD4 */</span>
+  <span class="keywordflow">if</span> (<a class="code" href="a01004_gaf525ac6dbe9b3f81a129c0f0866f5313.html#gaf525ac6dbe9b3f81a129c0f0866f5313" title="Cette routine permet d&amp;#39;écrire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueWr</a>(fid, fieldname, 2, 1, 8.9, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, <a class="code" href="a00321_a24ea9c52f5bde41d9a072925249ec06c.html#a24ea9c52f5bde41d9a072925249ec06c">MED_QUAD4</a>, <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, 
+                      <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>, nquad4, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*)quad4values_step2) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : write field values on MED_QUAD4 &quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  <span class="comment">/* Write associated mesh computation step */</span>
+  <span class="keywordflow">if</span> ( <a class="code" href="a01004_gad5e044ab63e012f677ea732d37c9ef92.html#gad5e044ab63e012f677ea732d37c9ef92" title="Cette routine permet de définir la séquence de calcul ( meshnumdit , meshnumit...">MEDfieldComputingStepMeshWr</a>(fid, fieldname, 2, 1,
+                                   1, 3 ) &lt; 0 ) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : write field mesh computation step error &quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  ret=0;
+ ERROR:
+
+  <span class="comment">/* close file */</span>
+  <span class="keywordflow">if</span> (<a class="code" href="a01005_ga12a0e901c376be997a41a073ce426283.html#ga12a0e901c376be997a41a073ce426283" title="Fermeture d&amp;#39;un fichier MED.">MEDfileClose</a>(fid) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : close file ...&quot;</span>);             
+    ret=-1; 
+  } 
+  
+  <span class="keywordflow">return</span> ret;
+}
+
+</pre></div> <h3><a class="anchor" id="4."></a>Lire un champ de r&eacute;sultats avec des s&eacute;quences de calcul</h3>
+<p>A la lecture, le nombre de s&eacute;quence de calcul du champ peut est r&eacute;cup&eacute;r&eacute; par les routines <a class="el" href="a01004_ga948789fb749c61a9bb7908e7d3b286c7.html#ga948789fb749c61a9bb7908e7d3b286c7">MEDfieldInfoByName</a> / <a class="el" href="a01019_ga11db28928630976b11d0eeb2ef07cd8e.html#ga11db28928630976b11d0eeb2ef07cd8e">mfdfin</a> et <a class="el" href="a01004_gaf2169b6d6505a28d7ee5f8599d2fb25e.html#gaf2169b6d6505a28d7ee5f8599d2fb25e">MEDfieldInfo</a> / <a class="el" href="a01019_ga4bb0475575242cb96e98d79025f5da0a.html#ga4bb0475575242cb96e98d79025f5da0a">mfdfdi</a>. Il s'agit ensuite d'it&eacute;rer sur ce nombre de s&eacute;quence afin de lire les valeurs portant sur les entit&eacute;s du maillage. La routine <a class="el" href="a01004_ga35a5786318fd1b47c163f18813c8cf9b.html#ga35a5786318fd1b47c163f18813c8cf9b">MEDfieldComputingStepMeshInfo</a> / <a class="el" href="a01019_ga0e7d42e97dbd3e0b017971852794ffaf.html#ga0e7d42e97dbd3e0b017971852794ffaf">mfdcmi</a> permet de r&eacute;cup&eacute;rer les informations relatives &agrave; la s&eacute;quence de calcul (pas de temps et num&eacute;ro d'ordre), ainsi que l'&eacute;tape d'&eacute;volution du maillage correspondante. La routine <a class="el" href="a01004_ga5b0031d3002518f1b2e134ff8c03dbc5.html#ga5b0031d3002518f1b2e134ff8c03dbc5">MEDfieldComputingStepInfo</a> / <a class="el" href="a01019_gabce51182563ff7413b33299fad77875b.html#gabce51182563ff7413b33299fad77875b">mfdcsi</a> permet de r&eacute;cup&eacute;rer les informations relatives &agrave; la s&eacute;quence de calcul sans se pr&eacute;occuper du maillage dans le cas d'un maillage non &eacute;volutif.  </p>
+<div class="fragment"><pre class="fragment"><span class="comment">/*  This file is part of MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<span class="comment"> *  (at your option) any later version.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="comment"> */</span>
+
+<span class="comment">/* </span>
+<span class="comment"> * Field use case 5 : read a field with following with computing steps</span>
+<span class="comment"> */</span>
+
+<span class="preprocessor">#include &lt;med.h&gt;</span>
+<span class="preprocessor">#define MESGERR 1</span>
+<span class="preprocessor"></span><span class="preprocessor">#include &lt;med_utils.h&gt;</span>
+
+<span class="preprocessor">#include &lt;string.h&gt;</span>
+
+<span class="keywordtype">int</span> <a class="code" href="a00750_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv) {
+  <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid;
+  <span class="keywordtype">char</span> meshname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+  <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a> localmesh;
+  <span class="keyword">const</span> <span class="keywordtype">char</span> fieldname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1] = <span class="stringliteral">&quot;TEMPERATURE_FIELD&quot;</span>;
+  <a class="code" href="a00321_a5615eeaf85e0b3f40b74bdd24178f2cd.html#a5615eeaf85e0b3f40b74bdd24178f2cd">med_field_type</a> fieldtype;
+  <span class="keywordtype">char</span> componentname[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+  <span class="keywordtype">char</span> componentunit[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+  <span class="keywordtype">char</span> dtunit[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+  <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *values = NULL;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nstep, nvalues;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ncomponent = 1;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> csit, numit, numdt, meshnumit, meshnumdt, it;
+  <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> dt;
+  <a class="code" href="a00321_a1043613afc3cd2e24785dfc7c0452ab8.html#a1043613afc3cd2e24785dfc7c0452ab8">med_geometry_type</a> geotype;
+  <a class="code" href="a00321_a1043613afc3cd2e24785dfc7c0452ab8.html#a1043613afc3cd2e24785dfc7c0452ab8">med_geometry_type</a> *geotypes = <a class="code" href="a00499_a54c2e34174a890046d0a204fa1a918a8.html#a54c2e34174a890046d0a204fa1a918a8">MED_GET_CELL_GEOMETRY_TYPE</a>;
+  <span class="keywordtype">int</span> ret=-1;
+
+  <span class="comment">/* open file */</span>
+  fid = <a class="code" href="a01005_ga9376a1654b7bf099c3f8941074c5fdfb.html#ga9376a1654b7bf099c3f8941074c5fdfb" title="Ouverture d&amp;#39;un fichier MED.">MEDfileOpen</a>(<span class="stringliteral">&quot;UsesCase_MEDfield_4.med&quot;</span>,<a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a616bf8345c622a34f0787f42eb400f25">MED_ACC_RDONLY</a>);
+  <span class="keywordflow">if</span> (fid &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : open file ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  <span class="comment">/*</span>
+<span class="comment">   * ... we know that the MED file has only one field with one component ,</span>
+<span class="comment">   * a real code working would check ...</span>
+<span class="comment">   */</span>
+
+  <span class="comment">/*</span>
+<span class="comment">   * if you know the field name, direct access to field informations</span>
+<span class="comment">   */</span>
+  <span class="keywordflow">if</span> (<a class="code" href="a01004_ga948789fb749c61a9bb7908e7d3b286c7.html#ga948789fb749c61a9bb7908e7d3b286c7" title="Cette routine permet de lire les informations d&amp;#39;indentification d&amp;#39;un champ...">MEDfieldInfoByName</a>(fid, fieldname, meshname, &amp;localmesh, &amp;fieldtype,
+                         componentname, componentunit, dtunit, &amp;nstep) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : Field info by name ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  <span class="comment">/*</span>
+<span class="comment">   * Read field values for each computing step</span>
+<span class="comment">   */</span>
+  <span class="keywordflow">for</span> (csit=0; csit&lt;nstep; csit++) {
+
+    <span class="keywordflow">if</span> (<a class="code" href="a01004_ga35a5786318fd1b47c163f18813c8cf9b.html#ga35a5786318fd1b47c163f18813c8cf9b" title="Cette routine permet de lire les informations caractérisant une séquence de calcul...">MEDfieldComputingStepMeshInfo</a>(fid, fieldname, csit+1, &amp;numdt, &amp;numit, &amp;dt,
+                                      &amp;meshnumdt, &amp;meshnumit) &lt; 0) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : Computing step info ...&quot;</span>);
+      <span class="keywordflow">goto</span> ERROR;
+    }
+
+  <span class="comment">/*</span>
+<span class="comment">   * ... In our case, we suppose that the field values are only defined on cells ...</span>
+<span class="comment">   */</span>
+    <span class="keywordflow">for</span> (it=1; it&lt;=<a class="code" href="a00321_abd42d91233c317ca8eb9b592e4502053.html#abd42d91233c317ca8eb9b592e4502053">MED_N_CELL_FIXED_GEO</a>; it++) {
+
+      geotype = geotypes[it];
+
+      <span class="keywordflow">if</span> ((nvalues = <a class="code" href="a01004_gad56d2c61cf0a4c55bc9834f5c2d9875e.html#gad56d2c61cf0a4c55bc9834f5c2d9875e" title="Cette routine permet de lire le nombre de valeurs dans un champ pour une séquence...">MEDfieldnValue</a>(fid, fieldname, numdt, numit, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, geotype)) &lt; 0) {
+        <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read number of values ...&quot;</span>);
+        <span class="keywordflow">goto</span> ERROR;
+      }
+
+      <span class="keywordflow">if</span> (nvalues) {
+        <span class="keywordflow">if</span> ((values = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>)*nvalues*ncomponent)) == NULL) {
+          <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+          <span class="keywordflow">goto</span> ERROR;
+        }
+        <span class="keywordflow">if</span> (<a class="code" href="a01004_ga3222b711fa5f6660f0fb3edff1ac9b29.html#ga3222b711fa5f6660f0fb3edff1ac9b29" title="Cette routine permet de lire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueRd</a>(fid, fieldname, numdt, numit, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, geotype,
+                            <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) values) &lt; 0) {
+          <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read fields values for cells ...&quot;</span>); 
+          free(values);
+          <span class="keywordflow">goto</span> ERROR; 
+        }  
+        free(values);
+      }
+    }
+  }
+
+  ret=0;
+ ERROR:
+   
+  <span class="comment">/* close file */</span>
+  <span class="keywordflow">if</span> (<a class="code" href="a01005_ga12a0e901c376be997a41a073ce426283.html#ga12a0e901c376be997a41a073ce426283" title="Fermeture d&amp;#39;un fichier MED.">MEDfileClose</a>(fid) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : close file ...&quot;</span>);             
+    ret=-1; 
+  } 
+
+  <span class="keywordflow">return</span> ret;
+}
+</pre></div> <p>Le cas d'utilisation suivant fournit une approche g&eacute;n&eacute;rique pour lire les valeurs portant sur les mailles du maillage pour toutes les s&eacute;quences de calcul de tous les champs d'un fichier MED. </p>
+<div class="fragment"><pre class="fragment"><span class="comment">/*  This file is part of MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<span class="comment"> *  (at your option) any later version.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="comment"> */</span>
+
+<span class="comment">/* </span>
+<span class="comment"> * Field use case 6 : read a field (generic approach) with computing steps</span>
+<span class="comment"> */</span>
+
+<span class="preprocessor">#include &lt;med.h&gt;</span>
+<span class="preprocessor">#define MESGERR 1</span>
+<span class="preprocessor"></span><span class="preprocessor">#include &lt;med_utils.h&gt;</span>
+
+<span class="preprocessor">#include &lt;string.h&gt;</span>
+
+<span class="preprocessor">#include &lt;med.h&gt;</span>
+<span class="preprocessor">#define MESGERR 1</span>
+<span class="preprocessor"></span><span class="preprocessor">#include &lt;med_utils.h&gt;</span>
+
+<span class="preprocessor">#include &lt;string.h&gt;</span>
+
+<span class="keywordtype">int</span> <a class="code" href="a00750_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv) {
+  <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid;
+  <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> nfield, i, j;
+  <span class="keywordtype">char</span> meshname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+  <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a> localmesh;
+  <span class="keywordtype">char</span> fieldname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+  <a class="code" href="a00321_a5615eeaf85e0b3f40b74bdd24178f2cd.html#a5615eeaf85e0b3f40b74bdd24178f2cd">med_field_type</a> fieldtype;
+  <span class="keywordtype">char</span> *componentname = NULL;
+  <span class="keywordtype">char</span> *componentunit = NULL;
+  <span class="keywordtype">char</span> dtunit[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+  <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *values = NULL;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nstep, nvalues;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ncomponent;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> csit, numit, numdt, meshnumit, meshnumdt, it;
+  <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> dt;
+  <a class="code" href="a00321_a1043613afc3cd2e24785dfc7c0452ab8.html#a1043613afc3cd2e24785dfc7c0452ab8">med_geometry_type</a> geotype;
+  <a class="code" href="a00321_a1043613afc3cd2e24785dfc7c0452ab8.html#a1043613afc3cd2e24785dfc7c0452ab8">med_geometry_type</a> *geotypes = <a class="code" href="a00499_a54c2e34174a890046d0a204fa1a918a8.html#a54c2e34174a890046d0a204fa1a918a8">MED_GET_CELL_GEOMETRY_TYPE</a>;
+  <span class="keywordtype">int</span> k;
+  <span class="keywordtype">int</span> ret=-1;
+
+  <span class="comment">/* open file */</span>
+  fid = <a class="code" href="a01005_ga9376a1654b7bf099c3f8941074c5fdfb.html#ga9376a1654b7bf099c3f8941074c5fdfb" title="Ouverture d&amp;#39;un fichier MED.">MEDfileOpen</a>(<span class="stringliteral">&quot;UsesCase_MEDfield_4.med&quot;</span>,<a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a616bf8345c622a34f0787f42eb400f25">MED_ACC_RDONLY</a>);
+  <span class="keywordflow">if</span> (fid &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : open file ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  <span class="comment">/*</span>
+<span class="comment">   * generic approach : how many fields in the file and identification</span>
+<span class="comment">   * of each field.</span>
+<span class="comment">   */</span>
+  <span class="keywordflow">if</span> ((nfield = <a class="code" href="a01004_ga0d8be6c1b6b24ff150a5adcb58831d93.html#ga0d8be6c1b6b24ff150a5adcb58831d93" title="Cette routine permet de lire le nombre de champs dans un fichier.">MEDnField</a>(fid)) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : How many fields in the file ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  <span class="comment">/* </span>
+<span class="comment">   * read values for each field</span>
+<span class="comment">   */</span>
+  <span class="keywordflow">for</span> (i=0; i&lt;nfield; i++) {
+
+    <span class="keywordflow">if</span> ((ncomponent = <a class="code" href="a01004_gabe6258ebc74592af81c9b51379b7b7af.html#gabe6258ebc74592af81c9b51379b7b7af" title="Cette routine lit le nombre de composantes d&amp;#39;un champ.">MEDfieldnComponent</a>(fid,i+1)) &lt; 0) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : number of field component ...&quot;</span>);
+      <span class="keywordflow">goto</span> ERROR;
+    }
+
+    <span class="keywordflow">if</span> ((componentname = (<span class="keywordtype">char</span> *) malloc(ncomponent*<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1)) == NULL) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+      <span class="keywordflow">goto</span> ERROR;
+    }
+
+    <span class="keywordflow">if</span> ((componentunit = (<span class="keywordtype">char</span> *) malloc(ncomponent*<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1)) == NULL) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+      <span class="keywordflow">goto</span> ERROR;
+    }    
+
+    <span class="keywordflow">if</span> (<a class="code" href="a01004_gaf2169b6d6505a28d7ee5f8599d2fb25e.html#gaf2169b6d6505a28d7ee5f8599d2fb25e" title="Cette routine permet de lire les informations d&amp;#39;indentification d&amp;#39;un champ...">MEDfieldInfo</a>(fid, i+1, fieldname, meshname, &amp;localmesh, &amp;fieldtype,
+                     componentname, componentunit, dtunit, &amp;nstep) &lt; 0) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : Field info ...&quot;</span>);
+      free(componentname);
+      free(componentunit);
+      <span class="keywordflow">goto</span> ERROR;
+    }
+    free(componentname);
+    free(componentunit);
+
+    <span class="comment">/*</span>
+<span class="comment">     * Read field values for each computing step </span>
+<span class="comment">     */</span> 
+    <span class="keywordflow">for</span> (csit=0; csit&lt;nstep; csit++) {
+
+      <span class="keywordflow">if</span> (<a class="code" href="a01004_ga35a5786318fd1b47c163f18813c8cf9b.html#ga35a5786318fd1b47c163f18813c8cf9b" title="Cette routine permet de lire les informations caractérisant une séquence de calcul...">MEDfieldComputingStepMeshInfo</a>(fid, fieldname, csit+1, &amp;numdt, &amp;numit, &amp;dt, 
+                                        &amp;meshnumdt, &amp;meshnumit) &lt; 0) {
+        <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : Computing step info ...&quot;</span>);
+        <span class="keywordflow">goto</span> ERROR;
+      }
+
+      <span class="comment">/* </span>
+<span class="comment">       * ... In our case, we suppose that the field values are only defined on cells ... </span>
+<span class="comment">       */</span>
+      <span class="keywordflow">for</span> (it=1; it&lt;=<a class="code" href="a00321_abd42d91233c317ca8eb9b592e4502053.html#abd42d91233c317ca8eb9b592e4502053">MED_N_CELL_FIXED_GEO</a>; it++) {
+
+        geotype = geotypes[it];
+        <span class="keywordflow">if</span> ((nvalues = <a class="code" href="a01004_gad56d2c61cf0a4c55bc9834f5c2d9875e.html#gad56d2c61cf0a4c55bc9834f5c2d9875e" title="Cette routine permet de lire le nombre de valeurs dans un champ pour une séquence...">MEDfieldnValue</a>(fid, fieldname, numdt, numit, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, geotype)) &lt; 0) {
+          <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read number of values ...&quot;</span>);
+          <span class="keywordflow">goto</span> ERROR;
+        } 
+        <span class="keywordflow">if</span> (nvalues) {
+          <span class="keywordflow">if</span> ((values = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>)*nvalues*ncomponent)) == NULL) {
+            <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+          <span class="keywordflow">goto</span> ERROR;
+          }
+          <span class="keywordflow">if</span> (<a class="code" href="a01004_ga3222b711fa5f6660f0fb3edff1ac9b29.html#ga3222b711fa5f6660f0fb3edff1ac9b29" title="Cette routine permet de lire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueRd</a>(fid, fieldname, numdt, numit, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, geotype,
+                              <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) values) &lt; 0) {
+            <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read fields values for cells ...&quot;</span>); 
+            free(values);
+            <span class="keywordflow">goto</span> ERROR; 
+          } 
+          free(values);
+        }
+
+      }
+    }
+  }
+
+  ret=0;
+ ERROR:
+  
+  <span class="comment">/* close file */</span>
+  <span class="keywordflow">if</span> (<a class="code" href="a01005_ga12a0e901c376be997a41a073ce426283.html#ga12a0e901c376be997a41a073ce426283" title="Fermeture d&amp;#39;un fichier MED.">MEDfileClose</a>(fid) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : close file ...&quot;</span>);             
+    ret=-1; 
+  } 
+  
+  <span class="keywordflow">return</span> ret;
+}
+</pre></div> <p><br/>
+<br/>
+  </p>
+</div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:44 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

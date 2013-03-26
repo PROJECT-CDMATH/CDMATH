@@ -1,0 +1,324 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de MAJ_21_22_champs.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_85294a8a9f196cdbd7e42569a8b43d43.html">tools</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_a46d7e16343b264a6f70ad9d6544d474.html">medimport</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_6cd109759b619ae6907274d629cffda6.html">2.1.x</a>
+  </div>
+</div>
+<div class="contents">
+<h1>MAJ_21_22_champs.c</h1><a href="a00298.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment"> *</span>
+<a name="l00003"></a>00003 <span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment"> *  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment"> *</span>
+<a name="l00009"></a>00009 <span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment"> *</span>
+<a name="l00014"></a>00014 <span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment"> */</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019 <span class="preprocessor">#include &quot;<a class="code" href="a00334.html">med_config.h</a>&quot;</span>
+<a name="l00020"></a>00020 <span class="preprocessor">#include &quot;<a class="code" href="a00345.html">med_outils.h</a>&quot;</span>
+<a name="l00021"></a>00021 <span class="preprocessor">#include &lt;string.h&gt;</span>
+<a name="l00022"></a>00022 
+<a name="l00023"></a>00023 <span class="comment">/* #ifdef __cplusplus */</span>
+<a name="l00024"></a>00024 <span class="comment">/* } */</span>
+<a name="l00025"></a>00025 <span class="comment">/* #endif */</span>
+<a name="l00026"></a>00026 
+<a name="l00027"></a>00027 <span class="preprocessor">#include &quot;<a class="code" href="a00349.html">med_utils.h</a>&quot;</span>
+<a name="l00028"></a>00028 
+<a name="l00029"></a>00029 <span class="preprocessor">#include &quot;<a class="code" href="a00340.html">med_hdfi21.h</a>&quot;</span>
+<a name="l00030"></a>00030 <span class="preprocessor">#include &quot;<a class="code" href="a00341.html">med_hdfi231.h</a>&quot;</span>
+<a name="l00031"></a>00031 <span class="preprocessor">#include &quot;<a class="code" href="a00322.html">med21.h</a>&quot;</span>
+<a name="l00032"></a>00032 
+<a name="l00033"></a>00033 <span class="preprocessor">#include &quot;<a class="code" href="a00296.html">MAJ_21_22.h</a>&quot;</span>
+<a name="l00034"></a>00034 
+<a name="l00035"></a><a class="code" href="a00296_a93bfd3c918bd2205deb4a38b4ca11916.html#a93bfd3c918bd2205deb4a38b4ca11916">00035</a> <span class="keywordtype">void</span> <a class="code" href="a00298_a93bfd3c918bd2205deb4a38b4ca11916.html#a93bfd3c918bd2205deb4a38b4ca11916">MAJ_21_22_champs</a>(<a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid)
+<a name="l00036"></a>00036 {
+<a name="l00037"></a>00037   <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> gid,eid,pid,mid,did,aid;
+<a name="l00038"></a>00038   <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> ret;
+<a name="l00039"></a>00039   <span class="keywordtype">int</span> n,i,j,k;
+<a name="l00040"></a>00040   <span class="keywordtype">char</span> nom[<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>+1];
+<a name="l00041"></a>00041   <span class="keywordtype">char</span> chemin[<a class="code" href="a00344_a946e73da702a9124f741da789561d75c.html#a946e73da702a9124f741da789561d75c">MED_TAILLE_CHA</a>+<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>+1];
+<a name="l00042"></a>00042   <span class="keywordtype">char</span> maillage[<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>+1];
+<a name="l00043"></a>00043   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> type;
+<a name="l00044"></a>00044   <span class="keywordtype">char</span> *comp, *unit;
+<a name="l00045"></a>00045   <span class="keywordtype">char</span> *nouvelle_chaine;
+<a name="l00046"></a>00046   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ncomp;
+<a name="l00047"></a>00047   <span class="keywordtype">int</span> nent, npdt;
+<a name="l00048"></a>00048   <span class="keywordtype">char</span> noment[<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>+1];
+<a name="l00049"></a>00049   <span class="keywordtype">char</span> nompdt[2*<a class="code" href="a00320_a5ad5e5ac777d6bc82bb6d4ad38d7af53.html#a5ad5e5ac777d6bc82bb6d4ad38d7af53">MED_MAX_PARA</a>+1];
+<a name="l00050"></a>00050   <span class="keywordtype">char</span> oldunidt[<a class="code" href="a00322_a7352829e098e8d56d7428c076075d129.html#a7352829e098e8d56d7428c076075d129">ANCIEN_MED_TAILLE_PNOM</a>+1];
+<a name="l00051"></a>00051   <span class="keywordtype">char</span> unitdt[<a class="code" href="a00320_aa91a291a9736ce1ad33b5be657106edb.html#aa91a291a9736ce1ad33b5be657106edb">MED_TAILLE_PNOM</a>+1];
+<a name="l00052"></a>00052   <span class="keywordtype">char</span> tmp[<a class="code" href="a00320_aecfdcbb63702f8a9b97643d05cc63888.html#aecfdcbb63702f8a9b97643d05cc63888">MED_TAILLE_DESC</a>+1];
+<a name="l00053"></a>00053   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> att;
+<a name="l00054"></a>00054   <span class="keywordtype">char</span> profil[<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>+1];
+<a name="l00055"></a>00055   <span class="keywordtype">char</span> gauss[<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>+1];
+<a name="l00056"></a>00056   <span class="keywordtype">char</span> modele[3];
+<a name="l00057"></a>00057   <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *valr;
+<a name="l00058"></a>00058   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nval;
+<a name="l00059"></a>00059   hid_t hdf_type;
+<a name="l00060"></a>00060   <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> dimd[1];
+<a name="l00061"></a>00061   <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> pdt;
+<a name="l00062"></a>00062   
+<a name="l00063"></a>00063 
+<a name="l00064"></a>00064   <span class="comment">/* Lecture du nombre de champs */</span>
+<a name="l00065"></a>00065   n = 0;
+<a name="l00066"></a>00066   <a class="code" href="a00338_a53a598540b189068e5b56a67dfe1320a.html#a53a598540b189068e5b56a67dfe1320a">_MEDnObjets</a>(fid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a85e63d51cfcc44545c55f6941555c5df.html#a85e63d51cfcc44545c55f6941555c5df">MED_CHA</a>),&amp;n);
+<a name="l00067"></a>00067   <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(n &lt; 0,<span class="stringliteral">&quot;Erreur a la lecture du nombre de champ&quot;</span>,NULL);
+<a name="l00068"></a>00068 
+<a name="l00069"></a>00069   <span class="keywordflow">for</span> (i=0;i&lt;n;i++) {
+<a name="l00070"></a>00070     <span class="comment">/* on recupere le nom du champ */</span>
+<a name="l00071"></a>00071     ret = <a class="code" href="a00338_a4b64ee9bc2dbc2ffa32d72d7c1538401.html#a4b64ee9bc2dbc2ffa32d72d7c1538401">_MEDobjetIdentifier</a>(fid,(<span class="keywordtype">char</span> *) <a class="code" href="a00344_a85e63d51cfcc44545c55f6941555c5df.html#a85e63d51cfcc44545c55f6941555c5df">MED_CHA</a>,i,nom);
+<a name="l00072"></a>00072     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Identification d&apos;un champ&quot;</span>,NULL);
+<a name="l00073"></a>00073     fprintf(stdout,<span class="stringliteral">&quot;  &gt;&gt;&gt; Normalisation du champ [%s] \n&quot;</span>,nom);
+<a name="l00074"></a>00074 
+<a name="l00075"></a>00075     <span class="comment">/* on accede au champ */</span>
+<a name="l00076"></a>00076     strcpy(chemin,(<span class="keywordtype">char</span> *)(MED_CHA));
+<a name="l00077"></a>00077     strcat(chemin,nom);
+<a name="l00078"></a>00078     gid = <a class="code" href="a00338_a0d7b9bf5192f404a570f775351a8a536.html#a0d7b9bf5192f404a570f775351a8a536">_MEDdatagroupOuvrir</a>(fid,chemin); 
+<a name="l00079"></a>00079     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(gid &lt; 0,<span class="stringliteral">&quot;Accès au champ&quot;</span>,nom);
+<a name="l00080"></a>00080 
+<a name="l00081"></a>00081     <span class="comment">/* Lecture du nombre de composantes */</span> 
+<a name="l00082"></a>00082     ret = <a class="code" href="a00338_a652ae7052a4ac03bc148797be71d789d.html#a652ae7052a4ac03bc148797be71d789d">_MEDattrEntierLire</a>(gid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a9093ad026ef70fb3ddfaf8059863df2c.html#a9093ad026ef70fb3ddfaf8059863df2c">MED_NOM_NCO</a>),&amp;ncomp);
+<a name="l00083"></a>00083     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Lecture du nombre de composante&quot;</span>,NULL);
+<a name="l00084"></a>00084 
+<a name="l00085"></a>00085     <span class="comment">/* Lecture du type du champ */</span>
+<a name="l00086"></a>00086     ret = <a class="code" href="a00338_a652ae7052a4ac03bc148797be71d789d.html#a652ae7052a4ac03bc148797be71d789d">_MEDattrEntierLire</a>(gid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a975f2929c095d3a428cff4412176d47c.html#a975f2929c095d3a428cff4412176d47c">MED_NOM_TYP</a>),&amp;type);
+<a name="l00087"></a>00087     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Lecture du type du champ&quot;</span>,NULL);
+<a name="l00088"></a>00088 
+<a name="l00089"></a>00089     <span class="comment">/* Normalisation des nom et unites des composantes */</span>
+<a name="l00090"></a>00090     comp = (<span class="keywordtype">char</span> *) malloc(ncomp*<a class="code" href="a00322_a7352829e098e8d56d7428c076075d129.html#a7352829e098e8d56d7428c076075d129">ANCIEN_MED_TAILLE_PNOM</a>+1);
+<a name="l00091"></a>00091     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(comp == NULL,NULL,NULL);
+<a name="l00092"></a>00092     unit = (<span class="keywordtype">char</span> *) malloc(ncomp*<a class="code" href="a00322_a7352829e098e8d56d7428c076075d129.html#a7352829e098e8d56d7428c076075d129">ANCIEN_MED_TAILLE_PNOM</a>+1);
+<a name="l00093"></a>00093     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(unit == NULL,NULL,NULL);
+<a name="l00094"></a>00094     nouvelle_chaine = (<span class="keywordtype">char</span> *) malloc(ncomp*<a class="code" href="a00320_aa91a291a9736ce1ad33b5be657106edb.html#aa91a291a9736ce1ad33b5be657106edb">MED_TAILLE_PNOM</a>+1);
+<a name="l00095"></a>00095     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(nouvelle_chaine == NULL,NULL,NULL);
+<a name="l00096"></a>00096 
+<a name="l00097"></a>00097     ret = <a class="code" href="a00338_af486580481f12d4792b3872780f5fb99.html#af486580481f12d4792b3872780f5fb99">_MEDattrStringLire</a>(gid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a4508ac800b43e951688ab10dfefb2fca.html#a4508ac800b43e951688ab10dfefb2fca">MED_NOM_NOM</a>),ncomp*<a class="code" href="a00322_a7352829e098e8d56d7428c076075d129.html#a7352829e098e8d56d7428c076075d129">ANCIEN_MED_TAILLE_PNOM</a>,comp);
+<a name="l00098"></a>00098     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Lecture des noms des composantes du champ&quot;</span>,NULL);
+<a name="l00099"></a>00099     <a class="code" href="a00329_aac151527c24505197158190ccf0f3572.html#aac151527c24505197158190ccf0f3572">_MED23v30stringConvert</a>(nouvelle_chaine, <a class="code" href="a00320_aa91a291a9736ce1ad33b5be657106edb.html#aa91a291a9736ce1ad33b5be657106edb">MED_TAILLE_PNOM</a>,
+<a name="l00100"></a>00100                            comp, ANCIEN_MED_TAILLE_PNOM, ncomp );
+<a name="l00101"></a>00101 <span class="comment">/*     MAJ_21_22_chaine(comp,nouvelle_chaine,ncomp); */</span>
+<a name="l00102"></a>00102     H5Adelete(gid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a4508ac800b43e951688ab10dfefb2fca.html#a4508ac800b43e951688ab10dfefb2fca">MED_NOM_NOM</a>));
+<a name="l00103"></a>00103     ret = <a class="code" href="a00338_acffc809464d36ddd799e78069be4ad40.html#acffc809464d36ddd799e78069be4ad40">_MEDattrStringEcrire</a>(gid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a4508ac800b43e951688ab10dfefb2fca.html#a4508ac800b43e951688ab10dfefb2fca">MED_NOM_NOM</a>),<a class="code" href="a00320_aa91a291a9736ce1ad33b5be657106edb.html#aa91a291a9736ce1ad33b5be657106edb">MED_TAILLE_PNOM</a>*ncomp,nouvelle_chaine);
+<a name="l00104"></a>00104     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Ecriture des nouveaux noms des composantes du champ&quot;</span>,NULL);  
+<a name="l00105"></a>00105     free(comp);
+<a name="l00106"></a>00106 
+<a name="l00107"></a>00107     ret = <a class="code" href="a00338_af486580481f12d4792b3872780f5fb99.html#af486580481f12d4792b3872780f5fb99">_MEDattrStringLire</a>(gid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a7f355209cf332de5221058705ca36fe0.html#a7f355209cf332de5221058705ca36fe0">MED_NOM_UNI</a>),ncomp*ANCIEN_MED_TAILLE_PNOM,unit);
+<a name="l00108"></a>00108     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Lecture des unités des composantes du champ&quot;</span>,NULL);
+<a name="l00109"></a>00109     <a class="code" href="a00329_aac151527c24505197158190ccf0f3572.html#aac151527c24505197158190ccf0f3572">_MED23v30stringConvert</a>(nouvelle_chaine, <a class="code" href="a00320_aa91a291a9736ce1ad33b5be657106edb.html#aa91a291a9736ce1ad33b5be657106edb">MED_TAILLE_PNOM</a>,
+<a name="l00110"></a>00110                            unit, ANCIEN_MED_TAILLE_PNOM, ncomp );
+<a name="l00111"></a>00111 <span class="comment">/*     MAJ_21_22_chaine(unit,nouvelle_chaine,ncomp); */</span>
+<a name="l00112"></a>00112     H5Adelete(gid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a7f355209cf332de5221058705ca36fe0.html#a7f355209cf332de5221058705ca36fe0">MED_NOM_UNI</a>));
+<a name="l00113"></a>00113     ret = <a class="code" href="a00338_acffc809464d36ddd799e78069be4ad40.html#acffc809464d36ddd799e78069be4ad40">_MEDattrStringEcrire</a>(gid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a7f355209cf332de5221058705ca36fe0.html#a7f355209cf332de5221058705ca36fe0">MED_NOM_UNI</a>),<a class="code" href="a00320_aa91a291a9736ce1ad33b5be657106edb.html#aa91a291a9736ce1ad33b5be657106edb">MED_TAILLE_PNOM</a>*ncomp,nouvelle_chaine);
+<a name="l00114"></a>00114     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Ecriture des nouvelles unités des composantes du champ&quot;</span>,NULL);  
+<a name="l00115"></a>00115     free(unit);
+<a name="l00116"></a>00116 
+<a name="l00117"></a>00117     free(nouvelle_chaine);
+<a name="l00118"></a>00118     fprintf(stdout,<span class="stringliteral">&quot;  ... Normalisation des noms et unités des composantes effectuée...\n&quot;</span>);
+<a name="l00119"></a>00119 
+<a name="l00120"></a>00120     <span class="comment">/* On ajoute le groupe HDF correspondant au maillage */</span>
+<a name="l00121"></a>00121     <span class="comment">/* On recupere le nom du maillage par defaut */</span>
+<a name="l00122"></a>00122     nent = 0;
+<a name="l00123"></a>00123     <a class="code" href="a00338_a53a598540b189068e5b56a67dfe1320a.html#a53a598540b189068e5b56a67dfe1320a">_MEDnObjets</a>(gid,(<span class="keywordtype">char</span> *)(<span class="stringliteral">&quot;./&quot;</span>),&amp;nent);
+<a name="l00124"></a>00124     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(nent &lt; 0,<span class="stringliteral">&quot;Erreur a la lecture du nombre d&apos;entité dans un champ&quot;</span>,NULL);
+<a name="l00125"></a>00125     <span class="keywordflow">for</span> (j=0;j&lt;nent;j++) {
+<a name="l00126"></a>00126       <span class="comment">/* on recupere le nom du groupe HDF correspondant a l&apos;entite */</span> 
+<a name="l00127"></a>00127       ret = <a class="code" href="a00338_a4b64ee9bc2dbc2ffa32d72d7c1538401.html#a4b64ee9bc2dbc2ffa32d72d7c1538401">_MEDobjetIdentifier</a>(gid,(<span class="keywordtype">char</span> *)(<span class="stringliteral">&quot;./&quot;</span>),j,noment);
+<a name="l00128"></a>00128       <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Identification des objets de niveau 1 dans le champ&quot;</span>,NULL);
+<a name="l00129"></a>00129 
+<a name="l00130"></a>00130       <span class="comment">/* On ouvre le groupe HDF */</span>
+<a name="l00131"></a>00131       eid = <a class="code" href="a00338_a0d7b9bf5192f404a570f775351a8a536.html#a0d7b9bf5192f404a570f775351a8a536">_MEDdatagroupOuvrir</a>(gid,noment);
+<a name="l00132"></a>00132       <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(eid &lt; 0,<span class="stringliteral">&quot;Ouverture du groupe HDF de niveau 1&quot;</span>,NULL);
+<a name="l00133"></a>00133 
+<a name="l00134"></a>00134       <span class="comment">/* On recupere le nombre de pas de temps */</span>
+<a name="l00135"></a>00135       npdt = 0;
+<a name="l00136"></a>00136       <a class="code" href="a00338_a53a598540b189068e5b56a67dfe1320a.html#a53a598540b189068e5b56a67dfe1320a">_MEDnObjets</a>(eid,(<span class="keywordtype">char</span> *)(<span class="stringliteral">&quot;./&quot;</span>),&amp;npdt);
+<a name="l00137"></a>00137       <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(nent &lt; 0,<span class="stringliteral">&quot;Erreur a la lecture du nombre de pas de temps&quot;</span>,NULL);
+<a name="l00138"></a>00138       <span class="comment">/* On traite chaque pas de temps */</span>
+<a name="l00139"></a>00139       <span class="keywordflow">for</span> (k=0;k&lt;npdt;k++) {
+<a name="l00140"></a>00140         <span class="comment">/* On recupere le nom du groupe HDF correspondant au pas de temps */</span> 
+<a name="l00141"></a>00141         ret = <a class="code" href="a00338_a4b64ee9bc2dbc2ffa32d72d7c1538401.html#a4b64ee9bc2dbc2ffa32d72d7c1538401">_MEDobjetIdentifier</a>(eid,(<span class="keywordtype">char</span> *)(<span class="stringliteral">&quot;./&quot;</span>),k,nompdt);
+<a name="l00142"></a>00142         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Identification des objets de niveau 2 dans le champ&quot;</span>,NULL);
+<a name="l00143"></a>00143         <span class="comment">/* On ouvre le groupe HDF correspondant au pas de temps */</span>
+<a name="l00144"></a>00144         pid = <a class="code" href="a00338_a0d7b9bf5192f404a570f775351a8a536.html#a0d7b9bf5192f404a570f775351a8a536">_MEDdatagroupOuvrir</a>(eid,nompdt);
+<a name="l00145"></a>00145         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(pid &lt; 0,<span class="stringliteral">&quot;Ouverture du groupe HDF de niveau 2&quot;</span>,NULL);
+<a name="l00146"></a>00146 
+<a name="l00147"></a>00147         <span class="comment">/* On lit le pas de temps */</span>
+<a name="l00148"></a>00148         aid = H5Aopen_name(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_ae6057c18e4111fc0638ecc55d819f172.html#ae6057c18e4111fc0638ecc55d819f172">MED_NOM_PDT</a>));
+<a name="l00149"></a>00149         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(aid &lt; 0,<span class="stringliteral">&quot;Ouverture de l&apos;attribut HDF MED_NOM_PDT&quot;</span>,NULL);
+<a name="l00150"></a>00150         hdf_type = H5Aget_type(aid);
+<a name="l00151"></a>00151         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(hdf_type &lt; 0,<span class="stringliteral">&quot;Lecture du type de l&apos;attribut HDF MED_NOM_PDT&quot;</span>,NULL);
+<a name="l00152"></a>00152         ret = H5Aclose(aid);
+<a name="l00153"></a>00153         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Fermeture de l&apos;attribut MED_NOM_PDT&quot;</span>,NULL);
+<a name="l00154"></a>00154         ret = <a class="code" href="a00323_a5a4a3f64e67a961c773a31e3506dc4d5.html#a5a4a3f64e67a961c773a31e3506dc4d5">_MED21attrNumLire</a>(pid,<a class="code" href="a00320_a7d730da9417184bffcdccc90a1749e27.html#a7d730da9417184bffcdccc90a1749e27ad44e111629f7a5811626b87c8b42b3ea">MED_FLOAT64</a>,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_ae6057c18e4111fc0638ecc55d819f172.html#ae6057c18e4111fc0638ecc55d819f172">MED_NOM_PDT</a>),(<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*)(&amp;pdt),hdf_type);
+<a name="l00155"></a>00155         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Lecture du pas de temps dans MED_NOM_PDT&quot;</span>,NULL);
+<a name="l00156"></a>00156         dimd[0] = 1;
+<a name="l00157"></a>00157         <span class="comment">/*      printf(&quot;EGALITE des types : %d \n&quot;,H5Tequal(hdf_type,H5T_NATIVE_DOUBLE)); */</span>
+<a name="l00158"></a>00158         <span class="comment">/*      printf(&quot;Avant conversion : [%f]\n&quot;,pdt); */</span>
+<a name="l00159"></a>00159         <span class="keywordflow">if</span> (! H5Tequal(hdf_type,H5T_NATIVE_DOUBLE)) {
+<a name="l00160"></a>00160           ret = H5Tconvert(hdf_type,H5T_NATIVE_DOUBLE,(hsize_t)*dimd,(<span class="keywordtype">void</span> *)(&amp;pdt),NULL,0);
+<a name="l00161"></a>00161           <span class="comment">/*    printf(&quot;Après conversion éventuelle : [%f] \n&quot;,pdt); */</span>
+<a name="l00162"></a>00162           <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Conversion du pas de temps&quot;</span>,NULL);
+<a name="l00163"></a>00163         }
+<a name="l00164"></a>00164         H5Tclose(hdf_type);
+<a name="l00165"></a>00165         H5Adelete(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_ae6057c18e4111fc0638ecc55d819f172.html#ae6057c18e4111fc0638ecc55d819f172">MED_NOM_PDT</a>));
+<a name="l00166"></a>00166         ret = <a class="code" href="a00338_ab6c944f8e678bb4f0bd49c95fcb98140.html#ab6c944f8e678bb4f0bd49c95fcb98140">_MEDattrFloatEcrire</a>(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_ae6057c18e4111fc0638ecc55d819f172.html#ae6057c18e4111fc0638ecc55d819f172">MED_NOM_PDT</a>),&amp;pdt);
+<a name="l00167"></a>00167         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Ecriture du nouveau pas de temps&quot;</span>,NULL);
+<a name="l00168"></a>00168 
+<a name="l00169"></a>00169         <span class="comment">/* On met a jour l&apos;unité du pas de temps : 8 -&gt; 16 caractères </span>
+<a name="l00170"></a>00170 <span class="comment">           Si on rencontre &quot;        &quot; =&gt; on ecrit &quot;&quot; </span>
+<a name="l00171"></a>00171 <span class="comment">        */</span>
+<a name="l00172"></a>00172         ret = <a class="code" href="a00338_af486580481f12d4792b3872780f5fb99.html#af486580481f12d4792b3872780f5fb99">_MEDattrStringLire</a>(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a7f355209cf332de5221058705ca36fe0.html#a7f355209cf332de5221058705ca36fe0">MED_NOM_UNI</a>),ANCIEN_MED_TAILLE_PNOM,oldunidt);
+<a name="l00173"></a>00173         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Lecture de l&apos;unite du pas de temps&quot;</span>,NULL);
+<a name="l00174"></a>00174         <span class="keywordflow">if</span> (! strcmp(oldunidt,<a class="code" href="a00322_aae31b202194f0addb7c68e670ea26a4f.html#aae31b202194f0addb7c68e670ea26a4f">ANCIEN_MED_BLANC_PNOM</a>))
+<a name="l00175"></a>00175           strcpy(unitdt,<span class="stringliteral">&quot;&quot;</span>);
+<a name="l00176"></a>00176         <span class="keywordflow">else</span> {
+<a name="l00177"></a>00177 <span class="comment">/*        MAJ_21_22_chaine(oldunidt,unitdt,1); */</span>
+<a name="l00178"></a>00178           <a class="code" href="a00329_aac151527c24505197158190ccf0f3572.html#aac151527c24505197158190ccf0f3572">_MED23v30stringConvert</a>(unitdt, <a class="code" href="a00320_aa91a291a9736ce1ad33b5be657106edb.html#aa91a291a9736ce1ad33b5be657106edb">MED_TAILLE_PNOM</a>,
+<a name="l00179"></a>00179                                  oldunidt, ANCIEN_MED_TAILLE_PNOM, 1 );
+<a name="l00180"></a>00180 
+<a name="l00181"></a>00181         }
+<a name="l00182"></a>00182         H5Adelete(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a7f355209cf332de5221058705ca36fe0.html#a7f355209cf332de5221058705ca36fe0">MED_NOM_UNI</a>));
+<a name="l00183"></a>00183         ret = <a class="code" href="a00338_acffc809464d36ddd799e78069be4ad40.html#acffc809464d36ddd799e78069be4ad40">_MEDattrStringEcrire</a>(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a7f355209cf332de5221058705ca36fe0.html#a7f355209cf332de5221058705ca36fe0">MED_NOM_UNI</a>),<a class="code" href="a00320_aa91a291a9736ce1ad33b5be657106edb.html#aa91a291a9736ce1ad33b5be657106edb">MED_TAILLE_PNOM</a>,unitdt);
+<a name="l00184"></a>00184         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Ecriture de la nouvelle unité du pas de temps&quot;</span>,NULL);  
+<a name="l00185"></a>00185         <span class="comment">/* On recupere le nom du maillage */</span>
+<a name="l00186"></a>00186         ret = <a class="code" href="a00338_af486580481f12d4792b3872780f5fb99.html#af486580481f12d4792b3872780f5fb99">_MEDattrStringLire</a>(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_aec91ff655e907dd5a4be74dcf6b7ea06.html#aec91ff655e907dd5a4be74dcf6b7ea06">MED_NOM_MAI</a>),<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>,maillage);
+<a name="l00187"></a>00187         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Lecture du nom du maillage du pas de temps&quot;</span>,NULL);
+<a name="l00188"></a>00188         <span class="comment">/* On cree le groupe HDF de niveau 3 qui porte le nom du maillage */</span>
+<a name="l00189"></a>00189         mid = <a class="code" href="a00338_a035c29f443adaee7c8aa4550ef59b807.html#a035c29f443adaee7c8aa4550ef59b807">_MEDdatagroupCreer</a>(pid,maillage);
+<a name="l00190"></a>00190         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(mid &lt; 0,<span class="stringliteral">&quot;Creation du groupe HDF de niveau 3&quot;</span>,NULL);
+<a name="l00191"></a>00191         <span class="comment">/* Déplacement de l&apos;attribut MED_NOM_NBR */</span>
+<a name="l00192"></a>00192         ret = <a class="code" href="a00338_a652ae7052a4ac03bc148797be71d789d.html#a652ae7052a4ac03bc148797be71d789d">_MEDattrEntierLire</a>(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_ae7f8e1e608e0720d32f83e43d77c2037.html#ae7f8e1e608e0720d32f83e43d77c2037">MED_NOM_NBR</a>),&amp;nval);
+<a name="l00193"></a>00193         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Lecture de l&apos;attribut MED_NOM_NBR&quot;</span>,NULL);
+<a name="l00194"></a>00194         ret = H5Adelete(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_ae7f8e1e608e0720d32f83e43d77c2037.html#ae7f8e1e608e0720d32f83e43d77c2037">MED_NOM_NBR</a>));
+<a name="l00195"></a>00195         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Destruction de l&apos;attribut MED_NOM_NBR&quot;</span>,NULL);
+<a name="l00196"></a>00196         ret = <a class="code" href="a00338_a99537f106bc622b016c85f7f4d7f387f.html#a99537f106bc622b016c85f7f4d7f387f">_MEDattrEntierEcrire</a>(mid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_ae7f8e1e608e0720d32f83e43d77c2037.html#ae7f8e1e608e0720d32f83e43d77c2037">MED_NOM_NBR</a>),&amp;nval);
+<a name="l00197"></a>00197         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Ecriture de l&apos;attribut MED_NOM_NBR au niveau 3&quot;</span>,NULL);
+<a name="l00198"></a>00198 
+<a name="l00199"></a>00199         <span class="comment">/* Deplacement de l&apos;attribut MED_NOM_NGA */</span>
+<a name="l00200"></a>00200         ret = <a class="code" href="a00338_a652ae7052a4ac03bc148797be71d789d.html#a652ae7052a4ac03bc148797be71d789d">_MEDattrEntierLire</a>(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a1ef42826f0dd74bd2f6ef45f826dbcf1.html#a1ef42826f0dd74bd2f6ef45f826dbcf1">MED_NOM_NGA</a>),&amp;att);
+<a name="l00201"></a>00201         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Lecture de l&apos;attribut MED_NOM_NGA&quot;</span>,NULL);
+<a name="l00202"></a>00202         <span class="keywordflow">if</span> ( (att &gt; 100) || (att &lt; 1)) {
+<a name="l00203"></a>00203           <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Detection d&apos;un nombre incorrect de nombre de points de gauss, réinitialisation à 1&quot;</span>);
+<a name="l00204"></a>00204           att=1;
+<a name="l00205"></a>00205         }
+<a name="l00206"></a>00206         ret = H5Adelete(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a1ef42826f0dd74bd2f6ef45f826dbcf1.html#a1ef42826f0dd74bd2f6ef45f826dbcf1">MED_NOM_NGA</a>));
+<a name="l00207"></a>00207         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Destruction de l&apos;attribut MED_NOM_NGA&quot;</span>,NULL);
+<a name="l00208"></a>00208         ret = <a class="code" href="a00338_a99537f106bc622b016c85f7f4d7f387f.html#a99537f106bc622b016c85f7f4d7f387f">_MEDattrEntierEcrire</a>(mid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a1ef42826f0dd74bd2f6ef45f826dbcf1.html#a1ef42826f0dd74bd2f6ef45f826dbcf1">MED_NOM_NGA</a>),&amp;att);
+<a name="l00209"></a>00209         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Ecriture de l&apos;attribut MED_NOM_NGA au niveau 3&quot;</span>,NULL);
+<a name="l00210"></a>00210 
+<a name="l00211"></a>00211         <span class="comment">/* Ecriture de l&apos;attribut MED_NOM_GAU : localisation des points de Gauss */</span>
+<a name="l00212"></a>00212         <span class="keywordflow">if</span> (att &lt; 2)
+<a name="l00213"></a>00213           strcpy(gauss,(<span class="keywordtype">char</span> *)(<a class="code" href="a00320_a2d0fb72f143294dd276709da6f82dc98.html#a2d0fb72f143294dd276709da6f82dc98">MED_NOM_BLANC</a>));
+<a name="l00214"></a>00214         <span class="keywordflow">else</span> {
+<a name="l00215"></a>00215           <span class="comment">/* on prend en compte que les 3 dernières lettres de noment + nb de points de Gauss : </span>
+<a name="l00216"></a>00216 <span class="comment">             Exemple : &quot;MAI.QU4&quot; et 4 points =&gt; gauss=&quot;QU4_04_LocalisationDefaut_IMPORT */</span>
+<a name="l00217"></a>00217           strcpy(gauss,noment+4);
+<a name="l00218"></a>00218           <span class="comment">/* on recupere dans le nom, le nombre de points de Gauss */</span>
+<a name="l00219"></a>00219           <span class="comment">/*      sprintf(modele,&quot;%0*d&quot;,2,att);*/</span>
+<a name="l00220"></a>00220           sprintf(modele, <span class="stringliteral">&quot;%02d&quot;</span>  ,(<span class="keywordtype">int</span>) att);
+<a name="l00221"></a>00221           modele[2] = <span class="charliteral">&apos;\0&apos;</span>;
+<a name="l00222"></a>00222           strcat(gauss,<span class="stringliteral">&quot;_&quot;</span>);
+<a name="l00223"></a>00223           strcat(gauss,modele);
+<a name="l00224"></a>00224           strcat(gauss,<span class="stringliteral">&quot;_LocalisationDefaut_IMPORT&quot;</span>);
+<a name="l00225"></a>00225           <span class="comment">/* On ecrit en plus la localisation bidon des points de Gauss */</span>
+<a name="l00226"></a>00226           <a class="code" href="a00301_aae6107096bd7aeea6764c0f0d0c5fafe.html#aae6107096bd7aeea6764c0f0d0c5fafe">MAJ_21_22_localisation_Gauss</a>(fid,gauss,att);
+<a name="l00227"></a>00227         }
+<a name="l00228"></a>00228         ret = <a class="code" href="a00338_acffc809464d36ddd799e78069be4ad40.html#acffc809464d36ddd799e78069be4ad40">_MEDattrStringEcrire</a>(mid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a8ba5c0b3e75ccd59b263ed18837c4a94.html#a8ba5c0b3e75ccd59b263ed18837c4a94">MED_NOM_GAU</a>),<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>,gauss);
+<a name="l00229"></a>00229         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Ecriture de la localisation des points de Gauss&quot;</span>,NULL);
+<a name="l00230"></a>00230 
+<a name="l00231"></a>00231         <span class="comment">/* Deplacement de l&apos;attribut MED_NOM_PFL */</span>
+<a name="l00232"></a>00232         ret = <a class="code" href="a00338_af486580481f12d4792b3872780f5fb99.html#af486580481f12d4792b3872780f5fb99">_MEDattrStringLire</a>(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a7f0b01d2c3f1b1530cac18f7e6d7c289.html#a7f0b01d2c3f1b1530cac18f7e6d7c289">MED_NOM_PFL</a>),<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>,profil);
+<a name="l00233"></a>00233         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Lecture de l&apos;attribut MED_NOM_PFL&quot;</span>,NULL);
+<a name="l00234"></a>00234         ret = H5Adelete(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a7f0b01d2c3f1b1530cac18f7e6d7c289.html#a7f0b01d2c3f1b1530cac18f7e6d7c289">MED_NOM_PFL</a>));
+<a name="l00235"></a>00235         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Desctruction de l&apos;attribut MED_NOM_PFL&quot;</span>,NULL);
+<a name="l00236"></a>00236         ret = <a class="code" href="a00338_acffc809464d36ddd799e78069be4ad40.html#acffc809464d36ddd799e78069be4ad40">_MEDattrStringEcrire</a>(mid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a7f0b01d2c3f1b1530cac18f7e6d7c289.html#a7f0b01d2c3f1b1530cac18f7e6d7c289">MED_NOM_PFL</a>),<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>,profil);
+<a name="l00237"></a>00237         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Ecriture de l&apos;attribut MED_NOM_PFL au niveau 3&quot;</span>,NULL);
+<a name="l00238"></a>00238 
+<a name="l00239"></a>00239         <span class="comment">/* On ferme le groupe HDF de niveau 3 */</span>
+<a name="l00240"></a>00240         ret = <a class="code" href="a00338_ae3ba55fd16381090e93f0ee8e3f9e6c6.html#ae3ba55fd16381090e93f0ee8e3f9e6c6">_MEDdatagroupFermer</a>(mid);
+<a name="l00241"></a>00241         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;fermeture du groupe HDF de niveau 3&quot;</span>,NULL);
+<a name="l00242"></a>00242 
+<a name="l00243"></a>00243         <span class="comment">/* On deplace du niveau 2 -&gt; 3, le dataset MED_NOM_CO </span>
+<a name="l00244"></a>00244 <span class="comment">           avec si type==MED_FLOAT_64 une conversion au passage */</span>
+<a name="l00245"></a>00245         strcpy(tmp,maillage);
+<a name="l00246"></a>00246         strcat(tmp,<span class="stringliteral">&quot;/&quot;</span>);
+<a name="l00247"></a>00247         strcat(tmp,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a7a46de84c260ed4c22887ace68ebf16f.html#a7a46de84c260ed4c22887ace68ebf16f">MED_NOM_CO</a>));
+<a name="l00248"></a>00248 
+<a name="l00249"></a>00249         <span class="keywordflow">if</span> (type != <a class="code" href="a00320_a7d730da9417184bffcdccc90a1749e27.html#a7d730da9417184bffcdccc90a1749e27ad44e111629f7a5811626b87c8b42b3ea">MED_FLOAT64</a>) {
+<a name="l00250"></a>00250           ret = H5Gmove(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a7a46de84c260ed4c22887ace68ebf16f.html#a7a46de84c260ed4c22887ace68ebf16f">MED_NOM_CO</a>),tmp);
+<a name="l00251"></a>00251           <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Transfert du dataset MED_NOM_CO&quot;</span>,NULL);
+<a name="l00252"></a>00252         } <span class="keywordflow">else</span> {
+<a name="l00253"></a>00253           did = <a class="code" href="a00338_ae51c738b7cd88c8caa21d8e4f2a9f1b0.html#ae51c738b7cd88c8caa21d8e4f2a9f1b0">_MEDdatasetOuvrir</a>(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a7a46de84c260ed4c22887ace68ebf16f.html#a7a46de84c260ed4c22887ace68ebf16f">MED_NOM_CO</a>));
+<a name="l00254"></a>00254           <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(did &lt; 0,<span class="stringliteral">&quot;Ouverture du dataset HDF des valeurs&quot;</span>,NULL);
+<a name="l00255"></a>00255           hdf_type = H5Dget_type(did);
+<a name="l00256"></a>00256           <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(hdf_type &lt; 0,<span class="stringliteral">&quot;Lecture du type HDF de stockage des valeurs&quot;</span>,NULL);
+<a name="l00257"></a>00257           ret = <a class="code" href="a00338_a80045cece261986ef1aafc898da2b7f6.html#a80045cece261986ef1aafc898da2b7f6">_MEDdatasetFermer</a>(did);
+<a name="l00258"></a>00258           <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Fermeture du dataset HDF des valeurs&quot;</span>,NULL);
+<a name="l00259"></a>00259           valr = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>)*ncomp*nval);
+<a name="l00260"></a>00260           <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(valr == NULL,NULL,NULL);
+<a name="l00261"></a>00261           ret = <a class="code" href="a00324_ae2b1efc679b05b6a7e210495e2f757e2.html#ae2b1efc679b05b6a7e210495e2f757e2">_MED21datasetNumLire</a>(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a7a46de84c260ed4c22887ace68ebf16f.html#a7a46de84c260ed4c22887ace68ebf16f">MED_NOM_CO</a>),<a class="code" href="a00320_a7d730da9417184bffcdccc90a1749e27.html#a7d730da9417184bffcdccc90a1749e27ad44e111629f7a5811626b87c8b42b3ea">MED_FLOAT64</a>,
+<a name="l00262"></a>00262                                       <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>,ncomp,<a class="code" href="a00320_a35be9cde013c9b7c347dfd0e821a1bcb.html#a35be9cde013c9b7c347dfd0e821a1bcb">MED_ALL</a>,
+<a name="l00263"></a>00263                                       0,NULL,<a class="code" href="a00320_a5cc33ac324dc7c7d4b6b3cc8225cbb84.html#a5cc33ac324dc7c7d4b6b3cc8225cbb84">MED_NOPG</a>,
+<a name="l00264"></a>00264                                       (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) valr,hdf_type);
+<a name="l00265"></a>00265           <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Lecture des valeurs du champ&quot;</span>,NULL);
+<a name="l00266"></a>00266           H5Gunlink(pid,(<span class="keywordtype">char</span> *)(<a class="code" href="a00344_a7a46de84c260ed4c22887ace68ebf16f.html#a7a46de84c260ed4c22887ace68ebf16f">MED_NOM_CO</a>));
+<a name="l00267"></a>00267           dimd[0] = ncomp*nval;
+<a name="l00268"></a>00268           ret = H5Tconvert(hdf_type,H5T_NATIVE_DOUBLE,(hsize_t)*dimd,(<span class="keywordtype">void</span> *)valr,NULL,0);
+<a name="l00269"></a>00269           <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Conversion des valeurs&quot;</span>,NULL);
+<a name="l00270"></a>00270           H5Tclose(hdf_type);
+<a name="l00271"></a>00271           <span class="comment">/* On reporte les valeurs dans le groupe HDF TMP */</span>
+<a name="l00272"></a>00272           ret = <a class="code" href="a00341_a847e82fea78b455c3663c135bbecf3f0.html#a847e82fea78b455c3663c135bbecf3f0">_MED231datasetNumEcrire</a>(pid,tmp,<a class="code" href="a00320_a7d730da9417184bffcdccc90a1749e27.html#a7d730da9417184bffcdccc90a1749e27ad44e111629f7a5811626b87c8b42b3ea">MED_FLOAT64</a>,<a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>,
+<a name="l00273"></a>00273                                         ncomp,<a class="code" href="a00320_a35be9cde013c9b7c347dfd0e821a1bcb.html#a35be9cde013c9b7c347dfd0e821a1bcb">MED_ALL</a>,<a class="code" href="a00320_ab82d1519c79facaa7859fe36b0f774b8.html#ab82d1519c79facaa7859fe36b0f774b8">MED_NOPF</a>,<a class="code" href="a00320_afc7ce1d801c10d9348a0349e664fb9e5.html#afc7ce1d801c10d9348a0349e664fb9e5a0b41b82b290c4e291f71cbeb220a348d">MED_NO_PFLMOD</a>,0,<a class="code" href="a00320_a5cc33ac324dc7c7d4b6b3cc8225cbb84.html#a5cc33ac324dc7c7d4b6b3cc8225cbb84">MED_NOPG</a>,dimd,
+<a name="l00274"></a>00274                                         (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) valr);
+<a name="l00275"></a>00275           <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Ecriture des valeurs après conversion&quot;</span>,NULL);
+<a name="l00276"></a>00276           free(valr);
+<a name="l00277"></a>00277         }
+<a name="l00278"></a>00278           
+<a name="l00279"></a>00279         <span class="comment">/* On ferme le groupe HDF de niveau 2*/</span>
+<a name="l00280"></a>00280         ret = <a class="code" href="a00338_ae3ba55fd16381090e93f0ee8e3f9e6c6.html#ae3ba55fd16381090e93f0ee8e3f9e6c6">_MEDdatagroupFermer</a>(pid);
+<a name="l00281"></a>00281         <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Fermeture du groupe HDF de niveau 2&quot;</span>,NULL);
+<a name="l00282"></a>00282       }
+<a name="l00283"></a>00283 
+<a name="l00284"></a>00284       <span class="comment">/* On ferme le groupe HDF */</span>
+<a name="l00285"></a>00285       ret = <a class="code" href="a00338_ae3ba55fd16381090e93f0ee8e3f9e6c6.html#ae3ba55fd16381090e93f0ee8e3f9e6c6">_MEDdatagroupFermer</a>(eid);
+<a name="l00286"></a>00286       <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Fermeture du groupe HDF de niveau 1&quot;</span>,NULL);
+<a name="l00287"></a>00287     }
+<a name="l00288"></a>00288     fprintf(stdout,<span class="stringliteral">&quot;  ... Normalisation de tous les pas de temps effectuée...\n&quot;</span>);
+<a name="l00289"></a>00289 
+<a name="l00290"></a>00290     <span class="comment">/* On ferme tout */</span>
+<a name="l00291"></a>00291     ret = <a class="code" href="a00338_ae3ba55fd16381090e93f0ee8e3f9e6c6.html#ae3ba55fd16381090e93f0ee8e3f9e6c6">_MEDdatagroupFermer</a>(gid);
+<a name="l00292"></a>00292     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Fermeture de l&apos;accès au champ&quot;</span>,NULL);
+<a name="l00293"></a>00293     
+<a name="l00294"></a>00294     fprintf(stdout,<span class="stringliteral">&quot;  &gt;&gt;&gt; Normalisation du champ [%s] : ... OK ... \n&quot;</span>,nom);
+<a name="l00295"></a>00295   }
+<a name="l00296"></a>00296 }
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:34 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

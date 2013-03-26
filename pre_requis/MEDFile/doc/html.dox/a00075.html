@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: usecases/c/UsesCase_MEDinterp_3.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+<h1>usecases/c/UsesCase_MEDinterp_3.c</h1><div class="fragment"><pre class="fragment"><span class="comment">/*  This file is part of MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<span class="comment"> *  (at your option) any later version.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="comment"> */</span>
+
+<span class="comment">/* </span>
+<span class="comment"> * Interp use case 1 : read an interpolation family with a generic access by an iterator.</span>
+<span class="comment"> * In this example, the interpolation family can be used with </span>
+<span class="comment"> * the TEMPERATURE field of UsesCase_MEDfield_10 use case</span>
+<span class="comment"> */</span>
+
+<span class="preprocessor">#include &lt;med.h&gt;</span>
+<span class="preprocessor">#define MESGERR 1</span>
+<span class="preprocessor"></span><span class="preprocessor">#include &lt;med_utils.h&gt;</span>
+
+<span class="preprocessor">#include &lt;string.h&gt;</span>
+
+<span class="keywordtype">int</span> <a name="a0"></a><a class="code" href="a00750_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv) {
+  <a name="a1"></a><a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid;
+  <span class="keywordtype">char</span>              interpname[<a name="a2"></a><a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+  <a name="a3"></a><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>           ninterp                    =0;
+  <span class="keywordtype">int</span>               it                         =0;
+  <a name="a4"></a><a class="code" href="a00321_a1043613afc3cd2e24785dfc7c0452ab8.html#a1043613afc3cd2e24785dfc7c0452ab8">med_geometry_type</a> geotype                    =<a name="a5"></a><a class="code" href="a00321_a9a2843c7d6eacffdd9377b5bfb8a6de3.html#a9a2843c7d6eacffdd9377b5bfb8a6de3">MED_NONE</a>;
+  <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a>          cellnodes                  =<a name="a6"></a><a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190deea30b70cc2a253ed4141db9a78ba696046">MED_FALSE</a>;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>           nbasisfunc              =0;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>           nvariable               =0;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>           maxdegree                  =0;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>           nmaxcoefficient            =0;
+  <span class="keywordtype">int</span>               basisfuncit                =0;
+  <span class="keywordtype">int</span>               powerit                    =0;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>           ncoefficient            =0;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>*          power                      =NULL;
+  <a name="a7"></a><a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>*        coefficient                =NULL;
+  <span class="keywordtype">int</span>               coefficientit              =0;
+  <span class="keywordtype">int</span> ret=-1;
+
+
+  <span class="comment">/* file creation */</span>
+  fid = <a name="a8"></a><a class="code" href="a01005_ga9376a1654b7bf099c3f8941074c5fdfb.html#ga9376a1654b7bf099c3f8941074c5fdfb" title="Ouverture d&amp;#39;un fichier MED.">MEDfileOpen</a>(<span class="stringliteral">&quot;UsesCase_MEDinterp_1.med&quot;</span>,<a name="a9"></a><a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a616bf8345c622a34f0787f42eb400f25">MED_ACC_RDONLY</a>);
+  <span class="keywordflow">if</span> (fid &lt; 0) {
+    <a name="a10"></a><a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : file creation ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+ 
+  <span class="comment">/* how many interpolation family in the file ? */</span>
+  <span class="keywordflow">if</span> ((ninterp = <a name="a11"></a><a class="code" href="a01007_ga926e9c439534535a36ab17ed0d531f4c.html#ga926e9c439534535a36ab17ed0d531f4c" title="Cette routine renvoie le nombre d&amp;#39;interpolations disponibles dans le fichier...">MEDnInterp</a>(fid)) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read number of interpolation ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  <span class="comment">/* read each interpolation family */</span>
+  <span class="comment">/* with an access by an iterator */</span>
+  <span class="keywordflow">for</span> (it=1; it&lt;= ninterp; it++) {
+
+    <span class="keywordflow">if</span> (<a name="a12"></a><a class="code" href="a01007_ga9627e71ada4bcf04274dce8b0c0d0c7a.html#ga9627e71ada4bcf04274dce8b0c0d0c7a" title="Cette fonction informe des caractéristiques de la fonction d&amp;#39;interpolation n°...">MEDinterpInfo</a>(fid,it,interpname,&amp;geotype,&amp;cellnodes,&amp;nbasisfunc,
+                      &amp;nvariable,&amp;maxdegree,&amp;nmaxcoefficient) &lt; 0) {
+      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : interpolation function information ...&quot;</span>);
+      <span class="keywordflow">goto</span> ERROR;
+    }
+
+    <span class="comment">/* read each basis function */</span>
+    <span class="keywordflow">for</span> ( basisfuncit=1; basisfuncit&lt;= nbasisfunc; ++basisfuncit) {
+      <span class="keywordflow">if</span> ((ncoefficient = <a name="a13"></a><a class="code" href="a01007_ga39b5f9f4822173655561a8e558bc9745.html#ga39b5f9f4822173655561a8e558bc9745" title="Cette routine retourne ne nombre de coefficients/monômes de la fonction de base/forme...">MEDinterpBaseFunctionCoefSize</a>(fid,interpname,basisfuncit) ) &lt;0 ) {
+        <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read number of coefficient in the base function ...&quot;</span>);
+        <span class="keywordflow">goto</span> ERROR;
+      }
+      
+      coefficient = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>*) calloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>),ncoefficient);
+      power       = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>*)   calloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>),nvariable*ncoefficient);
+      
+      <span class="keywordflow">if</span> (<a name="a14"></a><a class="code" href="a01007_ga4b372925585a18f52d243848718c632f.html#ga4b372925585a18f52d243848718c632f" title="Cette routine permet la lecture d&amp;#39;une fonction de base/forme de l&amp;#39;interpolation...">MEDinterpBaseFunctionRd</a>(fid,interpname,basisfuncit,&amp;ncoefficient,power,coefficient) &lt; 0) {
+        <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read base function ...&quot;</span>);
+        free(coefficient); free(power);
+        <span class="keywordflow">goto</span> ERROR;
+      }
+
+      free(coefficient);
+      free(power);
+    }
+
+  }
+
+  ret=0;
+ ERROR:
+  
+  <span class="comment">/* close file */</span>
+  <span class="keywordflow">if</span> (<a name="a15"></a><a class="code" href="a01005_ga12a0e901c376be997a41a073ce426283.html#ga12a0e901c376be997a41a073ce426283" title="Fermeture d&amp;#39;un fichier MED.">MEDfileClose</a>(fid) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : close file ...&quot;</span>);             
+    ret=-1; 
+  } 
+  
+  <span class="keywordflow">return</span> ret;
+}
+</pre></div> </div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:34 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de libmedimport.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_85294a8a9f196cdbd7e42569a8b43d43.html">tools</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_a46d7e16343b264a6f70ad9d6544d474.html">medimport</a>
+  </div>
+</div>
+<div class="contents">
+<h1>libmedimport.c</h1><a href="a00291.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment"> *</span>
+<a name="l00003"></a>00003 <span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment"> *  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment"> *</span>
+<a name="l00009"></a>00009 <span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment"> *</span>
+<a name="l00014"></a>00014 <span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment"> */</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 <span class="comment">/* L&apos;utilisation des med_utils n&apos;est pas optionelle</span>
+<a name="l00019"></a>00019 <span class="comment">   dans l&apos;outil medimport, elle revet cependant deux</span>
+<a name="l00020"></a>00020 <span class="comment">   formes :</span>
+<a name="l00021"></a>00021 <span class="comment">   - Si -DWITH_EXCEPTION EXITIF renvoie une exception MEDerreur</span>
+<a name="l00022"></a>00022 <span class="comment">   - Sinon exécute l&apos;instruction return */</span>
+<a name="l00023"></a>00023 
+<a name="l00024"></a>00024 
+<a name="l00025"></a>00025 <span class="preprocessor">#ifdef HAVE_STDBOOL_H</span>
+<a name="l00026"></a>00026 <span class="preprocessor"></span><span class="preprocessor"># include &lt;stdbool.h&gt;</span>
+<a name="l00027"></a>00027 <span class="preprocessor">#else</span>
+<a name="l00028"></a>00028 <span class="preprocessor"></span><span class="preprocessor"># ifndef HAVE__BOOL</span>
+<a name="l00029"></a>00029 <span class="preprocessor"></span><span class="preprocessor">#  ifdef __cplusplus</span>
+<a name="l00030"></a>00030 <span class="preprocessor"></span><span class="keyword">typedef</span> <span class="keywordtype">bool</span> <a class="code" href="a00291_aeaff0db5524987a2f50d71ac0162ceb2.html#aeaff0db5524987a2f50d71ac0162ceb2">_Bool</a>;
+<a name="l00031"></a>00031 <span class="preprocessor">#  else</span>
+<a name="l00032"></a><a class="code" href="a00291_aeaff0db5524987a2f50d71ac0162ceb2.html#aeaff0db5524987a2f50d71ac0162ceb2">00032</a> <span class="preprocessor"></span><span class="preprocessor">#   define _Bool signed char</span>
+<a name="l00033"></a>00033 <span class="preprocessor"></span><span class="preprocessor">#  endif</span>
+<a name="l00034"></a>00034 <span class="preprocessor"></span><span class="preprocessor"># endif</span>
+<a name="l00035"></a><a class="code" href="a00291_abb452686968e48b67397da5f97445f5b.html#abb452686968e48b67397da5f97445f5b">00035</a> <span class="preprocessor"></span><span class="preprocessor"># define bool _Bool</span>
+<a name="l00036"></a><a class="code" href="a00291_a65e9886d74aaee76545e83dd09011727.html#a65e9886d74aaee76545e83dd09011727">00036</a> <span class="preprocessor"></span><span class="preprocessor"># define false 0</span>
+<a name="l00037"></a><a class="code" href="a00291_a41f9c5fb8b08eb5dc3edce4dcb37fee7.html#a41f9c5fb8b08eb5dc3edce4dcb37fee7">00037</a> <span class="preprocessor"></span><span class="preprocessor"># define true 1</span>
+<a name="l00038"></a><a class="code" href="a00291_a665b0cc9ee2ced31785321d55cde349e.html#a665b0cc9ee2ced31785321d55cde349e">00038</a> <span class="preprocessor"></span><span class="preprocessor"># define __bool_true_false_are_defined 1</span>
+<a name="l00039"></a>00039 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<a name="l00040"></a>00040 <span class="preprocessor"></span>
+<a name="l00041"></a>00041 <span class="comment">/* #ifdef __cplusplus */</span>
+<a name="l00042"></a>00042 <span class="comment">/* extern &quot;C&quot; { */</span>
+<a name="l00043"></a>00043 <span class="comment">/* #endif */</span>
+<a name="l00044"></a>00044 
+<a name="l00045"></a>00045 <span class="comment">/* Pour faciliter la detection autotools */</span>
+<a name="l00046"></a><a class="code" href="a00291_addbfa7540e2d024008e842991c1648f5.html#addbfa7540e2d024008e842991c1648f5">00046</a> <span class="keywordtype">int</span> <a class="code" href="a00291_addbfa7540e2d024008e842991c1648f5.html#addbfa7540e2d024008e842991c1648f5">HAVE_MEDimport</a>=1;
+<a name="l00047"></a>00047 
+<a name="l00048"></a>00048 <span class="comment">/*Inclusion des .h de la version de la bibliothèque courante*/</span>
+<a name="l00049"></a>00049 <span class="preprocessor">#include &lt;<a class="code" href="a00334.html">med_config.h</a>&gt;</span>
+<a name="l00050"></a>00050 <span class="preprocessor">#include &lt;<a class="code" href="a00321.html">med.h</a>&gt;</span>
+<a name="l00051"></a>00051 <span class="preprocessor">#include &lt;<a class="code" href="a00345.html">med_outils.h</a>&gt;</span>
+<a name="l00052"></a>00052 
+<a name="l00053"></a>00053 <span class="preprocessor">#include &lt;stdio.h&gt;</span>
+<a name="l00054"></a>00054 <span class="preprocessor">#include &lt;string.h&gt;</span>
+<a name="l00055"></a>00055 
+<a name="l00056"></a>00056 <span class="comment">/*TODO : En attendant une conversion totale de l&apos;outil libmedimport en 3.0*/</span>
+<a name="l00057"></a>00057 <span class="preprocessor">#include &lt;<a class="code" href="a00327.html">2.3.6/med23v30.h</a>&gt;</span>
+<a name="l00058"></a>00058 <span class="preprocessor">#include &lt;<a class="code" href="a00330.html">2.3.6/med23v30_proto.h</a>&gt;</span>
+<a name="l00059"></a>00059 <span class="preprocessor">#include &quot;<a class="code" href="a00329.html">2.3.6/med23v30_misc.h</a>&quot;</span>
+<a name="l00060"></a>00060 
+<a name="l00061"></a>00061 <span class="preprocessor">#ifdef PPRO_NT</span>
+<a name="l00062"></a>00062 <span class="preprocessor"></span><span class="preprocessor"># include &lt;stdlib.h&gt;</span>
+<a name="l00063"></a>00063 <span class="preprocessor">#else</span>
+<a name="l00064"></a>00064 <span class="preprocessor"></span><span class="preprocessor"># include &lt;libgen.h&gt;</span>
+<a name="l00065"></a>00065 <span class="preprocessor">#endif</span>
+<a name="l00066"></a>00066 <span class="preprocessor"></span>
+<a name="l00067"></a>00067 <span class="comment">/* #ifdef __cplusplus */</span>
+<a name="l00068"></a>00068 <span class="comment">/* } */</span>
+<a name="l00069"></a>00069 <span class="comment">/* #endif */</span>
+<a name="l00070"></a>00070 
+<a name="l00071"></a>00071 <span class="comment">/*Inclusion des .h spécifiques à medimport */</span>
+<a name="l00072"></a>00072 
+<a name="l00073"></a>00073 <span class="comment">/* Interface publique de l&apos;outil medimport */</span>
+<a name="l00074"></a>00074 <span class="comment">/* MEDimport.h == MEDimport.hxx */</span>
+<a name="l00075"></a>00075 <span class="preprocessor">#include &quot;<a class="code" href="a00482.html">MEDimport.h</a>&quot;</span>
+<a name="l00076"></a>00076 <span class="preprocessor">#include &quot;<a class="code" href="a00317.html">MAJ_version.h</a>&quot;</span>
+<a name="l00077"></a>00077 
+<a name="l00078"></a>00078 <span class="comment">/* Interfaces privées à l&apos;outil medimport  */</span>
+<a name="l00079"></a>00079 <span class="preprocessor">#include &quot;<a class="code" href="a00296.html">MAJ_21_22.h</a>&quot;</span>
+<a name="l00080"></a>00080 <span class="preprocessor">#include &quot;<a class="code" href="a00305.html">MAJ_231_232.h</a>&quot;</span>
+<a name="l00081"></a>00081 <span class="preprocessor">#include &quot;<a class="code" href="a00306.html">MAJ_236_300.h</a>&quot;</span>
+<a name="l00082"></a>00082 
+<a name="l00083"></a>00083 
+<a name="l00084"></a>00084 <span class="preprocessor">#ifdef __cplusplus</span>
+<a name="l00085"></a>00085 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> <span class="keywordtype">void</span> <a class="code" href="a00338_aa645db37de32784a120a8deb350095e1.html#aa645db37de32784a120a8deb350095e1">_MEDmodeErreurVerrouiller</a>(<span class="keywordtype">void</span>);
+<a name="l00086"></a>00086 <span class="preprocessor">#endif</span>
+<a name="l00087"></a>00087 <span class="preprocessor"></span>
+<a name="l00088"></a>00088 
+<a name="l00089"></a>00089 
+<a name="l00090"></a><a class="code" href="a00291_a0be58e5f5a3be382a29ab11a18b6b23e.html#a0be58e5f5a3be382a29ab11a18b6b23e">00090</a> <span class="keywordtype">int</span> <a class="code" href="a00482_a19fe92429f3f72558fb4360b8f2c2eb8.html#a19fe92429f3f72558fb4360b8f2c2eb8">MEDimport</a>(<span class="keywordtype">char</span> * filein, <span class="keywordtype">char</span> *  fileout) {
+<a name="l00091"></a>00091 
+<a name="l00092"></a>00092   <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid, gid;
+<a name="l00093"></a>00093   <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> ret;
+<a name="l00094"></a>00094   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> majeur, mineur, release;
+<a name="l00095"></a>00095   <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a> hdfok=<a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190deea30b70cc2a253ed4141db9a78ba696046">MED_FALSE</a>;
+<a name="l00096"></a>00096   <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a> medok=<a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190deea30b70cc2a253ed4141db9a78ba696046">MED_FALSE</a>;
+<a name="l00097"></a>00097   <span class="keywordtype">char</span> *_fileout,*tmp=NULL;
+<a name="l00098"></a>00098   <span class="keywordtype">int</span>   _fileoutsize;
+<a name="l00099"></a>00099   <span class="keywordtype">bool</span>  hasfileout=<span class="keyword">false</span>;
+<a name="l00100"></a>00100   <span class="keywordtype">char</span> *commande;
+<a name="l00101"></a>00101   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nprofil;
+<a name="l00102"></a>00102   <span class="keywordtype">char</span> chemin_profils[<a class="code" href="a00344_adbf121c49d97dc40d72f6eb2e9f6ac76.html#adbf121c49d97dc40d72f6eb2e9f6ac76">MED_TAILLE_PROFILS</a>+1];
+<a name="l00103"></a>00103   <span class="keywordtype">char</span> chemin_liens[<a class="code" href="a00344_a77423fcb79fcbc89f3123d2c45865631.html#a77423fcb79fcbc89f3123d2c45865631">MED_TAILLE_LIENS</a>+1];
+<a name="l00104"></a>00104   <span class="keywordtype">char</span> version[9];
+<a name="l00105"></a>00105   <span class="keywordtype">int</span> MAJ_21_22 = 0, MAJ_231_232 = 0, MAJ_236_300 = 0;
+<a name="l00106"></a>00106 <span class="preprocessor">#ifdef PPRO_NT</span>
+<a name="l00107"></a>00107 <span class="preprocessor"></span>  <span class="keywordtype">char</span> *drive, *dir, *ext;
+<a name="l00108"></a>00108 <span class="preprocessor">#endif</span>
+<a name="l00109"></a>00109 <span class="preprocessor"></span>  <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> reponse=<span class="charliteral">&apos;o&apos;</span>;
+<a name="l00110"></a>00110   <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a>      _noversion=<a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190deea30b70cc2a253ed4141db9a78ba696046">MED_FALSE</a>;
+<a name="l00111"></a>00111 
+<a name="l00112"></a>00112   <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(filein == NULL,<span class="stringliteral">&quot;Le nom du fichier d&apos;entrée est vide : &quot;</span>, filein);
+<a name="l00113"></a>00113 
+<a name="l00114"></a>00114   hasfileout = strcmp(fileout,<span class="stringliteral">&quot;&quot;</span>);
+<a name="l00115"></a>00115   <span class="keywordflow">if</span> ( hasfileout ) {
+<a name="l00116"></a>00116     _fileoutsize = strlen(fileout);
+<a name="l00117"></a>00117     _fileout     = fileout;
+<a name="l00118"></a>00118   } <span class="keywordflow">else</span> {
+<a name="l00119"></a>00119     _fileoutsize = strlen(filein)+strlen(PACKAGE_VERSION);
+<a name="l00120"></a>00120     tmp          = (<span class="keywordtype">char</span> *) malloc(<span class="keyword">sizeof</span>(<span class="keywordtype">char</span>)*(_fileoutsize+1));
+<a name="l00121"></a>00121     strcpy(tmp,filein);
+<a name="l00122"></a>00122     strcat(tmp,PACKAGE_VERSION);
+<a name="l00123"></a>00123 <span class="preprocessor">#ifdef PPRO_NT</span>
+<a name="l00124"></a>00124 <span class="preprocessor"></span>    _splitpath( tmp, drive, dir, _fileout, ext );
+<a name="l00125"></a>00125 <span class="preprocessor">#else</span>
+<a name="l00126"></a>00126 <span class="preprocessor"></span>    _fileout     = basename(tmp);
+<a name="l00127"></a>00127 <span class="preprocessor">#endif</span>
+<a name="l00128"></a>00128 <span class="preprocessor"></span>    _fileoutsize = strlen(_fileout);
+<a name="l00129"></a>00129 
+<a name="l00130"></a>00130   }
+<a name="l00131"></a>00131 
+<a name="l00132"></a>00132   <span class="comment">/* Test du format du fichier */</span>
+<a name="l00133"></a>00133 
+<a name="l00134"></a>00134   ret = <a class="code" href="a01005_gac3e0eb335c4d611cbbeaf7688050f054.html#gac3e0eb335c4d611cbbeaf7688050f054" title="Vérification de la compatibilité d&amp;#39;un fichier avec HDF et MED.">MEDfileCompatibility</a>(filein,&amp;hdfok,&amp;medok);
+<a name="l00135"></a>00135 
+<a name="l00136"></a>00136   <span class="keywordflow">if</span> (ret &lt; 0 ) {
+<a name="l00137"></a>00137     fprintf(stdout,<span class="stringliteral">&quot;&gt;&gt;&gt; Attention le fichier %s ne contient pas de numéro de version. \n&quot;</span>,filein);
+<a name="l00138"></a>00138     fprintf(stdout,<span class="stringliteral">&quot;&gt;&gt;&gt; Le fichier  %s est supposé être en version 2.1.1. \n&quot;</span>,filein);
+<a name="l00139"></a>00139     <span class="comment">/* PAs d&apos;interactif dans une bibliothèque !*/</span>
+<a name="l00140"></a>00140 <span class="comment">/*     fprintf(stdout,&quot;&gt;&gt;&gt; Voulez-vous essayer une conversion d&apos;un fichier  &lt; 2.2 (o/n) ? &quot;); */</span>
+<a name="l00141"></a>00141 <span class="comment">/*     scanf(&quot;%c&quot;,&amp;reponse); */</span>
+<a name="l00142"></a>00142     <span class="keywordflow">if</span> ( (reponse != <span class="charliteral">&apos;o&apos;</span>) &amp;&amp; (reponse != <span class="charliteral">&apos;O&apos;</span>) &amp;&amp; (reponse != <span class="charliteral">&apos;y&apos;</span>) &amp;&amp; (reponse != <span class="charliteral">&apos;Y&apos;</span>) ) {
+<a name="l00143"></a>00143       <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(<a class="code" href="a01005_gac3e0eb335c4d611cbbeaf7688050f054.html#gac3e0eb335c4d611cbbeaf7688050f054" title="Vérification de la compatibilité d&amp;#39;un fichier avec HDF et MED.">MEDfileCompatibility</a>(filein,&amp;hdfok,&amp;medok) &lt; 0,
+<a name="l00144"></a>00144               <span class="stringliteral">&quot;Erreur d&apos;appel de  MEDfileCompatibility : &quot;</span>, filein);
+<a name="l00145"></a>00145     }
+<a name="l00146"></a>00146     _noversion = <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190deeaa9f40f3cd6611d437c39900c63ce80c4">MED_TRUE</a>;
+<a name="l00147"></a>00147   }
+<a name="l00148"></a>00148   <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>( !hdfok ,
+<a name="l00149"></a>00149           <span class="stringliteral">&quot;Le fichier d&apos;entrée n&apos;est pas dans un  format HDF compatible : &quot;</span>, filein);
+<a name="l00150"></a>00150 
+<a name="l00151"></a>00151 <span class="comment">/*   EXIT_IF( !medok , */</span>
+<a name="l00152"></a>00152 <span class="comment">/*        &quot;MEDimport ne gère pas le format  MED de ce fichier : &quot;, filein); */</span>
+<a name="l00153"></a>00153 
+<a name="l00154"></a>00154   <span class="comment">/* Creation et ouverture du fichier que l&apos;on va convertir au format MED actuel */</span>
+<a name="l00155"></a>00155   commande = (<span class="keywordtype">char</span> *) malloc(<span class="keyword">sizeof</span>(<span class="keywordtype">char</span>)*(strlen(<span class="stringliteral">&quot;cp &quot;</span>)+strlen(filein)+
+<a name="l00156"></a>00156                                            strlen(<span class="stringliteral">&quot; &quot;</span>)+_fileoutsize + 4 +1  ) );
+<a name="l00157"></a>00157   <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(commande == NULL,NULL,NULL);
+<a name="l00158"></a>00158   strcpy(commande,<span class="stringliteral">&quot;cp \&quot;&quot;</span>);
+<a name="l00159"></a>00159   strcat(commande,filein);
+<a name="l00160"></a>00160   strcat(commande,<span class="stringliteral">&quot;\&quot; \&quot;&quot;</span>);
+<a name="l00161"></a>00161   strcat(commande,_fileout);
+<a name="l00162"></a>00162   strcat(commande,<span class="stringliteral">&quot;\&quot;&quot;</span>);
+<a name="l00163"></a>00163   fprintf(stdout,<span class="stringliteral">&quot;&gt;&gt;&gt; Creation du fichier %s : %s \n&quot;</span>,_fileout,commande);
+<a name="l00164"></a>00164   system(commande);
+<a name="l00165"></a>00165   free(commande);
+<a name="l00166"></a>00166   commande = (<span class="keywordtype">char</span> *) malloc(<span class="keyword">sizeof</span>(<span class="keywordtype">char</span>)*(strlen(<span class="stringliteral">&quot;chmod u+w \&quot;&quot;</span>) + _fileoutsize +1 +1  ) );
+<a name="l00167"></a>00167   <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(commande == NULL,NULL,NULL);
+<a name="l00168"></a>00168   strcpy(commande,<span class="stringliteral">&quot;chmod u+w \&quot;&quot;</span>);
+<a name="l00169"></a>00169   strcat(commande,_fileout);
+<a name="l00170"></a>00170   strcat(commande,<span class="stringliteral">&quot;\&quot;&quot;</span>);
+<a name="l00171"></a>00171   fprintf(stdout,<span class="stringliteral">&quot;&gt;&gt;&gt; Chmod +w du fichier %s : %s \n&quot;</span>,_fileout,commande);
+<a name="l00172"></a>00172   system(commande);
+<a name="l00173"></a>00173   free(commande);
+<a name="l00174"></a>00174 
+<a name="l00175"></a>00175   fid = <a class="code" href="a01005_ga9376a1654b7bf099c3f8941074c5fdfb.html#ga9376a1654b7bf099c3f8941074c5fdfb" title="Ouverture d&amp;#39;un fichier MED.">MEDfileOpen</a>(_fileout,<a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85ab53f10a6b700d1087d7a50710fe29f00">MED_ACC_RDWR</a>);
+<a name="l00176"></a>00176   <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(fid &lt; 0,<span class="stringliteral">&quot;Ouverture du fichier : &quot;</span>, _fileout);
+<a name="l00177"></a>00177 
+<a name="l00178"></a>00178   <span class="comment">/* Verification du numero de version */</span>
+<a name="l00179"></a>00179   <span class="keywordflow">if</span> (! _noversion)
+<a name="l00180"></a>00180     ret = <a class="code" href="a01005_gaec83c9561b5640ca32a12e58c5d2e10d.html#gaec83c9561b5640ca32a12e58c5d2e10d" title="Lecture du numéro de version de la bibliothèque MED utilisée pour créer le fichier...">MEDfileNumVersionRd</a>(fid,&amp;majeur,&amp;mineur,&amp;release);
+<a name="l00181"></a>00181   <span class="keywordflow">else</span> {
+<a name="l00182"></a>00182     ret=0;
+<a name="l00183"></a>00183     majeur=2;
+<a name="l00184"></a>00184     mineur=1;
+<a name="l00185"></a>00185     release=1;
+<a name="l00186"></a>00186   }
+<a name="l00187"></a>00187   sprintf(version, <a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot;_&quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot;_&quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a>, majeur, mineur, release);
+<a name="l00188"></a>00188   <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Lecture du numero de version de MED-fichier&quot;</span>,NULL);
+<a name="l00189"></a>00189   <span class="keywordflow">if</span> (strcmp(version, <span class="stringliteral">&quot;2_2_0&quot;</span>) &lt; 0)
+<a name="l00190"></a>00190     MAJ_21_22 = 1;
+<a name="l00191"></a>00191   <span class="keywordflow">if</span> (strcmp(version, <span class="stringliteral">&quot;2_3_2&quot;</span>) &lt; 0)
+<a name="l00192"></a>00192     MAJ_231_232 = 1;
+<a name="l00193"></a>00193   <span class="keywordflow">if</span> (strcmp(version, <span class="stringliteral">&quot;3_0_0&quot;</span>) &lt; 0)
+<a name="l00194"></a>00194     MAJ_236_300 = 1;
+<a name="l00195"></a>00195 
+<a name="l00196"></a>00196 <span class="comment">/*   SSCRUTE(version); */</span>
+<a name="l00197"></a>00197 
+<a name="l00198"></a>00198   <span class="keywordflow">if</span> (MAJ_236_300 == 0) {
+<a name="l00199"></a>00199     fprintf(stdout,<span class="stringliteral">&quot;Le fichier %s est déjà au bon format !!! \n&quot;</span>,_fileout);
+<a name="l00200"></a>00200     ret = <a class="code" href="a01005_ga12a0e901c376be997a41a073ce426283.html#ga12a0e901c376be997a41a073ce426283" title="Fermeture d&amp;#39;un fichier MED.">MEDfileClose</a>(fid);
+<a name="l00201"></a>00201     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Fermeture du fichier&quot;</span>,filein);
+<a name="l00202"></a>00202     <span class="keywordflow">return</span> 0;
+<a name="l00203"></a>00203   }
+<a name="l00204"></a>00204 
+<a name="l00205"></a>00205   <span class="comment">/* On avertit qu&apos;on commence la conversion */</span>
+<a name="l00206"></a>00206   fprintf(stdout,<span class="stringliteral">&quot;&gt;&gt;&gt; Lancement de la normalisation du fichier selon le format &quot;</span> PACKAGE_VERSION <span class="stringliteral">&quot; ...\n&quot;</span>);
+<a name="l00207"></a>00207 
+<a name="l00208"></a>00208   <span class="comment">/* On inhibe le gestionnaire d&apos;erreur HDF5 */</span>
+<a name="l00209"></a>00209   <a class="code" href="a00338_aa645db37de32784a120a8deb350095e1.html#aa645db37de32784a120a8deb350095e1">_MEDmodeErreurVerrouiller</a>();
+<a name="l00210"></a>00210 
+<a name="l00211"></a>00211   <span class="comment">/* Mise a jour du numero de version */</span>
+<a name="l00212"></a>00212   fprintf(stdout,<span class="stringliteral">&quot;- Lancement de la mise à jour du numéro de version ... \n&quot;</span>);
+<a name="l00213"></a>00213 <span class="comment">/*   La mise à jour MAJ_version(fid); doit être différée pour que les majs des fichiers anciens</span>
+<a name="l00214"></a>00214 <span class="comment"> fonctionnent correctement*/</span>
+<a name="l00215"></a>00215 <span class="comment">/*   MAJ_version(fid); */</span>
+<a name="l00216"></a>00216   <a class="code" href="a00317_ac54c573f261305ee7d87a5c9a1dcafd1.html#ac54c573f261305ee7d87a5c9a1dcafd1">MAJ_write_version_num</a>(fid,2,3,6);
+<a name="l00217"></a>00217   fprintf(stdout,<span class="stringliteral">&quot;  Numéro de version : ... OK ... \n&quot;</span>);
+<a name="l00218"></a>00218 
+<a name="l00219"></a>00219   <span class="keywordflow">if</span> (MAJ_21_22) {
+<a name="l00220"></a>00220 
+<a name="l00221"></a>00221     <span class="comment">/* Mise a jour des maillages : type = MED_NON_STRUCTURE, description, ... */</span>
+<a name="l00222"></a>00222     fprintf(stdout,<span class="stringliteral">&quot;- Lancement de la mise à jour des maillages ... \n&quot;</span>);
+<a name="l00223"></a>00223     <a class="code" href="a00302_a5b8bcf3bb1000d8ba619ff438bbb42b4.html#a5b8bcf3bb1000d8ba619ff438bbb42b4">MAJ_21_22_maillages</a>(fid);
+<a name="l00224"></a>00224     fprintf(stdout,<span class="stringliteral">&quot;  Maillage(s) : ... OK ...\n&quot;</span>);
+<a name="l00225"></a>00225 
+<a name="l00226"></a>00226     <span class="comment">/* Mise a jour des champs */</span>
+<a name="l00227"></a>00227     fprintf(stdout,<span class="stringliteral">&quot;- Lancement de la mise à jour des champs de résultats ... \n&quot;</span>);
+<a name="l00228"></a>00228     <a class="code" href="a00298_a93bfd3c918bd2205deb4a38b4ca11916.html#a93bfd3c918bd2205deb4a38b4ca11916">MAJ_21_22_champs</a>(fid);
+<a name="l00229"></a>00229     fprintf(stdout,<span class="stringliteral">&quot;  Champs(s) : ... OK ...\n&quot;</span>);
+<a name="l00230"></a>00230 
+<a name="l00231"></a>00231     <span class="comment">/* Mise a jour des profils eventuels */</span>
+<a name="l00232"></a>00232     nprofil = <a class="code" href="a00346_a4c4e43f1a93cfb3fac0575132e1cda43.html#a4c4e43f1a93cfb3fac0575132e1cda43">MEDnProfil</a>(fid);
+<a name="l00233"></a>00233     <span class="keywordflow">if</span> (nprofil &gt; 0) {
+<a name="l00234"></a>00234       fprintf(stdout,<span class="stringliteral">&quot;- Lancement de la mise à jour des profils ... \n&quot;</span>);
+<a name="l00235"></a>00235       <a class="code" href="a00304_ae4a761200adb5c7cd05a9d784a5a82a6.html#ae4a761200adb5c7cd05a9d784a5a82a6">MAJ_21_22_profils</a>(fid,nprofil);
+<a name="l00236"></a>00236       fprintf(stdout,<span class="stringliteral">&quot;  Profils(s) : ... OK ...\n&quot;</span>);
+<a name="l00237"></a>00237     } <span class="keywordflow">else</span> {
+<a name="l00238"></a>00238       strncpy(chemin_profils,<a class="code" href="a00344_a9c0a51bba04c2e4908971dbe421d4bd2.html#a9c0a51bba04c2e4908971dbe421d4bd2">MED_PROFILS</a>,<a class="code" href="a00344_adbf121c49d97dc40d72f6eb2e9f6ac76.html#adbf121c49d97dc40d72f6eb2e9f6ac76">MED_TAILLE_PROFILS</a>-1);
+<a name="l00239"></a>00239       chemin_profils[<a class="code" href="a00344_adbf121c49d97dc40d72f6eb2e9f6ac76.html#adbf121c49d97dc40d72f6eb2e9f6ac76">MED_TAILLE_PROFILS</a>-1] = <span class="charliteral">&apos;\0&apos;</span>;
+<a name="l00240"></a>00240       gid = <a class="code" href="a00338_a035c29f443adaee7c8aa4550ef59b807.html#a035c29f443adaee7c8aa4550ef59b807">_MEDdatagroupCreer</a>(fid,chemin_profils);
+<a name="l00241"></a>00241       <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(gid &lt; 0,<span class="stringliteral">&quot;Creation du groupe HDF sur les profils&quot;</span>,chemin_profils);
+<a name="l00242"></a>00242       ret = <a class="code" href="a00338_ae3ba55fd16381090e93f0ee8e3f9e6c6.html#ae3ba55fd16381090e93f0ee8e3f9e6c6">_MEDdatagroupFermer</a>(gid);
+<a name="l00243"></a>00243       <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Fermeture du groupe HDF sur les profils&quot;</span>,chemin_profils);
+<a name="l00244"></a>00244     }
+<a name="l00245"></a>00245 
+<a name="l00246"></a>00246     <span class="comment">/* On cree le groupe HDF pour les liens */</span>
+<a name="l00247"></a>00247     strncpy(chemin_liens,<a class="code" href="a00344_ada084121b6ddc68a9598b85492ea7bcd.html#ada084121b6ddc68a9598b85492ea7bcd">MED_LIENS</a>,<a class="code" href="a00344_a77423fcb79fcbc89f3123d2c45865631.html#a77423fcb79fcbc89f3123d2c45865631">MED_TAILLE_LIENS</a>-1);
+<a name="l00248"></a>00248     chemin_liens[<a class="code" href="a00344_a77423fcb79fcbc89f3123d2c45865631.html#a77423fcb79fcbc89f3123d2c45865631">MED_TAILLE_LIENS</a>-1] = <span class="charliteral">&apos;\0&apos;</span>;
+<a name="l00249"></a>00249     gid = <a class="code" href="a00338_a035c29f443adaee7c8aa4550ef59b807.html#a035c29f443adaee7c8aa4550ef59b807">_MEDdatagroupCreer</a>(fid,chemin_liens);
+<a name="l00250"></a>00250     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(gid &lt; 0,<span class="stringliteral">&quot;Creation du groupe HDF sur les liens&quot;</span>,chemin_liens);
+<a name="l00251"></a>00251     ret = <a class="code" href="a00338_ae3ba55fd16381090e93f0ee8e3f9e6c6.html#ae3ba55fd16381090e93f0ee8e3f9e6c6">_MEDdatagroupFermer</a>(gid);
+<a name="l00252"></a>00252     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Fermeture du groupe HDF sur les liens&quot;</span>,chemin_liens);
+<a name="l00253"></a>00253   }
+<a name="l00254"></a>00254 
+<a name="l00255"></a>00255   <span class="keywordflow">if</span> (MAJ_231_232) {
+<a name="l00256"></a>00256     <span class="comment">/* Mise a jour des champs */</span>
+<a name="l00257"></a>00257     fprintf(stdout,<span class="stringliteral">&quot;- Lancement de la mise à jour des champs de résultats ... \n&quot;</span>);
+<a name="l00258"></a>00258     <a class="code" href="a00305_a8cfe954975e8fd95d32f999f943ca59e.html#a8cfe954975e8fd95d32f999f943ca59e">MAJ_231_232_champs</a>(fid);
+<a name="l00259"></a>00259     fprintf(stdout,<span class="stringliteral">&quot;  Champs(s) : ... OK ...\n&quot;</span>);
+<a name="l00260"></a>00260     fprintf(stdout,<span class="stringliteral">&quot;- Lancement de la mise à jour des noms de maillages ... \n&quot;</span>);
+<a name="l00261"></a>00261     <a class="code" href="a00305_a669c17f465ceeacac7efb9a2a18a0680.html#a669c17f465ceeacac7efb9a2a18a0680">MAJ_231_232_maillages</a>(fid);
+<a name="l00262"></a>00262     fprintf(stdout,<span class="stringliteral">&quot;  Noms(s) de maillage(s): ... OK ...\n&quot;</span>);
+<a name="l00263"></a>00263   }
+<a name="l00264"></a>00264 
+<a name="l00265"></a>00265   <span class="keywordflow">if</span> (MAJ_236_300) {
+<a name="l00266"></a>00266     <span class="comment">/* Mise a jour des champs */</span>
+<a name="l00267"></a>00267     fprintf(stdout,<span class="stringliteral">&quot;- Lancement de la mise à jour des champs de résultats ... \n&quot;</span>);
+<a name="l00268"></a>00268     <a class="code" href="a00308_ac689651b9da30b663cfb9be1c81537ac.html#ac689651b9da30b663cfb9be1c81537ac">MAJ_236_300_champs</a>(fid);
+<a name="l00269"></a>00269     fprintf(stdout,<span class="stringliteral">&quot;  Champs(s) : ... OK ...\n&quot;</span>);
+<a name="l00270"></a>00270 
+<a name="l00271"></a>00271     <a class="code" href="a00317_a57cc3f81a2d54469b7740afc0c8eede2.html#a57cc3f81a2d54469b7740afc0c8eede2">MAJ_version</a>(fid);
+<a name="l00272"></a>00272 
+<a name="l00273"></a>00273     fprintf(stdout,<span class="stringliteral">&quot;- Lancement de la mise à jour des maillages ... \n&quot;</span>);
+<a name="l00274"></a>00274     <a class="code" href="a00313_ad6adc58302900a69ea9e9f8759422fe0.html#ad6adc58302900a69ea9e9f8759422fe0">MAJ_236_300_maillages</a>(fid);
+<a name="l00275"></a>00275     fprintf(stdout,<span class="stringliteral">&quot;  Maillage(s): ... OK ...\n&quot;</span>);
+<a name="l00276"></a>00276 
+<a name="l00277"></a>00277     <a class="code" href="a00317_a57cc3f81a2d54469b7740afc0c8eede2.html#a57cc3f81a2d54469b7740afc0c8eede2">MAJ_version</a>(fid);
+<a name="l00278"></a>00278 
+<a name="l00279"></a>00279   }
+<a name="l00280"></a>00280 
+<a name="l00281"></a>00281   <a class="code" href="a00317_ac54c573f261305ee7d87a5c9a1dcafd1.html#ac54c573f261305ee7d87a5c9a1dcafd1">MAJ_write_version_num</a>(fid,<a class="code" href="a00320_a6747c1ac7c0589009db553b675e3b6a7.html#a6747c1ac7c0589009db553b675e3b6a7">MED_NUM_MAJEUR</a>,<a class="code" href="a00320_a9acc99e52c9a7bd3208f9c934b473baa.html#a9acc99e52c9a7bd3208f9c934b473baa">MED_NUM_MINEUR</a>,<a class="code" href="a00320_adaf617ec343314cca1a68e62bbc2709d.html#adaf617ec343314cca1a68e62bbc2709d">MED_NUM_RELEASE</a>);
+<a name="l00282"></a>00282 
+<a name="l00283"></a>00283   <span class="comment">/* Fermeture du fichier */</span>
+<a name="l00284"></a>00284   ret = <a class="code" href="a01005_ga12a0e901c376be997a41a073ce426283.html#ga12a0e901c376be997a41a073ce426283" title="Fermeture d&amp;#39;un fichier MED.">MEDfileClose</a>(fid);
+<a name="l00285"></a>00285   <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Fermeture du fichier&quot;</span>,_fileout);
+<a name="l00286"></a>00286 
+<a name="l00287"></a>00287   <span class="comment">/* On avertit que c&apos;est fini */</span>
+<a name="l00288"></a>00288   fprintf(stdout,<span class="stringliteral">&quot;&gt;&gt;&gt; Conversion du fichier %s au format MED V&quot;</span> PACKAGE_VERSION <span class="stringliteral">&quot; terminée\n&quot;</span>,
+<a name="l00289"></a>00289           _fileout);
+<a name="l00290"></a>00290 
+<a name="l00291"></a>00291   <span class="comment">/* On libere la memoire */</span>
+<a name="l00292"></a>00292   <span class="keywordflow">if</span> (!hasfileout) free(tmp);
+<a name="l00293"></a>00293 
+<a name="l00294"></a>00294   <span class="keywordflow">return</span> 0;
+<a name="l00295"></a>00295 }
+<a name="l00296"></a>00296 
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:34 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

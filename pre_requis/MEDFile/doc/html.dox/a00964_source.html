@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de UsesCase_MEDfield_5.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_ba46011aeafd781e3c350f50ac4ad407.html">tests</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_9a395515a435a9986fd8a1dd7050dffb.html">usecases</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_358be61bc0fd4057433ed64ed56bcbbe.html">c</a>
+  </div>
+</div>
+<div class="contents">
+<h1>UsesCase_MEDfield_5.c</h1><a href="a00964.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment"> *</span>
+<a name="l00003"></a>00003 <span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment"> *  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment"> *</span>
+<a name="l00009"></a>00009 <span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment"> *</span>
+<a name="l00014"></a>00014 <span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment"> */</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 <span class="comment">/* </span>
+<a name="l00019"></a>00019 <span class="comment"> * Field use case 5 : read a field with following with computing steps</span>
+<a name="l00020"></a>00020 <span class="comment"> */</span>
+<a name="l00021"></a>00021 
+<a name="l00022"></a>00022 <span class="preprocessor">#include &lt;<a class="code" href="a00321.html">med.h</a>&gt;</span>
+<a name="l00023"></a><a class="code" href="a00964_a8e315da8f14d473c025c8a1f6af2f979.html#a8e315da8f14d473c025c8a1f6af2f979">00023</a> <span class="preprocessor">#define MESGERR 1</span>
+<a name="l00024"></a>00024 <span class="preprocessor"></span><span class="preprocessor">#include &lt;<a class="code" href="a00349.html">med_utils.h</a>&gt;</span>
+<a name="l00025"></a>00025 
+<a name="l00026"></a>00026 <span class="preprocessor">#include &lt;string.h&gt;</span>
+<a name="l00027"></a>00027 
+<a name="l00028"></a><a class="code" href="a00964_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">00028</a> <span class="keywordtype">int</span> <a class="code" href="a00750_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv) {
+<a name="l00029"></a>00029   <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid;
+<a name="l00030"></a>00030   <span class="keywordtype">char</span> meshname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+<a name="l00031"></a>00031   <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a> localmesh;
+<a name="l00032"></a>00032   <span class="keyword">const</span> <span class="keywordtype">char</span> fieldname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1] = <span class="stringliteral">&quot;TEMPERATURE_FIELD&quot;</span>;
+<a name="l00033"></a>00033   <a class="code" href="a00321_a5615eeaf85e0b3f40b74bdd24178f2cd.html#a5615eeaf85e0b3f40b74bdd24178f2cd">med_field_type</a> fieldtype;
+<a name="l00034"></a>00034   <span class="keywordtype">char</span> componentname[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+<a name="l00035"></a>00035   <span class="keywordtype">char</span> componentunit[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+<a name="l00036"></a>00036   <span class="keywordtype">char</span> dtunit[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+<a name="l00037"></a>00037   <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *values = NULL;
+<a name="l00038"></a>00038   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nstep, nvalues;
+<a name="l00039"></a>00039   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ncomponent = 1;
+<a name="l00040"></a>00040   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> csit, numit, numdt, meshnumit, meshnumdt, it;
+<a name="l00041"></a>00041   <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> dt;
+<a name="l00042"></a>00042   <a class="code" href="a00321_a1043613afc3cd2e24785dfc7c0452ab8.html#a1043613afc3cd2e24785dfc7c0452ab8">med_geometry_type</a> geotype;
+<a name="l00043"></a>00043   <a class="code" href="a00321_a1043613afc3cd2e24785dfc7c0452ab8.html#a1043613afc3cd2e24785dfc7c0452ab8">med_geometry_type</a> *geotypes = <a class="code" href="a00499_a54c2e34174a890046d0a204fa1a918a8.html#a54c2e34174a890046d0a204fa1a918a8">MED_GET_CELL_GEOMETRY_TYPE</a>;
+<a name="l00044"></a>00044   <span class="keywordtype">int</span> ret=-1;
+<a name="l00045"></a>00045 
+<a name="l00046"></a>00046   <span class="comment">/* open file */</span>
+<a name="l00047"></a>00047   fid = <a class="code" href="a01005_ga9376a1654b7bf099c3f8941074c5fdfb.html#ga9376a1654b7bf099c3f8941074c5fdfb" title="Ouverture d&amp;#39;un fichier MED.">MEDfileOpen</a>(<span class="stringliteral">&quot;UsesCase_MEDfield_4.med&quot;</span>,<a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a616bf8345c622a34f0787f42eb400f25">MED_ACC_RDONLY</a>);
+<a name="l00048"></a>00048   <span class="keywordflow">if</span> (fid &lt; 0) {
+<a name="l00049"></a>00049     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : open file ...&quot;</span>);
+<a name="l00050"></a>00050     <span class="keywordflow">goto</span> ERROR;
+<a name="l00051"></a>00051   }
+<a name="l00052"></a>00052 
+<a name="l00053"></a>00053   <span class="comment">/*</span>
+<a name="l00054"></a>00054 <span class="comment">   * ... we know that the MED file has only one field with one component ,</span>
+<a name="l00055"></a>00055 <span class="comment">   * a real code working would check ...</span>
+<a name="l00056"></a>00056 <span class="comment">   */</span>
+<a name="l00057"></a>00057 
+<a name="l00058"></a>00058   <span class="comment">/*</span>
+<a name="l00059"></a>00059 <span class="comment">   * if you know the field name, direct access to field informations</span>
+<a name="l00060"></a>00060 <span class="comment">   */</span>
+<a name="l00061"></a>00061   <span class="keywordflow">if</span> (<a class="code" href="a01004_ga948789fb749c61a9bb7908e7d3b286c7.html#ga948789fb749c61a9bb7908e7d3b286c7" title="Cette routine permet de lire les informations d&amp;#39;indentification d&amp;#39;un champ...">MEDfieldInfoByName</a>(fid, fieldname, meshname, &amp;localmesh, &amp;fieldtype,
+<a name="l00062"></a>00062                          componentname, componentunit, dtunit, &amp;nstep) &lt; 0) {
+<a name="l00063"></a>00063     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : Field info by name ...&quot;</span>);
+<a name="l00064"></a>00064     <span class="keywordflow">goto</span> ERROR;
+<a name="l00065"></a>00065   }
+<a name="l00066"></a>00066 
+<a name="l00067"></a>00067   <span class="comment">/*</span>
+<a name="l00068"></a>00068 <span class="comment">   * Read field values for each computing step</span>
+<a name="l00069"></a>00069 <span class="comment">   */</span>
+<a name="l00070"></a>00070   <span class="keywordflow">for</span> (csit=0; csit&lt;nstep; csit++) {
+<a name="l00071"></a>00071 
+<a name="l00072"></a>00072     <span class="keywordflow">if</span> (<a class="code" href="a01004_ga35a5786318fd1b47c163f18813c8cf9b.html#ga35a5786318fd1b47c163f18813c8cf9b" title="Cette routine permet de lire les informations caractérisant une séquence de calcul...">MEDfieldComputingStepMeshInfo</a>(fid, fieldname, csit+1, &amp;numdt, &amp;numit, &amp;dt,
+<a name="l00073"></a>00073                                       &amp;meshnumdt, &amp;meshnumit) &lt; 0) {
+<a name="l00074"></a>00074       <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : Computing step info ...&quot;</span>);
+<a name="l00075"></a>00075       <span class="keywordflow">goto</span> ERROR;
+<a name="l00076"></a>00076     }
+<a name="l00077"></a>00077 
+<a name="l00078"></a>00078   <span class="comment">/*</span>
+<a name="l00079"></a>00079 <span class="comment">   * ... In our case, we suppose that the field values are only defined on cells ...</span>
+<a name="l00080"></a>00080 <span class="comment">   */</span>
+<a name="l00081"></a>00081     <span class="keywordflow">for</span> (it=1; it&lt;=<a class="code" href="a00321_abd42d91233c317ca8eb9b592e4502053.html#abd42d91233c317ca8eb9b592e4502053">MED_N_CELL_FIXED_GEO</a>; it++) {
+<a name="l00082"></a>00082 
+<a name="l00083"></a>00083       geotype = geotypes[it];
+<a name="l00084"></a>00084 
+<a name="l00085"></a>00085       <span class="keywordflow">if</span> ((nvalues = <a class="code" href="a01004_gad56d2c61cf0a4c55bc9834f5c2d9875e.html#gad56d2c61cf0a4c55bc9834f5c2d9875e" title="Cette routine permet de lire le nombre de valeurs dans un champ pour une séquence...">MEDfieldnValue</a>(fid, fieldname, numdt, numit, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, geotype)) &lt; 0) {
+<a name="l00086"></a>00086         <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read number of values ...&quot;</span>);
+<a name="l00087"></a>00087         <span class="keywordflow">goto</span> ERROR;
+<a name="l00088"></a>00088       }
+<a name="l00089"></a>00089 
+<a name="l00090"></a>00090       <span class="keywordflow">if</span> (nvalues) {
+<a name="l00091"></a>00091         <span class="keywordflow">if</span> ((values = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>)*nvalues*ncomponent)) == NULL) {
+<a name="l00092"></a>00092           <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+<a name="l00093"></a>00093           <span class="keywordflow">goto</span> ERROR;
+<a name="l00094"></a>00094         }
+<a name="l00095"></a>00095         <span class="keywordflow">if</span> (<a class="code" href="a01004_ga3222b711fa5f6660f0fb3edff1ac9b29.html#ga3222b711fa5f6660f0fb3edff1ac9b29" title="Cette routine permet de lire les valeurs d&amp;#39;un champ définies sur des entités...">MEDfieldValueRd</a>(fid, fieldname, numdt, numit, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, geotype,
+<a name="l00096"></a>00096                             <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, <a class="code" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a>, (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*) values) &lt; 0) {
+<a name="l00097"></a>00097           <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read fields values for cells ...&quot;</span>); 
+<a name="l00098"></a>00098           free(values);
+<a name="l00099"></a>00099           <span class="keywordflow">goto</span> ERROR; 
+<a name="l00100"></a>00100         }  
+<a name="l00101"></a>00101         free(values);
+<a name="l00102"></a>00102       }
+<a name="l00103"></a>00103     }
+<a name="l00104"></a>00104   }
+<a name="l00105"></a>00105 
+<a name="l00106"></a>00106   ret=0;
+<a name="l00107"></a>00107  ERROR:
+<a name="l00108"></a>00108    
+<a name="l00109"></a>00109   <span class="comment">/* close file */</span>
+<a name="l00110"></a>00110   <span class="keywordflow">if</span> (<a class="code" href="a01005_ga12a0e901c376be997a41a073ce426283.html#ga12a0e901c376be997a41a073ce426283" title="Fermeture d&amp;#39;un fichier MED.">MEDfileClose</a>(fid) &lt; 0) {
+<a name="l00111"></a>00111     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : close file ...&quot;</span>);             
+<a name="l00112"></a>00112     ret=-1; 
+<a name="l00113"></a>00113   } 
+<a name="l00114"></a>00114 
+<a name="l00115"></a>00115   <span class="keywordflow">return</span> ret;
+<a name="l00116"></a>00116 }
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:35 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

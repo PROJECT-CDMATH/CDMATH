@@ -1,0 +1,23 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$a00334.html" title="med_config.h" alt="" coords="5,246,104,277"/>
+<area shape="rect" id="node5" href="$a00345.html" title="med_outils.h" alt="" coords="337,86,433,117"/>
+<area shape="rect" id="node38" href="$a00352.html" title="med_versioned.h" alt="" coords="1084,86,1204,117"/>
+<area shape="rect" id="node53" href="$a00327.html" title="2.3.6/med23v30.h" alt="" coords="671,166,796,197"/>
+<area shape="rect" id="node56" href="$a00330.html" title="2.3.6/med23v30_proto.h" alt="" coords="752,246,915,277"/>
+<area shape="rect" id="node61" href="$a00346.html" title="2.3.6/med_proto.h" alt="" coords="1368,326,1493,357"/>
+<area shape="rect" id="node64" href="$a00329.html" title="2.3.6/med23v30_misc.h" alt="" coords="871,86,1031,117"/>
+<area shape="rect" id="node68" href="$a00306.html" title="MAJ_236_300.h" alt="" coords="1492,86,1607,117"/>
+<area shape="rect" id="node70" href="$a00317.html" title="MAJ_version.h" alt="" coords="1631,86,1740,117"/>
+<area shape="rect" id="node7" href="$a00321.html" title="med.h" alt="" coords="575,246,633,277"/>
+<area shape="rect" id="node15" href="$a00350.html" title="med_vargs.h" alt="" coords="68,166,164,197"/>
+<area shape="rect" id="node20" href="$a00343.html" title="med_misc.h" alt="" coords="444,166,537,197"/>
+<area shape="rect" id="node28" href="$a00339.html" title="med_hdfi.h" alt="" coords="561,166,647,197"/>
+<area shape="rect" id="node31" href="$a00349.html" title="med_utils.h" alt="" coords="188,166,276,197"/>
+<area shape="rect" id="node11" href="$a00347.html" title="med_proto.h" alt="" coords="787,326,880,357"/>
+<area shape="rect" id="node13" href="$a00364.html" title="medC_win_dll.h" alt="" coords="1001,406,1113,437"/>
+<area shape="rect" id="node25" href="$a00337.html" title="med_exit_if.h" alt="" coords="441,246,540,277"/>
+<area shape="rect" id="node36" href="$a00335.html" title="med_err.h" alt="" coords="264,246,344,277"/>
+<area shape="rect" id="node40" href="$a00359.html" title="med_versioned_proto_en.h" alt="" coords="1276,166,1455,197"/>
+<area shape="rect" id="node44" href="$a00358.html" title="med_versioned_proto.h" alt="" coords="1095,166,1252,197"/>
+<area shape="rect" id="node48" href="$a00356.html" title="med_versioned_hdfi.h" alt="" coords="921,166,1071,197"/>
+</map>

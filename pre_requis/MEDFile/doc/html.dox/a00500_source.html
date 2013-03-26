@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de MEDiteratorsF.f</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_6d8408d9855f99d1b33e274ba7d15ec1.html">src</a>
+  </div>
+</div>
+<div class="contents">
+<h1>MEDiteratorsF.f</h1><a href="a00500.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a><a class="code" href="a00500_aa4e3f8fe838412ba14831fcbcde8b166.html#aa4e3f8fe838412ba14831fcbcde8b166">00001</a>       <span class="keyword">block data</span> MED_SET_IT
+<a name="l00002"></a>00002 
+<a name="l00003"></a>00003       <span class="keyword">implicit none</span>
+<a name="l00004"></a>00004 
+<a name="l00005"></a>00005       include <span class="stringliteral">&quot;med_parameter.hf&quot;</span>
+<a name="l00006"></a>00006 
+<a name="l00007"></a>00007       common /MED/ <a class="code" href="a00499_a54c2e34174a890046d0a204fa1a918a8.html#a54c2e34174a890046d0a204fa1a918a8">MED_GET_CELL_GEOMETRY_TYPE</a>
+<a name="l00008"></a>00008       <span class="keywordtype">integer</span> MED_GET_CELL_GEOMETRY_TYPE(MED_N_CELL_FIXED_GEO)
+<a name="l00009"></a>00009       <span class="keywordtype">save</span> /MED/
+<a name="l00010"></a>00010       <span class="keyword">data</span> <a class="code" href="a00499_a54c2e34174a890046d0a204fa1a918a8.html#a54c2e34174a890046d0a204fa1a918a8">MED_GET_CELL_GEOMETRY_TYPE</a> /
+<a name="l00011"></a>00011      &amp;  <a class="code" href="a00321_aae1e86a4a1fce025bdadecb5e3e4a705.html#aae1e86a4a1fce025bdadecb5e3e4a705">MED_POINT1</a>, <a class="code" href="a00321_a29927daaa1a87f2129295a68264ad526.html#a29927daaa1a87f2129295a68264ad526">MED_SEG2</a>, <a class="code" href="a00321_abcdb0eb0e7fc585c10f8986c105135fb.html#abcdb0eb0e7fc585c10f8986c105135fb">MED_SEG3</a>,
+<a name="l00012"></a>00012      &amp;  <a class="code" href="a00321_a16443cb756f57ecfa39bcdd58f0edf54.html#a16443cb756f57ecfa39bcdd58f0edf54">MED_SEG4</a>, <a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>, <a class="code" href="a00321_a24ea9c52f5bde41d9a072925249ec06c.html#a24ea9c52f5bde41d9a072925249ec06c">MED_QUAD4</a>, <a class="code" href="a00321_a85970ad0ffaf58419c2afa36e43b1ea3.html#a85970ad0ffaf58419c2afa36e43b1ea3">MED_TRIA6</a>,
+<a name="l00013"></a>00013      &amp;  <a class="code" href="a00321_a17766b9d3ba4c1c46576a97d24e74236.html#a17766b9d3ba4c1c46576a97d24e74236">MED_TRIA7</a>, <a class="code" href="a00321_ac44f7967364889697b30b672df222578.html#ac44f7967364889697b30b672df222578">MED_QUAD8</a>, <a class="code" href="a00321_affd84bc502815e1d695a5a1254b1017c.html#affd84bc502815e1d695a5a1254b1017c">MED_QUAD9</a>, <a class="code" href="a00321_a8924ab0dac0ab1a0c090e0d7fe842a8f.html#a8924ab0dac0ab1a0c090e0d7fe842a8f">MED_TETRA4</a>,
+<a name="l00014"></a>00014      &amp;  <a class="code" href="a00321_afce5ab3f1962b80e2f9791b98d82bf9e.html#afce5ab3f1962b80e2f9791b98d82bf9e">MED_PYRA5</a>, <a class="code" href="a00321_ab7d645843b7016f7f36cb4c5af870683.html#ab7d645843b7016f7f36cb4c5af870683">MED_PENTA6</a>, <a class="code" href="a00321_ab17f50e219313c79659dabf1fe160dca.html#ab17f50e219313c79659dabf1fe160dca">MED_HEXA8</a>, <a class="code" href="a00321_a75d946428ccdd04653de5eae5ecdcd9a.html#a75d946428ccdd04653de5eae5ecdcd9a">MED_TETRA10</a>,
+<a name="l00015"></a>00015      &amp;  <a class="code" href="a00321_a10724d7331cfcd5f4cd066d025ed1469.html#a10724d7331cfcd5f4cd066d025ed1469">MED_OCTA12</a>, <a class="code" href="a00321_ad210e6eb7da4ae0d169813c2979ed640.html#ad210e6eb7da4ae0d169813c2979ed640">MED_PYRA13</a>, <a class="code" href="a00321_a775f9f630433766a8ee409075adce171.html#a775f9f630433766a8ee409075adce171">MED_PENTA15</a>, <a class="code" href="a00321_ace855a144ec03695afcaa291b7fc9c3b.html#ace855a144ec03695afcaa291b7fc9c3b">MED_HEXA20</a>,
+<a name="l00016"></a>00016      &amp;  <a class="code" href="a00321_aebd94e8163062a93f3d013bfc76eab01.html#aebd94e8163062a93f3d013bfc76eab01">MED_HEXA27</a>, <a class="code" href="a00321_a85eec62d6ac09df04ee4e0ca89586273.html#a85eec62d6ac09df04ee4e0ca89586273">MED_POLYGON</a>, <a class="code" href="a00321_ae08587b134662b257542c6b64e6a998a.html#ae08587b134662b257542c6b64e6a998a">MED_POLYHEDRON</a> /
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 <span class="keyword">      END</span>
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:34 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

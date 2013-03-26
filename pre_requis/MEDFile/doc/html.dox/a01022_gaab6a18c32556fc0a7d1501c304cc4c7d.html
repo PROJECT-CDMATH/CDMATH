@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: mipcsz</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+  <div class="navpath"><a class="el" href="a01022.html">Guide de référence du module fortran MEDinterp</a>
+  </div>
+<table cellspacing="0" cellpadding="0" border="0">
+  <tr>
+   <td valign="top">
+      <div class="navtab">
+        <table>
+          <tr><td class="navtab"><a class="qindex" href="a01022_gaffcbfcdc12ace78e5fdfa3d3162f8785.html#gaffcbfcdc12ace78e5fdfa3d3162f8785">mipbfr</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01022_ga47fb2995a1a920e720901127669bddc8.html#ga47fb2995a1a920e720901127669bddc8">mipbfw</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01022_ga6043fb74b17a756d1cb0e0130560db67.html#ga6043fb74b17a756d1cb0e0130560db67">mipcre</a></td></tr>
+          <tr><td class="navtab"><a class="qindexHL" href="a01022_gaab6a18c32556fc0a7d1501c304cc4c7d.html#gaab6a18c32556fc0a7d1501c304cc4c7d">mipcsz</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01022_gaa7dc205e0c8064ecfa76afaf828bb42e.html#gaa7dc205e0c8064ecfa76afaf828bb42e">mipiin</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01022_gaf16d60904a25c13945f0164357228fda.html#gaf16d60904a25c13945f0164357228fda">mipipi</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01022_gab0bc5d8a91ff9decf980673eba3850f2.html#gab0bc5d8a91ff9decf980673eba3850f2">mipnip</a></td></tr>
+        </table>
+      </div>
+   </td>
+   <td valign="top">
+<a class="anchor" id="gaab6a18c32556fc0a7d1501c304cc4c7d"></a><!-- doxytag: member="medinterp.f::mipcsz" ref="gaab6a18c32556fc0a7d1501c304cc4c7d" args="(fid, name, it, n, cret)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine mipcsz </td>
+          <td>(</td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>fid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character*(*)&nbsp;</td>
+          <td class="paramname"> <em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>it</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>cret</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Cette routine retourne ne nombre de coefficients/monômes de la fonction de base/forme n° <em>basisfunctit</em> de l'interpolation <em>interpname</em>. </p>
+<dl><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>fid</em>&nbsp;</td><td>Identificateur du fichier. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>name</em>&nbsp;</td><td>Tableau des noms. Chaque nom est sur <a class="el" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a> caractères. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>it</em>&nbsp;</td><td>Itérateur sur les fonctions de base/forme (&gt;0). </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>n</em>&nbsp;</td><td>Nombre de coefficients (non null) du polynômes. Nombre de monômes de la fonction de base </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>cret</em>&nbsp;</td><td>retour négatif en cas d'erreur, Zéro sinon. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="see"><dt><b>Voir également:</b></dt><dd><a class="el" href="a01007_ga39b5f9f4822173655561a8e558bc9745.html#ga39b5f9f4822173655561a8e558bc9745" title="Cette routine retourne ne nombre de coefficients/monômes de la fonction de base/forme...">MEDinterpBaseFunctionCoefSize</a></dd></dl>
+<p>Cette routine retourne ne nombre de coefficients/monômes de la fonction de base/forme n° <em>basisfunctit</em> de l'interpolation <em>interpname</em>. </p>
+
+<p>Définition à la ligne <a class="el" href="a00491_source.html#l00136">136</a> du fichier <a class="el" href="a00491_source.html">medinterp.f</a>.</p>
+
+</div>
+</div>
+    </td>
+  </tr>
+</table>
+</div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:46 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

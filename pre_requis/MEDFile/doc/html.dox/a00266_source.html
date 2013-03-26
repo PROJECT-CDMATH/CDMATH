@@ -1,0 +1,286 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de famcf.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_6d8408d9855f99d1b33e274ba7d15ec1.html">src</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_f28a13a54b2ea19aa3beea3b98c6f442.html">2.3.6</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_7ff86333d626dd172d748ad70fa2d230.html">cfi</a>
+  </div>
+</div>
+<div class="contents">
+<h1>famcf.c</h1><a href="a00266.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment"> *</span>
+<a name="l00003"></a>00003 <span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment"> *  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment"> *</span>
+<a name="l00009"></a>00009 <span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment"> *</span>
+<a name="l00014"></a>00014 <span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment"> */</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019 <span class="preprocessor">#include &lt;<a class="code" href="a00321.html">med.h</a>&gt;</span>
+<a name="l00020"></a>00020 <span class="preprocessor">#include &lt;<a class="code" href="a00334.html">med_config.h</a>&gt;</span>
+<a name="l00021"></a>00021 <span class="preprocessor">#include &lt;<a class="code" href="a00345.html">med_outils.h</a>&gt;</span>
+<a name="l00022"></a>00022 <span class="preprocessor">#include &lt;stdlib.h&gt;</span>
+<a name="l00023"></a>00023 <span class="preprocessor">#include &lt;string.h&gt;</span>
+<a name="l00024"></a>00024 
+<a name="l00025"></a><a class="code" href="a00266_a75ccd063592fae829ba1c2c826deee09.html#a75ccd063592fae829ba1c2c826deee09">00025</a> <span class="preprocessor">#define nedffamc F77_FUNC(edffamc,EDFFAMC)</span>
+<a name="l00026"></a><a class="code" href="a00266_a13d8b74ead8b25d9777fe2ca1f8324aa.html#a13d8b74ead8b25d9777fe2ca1f8324aa">00026</a> <span class="preprocessor"></span><span class="preprocessor">#define nedffame F77_FUNC(edffame,EDFFAME)</span>
+<a name="l00027"></a><a class="code" href="a00266_a2af3584cc4cf2976819c2573598add31.html#a2af3584cc4cf2976819c2573598add31">00027</a> <span class="preprocessor"></span><span class="preprocessor">#define nedffaml F77_FUNC(edffaml,EDFFAML)</span>
+<a name="l00028"></a><a class="code" href="a00266_a815b7c409e4d7d37433404635067d7d4.html#a815b7c409e4d7d37433404635067d7d4">00028</a> <span class="preprocessor"></span><span class="preprocessor">#define nedffami F77_FUNC(edffami,EDFFAMI)</span>
+<a name="l00029"></a><a class="code" href="a00266_aea2393d2c9724a2ef078f53d7f4bfa0b.html#aea2393d2c9724a2ef078f53d7f4bfa0b">00029</a> <span class="preprocessor"></span><span class="preprocessor">#define nedfnfam F77_FUNC(edfnfam,EDFNFAM)</span>
+<a name="l00030"></a><a class="code" href="a00266_aff4b2446cf990f208b1cf205ac3a01b2.html#aff4b2446cf990f208b1cf205ac3a01b2">00030</a> <span class="preprocessor"></span><span class="preprocessor">#define nedfngro F77_FUNC(edfngro,EDFNGRO)</span>
+<a name="l00031"></a><a class="code" href="a00266_a2af3c9d1a3061b764ec28d0d304316a7.html#a2af3c9d1a3061b764ec28d0d304316a7">00031</a> <span class="preprocessor"></span><span class="preprocessor">#define nedfnatt F77_FUNC(edfnatt,EDFNATT)</span>
+<a name="l00032"></a>00032 <span class="preprocessor"></span>
+<a name="l00033"></a>00033 
+<a name="l00034"></a>00034 <span class="preprocessor">#ifdef PPRO_NT</span>
+<a name="l00035"></a>00035 <span class="preprocessor"></span><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>
+<a name="l00036"></a>00036  EDFFAMC(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fid, <span class="keywordtype">char</span> *maa, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> bidon1, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon1,
+<a name="l00037"></a>00037                   <span class="keywordtype">char</span> *fam, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> bidon2, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon2, 
+<a name="l00038"></a>00038                   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *num, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *attr_ident, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *attr_val,
+<a name="l00039"></a>00039                   <span class="keywordtype">char</span> *attr_desc, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> bidon3, 
+<a name="l00040"></a>00040                   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon3, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *n_attr, <span class="keywordtype">char</span> *groupe , 
+<a name="l00041"></a>00041                   <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> bidon4, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon4, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *n_groupe)
+<a name="l00042"></a>00042 <span class="preprocessor">#else</span>
+<a name="l00043"></a>00043 <span class="preprocessor"></span><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>
+<a name="l00044"></a><a class="code" href="a00266_adc9858bb280c9c4b6157cc41eaf3df43.html#adc9858bb280c9c4b6157cc41eaf3df43">00044</a> <a class="code" href="a00266_a75ccd063592fae829ba1c2c826deee09.html#a75ccd063592fae829ba1c2c826deee09">nedffamc</a>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fid,<span class="keywordtype">char</span> *maa,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon1,<span class="keywordtype">char</span> *fam,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon2, 
+<a name="l00045"></a>00045          <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *num,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *attr_ident,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *attr_val,<span class="keywordtype">char</span> *attr_desc, 
+<a name="l00046"></a>00046          <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon3,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *n_attr,<span class="keywordtype">char</span> *groupe ,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon4, 
+<a name="l00047"></a>00047          <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *n_groupe)
+<a name="l00048"></a>00048 <span class="preprocessor">#endif</span>
+<a name="l00049"></a>00049 <span class="preprocessor"></span>{
+<a name="l00050"></a>00050 
+<a name="l00051"></a>00051 
+<a name="l00052"></a>00052   <span class="keywordtype">char</span> *  name = <span class="stringliteral">&quot;nedffamc&quot;</span>;
+<a name="l00053"></a>00053   <span class="keywordtype">int</span>     dummy;
+<a name="l00054"></a>00054   <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> fret=-1;
+<a name="l00055"></a>00055   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> majeur, mineur, release;
+<a name="l00056"></a>00056   <a class="code" href="a00342_aa896a5dd96c1794c04cfe5d0f174c4e1.html#aa896a5dd96c1794c04cfe5d0f174c4e1">MedFuncType</a> func;
+<a name="l00057"></a>00057 
+<a name="l00058"></a>00058   <a class="code" href="a00346_a86c364582d2209692bdbb5669c6bdf47.html#a86c364582d2209692bdbb5669c6bdf47">MEDversionLire</a>( (<a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>) *fid, &amp;majeur, &amp;mineur, &amp;release );
+<a name="l00059"></a>00059   
+<a name="l00060"></a>00060   func = <a class="code" href="a00342_a477d77bffcd0b9682a2c038fab687aea.html#a477d77bffcd0b9682a2c038fab687aea">_MEDversionedApi</a>(name,majeur,mineur,release);
+<a name="l00061"></a>00061   <span class="keywordflow">if</span> ( func != (<a class="code" href="a00342_aa896a5dd96c1794c04cfe5d0f174c4e1.html#aa896a5dd96c1794c04cfe5d0f174c4e1">MedFuncType</a>) NULL )
+<a name="l00062"></a>00062     func (dummy, fid, maa, lon1, fam, lon2, 
+<a name="l00063"></a>00063           num, attr_ident, attr_val, attr_desc, 
+<a name="l00064"></a>00064           lon3, n_attr, groupe , lon4, 
+<a name="l00065"></a>00065           n_groupe , &amp;fret);
+<a name="l00066"></a>00066 
+<a name="l00067"></a>00067   <span class="keywordflow">return</span> fret;
+<a name="l00068"></a>00068 }
+<a name="l00069"></a>00069 
+<a name="l00070"></a>00070 <span class="preprocessor">#ifdef PPRO_NT</span>
+<a name="l00071"></a>00071 <span class="preprocessor"></span><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>
+<a name="l00072"></a>00072  EDFFAME (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fid, <span class="keywordtype">char</span> *maa, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> bidon, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon1,
+<a name="l00073"></a>00073                    <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fam, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *n, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *type_ent,
+<a name="l00074"></a>00074                    <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *type_geo)
+<a name="l00075"></a>00075 <span class="preprocessor">#else</span>
+<a name="l00076"></a>00076 <span class="preprocessor"></span><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>
+<a name="l00077"></a><a class="code" href="a00266_a9641053bd2702e0d62a5ee94881aa1a3.html#a9641053bd2702e0d62a5ee94881aa1a3">00077</a> <a class="code" href="a00266_a13d8b74ead8b25d9777fe2ca1f8324aa.html#a13d8b74ead8b25d9777fe2ca1f8324aa">nedffame</a>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fid,<span class="keywordtype">char</span> *maa,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon1,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fam, 
+<a name="l00078"></a>00078          <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *n, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *type_ent,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *type_geo)
+<a name="l00079"></a>00079 <span class="preprocessor">#endif</span>
+<a name="l00080"></a>00080 <span class="preprocessor"></span>{
+<a name="l00081"></a>00081   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ret;
+<a name="l00082"></a>00082   <span class="keywordtype">char</span> *  fn1;
+<a name="l00083"></a>00083   
+<a name="l00084"></a>00084   fn1 = <a class="code" href="a00342_ad9fbdd2fe9e8a3ad492a674d3def67b7.html#ad9fbdd2fe9e8a3ad492a674d3def67b7">_MED2cstring</a>(maa, (<span class="keywordtype">int</span>) * lon1);
+<a name="l00085"></a>00085   <span class="keywordflow">if</span> (!fn1 )
+<a name="l00086"></a>00086     <span class="keywordflow">return</span>(-1);
+<a name="l00087"></a>00087 
+<a name="l00088"></a>00088   ret = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>) <a class="code" href="a00346_aea3804c0bafbe6bcadf142634cd5f9d4.html#aea3804c0bafbe6bcadf142634cd5f9d4">MEDfamEcr</a>((<a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>) *fid,fn1,(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *)fam,
+<a name="l00089"></a>00089                            (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>) *n,
+<a name="l00090"></a>00090                            (<a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08">med_entite_maillage</a>) *type_ent,
+<a name="l00091"></a>00091                            (<a class="code" href="a00320_ab93ab4475f81e2db98705aca718115a9.html#ab93ab4475f81e2db98705aca718115a9">med_geometrie_element</a>) *type_geo); 
+<a name="l00092"></a>00092 
+<a name="l00093"></a>00093   <a class="code" href="a00342_a992df60eb088b3e3138a7c59596b8339.html#a992df60eb088b3e3138a7c59596b8339">_MEDcstringFree</a>(fn1);
+<a name="l00094"></a>00094 
+<a name="l00095"></a>00095   <span class="keywordflow">return</span>(ret);
+<a name="l00096"></a>00096 }
+<a name="l00097"></a>00097 
+<a name="l00098"></a>00098 
+<a name="l00099"></a>00099 <span class="preprocessor">#ifdef PPRO_NT</span>
+<a name="l00100"></a>00100 <span class="preprocessor"></span><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>
+<a name="l00101"></a>00101  EDFFAML(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fid, <span class="keywordtype">char</span> *maa, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> bidon, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon1,
+<a name="l00102"></a>00102                   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fam, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *n, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *type_ent,
+<a name="l00103"></a>00103                   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *type_geo)
+<a name="l00104"></a>00104 <span class="preprocessor">#else</span>
+<a name="l00105"></a>00105 <span class="preprocessor"></span><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>
+<a name="l00106"></a><a class="code" href="a00266_a869a757a09db1fabc071ed72fa59887c.html#a869a757a09db1fabc071ed72fa59887c">00106</a> <a class="code" href="a00266_a2af3584cc4cf2976819c2573598add31.html#a2af3584cc4cf2976819c2573598add31">nedffaml</a>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fid, <span class="keywordtype">char</span> *maa, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon1, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fam, 
+<a name="l00107"></a>00107          <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *n,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *type_ent,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *type_geo)
+<a name="l00108"></a>00108 <span class="preprocessor">#endif</span>
+<a name="l00109"></a>00109 <span class="preprocessor"></span>{
+<a name="l00110"></a>00110   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ret;
+<a name="l00111"></a>00111   <span class="keywordtype">char</span> *  fn1;
+<a name="l00112"></a>00112   
+<a name="l00113"></a>00113   fn1 = <a class="code" href="a00342_ad9fbdd2fe9e8a3ad492a674d3def67b7.html#ad9fbdd2fe9e8a3ad492a674d3def67b7">_MED2cstring</a>(maa, (<span class="keywordtype">int</span>) * lon1);
+<a name="l00114"></a>00114   <span class="keywordflow">if</span> (!fn1 )
+<a name="l00115"></a>00115     <span class="keywordflow">return</span>(-1);
+<a name="l00116"></a>00116 
+<a name="l00117"></a>00117   ret = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>) <a class="code" href="a00346_a3e6c8b8a760f297e91934f46c4b9fd17.html#a3e6c8b8a760f297e91934f46c4b9fd17">MEDfamLire</a>((<a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>) *fid,fn1,(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>*) fam,(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>) *n, 
+<a name="l00118"></a>00118                              (<a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08">med_entite_maillage</a>) *type_ent,
+<a name="l00119"></a>00119                              (<a class="code" href="a00320_ab93ab4475f81e2db98705aca718115a9.html#ab93ab4475f81e2db98705aca718115a9">med_geometrie_element</a>) *type_geo); 
+<a name="l00120"></a>00120 
+<a name="l00121"></a>00121   <a class="code" href="a00342_a992df60eb088b3e3138a7c59596b8339.html#a992df60eb088b3e3138a7c59596b8339">_MEDcstringFree</a>(fn1);
+<a name="l00122"></a>00122 
+<a name="l00123"></a>00123   <span class="keywordflow">return</span>(ret);
+<a name="l00124"></a>00124 }
+<a name="l00125"></a>00125 
+<a name="l00126"></a>00126 
+<a name="l00127"></a>00127 <span class="preprocessor">#ifdef  PPRO_NT</span>
+<a name="l00128"></a>00128 <span class="preprocessor"></span><span class="keywordtype">int</span>
+<a name="l00129"></a>00129  EDFFAMI(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fid, <span class="keywordtype">char</span> *maa, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> bidon1, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon1,
+<a name="l00130"></a>00130                   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *ind, <span class="keywordtype">char</span> *fam, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> bidon2, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *num,
+<a name="l00131"></a>00131                   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *attr_ident, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *attr_val, 
+<a name="l00132"></a>00132                   <span class="keywordtype">char</span> *attr_desc, <span class="keywordtype">int</span> <span class="keywordtype">unsigned</span> bidon3, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *n_attr,
+<a name="l00133"></a>00133                   <span class="keywordtype">char</span> *groupe , <span class="keywordtype">int</span> <span class="keywordtype">unsigned</span> bidon4, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *n_groupe)
+<a name="l00134"></a>00134 <span class="preprocessor">#else</span>
+<a name="l00135"></a>00135 <span class="preprocessor"></span><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>
+<a name="l00136"></a><a class="code" href="a00266_a6c74ac1552215162180649d091a084f4.html#a6c74ac1552215162180649d091a084f4">00136</a> <a class="code" href="a00266_a815b7c409e4d7d37433404635067d7d4.html#a815b7c409e4d7d37433404635067d7d4">nedffami</a>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fid, <span class="keywordtype">char</span> *maa,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon1,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *ind, 
+<a name="l00137"></a>00137          <span class="keywordtype">char</span> *fam,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *num,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *attr_ident,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *attr_val, 
+<a name="l00138"></a>00138          <span class="keywordtype">char</span> *attr_desc,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *n_attr,
+<a name="l00139"></a>00139          <span class="keywordtype">char</span> *groupe ,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *n_groupe)
+<a name="l00140"></a>00140 <span class="preprocessor">#endif</span>
+<a name="l00141"></a>00141 <span class="preprocessor"></span>{
+<a name="l00142"></a>00142   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ret;
+<a name="l00143"></a>00143   <span class="keywordtype">char</span> * fn1,* fs1, * fs2;
+<a name="l00144"></a>00144   <span class="keywordtype">char</span> fs3[<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>+1];
+<a name="l00145"></a>00145   <span class="keywordtype">int</span> natt,ngro,j;
+<a name="l00146"></a>00146   <span class="keywordtype">char</span> <a class="code" href="a00318_ad8ab729381f270b100f3d05b6c6676fc.html#ad8ab729381f270b100f3d05b6c6676fc">str</a>[<a class="code" href="a00320_a33da0ce26e6140524104f6c3983738f9.html#a33da0ce26e6140524104f6c3983738f9">MED_TAILLE_LNOM</a>+1];
+<a name="l00147"></a>00147 
+<a name="l00148"></a>00148   fn1 = <a class="code" href="a00342_ad9fbdd2fe9e8a3ad492a674d3def67b7.html#ad9fbdd2fe9e8a3ad492a674d3def67b7">_MED2cstring</a>(maa, (<span class="keywordtype">int</span>) * lon1);
+<a name="l00149"></a>00149   <span class="keywordflow">if</span> (!fn1)
+<a name="l00150"></a>00150     <span class="keywordflow">return</span>(-1);
+<a name="l00151"></a>00151 
+<a name="l00152"></a>00152   <span class="keywordflow">if</span> ((ngro = <a class="code" href="a00346_a4507eb4ad598a268e9c7890ac6f5cef9.html#a4507eb4ad598a268e9c7890ac6f5cef9">MEDnGroupe</a>  ((<a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>) *fid,fn1,*ind)) &lt; 0) <span class="keywordflow">return</span> -1; 
+<a name="l00153"></a>00153   <span class="keywordflow">if</span> ((natt = <a class="code" href="a00346_a1c5812849709b06e9b33d88749752e9b.html#a1c5812849709b06e9b33d88749752e9b">MEDnAttribut</a>((<a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>) *fid,fn1,*ind)) &lt; 0) <span class="keywordflow">return</span> -1; 
+<a name="l00154"></a>00154 
+<a name="l00155"></a>00155   fs1 = (<span class="keywordtype">char</span> *) malloc(<a class="code" href="a00320_aecfdcbb63702f8a9b97643d05cc63888.html#aecfdcbb63702f8a9b97643d05cc63888">MED_TAILLE_DESC</a>*natt+1);
+<a name="l00156"></a>00156   fs2 = (<span class="keywordtype">char</span> *) malloc(<a class="code" href="a00320_a33da0ce26e6140524104f6c3983738f9.html#a33da0ce26e6140524104f6c3983738f9">MED_TAILLE_LNOM</a>*ngro+1);
+<a name="l00157"></a>00157 
+<a name="l00158"></a>00158   ret = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>) <a class="code" href="a00346_a9b5446adf24c6de1c5111c08ae612960.html#a9b5446adf24c6de1c5111c08ae612960">MEDfamInfo</a>((<a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>) *fid,fn1,(int) *ind, (<span class="keywordtype">char</span> *)fs3 , 
+<a name="l00159"></a>00159                              (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *)num, 
+<a name="l00160"></a>00160                              (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *) attr_ident,(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *) attr_val,
+<a name="l00161"></a>00161                              (<span class="keywordtype">char</span> *) fs1,
+<a name="l00162"></a>00162                              (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *) n_attr,
+<a name="l00163"></a>00163                              (<span class="keywordtype">char</span> *)fs2 ,(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *) n_groupe);
+<a name="l00164"></a>00164 
+<a name="l00165"></a>00165   strncpy(fam,fs3,<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>);
+<a name="l00166"></a>00166   <a class="code" href="a00342_acaf1de91642347cf35032cfab90afb1c.html#acaf1de91642347cf35032cfab90afb1c">_MEDfstring</a>(fam,<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>);
+<a name="l00167"></a>00167   strncpy(attr_desc,fs1,<a class="code" href="a00320_aecfdcbb63702f8a9b97643d05cc63888.html#aecfdcbb63702f8a9b97643d05cc63888">MED_TAILLE_DESC</a>*natt);
+<a name="l00168"></a>00168   <a class="code" href="a00342_acaf1de91642347cf35032cfab90afb1c.html#acaf1de91642347cf35032cfab90afb1c">_MEDfstring</a>(attr_desc,<a class="code" href="a00320_aecfdcbb63702f8a9b97643d05cc63888.html#aecfdcbb63702f8a9b97643d05cc63888">MED_TAILLE_DESC</a>*natt);
+<a name="l00169"></a>00169 
+<a name="l00170"></a>00170   <span class="keywordflow">for</span> (j=0;j&lt;ngro;j++) {
+<a name="l00171"></a>00171       strncpy(str,fs2+j*<a class="code" href="a00320_a33da0ce26e6140524104f6c3983738f9.html#a33da0ce26e6140524104f6c3983738f9">MED_TAILLE_LNOM</a>,MED_TAILLE_LNOM);
+<a name="l00172"></a>00172       <a class="code" href="a00342_acaf1de91642347cf35032cfab90afb1c.html#acaf1de91642347cf35032cfab90afb1c">_MEDfstring</a>(str,MED_TAILLE_LNOM);
+<a name="l00173"></a>00173       str[MED_TAILLE_LNOM] = <span class="charliteral">&apos;\0&apos;</span>;
+<a name="l00174"></a>00174       <span class="keywordflow">if</span> (j == 0) 
+<a name="l00175"></a>00175               strcpy(groupe,str);
+<a name="l00176"></a>00176       <span class="keywordflow">else</span>
+<a name="l00177"></a>00177               strcat(groupe,str);
+<a name="l00178"></a>00178   } 
+<a name="l00179"></a>00179   <a class="code" href="a00342_acaf1de91642347cf35032cfab90afb1c.html#acaf1de91642347cf35032cfab90afb1c">_MEDfstring</a>(groupe,<a class="code" href="a00320_a33da0ce26e6140524104f6c3983738f9.html#a33da0ce26e6140524104f6c3983738f9">MED_TAILLE_LNOM</a>*ngro);
+<a name="l00180"></a>00180   free(fs1);
+<a name="l00181"></a>00181   free(fs2);
+<a name="l00182"></a>00182   
+<a name="l00183"></a>00183   <a class="code" href="a00342_a992df60eb088b3e3138a7c59596b8339.html#a992df60eb088b3e3138a7c59596b8339">_MEDcstringFree</a>(fn1);
+<a name="l00184"></a>00184   
+<a name="l00185"></a>00185   <span class="keywordflow">return</span>(ret);
+<a name="l00186"></a>00186 }
+<a name="l00187"></a>00187 
+<a name="l00188"></a>00188 <span class="preprocessor">#ifdef PPRO_NT</span>
+<a name="l00189"></a>00189 <span class="preprocessor"></span><span class="keywordtype">int</span>
+<a name="l00190"></a>00190  EDFNFAM(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fid, <span class="keywordtype">char</span> *maa, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> bidon, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon1)
+<a name="l00191"></a>00191 <span class="preprocessor">#else</span>
+<a name="l00192"></a>00192 <span class="preprocessor"></span><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>
+<a name="l00193"></a><a class="code" href="a00266_a7b4c120e887f2d20b63546f450033988.html#a7b4c120e887f2d20b63546f450033988">00193</a> <a class="code" href="a00266_aea2393d2c9724a2ef078f53d7f4bfa0b.html#aea2393d2c9724a2ef078f53d7f4bfa0b">nedfnfam</a>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fid,<span class="keywordtype">char</span> *maa,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon1)
+<a name="l00194"></a>00194 <span class="preprocessor">#endif</span>
+<a name="l00195"></a>00195 <span class="preprocessor"></span>{
+<a name="l00196"></a>00196   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ret;
+<a name="l00197"></a>00197   <span class="keywordtype">char</span> *  fn1;
+<a name="l00198"></a>00198   
+<a name="l00199"></a>00199   fn1 = <a class="code" href="a00342_ad9fbdd2fe9e8a3ad492a674d3def67b7.html#ad9fbdd2fe9e8a3ad492a674d3def67b7">_MED2cstring</a>(maa, (<span class="keywordtype">int</span>) * lon1);
+<a name="l00200"></a>00200   <span class="keywordflow">if</span> (!fn1)
+<a name="l00201"></a>00201     <span class="keywordflow">return</span>(-1); 
+<a name="l00202"></a>00202 
+<a name="l00203"></a>00203   ret = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>) <a class="code" href="a00346_a2a35febeb1f6e8e07715bce2f4daab3f.html#a2a35febeb1f6e8e07715bce2f4daab3f">MEDnFam</a>((<a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>)*fid,fn1); 
+<a name="l00204"></a>00204 
+<a name="l00205"></a>00205   <a class="code" href="a00342_a992df60eb088b3e3138a7c59596b8339.html#a992df60eb088b3e3138a7c59596b8339">_MEDcstringFree</a>(fn1);
+<a name="l00206"></a>00206 
+<a name="l00207"></a>00207   <span class="keywordflow">return</span>(ret);  
+<a name="l00208"></a>00208 }
+<a name="l00209"></a>00209 
+<a name="l00210"></a>00210 <span class="preprocessor">#ifdef PPRO_NT</span>
+<a name="l00211"></a>00211 <span class="preprocessor"></span><span class="keywordtype">int</span>
+<a name="l00212"></a>00212  EDFNGRO(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fid, <span class="keywordtype">char</span> *maa, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> bidon, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon1, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *indice)
+<a name="l00213"></a>00213 <span class="preprocessor">#else</span>
+<a name="l00214"></a>00214 <span class="preprocessor"></span><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>
+<a name="l00215"></a><a class="code" href="a00266_acedf948c75fa163acf74e9d7153bc3a2.html#acedf948c75fa163acf74e9d7153bc3a2">00215</a> <a class="code" href="a00266_aff4b2446cf990f208b1cf205ac3a01b2.html#aff4b2446cf990f208b1cf205ac3a01b2">nedfngro</a>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fid,<span class="keywordtype">char</span> *maa,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon1,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *indice)
+<a name="l00216"></a>00216 <span class="preprocessor">#endif</span>
+<a name="l00217"></a>00217 <span class="preprocessor"></span>{
+<a name="l00218"></a>00218   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ret;
+<a name="l00219"></a>00219   <span class="keywordtype">char</span> *  fn1;
+<a name="l00220"></a>00220   
+<a name="l00221"></a>00221   fn1 = <a class="code" href="a00342_ad9fbdd2fe9e8a3ad492a674d3def67b7.html#ad9fbdd2fe9e8a3ad492a674d3def67b7">_MED2cstring</a>(maa, (<span class="keywordtype">int</span>) * lon1);
+<a name="l00222"></a>00222   <span class="keywordflow">if</span> (!fn1)
+<a name="l00223"></a>00223     <span class="keywordflow">return</span>(-1); 
+<a name="l00224"></a>00224 
+<a name="l00225"></a>00225   ret = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>) <a class="code" href="a00346_a4507eb4ad598a268e9c7890ac6f5cef9.html#a4507eb4ad598a268e9c7890ac6f5cef9">MEDnGroupe</a>((<a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>)*fid,fn1,(int)*indice); 
+<a name="l00226"></a>00226 
+<a name="l00227"></a>00227   <a class="code" href="a00342_a992df60eb088b3e3138a7c59596b8339.html#a992df60eb088b3e3138a7c59596b8339">_MEDcstringFree</a>(fn1);
+<a name="l00228"></a>00228 
+<a name="l00229"></a>00229   <span class="keywordflow">return</span>(ret);  
+<a name="l00230"></a>00230 }
+<a name="l00231"></a>00231 
+<a name="l00232"></a>00232 
+<a name="l00233"></a>00233 <span class="preprocessor">#ifdef PPRO_NT</span>
+<a name="l00234"></a>00234 <span class="preprocessor"></span><span class="keywordtype">int</span>
+<a name="l00235"></a>00235  EDFNATT(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fid, <span class="keywordtype">char</span> *maa, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> bidon, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon1, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *indice)
+<a name="l00236"></a>00236 <span class="preprocessor">#else</span>
+<a name="l00237"></a>00237 <span class="preprocessor"></span><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>
+<a name="l00238"></a><a class="code" href="a00266_a0a3bd29c7e4ca2c8247e743e413d3e8a.html#a0a3bd29c7e4ca2c8247e743e413d3e8a">00238</a> <a class="code" href="a00266_a2af3c9d1a3061b764ec28d0d304316a7.html#a2af3c9d1a3061b764ec28d0d304316a7">nedfnatt</a>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *fid,<span class="keywordtype">char</span> *maa,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *lon1,<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *indice)
+<a name="l00239"></a>00239 <span class="preprocessor">#endif</span>
+<a name="l00240"></a>00240 <span class="preprocessor"></span>{
+<a name="l00241"></a>00241   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ret;
+<a name="l00242"></a>00242   <span class="keywordtype">char</span> *  fn1;
+<a name="l00243"></a>00243   
+<a name="l00244"></a>00244   fn1 = <a class="code" href="a00342_ad9fbdd2fe9e8a3ad492a674d3def67b7.html#ad9fbdd2fe9e8a3ad492a674d3def67b7">_MED2cstring</a>(maa, (<span class="keywordtype">int</span>) * lon1);
+<a name="l00245"></a>00245   <span class="keywordflow">if</span> (!fn1)
+<a name="l00246"></a>00246     <span class="keywordflow">return</span>(-1); 
+<a name="l00247"></a>00247 
+<a name="l00248"></a>00248   ret = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>) <a class="code" href="a00346_a1c5812849709b06e9b33d88749752e9b.html#a1c5812849709b06e9b33d88749752e9b">MEDnAttribut</a>((<a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>)*fid,fn1,(int)*indice); 
+<a name="l00249"></a>00249 
+<a name="l00250"></a>00250   <a class="code" href="a00342_a992df60eb088b3e3138a7c59596b8339.html#a992df60eb088b3e3138a7c59596b8339">_MEDcstringFree</a>(fn1);
+<a name="l00251"></a>00251 
+<a name="l00252"></a>00252   <span class="keywordflow">return</span>(ret);  
+<a name="l00253"></a>00253 }
+<a name="l00254"></a>00254 
+<a name="l00255"></a>00255 
+<a name="l00256"></a>00256 
+<a name="l00257"></a>00257 
+<a name="l00258"></a>00258 
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:34 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

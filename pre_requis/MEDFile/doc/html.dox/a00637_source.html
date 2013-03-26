@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de MEDnomLire.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_6d8408d9855f99d1b33e274ba7d15ec1.html">src</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_f28a13a54b2ea19aa3beea3b98c6f442.html">2.3.6</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_0ee583a61dcfc27056bc3bd5b0f76fbb.html">ci</a>
+  </div>
+</div>
+<div class="contents">
+<h1>MEDnomLire.c</h1><a href="a00637.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment"> *</span>
+<a name="l00003"></a>00003 <span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment"> *  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment"> *</span>
+<a name="l00009"></a>00009 <span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment"> *</span>
+<a name="l00014"></a>00014 <span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment"> */</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019 <span class="preprocessor">#include &lt;<a class="code" href="a00321.html">med.h</a>&gt;</span>
+<a name="l00020"></a>00020 <span class="preprocessor">#include &lt;<a class="code" href="a00334.html">med_config.h</a>&gt;</span>
+<a name="l00021"></a>00021 <span class="preprocessor">#include &lt;<a class="code" href="a00345.html">med_outils.h</a>&gt;</span>
+<a name="l00022"></a>00022 
+<a name="l00023"></a>00023 <span class="preprocessor">#include &lt;stdlib.h&gt;</span>
+<a name="l00024"></a>00024 <span class="preprocessor">#include &lt;string.h&gt;</span>
+<a name="l00025"></a>00025 
+<a name="l00026"></a>00026 <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> 
+<a name="l00027"></a><a class="code" href="a00637_a6f7dcbdceb7d8762f37bb07042f6358c.html#a6f7dcbdceb7d8762f37bb07042f6358c">00027</a> <a class="code" href="a00346_a78f4e82306b9d7bf0df7326098a51af8.html#a78f4e82306b9d7bf0df7326098a51af8">MEDnomLire</a>(<a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid,<span class="keywordtype">char</span> *maa, <span class="keywordtype">char</span> *nom, <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> n, 
+<a name="l00028"></a>00028            <a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08">med_entite_maillage</a> type_ent,<a class="code" href="a00320_ab93ab4475f81e2db98705aca718115a9.html#ab93ab4475f81e2db98705aca718115a9">med_geometrie_element</a> type_geo)
+<a name="l00029"></a>00029 {
+<a name="l00030"></a>00030   <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> root;
+<a name="l00031"></a>00031   <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> maaid = 0;
+<a name="l00032"></a>00032   <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> entid = 0;
+<a name="l00033"></a>00033   <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> geoid = 0;
+<a name="l00034"></a>00034   <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> ret = -1;
+<a name="l00035"></a>00035   <span class="keywordtype">char</span> chemin[<a class="code" href="a00344_ae7cf7e9299436565bcc7ebfe4820da01.html#ae7cf7e9299436565bcc7ebfe4820da01">MED_TAILLE_MAA</a>+<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>+1];
+<a name="l00036"></a>00036   <span class="keywordtype">char</span> nom_ent[<a class="code" href="a00344_a297272b5640494706d977f1a9f8ed27d.html#a297272b5640494706d977f1a9f8ed27d">MED_TAILLE_NOM_ENTITE</a>+1];
+<a name="l00037"></a>00037   <span class="keywordtype">char</span> nom_geo[<a class="code" href="a00344_a297272b5640494706d977f1a9f8ed27d.html#a297272b5640494706d977f1a9f8ed27d">MED_TAILLE_NOM_ENTITE</a>+1];
+<a name="l00038"></a>00038   <a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08">med_entite_maillage</a> _type_ent=type_ent;
+<a name="l00039"></a>00039 
+<a name="l00040"></a>00040   <span class="keywordflow">if</span> ( type_ent == <a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08a6258960b59d38b0cae7d3abb9659737a">MED_NOEUD_MAILLE</a> ) _type_ent=<a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08a1403b108df73119422ccabd619560c4c">MED_NOEUD</a> ;
+<a name="l00041"></a>00041 
+<a name="l00042"></a>00042   <span class="comment">/*</span>
+<a name="l00043"></a>00043 <span class="comment">   * On inhibe le gestionnaire d&apos;erreur HDF 5</span>
+<a name="l00044"></a>00044 <span class="comment">   */</span>
+<a name="l00045"></a>00045   <a class="code" href="a00338_aa645db37de32784a120a8deb350095e1.html#aa645db37de32784a120a8deb350095e1">_MEDmodeErreurVerrouiller</a>();
+<a name="l00046"></a>00046 <span class="keywordflow">if</span> (<a class="code" href="a00342_abd440542a0ffed874ed0d25bfb18f914.html#abd440542a0ffed874ed0d25bfb18f914">MEDcheckVersion</a>(fid) &lt; 0) <span class="keywordflow">return</span> -1;
+<a name="l00047"></a>00047 
+<a name="l00048"></a>00048 
+<a name="l00049"></a>00049   <span class="comment">/*</span>
+<a name="l00050"></a>00050 <span class="comment">   * Si le maillage n&apos;existe pas =&gt; erreur</span>
+<a name="l00051"></a>00051 <span class="comment">   */</span>
+<a name="l00052"></a>00052   strcpy(chemin,<a class="code" href="a00344_af9de1807c569f067769f17249fc35c8b.html#af9de1807c569f067769f17249fc35c8b">MED_MAA</a>);
+<a name="l00053"></a>00053   strcat(chemin,maa);
+<a name="l00054"></a>00054   <span class="keywordflow">if</span> ((maaid = <a class="code" href="a00338_a0d7b9bf5192f404a570f775351a8a536.html#a0d7b9bf5192f404a570f775351a8a536">_MEDdatagroupOuvrir</a>(fid,chemin)) &lt; 0) {
+<a name="l00055"></a>00055     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Impossible d&apos;acceder au maillage&quot;</span>);
+<a name="l00056"></a>00056     <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(chemin);
+<a name="l00057"></a>00057     <span class="keywordflow">goto</span> ERREUR;
+<a name="l00058"></a>00058   }
+<a name="l00059"></a>00059   
+<a name="l00060"></a>00060   <span class="comment">/*</span>
+<a name="l00061"></a>00061 <span class="comment">   * On met a jour le nom du &quot;Data Group&quot; representant</span>
+<a name="l00062"></a>00062 <span class="comment">   * le type des entites</span>
+<a name="l00063"></a>00063 <span class="comment">   */</span>
+<a name="l00064"></a>00064   <span class="keywordflow">if</span> (<a class="code" href="a00329_aecea9ce7979ccc45fb2c56896993511a.html#aecea9ce7979ccc45fb2c56896993511a">_MEDnomEntite</a>(nom_ent,_type_ent) &lt; 0) {
+<a name="l00065"></a>00065     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;L&apos;entité demandée n&apos;est pas une entité &lt;med_entite_maillage&gt; : &quot;</span>);
+<a name="l00066"></a>00066     <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(nom_ent); 
+<a name="l00067"></a>00067     <a class="code" href="a00348_a818470a84d2ad18a3fbb48170296cd95.html#a818470a84d2ad18a3fbb48170296cd95">ISCRUTE</a>(_type_ent);
+<a name="l00068"></a>00068     <span class="keywordflow">goto</span> ERREUR;
+<a name="l00069"></a>00069   }
+<a name="l00070"></a>00070      
+<a name="l00071"></a>00071   
+<a name="l00072"></a>00072   <span class="comment">/*</span>
+<a name="l00073"></a>00073 <span class="comment">   * Si le &quot;Data Group&quot; des entites n&apos;existe pas =&gt; erreur</span>
+<a name="l00074"></a>00074 <span class="comment">   */</span>
+<a name="l00075"></a>00075    <span class="keywordflow">if</span> ((entid = <a class="code" href="a00338_a0d7b9bf5192f404a570f775351a8a536.html#a0d7b9bf5192f404a570f775351a8a536">_MEDdatagroupOuvrir</a>(maaid,nom_ent)) &lt; 0) { 
+<a name="l00076"></a>00076      <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Impossible d&apos;accéder au groupe des entités : &quot;</span>);
+<a name="l00077"></a>00077      <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(nom_ent); 
+<a name="l00078"></a>00078      <a class="code" href="a00348_a818470a84d2ad18a3fbb48170296cd95.html#a818470a84d2ad18a3fbb48170296cd95">ISCRUTE</a>(_type_ent);
+<a name="l00079"></a>00079      <span class="keywordflow">goto</span> ERREUR;
+<a name="l00080"></a>00080    }
+<a name="l00081"></a>00081 
+<a name="l00082"></a>00082    <span class="comment">/*</span>
+<a name="l00083"></a>00083 <span class="comment">    * Pour les mailles, les faces et le aretes,</span>
+<a name="l00084"></a>00084 <span class="comment">    * on ouvre le &quot;Data Group&quot; du type geometrique correspondant</span>
+<a name="l00085"></a>00085 <span class="comment">    */</span>
+<a name="l00086"></a>00086    <span class="keywordflow">if</span> ((_type_ent==<a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08aa99fcc0abf1e176a8c7ef5453bd1f446">MED_MAILLE</a>)||(_type_ent==<a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08ab0641799ff99918e8e95edca23114f83">MED_FACE</a>)||(_type_ent==<a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08ace31cb42b6f0ecacdafc847f04f89cce">MED_ARETE</a>))
+<a name="l00087"></a>00087      {
+<a name="l00088"></a>00088        <span class="keywordflow">if</span> (<a class="code" href="a00329_a314319efe602621ddcc72b43feb644e0.html#a314319efe602621ddcc72b43feb644e0">_MEDnomGeometrie30</a>(nom_geo,type_geo) &lt; 0) {
+<a name="l00089"></a>00089          <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;L&apos;entité demandée n&apos;est pas un élément &lt;med_geometrie_element&gt; : &quot;</span>);
+<a name="l00090"></a>00090          <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(nom_geo); 
+<a name="l00091"></a>00091          <a class="code" href="a00348_a818470a84d2ad18a3fbb48170296cd95.html#a818470a84d2ad18a3fbb48170296cd95">ISCRUTE</a>(type_geo);
+<a name="l00092"></a>00092          <span class="keywordflow">goto</span> ERREUR;
+<a name="l00093"></a>00093        }
+<a name="l00094"></a>00094        
+<a name="l00095"></a>00095        <span class="keywordflow">if</span> ((geoid = <a class="code" href="a00338_a0d7b9bf5192f404a570f775351a8a536.html#a0d7b9bf5192f404a570f775351a8a536">_MEDdatagroupOuvrir</a>(entid,nom_geo)) &lt; 0) {
+<a name="l00096"></a>00096          <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Impossible d&apos;accéder au groupe des éléments géométriques : &quot;</span>);
+<a name="l00097"></a>00097          <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(nom_geo); 
+<a name="l00098"></a>00098          <a class="code" href="a00348_a818470a84d2ad18a3fbb48170296cd95.html#a818470a84d2ad18a3fbb48170296cd95">ISCRUTE</a>(type_geo);
+<a name="l00099"></a>00099          <span class="keywordflow">goto</span> ERREUR;
+<a name="l00100"></a>00100        }           
+<a name="l00101"></a>00101      }
+<a name="l00102"></a>00102    <span class="keywordflow">else</span> <span class="comment">/* pour les noeuds */</span>
+<a name="l00103"></a>00103      geoid = -1;
+<a name="l00104"></a>00104 
+<a name="l00105"></a>00105    <span class="comment">/*</span>
+<a name="l00106"></a>00106 <span class="comment">    * Lecture du &quot;Data Set&quot; &quot;NOM&quot; :</span>
+<a name="l00107"></a>00107 <span class="comment">    * - En cas d&apos;erreur, pas de message car la presence des </span>
+<a name="l00108"></a>00108 <span class="comment">    *   noms est optionnelle dans un maillage MED</span>
+<a name="l00109"></a>00109 <span class="comment">    */</span>
+<a name="l00110"></a>00110    <span class="keywordflow">if</span> (geoid == -1)
+<a name="l00111"></a>00111      root = entid;
+<a name="l00112"></a>00112    <span class="keywordflow">else</span>
+<a name="l00113"></a>00113      root = geoid;
+<a name="l00114"></a>00114    <span class="keywordflow">if</span> (<a class="code" href="a00328_a2e19cdcf1c8d85e644434affeb598693.html#a2e19cdcf1c8d85e644434affeb598693">_MEDdatasetStringLire</a>(root,<a class="code" href="a00344_a4508ac800b43e951688ab10dfefb2fca.html#a4508ac800b43e951688ab10dfefb2fca">MED_NOM_NOM</a>,nom) &lt; 0)
+<a name="l00115"></a>00115      <span class="keywordflow">goto</span> ERREUR;
+<a name="l00116"></a>00116 
+<a name="l00117"></a>00117    <span class="comment">/*</span>
+<a name="l00118"></a>00118 <span class="comment">    * Tout s&apos;est bien passé si on est parvenu jusqu&apos;ici</span>
+<a name="l00119"></a>00119 <span class="comment">    */</span>
+<a name="l00120"></a>00120    ret = 0;
+<a name="l00121"></a>00121 
+<a name="l00122"></a>00122    <span class="comment">/*</span>
+<a name="l00123"></a>00123 <span class="comment">    * On ferme tout y compris en cas d&apos;erreur</span>
+<a name="l00124"></a>00124 <span class="comment">    */</span>
+<a name="l00125"></a>00125  ERREUR:
+<a name="l00126"></a>00126    <span class="keywordflow">if</span> (geoid &gt; 0)
+<a name="l00127"></a>00127      <span class="keywordflow">if</span> (<a class="code" href="a00338_ae3ba55fd16381090e93f0ee8e3f9e6c6.html#ae3ba55fd16381090e93f0ee8e3f9e6c6">_MEDdatagroupFermer</a>(geoid) &lt; 0)
+<a name="l00128"></a>00128        <span class="keywordflow">return</span> -1;
+<a name="l00129"></a>00129    <span class="keywordflow">if</span> (entid &gt; 0)
+<a name="l00130"></a>00130      <span class="keywordflow">if</span> (<a class="code" href="a00338_ae3ba55fd16381090e93f0ee8e3f9e6c6.html#ae3ba55fd16381090e93f0ee8e3f9e6c6">_MEDdatagroupFermer</a>(entid) &lt; 0)
+<a name="l00131"></a>00131        <span class="keywordflow">return</span> -1;
+<a name="l00132"></a>00132    <span class="keywordflow">if</span> (maaid &gt; 0)
+<a name="l00133"></a>00133      <span class="keywordflow">if</span> (<a class="code" href="a00338_ae3ba55fd16381090e93f0ee8e3f9e6c6.html#ae3ba55fd16381090e93f0ee8e3f9e6c6">_MEDdatagroupFermer</a>(maaid) &lt; 0)
+<a name="l00134"></a>00134        <span class="keywordflow">return</span> -1;
+<a name="l00135"></a>00135 
+<a name="l00136"></a>00136    <span class="comment">/* Code retour : </span>
+<a name="l00137"></a>00137 <span class="comment">    *   - ret == 0 en cas de succès</span>
+<a name="l00138"></a>00138 <span class="comment">    *   - ret == -1 en cas d&apos;échec </span>
+<a name="l00139"></a>00139 <span class="comment">    */</span>
+<a name="l00140"></a>00140    <span class="keywordflow">return</span> (ret); 
+<a name="l00141"></a>00141 }
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:34 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

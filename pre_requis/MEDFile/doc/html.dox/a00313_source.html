@@ -1,0 +1,361 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de MAJ_236_300_maillages.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_85294a8a9f196cdbd7e42569a8b43d43.html">tools</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_a46d7e16343b264a6f70ad9d6544d474.html">medimport</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_c61f7ac308242b81179c815928c57e7c.html">2.3.6</a>
+  </div>
+</div>
+<div class="contents">
+<h1>MAJ_236_300_maillages.c</h1><a href="a00313.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment"> *</span>
+<a name="l00003"></a>00003 <span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment"> *  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment"> *</span>
+<a name="l00009"></a>00009 <span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment"> *</span>
+<a name="l00014"></a>00014 <span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment"> */</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019 <span class="preprocessor">#include &quot;<a class="code" href="a00334.html">med_config.h</a>&quot;</span>
+<a name="l00020"></a>00020 <span class="preprocessor">#include &quot;<a class="code" href="a00345.html">med_outils.h</a>&quot;</span>
+<a name="l00021"></a>00021 <span class="preprocessor">#include &quot;<a class="code" href="a00352.html">med_versioned.h</a>&quot;</span>
+<a name="l00022"></a>00022 <span class="preprocessor">#include &lt;string.h&gt;</span>
+<a name="l00023"></a>00023 
+<a name="l00024"></a>00024 <span class="preprocessor">#include &lt;<a class="code" href="a00327.html">2.3.6/med23v30.h</a>&gt;</span>
+<a name="l00025"></a>00025 <span class="preprocessor">#include &lt;<a class="code" href="a00330.html">2.3.6/med23v30_proto.h</a>&gt;</span>
+<a name="l00026"></a>00026 <span class="preprocessor">#include &lt;<a class="code" href="a00346.html">2.3.6/med_proto.h</a>&gt;</span>
+<a name="l00027"></a>00027 <span class="preprocessor">#include &quot;<a class="code" href="a00329.html">2.3.6/med23v30_misc.h</a>&quot;</span>
+<a name="l00028"></a>00028 
+<a name="l00029"></a>00029 <span class="preprocessor">#include &quot;<a class="code" href="a00306.html">MAJ_236_300.h</a>&quot;</span>
+<a name="l00030"></a>00030 <span class="preprocessor">#include &quot;<a class="code" href="a00317.html">MAJ_version.h</a>&quot;</span>
+<a name="l00031"></a>00031 
+<a name="l00032"></a><a class="code" href="a00313_a6a44ac38c13b7dbf0e999d491846f21d.html#a6a44ac38c13b7dbf0e999d491846f21d">00032</a> <span class="preprocessor">#define MAX_SPACE_DIM 3</span>
+<a name="l00033"></a>00033 <span class="preprocessor"></span>
+<a name="l00034"></a><a class="code" href="a00306_ad6adc58302900a69ea9e9f8759422fe0.html#ad6adc58302900a69ea9e9f8759422fe0">00034</a> <span class="keywordtype">void</span> <a class="code" href="a00313_ad6adc58302900a69ea9e9f8759422fe0.html#ad6adc58302900a69ea9e9f8759422fe0">MAJ_236_300_maillages</a>(<a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid)
+<a name="l00035"></a>00035 {
+<a name="l00036"></a>00036   <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> _ret  = -1;
+<a name="l00037"></a>00037   <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a>  ret  = -1;
+<a name="l00038"></a>00038   <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> _fret = -1;
+<a name="l00039"></a>00039   <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> _err  = -1;
+<a name="l00040"></a>00040   <span class="keywordtype">int</span>     dummy=0;
+<a name="l00041"></a>00041   <span class="keywordtype">char</span> _pathi[<a class="code" href="a00344_ae7cf7e9299436565bcc7ebfe4820da01.html#ae7cf7e9299436565bcc7ebfe4820da01">MED_TAILLE_MAA</a>+<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1+2*<a class="code" href="a00344_a297272b5640494706d977f1a9f8ed27d.html#a297272b5640494706d977f1a9f8ed27d">MED_TAILLE_NOM_ENTITE</a>+1+3+1]=<a class="code" href="a00344_af9de1807c569f067769f17249fc35c8b.html#af9de1807c569f067769f17249fc35c8b">MED_MAA</a>;
+<a name="l00042"></a>00042   <span class="keywordtype">char</span> _pathf[<a class="code" href="a00344_ae7cf7e9299436565bcc7ebfe4820da01.html#ae7cf7e9299436565bcc7ebfe4820da01">MED_TAILLE_MAA</a>+<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1+2*<a class="code" href="a00320_a5ad5e5ac777d6bc82bb6d4ad38d7af53.html#a5ad5e5ac777d6bc82bb6d4ad38d7af53">MED_MAX_PARA</a>+1+2*<a class="code" href="a00344_a297272b5640494706d977f1a9f8ed27d.html#a297272b5640494706d977f1a9f8ed27d">MED_TAILLE_NOM_ENTITE</a>+1+1]=<a class="code" href="a00344_af9de1807c569f067769f17249fc35c8b.html#af9de1807c569f067769f17249fc35c8b">MED_MAA</a>;
+<a name="l00043"></a>00043   <span class="keywordtype">char</span> _pathgridf[<a class="code" href="a00344_ae7cf7e9299436565bcc7ebfe4820da01.html#ae7cf7e9299436565bcc7ebfe4820da01">MED_TAILLE_MAA</a>+<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1+2*<a class="code" href="a00320_a5ad5e5ac777d6bc82bb6d4ad38d7af53.html#a5ad5e5ac777d6bc82bb6d4ad38d7af53">MED_MAX_PARA</a>+1+2*<a class="code" href="a00344_a297272b5640494706d977f1a9f8ed27d.html#a297272b5640494706d977f1a9f8ed27d">MED_TAILLE_NOM_ENTITE</a>+1+1]=<a class="code" href="a00344_af9de1807c569f067769f17249fc35c8b.html#af9de1807c569f067769f17249fc35c8b">MED_MAA</a>;
+<a name="l00044"></a>00044   <span class="keywordtype">char</span> _pathgridi[<a class="code" href="a00344_ae7cf7e9299436565bcc7ebfe4820da01.html#ae7cf7e9299436565bcc7ebfe4820da01">MED_TAILLE_MAA</a>+<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1+2*<a class="code" href="a00344_a297272b5640494706d977f1a9f8ed27d.html#a297272b5640494706d977f1a9f8ed27d">MED_TAILLE_NOM_ENTITE</a>+1+3+1]=<a class="code" href="a00344_af9de1807c569f067769f17249fc35c8b.html#af9de1807c569f067769f17249fc35c8b">MED_MAA</a>;
+<a name="l00045"></a>00045   <span class="keywordtype">char</span> _pathfam[<a class="code" href="a00344_a7252f9a057a8cec38fc0b99eef3c05a9.html#a7252f9a057a8cec38fc0b99eef3c05a9">MED_TAILLE_FAS</a>+<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1+<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1]=<a class="code" href="a00344_a20df7558c8143686f0e755db4da0c2b4.html#a20df7558c8143686f0e755db4da0c2b4">MED_FAS</a>;
+<a name="l00046"></a>00046   <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> _n=0;
+<a name="l00047"></a>00047   <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>            _datagroup=0;
+<a name="l00048"></a>00048   <span class="keywordtype">int</span>                _meshit=0;
+<a name="l00049"></a>00049   <span class="keywordtype">char</span>               _imeshname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1];
+<a name="l00050"></a>00050   <span class="keywordtype">char</span>               _fmeshname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1];
+<a name="l00051"></a>00051   <span class="keywordtype">char</span> *             _meshname=_imeshname;
+<a name="l00052"></a>00052   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>            _spacedim=0;
+<a name="l00053"></a>00053   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>            _meshdim=0;
+<a name="l00054"></a>00054   <a class="code" href="a00321_a821a4dd94c5c6b095318432bdec8d8a1.html#a821a4dd94c5c6b095318432bdec8d8a1">med_mesh_type</a>      _meshtype=<a class="code" href="a00321_a821a4dd94c5c6b095318432bdec8d8a1.html#a821a4dd94c5c6b095318432bdec8d8a1ab8317fa373a6de02bb50a0abdaf400e2">MED_UNDEF_MESH_TYPE</a>;
+<a name="l00055"></a>00055   <span class="keywordtype">char</span>               _description[<a class="code" href="a00321_ab69710ecf9f5257080a943579852d0f0.html#ab69710ecf9f5257080a943579852d0f0">MED_COMMENT_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+<a name="l00056"></a>00056   <span class="keywordtype">char</span>               _dtunit[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+<a name="l00057"></a>00057   <a class="code" href="a00321_a5b97067a30629cd60470d074691d6798.html#a5b97067a30629cd60470d074691d6798">med_sorting_type</a>   _sortingtype=<a class="code" href="a00321_a5b97067a30629cd60470d074691d6798.html#a5b97067a30629cd60470d074691d6798ab77f764517f30a63c9708909433777f8">MED_SORT_UNDEF</a>;
+<a name="l00058"></a>00058   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>            _nstep=0;
+<a name="l00059"></a>00059   <a class="code" href="a00321_a57867e4bed1d104c865cfc9d23c9204d.html#a57867e4bed1d104c865cfc9d23c9204d">med_axis_type</a>      _axistype=<a class="code" href="a00321_a57867e4bed1d104c865cfc9d23c9204d.html#a57867e4bed1d104c865cfc9d23c9204dae0b556d974da352186310978e6e1765a">MED_UNDEF_AXIS_TYPE</a>;
+<a name="l00060"></a>00060   <span class="keywordtype">char</span>               _axisname[3*<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1];
+<a name="l00061"></a>00061   <span class="keywordtype">char</span>               _axisunit[3*<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1];
+<a name="l00062"></a>00062   <span class="keywordtype">int</span>                _itmplen=0;
+<a name="l00063"></a>00063   <span class="keywordtype">int</span>                _ftmplen=0;
+<a name="l00064"></a>00064   <span class="keywordtype">int</span>                _gitmplen=0;
+<a name="l00065"></a>00065   <span class="keywordtype">int</span>                _gftmplen=0;
+<a name="l00066"></a>00066   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>            _1=1;
+<a name="l00067"></a>00067   <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a>           _datagroupexist=<a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190deea30b70cc2a253ed4141db9a78ba696046">MED_FALSE</a>,_isasoftlink=<a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190deea30b70cc2a253ed4141db9a78ba696046">MED_FALSE</a>;
+<a name="l00068"></a>00068   <a class="code" href="a00320_a2ffa035f48fcbb83e25edab5f19cbaf9.html#a2ffa035f48fcbb83e25edab5f19cbaf9">med_type_grille</a>    _gridtype;
+<a name="l00069"></a>00069   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>            _gridstruct[<a class="code" href="a00313_a6a44ac38c13b7dbf0e999d491846f21d.html#a6a44ac38c13b7dbf0e999d491846f21d">MAX_SPACE_DIM</a>] = {0,0,0};
+<a name="l00070"></a>00070   <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a>           _mustwrite_gridstruct= <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190deea30b70cc2a253ed4141db9a78ba696046">MED_FALSE</a>;
+<a name="l00071"></a>00071   hid_t              _ocp_plist_id;
+<a name="l00072"></a>00072   hid_t              _lcp_plist_id;
+<a name="l00073"></a>00073   htri_t  _groupexist;
+<a name="l00074"></a>00074 
+<a name="l00075"></a>00075   <span class="comment">/*</span>
+<a name="l00076"></a>00076 <span class="comment">   *  nombre de maillages</span>
+<a name="l00077"></a>00077 <span class="comment">   */</span>
+<a name="l00078"></a>00078 
+<a name="l00079"></a>00079   ret=<a class="code" href="a00339_a4b30fc43a5ea43b9dd866ceb63cbbe49.html#a4b30fc43a5ea43b9dd866ceb63cbbe49">_MEDnObjects</a>(fid,<a class="code" href="a00344_af9de1807c569f067769f17249fc35c8b.html#af9de1807c569f067769f17249fc35c8b">MED_MAA</a>,&amp;_n);
+<a name="l00080"></a>00080   <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( ( ret == (<a class="code" href="a00335_a65ef0d86e6f6ff88cfe5757570c7cdcb.html#a65ef0d86e6f6ff88cfe5757570c7cdcb">MED_ERR_COUNT</a> + <a class="code" href="a00335_a3e3ac48003b7eac5a1aecac139bcc201.html#a3e3ac48003b7eac5a1aecac139bcc201">MED_ERR_DATAGROUP</a>)),
+<a name="l00081"></a>00081                      <a class="code" href="a00335_a65ef0d86e6f6ff88cfe5757570c7cdcb.html#a65ef0d86e6f6ff88cfe5757570c7cdcb">MED_ERR_COUNT</a>,<a class="code" href="a00335_a8767f86ed60bd189b0e714b775846f24.html#a8767f86ed60bd189b0e714b775846f24">MED_ERR_MESH</a>,<a class="code" href="a00344_af9de1807c569f067769f17249fc35c8b.html#af9de1807c569f067769f17249fc35c8b">MED_MAA</a>);
+<a name="l00082"></a>00082 
+<a name="l00083"></a>00083   <span class="comment">/*</span>
+<a name="l00084"></a>00084 <span class="comment">   * Mise a jour des maillages :</span>
+<a name="l00085"></a>00085 <span class="comment">   *</span>
+<a name="l00086"></a>00086 <span class="comment">   */</span>
+<a name="l00087"></a>00087 <span class="comment">/*   SSCRUTE(_pathi); */</span>
+<a name="l00088"></a>00088   _groupexist= H5Aexists_by_name( fid, _pathi, <a class="code" href="a00345_ac7ffbff111dea04648c3cbcd39105144.html#ac7ffbff111dea04648c3cbcd39105144">MED_COMMENT_NAME</a>, H5P_DEFAULT  );
+<a name="l00089"></a>00089   <span class="keywordflow">if</span> (_groupexist &gt; 0) {
+<a name="l00090"></a>00090     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a00339_aab8b468a4abac24635c6596ed364a28f.html#aab8b468a4abac24635c6596ed364a28f">_MEDattributeStringRdByName</a>(fid,_pathi,<a class="code" href="a00345_ac7ffbff111dea04648c3cbcd39105144.html#ac7ffbff111dea04648c3cbcd39105144">MED_COMMENT_NAME</a>,<a class="code" href="a00321_ab69710ecf9f5257080a943579852d0f0.html#ab69710ecf9f5257080a943579852d0f0">MED_COMMENT_SIZE</a>,
+<a name="l00091"></a>00091                                                  _description ) &lt; 0 ,
+<a name="l00092"></a>00092                      <a class="code" href="a00335_ac3d72eee2022402ffdc5851d2dc98584.html#ac3d72eee2022402ffdc5851d2dc98584">MED_ERR_READ</a>,<a class="code" href="a00335_a839396052811187e23547f71d50ab39b.html#a839396052811187e23547f71d50ab39b">MED_ERR_ATTRIBUTE</a>,<a class="code" href="a00345_ac7ffbff111dea04648c3cbcd39105144.html#ac7ffbff111dea04648c3cbcd39105144">MED_COMMENT_NAME</a>);
+<a name="l00093"></a>00093     
+<a name="l00094"></a>00094     H5Adelete_by_name( fid, _pathi,<a class="code" href="a00345_ac7ffbff111dea04648c3cbcd39105144.html#ac7ffbff111dea04648c3cbcd39105144">MED_COMMENT_NAME</a>, H5P_DEFAULT );
+<a name="l00095"></a>00095     
+<a name="l00096"></a>00096     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a00339_a50312280b6e3cc4de19542b3fda2cb79.html#a50312280b6e3cc4de19542b3fda2cb79">_MEDattributeStringWrByName</a>(fid,<span class="stringliteral">&quot;/&quot;</span>,<a class="code" href="a00345_ac7ffbff111dea04648c3cbcd39105144.html#ac7ffbff111dea04648c3cbcd39105144">MED_COMMENT_NAME</a>,<a class="code" href="a00321_ab69710ecf9f5257080a943579852d0f0.html#ab69710ecf9f5257080a943579852d0f0">MED_COMMENT_SIZE</a>,
+<a name="l00097"></a>00097                                                  _description ) &lt; 0 ,
+<a name="l00098"></a>00098                      <a class="code" href="a00335_ada9ad358d137c53e288ff59d49e45541.html#ada9ad358d137c53e288ff59d49e45541">MED_ERR_WRITE</a>,<a class="code" href="a00335_a839396052811187e23547f71d50ab39b.html#a839396052811187e23547f71d50ab39b">MED_ERR_ATTRIBUTE</a>,<a class="code" href="a00345_ac7ffbff111dea04648c3cbcd39105144.html#ac7ffbff111dea04648c3cbcd39105144">MED_COMMENT_NAME</a>);
+<a name="l00099"></a>00099   }
+<a name="l00100"></a>00100 
+<a name="l00101"></a>00101   <span class="keywordflow">for</span> (_meshit=0;_meshit&lt;_n;++_meshit) {
+<a name="l00102"></a>00102 
+<a name="l00103"></a>00103     <span class="comment">/*</span>
+<a name="l00104"></a>00104 <span class="comment">     * On recupere le nom du maillage</span>
+<a name="l00105"></a>00105 <span class="comment">     */</span>
+<a name="l00106"></a>00106     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a00339_a209b0c9f7bfbe7739787aca43639efa4.html#a209b0c9f7bfbe7739787aca43639efa4">_MEDobjectGetName</a>(fid, <a class="code" href="a00344_af9de1807c569f067769f17249fc35c8b.html#af9de1807c569f067769f17249fc35c8b">MED_MAA</a> ,_meshit, _imeshname) &lt; 0 ,
+<a name="l00107"></a>00107                      <a class="code" href="a00335_a6b994e29644b2927bb7280e1d6c3025b.html#a6b994e29644b2927bb7280e1d6c3025b">MED_ERR_ACCESS</a>,<a class="code" href="a00335_a3e3ac48003b7eac5a1aecac139bcc201.html#a3e3ac48003b7eac5a1aecac139bcc201">MED_ERR_DATAGROUP</a>,_imeshname);
+<a name="l00108"></a>00108 
+<a name="l00109"></a>00109     <a class="code" href="a00317_ab88877b4efa8141814f92e5bed812b75.html#ab88877b4efa8141814f92e5bed812b75">MAJ_version_num</a>(fid,2,3,6);
+<a name="l00110"></a>00110     <a class="code" href="a00359_a20f6f8895632acda9f8473a4472ca6a0.html#a20f6f8895632acda9f8473a4472ca6a0">_MEDmeshInfoByName236</a>(dummy,fid, _imeshname, &amp;_spacedim, &amp;_meshdim, &amp;_meshtype,
+<a name="l00111"></a>00111                           _description, _dtunit, &amp;_sortingtype, &amp;_nstep,
+<a name="l00112"></a>00112                           &amp;_axistype, _axisname, _axisunit, &amp;_fret);
+<a name="l00113"></a>00113     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>(_fret &lt; 0, <a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>, <a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>, <span class="stringliteral">&quot;MEDmeshInfoByName236&quot;</span>);
+<a name="l00114"></a>00114     <a class="code" href="a00317_a57cc3f81a2d54469b7740afc0c8eede2.html#a57cc3f81a2d54469b7740afc0c8eede2">MAJ_version</a>(fid);
+<a name="l00115"></a>00115 
+<a name="l00116"></a>00116     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( _spacedim &gt; <a class="code" href="a00313_a6a44ac38c13b7dbf0e999d491846f21d.html#a6a44ac38c13b7dbf0e999d491846f21d">MAX_SPACE_DIM</a> ,
+<a name="l00117"></a>00117                      <a class="code" href="a00335_a5a17f3bad93080ab05839ddef1420c9e.html#a5a17f3bad93080ab05839ddef1420c9e">MED_ERR_INVALID</a>,<a class="code" href="a00335_ab3d5932043d08e77c1bd4f5089be04bb.html#ab3d5932043d08e77c1bd4f5089be04bb">MED_ERR_PARAMETER</a>,<span class="stringliteral">&quot;_spacedim&quot;</span>);
+<a name="l00118"></a>00118 
+<a name="l00119"></a>00119     <span class="keywordflow">if</span> ( <a class="code" href="a00307_a1ddb5eaf14ec4c393fb8b2919c0c457c.html#a1ddb5eaf14ec4c393fb8b2919c0c457c">MAJ_236_300_chaine</a>(_imeshname,_fmeshname) ) {
+<a name="l00120"></a>00120 
+<a name="l00121"></a>00121       fprintf(stdout,<span class="stringliteral">&quot;  &gt;&gt;&gt; Normalisation du nom de maillage [%s] \n&quot;</span>,_imeshname);
+<a name="l00122"></a>00122       <span class="comment">/* on accede au maillage */</span>
+<a name="l00123"></a>00123       strcpy(&amp;_pathi[<a class="code" href="a00344_ae7cf7e9299436565bcc7ebfe4820da01.html#ae7cf7e9299436565bcc7ebfe4820da01">MED_TAILLE_MAA</a>],_imeshname);
+<a name="l00124"></a>00124       strcpy(&amp;_pathf[MED_TAILLE_MAA],_fmeshname);
+<a name="l00125"></a>00125 
+<a name="l00126"></a>00126       ret = H5Gmove(fid, _pathi, _pathf  );
+<a name="l00127"></a>00127       <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Renommage du maillage en&quot;</span>,_fmeshname);
+<a name="l00128"></a>00128       _meshname=_fmeshname;
+<a name="l00129"></a>00129       fprintf(stdout,<span class="stringliteral">&quot;  &gt;&gt;&gt; Normalisation du nom du maillage [%s] ... OK ... \n&quot;</span>,_fmeshname);
+<a name="l00130"></a>00130     } <span class="keywordflow">else</span> {
+<a name="l00131"></a>00131       strcpy(&amp;_pathf[<a class="code" href="a00344_ae7cf7e9299436565bcc7ebfe4820da01.html#ae7cf7e9299436565bcc7ebfe4820da01">MED_TAILLE_MAA</a>],_meshname);
+<a name="l00132"></a>00132       strcpy(&amp;_pathi[MED_TAILLE_MAA],_meshname);
+<a name="l00133"></a>00133     }
+<a name="l00134"></a>00134     <span class="comment">/*     SSCRUTE(_pathf); */</span>
+<a name="l00135"></a>00135     <span class="comment">/*     SSCRUTE(_pathi); */</span>
+<a name="l00136"></a>00136 
+<a name="l00137"></a>00137 
+<a name="l00138"></a>00138     <span class="comment">/*</span>
+<a name="l00139"></a>00139 <span class="comment">     * MAJ des attributs sur le datagroup &lt;_meshname&gt;</span>
+<a name="l00140"></a>00140 <span class="comment">     */</span>
+<a name="l00141"></a>00141     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a01011_ga6007c3f1a62732e7a46c5eca232be78a.html#ga6007c3f1a62732e7a46c5eca232be78a" title="Cette routine permet de créer un maillage dans un fichier.">MEDmeshCr</a>(fid, _meshname, _spacedim, _meshdim, _meshtype,
+<a name="l00142"></a>00142                                _description, _dtunit, <a class="code" href="a00321_a5b97067a30629cd60470d074691d6798.html#a5b97067a30629cd60470d074691d6798ae896b6adfbde9870b4e875e5167eddd0">MED_SORT_DTIT</a>,
+<a name="l00143"></a>00143                                _axistype, _axisname, _axisunit)  &lt; 0,
+<a name="l00144"></a>00144                      <a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot;MEDmeshCr&quot;</span>);
+<a name="l00145"></a>00145 
+<a name="l00146"></a>00146     <span class="comment">/*Normalisation des grilles */</span>
+<a name="l00147"></a>00147     <span class="keywordflow">if</span> (  _meshtype != <a class="code" href="a00321_a821a4dd94c5c6b095318432bdec8d8a1.html#a821a4dd94c5c6b095318432bdec8d8a1a3719e53a4838d222f0a58148292fda41">MED_UNSTRUCTURED_MESH</a> ) {
+<a name="l00148"></a>00148       <a class="code" href="a00317_ab88877b4efa8141814f92e5bed812b75.html#ab88877b4efa8141814f92e5bed812b75">MAJ_version_num</a>(fid,2,3,6);
+<a name="l00149"></a>00149       <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a00346_a7c57f71ae9a2079d5962c2c96409dd00.html#a7c57f71ae9a2079d5962c2c96409dd00">MEDnatureGrilleLire</a>(fid, _meshname, &amp;_gridtype) &lt; 0
+<a name="l00150"></a>00150                        ,<a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot; MEDnatureGrilleLire&quot;</span>);
+<a name="l00151"></a>00151 
+<a name="l00152"></a>00152 <span class="comment">/*       strcpy(&amp;_pathgridf[MED_TAILLE_MAA],_meshname); */</span>
+<a name="l00153"></a>00153       strcpy(&amp;_pathgridi[<a class="code" href="a00344_ae7cf7e9299436565bcc7ebfe4820da01.html#ae7cf7e9299436565bcc7ebfe4820da01">MED_TAILLE_MAA</a>],_meshname);
+<a name="l00154"></a>00154 <span class="comment">/*       strcat(_pathgridf,&quot;/-0000000000000000001-0000000000000000001/NOE/&quot;); */</span>
+<a name="l00155"></a>00155       strcat(_pathgridi,<span class="stringliteral">&quot;/NOE/&quot;</span>);
+<a name="l00156"></a>00156       _gitmplen=strlen(_pathgridi);
+<a name="l00157"></a>00157 <span class="comment">/*       _gftmplen=strlen(_pathgridf); */</span>
+<a name="l00158"></a>00158 
+<a name="l00159"></a>00159       <span class="keywordflow">if</span> ( (_gridtype == <a class="code" href="a00320_a2ffa035f48fcbb83e25edab5f19cbaf9.html#a2ffa035f48fcbb83e25edab5f19cbaf9a11fee42768142b17590936a0819b370c">MED_GRILLE_CARTESIENNE</a>) || (_gridtype == <a class="code" href="a00320_a2ffa035f48fcbb83e25edab5f19cbaf9.html#a2ffa035f48fcbb83e25edab5f19cbaf9acdca0e81e2cd2160c0577837c2054336">MED_GRILLE_POLAIRE</a>) ) {
+<a name="l00160"></a>00160 
+<a name="l00161"></a>00161         strcpy(&amp;_pathgridi[_gitmplen],<span class="stringliteral">&quot;IN1&quot;</span>);
+<a name="l00162"></a>00162 <span class="comment">/*      SSCRUTE(_pathgridi); */</span>
+<a name="l00163"></a>00163         H5Adelete_by_name( fid, _pathgridi,<a class="code" href="a00344_a7f355209cf332de5221058705ca36fe0.html#a7f355209cf332de5221058705ca36fe0">MED_NOM_UNI</a>, H5P_DEFAULT  );
+<a name="l00164"></a>00164         H5Adelete_by_name( fid, _pathgridi,<a class="code" href="a00344_a4508ac800b43e951688ab10dfefb2fca.html#a4508ac800b43e951688ab10dfefb2fca">MED_NOM_NOM</a>, H5P_DEFAULT  );
+<a name="l00165"></a>00165         strcpy(&amp;_pathgridi[_gitmplen],<span class="stringliteral">&quot;IN2&quot;</span>);
+<a name="l00166"></a>00166 <span class="comment">/*      SSCRUTE(_pathgridi); */</span>
+<a name="l00167"></a>00167         H5Adelete_by_name( fid, _pathgridi,<a class="code" href="a00344_a7f355209cf332de5221058705ca36fe0.html#a7f355209cf332de5221058705ca36fe0">MED_NOM_UNI</a>, H5P_DEFAULT  );
+<a name="l00168"></a>00168         H5Adelete_by_name( fid, _pathgridi,<a class="code" href="a00344_a4508ac800b43e951688ab10dfefb2fca.html#a4508ac800b43e951688ab10dfefb2fca">MED_NOM_NOM</a>, H5P_DEFAULT  );
+<a name="l00169"></a>00169         strcpy(&amp;_pathgridi[_gitmplen],<span class="stringliteral">&quot;IN3&quot;</span>);
+<a name="l00170"></a>00170 <span class="comment">/*      SSCRUTE(_pathgridi); */</span>
+<a name="l00171"></a>00171         H5Adelete_by_name( fid, _pathgridi,<a class="code" href="a00344_a7f355209cf332de5221058705ca36fe0.html#a7f355209cf332de5221058705ca36fe0">MED_NOM_UNI</a>, H5P_DEFAULT  );
+<a name="l00172"></a>00172         H5Adelete_by_name( fid, _pathgridi,<a class="code" href="a00344_a4508ac800b43e951688ab10dfefb2fca.html#a4508ac800b43e951688ab10dfefb2fca">MED_NOM_NOM</a>, H5P_DEFAULT  );
+<a name="l00173"></a>00173 
+<a name="l00174"></a>00174         <a class="code" href="a00317_a57cc3f81a2d54469b7740afc0c8eede2.html#a57cc3f81a2d54469b7740afc0c8eede2">MAJ_version</a>(fid);
+<a name="l00175"></a>00175 
+<a name="l00176"></a>00176       } <span class="keywordflow">else</span> {
+<a name="l00177"></a>00177         <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a00346_ae720f0d7fe74cb3691162b29342c357a.html#ae720f0d7fe74cb3691162b29342c357a">MEDstructureCoordLire</a>(fid,_meshname,_meshdim,_gridstruct) &lt; 0
+<a name="l00178"></a>00178                          ,<a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot;MEDstructureCoordLire&quot;</span>);
+<a name="l00179"></a>00179         strcpy(&amp;_pathgridi[_gitmplen],<span class="stringliteral">&quot;COO&quot;</span>);
+<a name="l00180"></a>00180         H5Adelete_by_name( fid, _pathgridi,<a class="code" href="a00344_ac0c677861066182821b2c77bfe512ab0.html#ac0c677861066182821b2c77bfe512ab0">MED_NOM_IN1</a>, H5P_DEFAULT  );
+<a name="l00181"></a>00181         H5Adelete_by_name( fid, _pathgridi,<a class="code" href="a00344_a02493b5739cb499e6e0b65857439ec29.html#a02493b5739cb499e6e0b65857439ec29">MED_NOM_IN2</a>, H5P_DEFAULT  );
+<a name="l00182"></a>00182         H5Adelete_by_name( fid, _pathgridi,<a class="code" href="a00344_a9775636faa2abec18d3d8c1eab1697f9.html#a9775636faa2abec18d3d8c1eab1697f9">MED_NOM_IN3</a>, H5P_DEFAULT  );
+<a name="l00183"></a>00183 
+<a name="l00184"></a>00184         <a class="code" href="a00317_a57cc3f81a2d54469b7740afc0c8eede2.html#a57cc3f81a2d54469b7740afc0c8eede2">MAJ_version</a>(fid);
+<a name="l00185"></a>00185 
+<a name="l00186"></a>00186         _mustwrite_gridstruct= <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190deeaa9f40f3cd6611d437c39900c63ce80c4">MED_TRUE</a>;
+<a name="l00187"></a>00187 
+<a name="l00188"></a>00188       }
+<a name="l00189"></a>00189     }
+<a name="l00190"></a>00190 
+<a name="l00191"></a>00191     <span class="comment">/*     SSCRUTE(_meshname); */</span>
+<a name="l00192"></a>00192     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a01011_gae679b270b2e414666979c3f8aaddfa28.html#gae679b270b2e414666979c3f8aaddfa28" title="Cette routine permet de créer une nouvelle séquence de calcul dans un maillage...">MEDmeshComputationStepCr</a>(fid,_meshname,<a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>,<a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>,
+<a name="l00193"></a>00193                                               <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>,<a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>,0) &lt; 0
+<a name="l00194"></a>00194                      ,<a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot;MEDmeshComputationStepCr&quot;</span>);
+<a name="l00195"></a>00195     _ftmplen=strlen(_pathf);
+<a name="l00196"></a>00196     _pathf[_ftmplen]=<span class="charliteral">&apos;/&apos;</span>; ++_ftmplen;
+<a name="l00197"></a>00197     <a class="code" href="a00339_ae7515a60429be6b0bb0d6d4ead060801.html#ae7515a60429be6b0bb0d6d4ead060801">_MEDgetComputationStepName</a>(<a class="code" href="a00321_a5b97067a30629cd60470d074691d6798.html#a5b97067a30629cd60470d074691d6798ae896b6adfbde9870b4e875e5167eddd0">MED_SORT_DTIT</a>,<a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>,<a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>,&amp;_pathf[_ftmplen]);
+<a name="l00198"></a>00198     _ftmplen+=2*<a class="code" href="a00320_a5ad5e5ac777d6bc82bb6d4ad38d7af53.html#a5ad5e5ac777d6bc82bb6d4ad38d7af53">MED_MAX_PARA</a>;
+<a name="l00199"></a>00199     
+<a name="l00200"></a>00200 
+<a name="l00201"></a>00201     <span class="comment">/*     SSCRUTE(_pathf); */</span>
+<a name="l00202"></a>00202     <span class="comment">/*     H5Fflush(fid, H5F_SCOPE_GLOBAL  ); */</span>
+<a name="l00203"></a>00203     <span class="comment">/*     _MEDobjetsOuverts(fid); */</span>
+<a name="l00204"></a>00204 
+<a name="l00205"></a>00205     <span class="comment">/*</span>
+<a name="l00206"></a>00206 <span class="comment">     * MAJ de l&apos;attribut MED_NOM_CGT sur le datagroup d&apos;étape de calcul</span>
+<a name="l00207"></a>00207 <span class="comment">     */</span>
+<a name="l00208"></a>00208     <span class="comment">/* Le modify ne fonctionne pas dans _MEDattributeNumWrByName à cause hdf5 ? */</span>
+<a name="l00209"></a>00209     H5Adelete_by_name( fid, _pathf,<a class="code" href="a00345_a591a6c2892bbf547d9f480d7c2a0ce70.html#a591a6c2892bbf547d9f480d7c2a0ce70">MED_NOM_CGT</a>, H5P_DEFAULT  );
+<a name="l00210"></a>00210     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a00339_aa03e65058629a156c61f66821442d46b.html#aa03e65058629a156c61f66821442d46b">_MEDattributeNumWrByName</a>(fid,_pathf,<a class="code" href="a00345_a591a6c2892bbf547d9f480d7c2a0ce70.html#a591a6c2892bbf547d9f480d7c2a0ce70">MED_NOM_CGT</a>,<a class="code" href="a00321_a9e37f31e6c445d096158e87f07911845.html#a9e37f31e6c445d096158e87f07911845a272cd78f24373ef1d2519f359909838e">MED_INTERNAL_INT</a>,
+<a name="l00211"></a>00211                                               (<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> * <span class="keyword">const</span>) &amp;_1 ) &lt; 0,
+<a name="l00212"></a>00212                      <a class="code" href="a00335_ada9ad358d137c53e288ff59d49e45541.html#ada9ad358d137c53e288ff59d49e45541">MED_ERR_WRITE</a>,<a class="code" href="a00335_a839396052811187e23547f71d50ab39b.html#a839396052811187e23547f71d50ab39b">MED_ERR_ATTRIBUTE</a>,<a class="code" href="a00345_a591a6c2892bbf547d9f480d7c2a0ce70.html#a591a6c2892bbf547d9f480d7c2a0ce70">MED_NOM_CGT</a>);
+<a name="l00213"></a>00213 
+<a name="l00214"></a>00214     _pathf[_ftmplen]=<span class="charliteral">&apos;/&apos;</span>;
+<a name="l00215"></a>00215     ++_ftmplen;
+<a name="l00216"></a>00216     _pathf[_ftmplen]=<span class="charliteral">&apos;\0&apos;</span>;
+<a name="l00217"></a>00217 
+<a name="l00218"></a>00218     strcat(_pathi,<span class="stringliteral">&quot;/&quot;</span>);
+<a name="l00219"></a>00219     _itmplen=strlen(_pathi);
+<a name="l00220"></a>00220 
+<a name="l00221"></a>00221     <span class="comment">/*     SSCRUTE(_pathi); */</span>
+<a name="l00222"></a>00222     <span class="comment">/*     SSCRUTE(_pathf); */</span>
+<a name="l00223"></a>00223 
+<a name="l00224"></a>00224     <span class="comment">/* Normalisation des familles */</span>
+<a name="l00225"></a>00225     strcpy(&amp;_pathi[_itmplen-1],<a class="code" href="a00344_a20df7558c8143686f0e755db4da0c2b4.html#a20df7558c8143686f0e755db4da0c2b4">MED_FAS</a>);
+<a name="l00226"></a>00226 <span class="comment">/*     SSCRUTE(_pathi); */</span>
+<a name="l00227"></a>00227     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a00339_aec7d7586d4fd3a8fc4eaf3a303f5c6ae.html#aec7d7586d4fd3a8fc4eaf3a303f5c6ae">_MEDdatagroupExist</a>(fid,_pathi,&amp;_datagroupexist,&amp;_isasoftlink) &lt; 0 ,
+<a name="l00228"></a>00228                      <a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot;_MEDdatagroupExist&quot;</span>);
+<a name="l00229"></a>00229 
+<a name="l00230"></a>00230     fprintf(stdout,<span class="stringliteral">&quot;  &gt;&gt;&gt; Normalisation des familles du maillage [%s] \n&quot;</span>,_imeshname);
+<a name="l00231"></a>00231 
+<a name="l00232"></a>00232     _datagroup = <a class="code" href="a00338_a035c29f443adaee7c8aa4550ef59b807.html#a035c29f443adaee7c8aa4550ef59b807">_MEDdatagroupCreer</a>(fid,_pathfam);
+<a name="l00233"></a>00233     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>(_datagroup &lt; 0 ,<a class="code" href="a00335_a92354d1153d9e053407f2f8c0dedbda7.html#a92354d1153d9e053407f2f8c0dedbda7">MED_ERR_CREATE</a>,<a class="code" href="a00335_a3e3ac48003b7eac5a1aecac139bcc201.html#a3e3ac48003b7eac5a1aecac139bcc201">MED_ERR_DATAGROUP</a>,_pathfam);
+<a name="l00234"></a>00234     <span class="keywordflow">if</span> (_datagroup&gt;0) {
+<a name="l00235"></a>00235       _ret= <a class="code" href="a00338_ae3ba55fd16381090e93f0ee8e3f9e6c6.html#ae3ba55fd16381090e93f0ee8e3f9e6c6">_MEDdatagroupFermer</a>(_datagroup);
+<a name="l00236"></a>00236       <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>(_ret &lt; 0,<a class="code" href="a00335_a444c5e2cb5b9f60b769909297300ac14.html#a444c5e2cb5b9f60b769909297300ac14">MED_ERR_CLOSE</a>,<a class="code" href="a00335_a3e3ac48003b7eac5a1aecac139bcc201.html#a3e3ac48003b7eac5a1aecac139bcc201">MED_ERR_DATAGROUP</a>,_pathfam);
+<a name="l00237"></a>00237     }
+<a name="l00238"></a>00238 
+<a name="l00239"></a>00239     strcpy(&amp;_pathfam[<a class="code" href="a00344_a7252f9a057a8cec38fc0b99eef3c05a9.html#a7252f9a057a8cec38fc0b99eef3c05a9">MED_TAILLE_FAS</a>],_meshname);strcat(_pathfam,<span class="stringliteral">&quot;/&quot;</span>);
+<a name="l00240"></a>00240 
+<a name="l00241"></a>00241     <span class="keywordflow">if</span>( _datagroupexist) {
+<a name="l00242"></a>00242 
+<a name="l00243"></a>00243       _ocp_plist_id = H5Pcreate( H5P_OBJECT_COPY );
+<a name="l00244"></a>00244       _lcp_plist_id = H5Pcreate( H5P_LINK_CREATE );
+<a name="l00245"></a>00245 
+<a name="l00246"></a>00246       ret =  H5Ocopy(fid,_pathi,fid,_pathfam,_ocp_plist_id,_lcp_plist_id);
+<a name="l00247"></a>00247       <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Copie des familles dans &quot;</span>,<span class="stringliteral">&quot;/&quot;</span>);
+<a name="l00248"></a>00248 
+<a name="l00249"></a>00249       <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a> ( <a class="code" href="a00339_ab84069d4e8c9e86e20283c1c6be797e8.html#ab84069d4e8c9e86e20283c1c6be797e8">_MEDvisit</a>(fid,_pathi,_pathfam,(<a class="code" href="a00339_a14090e48b5ee6b9dca06a291ae05fd41.html#a14090e48b5ee6b9dca06a291ae05fd41">medvisitorfunc</a>) <a class="code" href="a00306_a4f2e049221d9b3485b4d10f9397633b5.html#a4f2e049221d9b3485b4d10f9397633b5">_MEDconvertStringDatasets</a> ) &lt; 0,
+<a name="l00250"></a>00250                         <a class="code" href="a00335_aed14abea7a3fd2a958663c81017bf902.html#aed14abea7a3fd2a958663c81017bf902">MED_ERR_VISIT</a>,<a class="code" href="a00335_a3e3ac48003b7eac5a1aecac139bcc201.html#a3e3ac48003b7eac5a1aecac139bcc201">MED_ERR_DATAGROUP</a>,_pathfam);
+<a name="l00251"></a>00251       <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a> ( H5Ldelete(fid,_pathi,H5P_DEFAULT) &lt; 0, <a class="code" href="a00335_aae79dbb5809e0ebce1dd979d4c7785cd.html#aae79dbb5809e0ebce1dd979d4c7785cd">MED_ERR_DELETE</a>,<a class="code" href="a00335_a1202baa7f8e5463f0f1f342a775da0a0.html#a1202baa7f8e5463f0f1f342a775da0a0">MED_ERR_LINK</a>,_pathi);
+<a name="l00252"></a>00252 
+<a name="l00253"></a>00253     }
+<a name="l00254"></a>00254 
+<a name="l00255"></a>00255     strcat(_pathfam,<span class="stringliteral">&quot;FAMILLE_ZERO&quot;</span>);
+<a name="l00256"></a>00256     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a00339_aec7d7586d4fd3a8fc4eaf3a303f5c6ae.html#aec7d7586d4fd3a8fc4eaf3a303f5c6ae">_MEDdatagroupExist</a>(fid,_pathfam,&amp;_datagroupexist,&amp;_isasoftlink) &lt; 0 ,
+<a name="l00257"></a>00257                      <a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot;_MEDdatagroupExist&quot;</span>);
+<a name="l00258"></a>00258 
+<a name="l00259"></a>00259     <span class="keywordflow">if</span>( !_datagroupexist) {
+<a name="l00260"></a>00260       <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a> ( (<a class="code" href="a01003_ga0873b54d0dc1472eee12c42aaf4fbca3.html#ga0873b54d0dc1472eee12c42aaf4fbca3" title="Cette routine permet la création d&amp;#39;une famille portant sur les entités d&amp;#39;un...">MEDfamilyCr</a>(fid,_meshname,<a class="code" href="a00344_ad880fef28b13f161527978ec7fd7daf6.html#ad880fef28b13f161527978ec7fd7daf6">FAMILLE_ZERO</a>, 0, 0, <span class="stringliteral">&quot;&quot;</span>) &lt; 0),
+<a name="l00261"></a>00261                         <a class="code" href="a00335_a92354d1153d9e053407f2f8c0dedbda7.html#a92354d1153d9e053407f2f8c0dedbda7">MED_ERR_CREATE</a>,<a class="code" href="a00335_a21b161b9c2e54a5b96e0d0a73aa0940b.html#a21b161b9c2e54a5b96e0d0a73aa0940b">MED_ERR_FAMILY</a>,<span class="stringliteral">&quot;MEDfamilyCr&quot;</span>);
+<a name="l00262"></a>00262     }
+<a name="l00263"></a>00263 
+<a name="l00264"></a>00264     <span class="comment">/* Normalisation des equivalences */</span>
+<a name="l00265"></a>00265     strcpy(&amp;_pathi[_itmplen-1],<a class="code" href="a00344_a2e347227a0bd63c9170588f27bd2b309.html#a2e347227a0bd63c9170588f27bd2b309">MED_EQS</a>);
+<a name="l00266"></a>00266 
+<a name="l00267"></a>00267     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a00310_aa718c0f079fc099a239544850bae79b7.html#aa718c0f079fc099a239544850bae79b7">MAJ_236_300_equivalence</a>(fid,_meshname) &lt; 0,
+<a name="l00268"></a>00268                      <a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot;MAJ_236_300_equivalence&quot;</span>);
+<a name="l00269"></a>00269     _groupexist=H5Lexists(fid, _pathi, H5P_DEFAULT  );
+<a name="l00270"></a>00270     <span class="keywordflow">if</span> (_groupexist) {
+<a name="l00271"></a>00271       <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( H5Ldelete(fid,_pathi,H5P_DEFAULT) &lt; 0,
+<a name="l00272"></a>00272                        <a class="code" href="a00335_aae79dbb5809e0ebce1dd979d4c7785cd.html#aae79dbb5809e0ebce1dd979d4c7785cd">MED_ERR_DELETE</a>,<a class="code" href="a00335_a1202baa7f8e5463f0f1f342a775da0a0.html#a1202baa7f8e5463f0f1f342a775da0a0">MED_ERR_LINK</a>,_pathi);
+<a name="l00273"></a>00273     }
+<a name="l00274"></a>00274 
+<a name="l00275"></a>00275     <span class="comment">/* Normalisation des joint */</span>
+<a name="l00276"></a>00276     strcpy(&amp;_pathi[_itmplen-1],<a class="code" href="a00344_a875cbd87e555cc969ee9337178dbabca.html#a875cbd87e555cc969ee9337178dbabca">MED_JNT</a>);
+<a name="l00277"></a>00277 
+<a name="l00278"></a>00278     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a00312_a493ec1f19c607791042594f3d150e02a.html#a493ec1f19c607791042594f3d150e02a">MAJ_236_300_joint</a>(fid,_meshname) &lt; 0,
+<a name="l00279"></a>00279                      <a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot;MAJ_236_300_joint&quot;</span>);
+<a name="l00280"></a>00280     _groupexist=H5Lexists(fid, _pathi, H5P_DEFAULT  );
+<a name="l00281"></a>00281     <span class="keywordflow">if</span> (_groupexist) {
+<a name="l00282"></a>00282       <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( H5Ldelete(fid,_pathi,H5P_DEFAULT) &lt; 0,
+<a name="l00283"></a>00283                        <a class="code" href="a00335_aae79dbb5809e0ebce1dd979d4c7785cd.html#aae79dbb5809e0ebce1dd979d4c7785cd">MED_ERR_DELETE</a>,<a class="code" href="a00335_ac0df2155b5b1dac6dd170200ba28ddaa.html#ac0df2155b5b1dac6dd170200ba28ddaa">MED_ERR_JOINT</a>,_pathi);
+<a name="l00284"></a>00284     }
+<a name="l00285"></a>00285 
+<a name="l00286"></a>00286     _pathi[_itmplen]=<span class="charliteral">&apos;\0&apos;</span>;
+<a name="l00287"></a>00287 <span class="comment">/*     SSCRUTE(_pathi); */</span>
+<a name="l00288"></a>00288 
+<a name="l00289"></a>00289     <span class="comment">/*Normalisation des entités*/</span>
+<a name="l00290"></a>00290     fprintf(stdout,<span class="stringliteral">&quot;  &gt;&gt;&gt; Normalisation des entites [%s] du maillage [%s] \n&quot;</span>,
+<a name="l00291"></a>00291             <a class="code" href="a00499_ad72c4ec2628b95b86e62e893bdfc4d3a.html#ad72c4ec2628b95b86e62e893bdfc4d3a">MED_GET_ENTITY_TYPENAME</a>[<a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a>+1],_meshname);
+<a name="l00292"></a>00292     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a00309_a8fec5304760d1f7f7a6ecb0dcfb8a674.html#a8fec5304760d1f7f7a6ecb0dcfb8a674">MAJ_236_300_entites</a>( fid,_pathi, _pathf,_meshname, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a>) &lt; 0 ,
+<a name="l00293"></a>00293                      <a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot;MAJ_236_300_entites&quot;</span>);
+<a name="l00294"></a>00294 
+<a name="l00295"></a>00295     <span class="comment">/*On ne peut écrire la structure de la grille qu&apos;une fois le datagroup NOE déplacé*/</span>
+<a name="l00296"></a>00296     <span class="keywordflow">if</span> (_mustwrite_gridstruct) {
+<a name="l00297"></a>00297       <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a01011_ga8096dfdacfbaf8d876c057956f249dee.html#ga8096dfdacfbaf8d876c057956f249dee" title="Cette routine définit la structure (nombre de points sur chaque axe du repère)...">MEDmeshGridStructWr</a>(fid,_meshname,<a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>,<a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00321_a609885580ce660eb5b7c80074d64f93f.html#a609885580ce660eb5b7c80074d64f93f">MED_UNDEF_DT</a>, _gridstruct ) &lt; 0
+<a name="l00298"></a>00298                        ,<a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot;MEDmeshGridStructWr&quot;</span>);
+<a name="l00299"></a>00299       _mustwrite_gridstruct = <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190deea30b70cc2a253ed4141db9a78ba696046">MED_FALSE</a>;
+<a name="l00300"></a>00300     }
+<a name="l00301"></a>00301 
+<a name="l00302"></a>00302     <span class="comment">/*On annule les modifications de _pathi et _pathf effectuées dans MAJ_236_300_entites */</span>
+<a name="l00303"></a>00303     _pathf[_ftmplen]=<span class="charliteral">&apos;\0&apos;</span>;
+<a name="l00304"></a>00304     _pathi[_itmplen]=<span class="charliteral">&apos;\0&apos;</span>;
+<a name="l00305"></a>00305 
+<a name="l00306"></a>00306     fprintf(stdout,<span class="stringliteral">&quot;  &gt;&gt;&gt; Normalisation des entites [%s] du maillage [%s] \n&quot;</span>,
+<a name="l00307"></a>00307             <a class="code" href="a00499_ad72c4ec2628b95b86e62e893bdfc4d3a.html#ad72c4ec2628b95b86e62e893bdfc4d3a">MED_GET_ENTITY_TYPENAME</a>[<a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>+1],_meshname);
+<a name="l00308"></a>00308     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a00309_a8fec5304760d1f7f7a6ecb0dcfb8a674.html#a8fec5304760d1f7f7a6ecb0dcfb8a674">MAJ_236_300_entites</a>( fid,_pathi, _pathf,_meshname, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>) &lt; 0,
+<a name="l00309"></a>00309                      <a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot;MAJ_236_300_entites&quot;</span>);
+<a name="l00310"></a>00310 
+<a name="l00311"></a>00311     _pathf[_ftmplen]=<span class="charliteral">&apos;\0&apos;</span>;
+<a name="l00312"></a>00312     _pathi[_itmplen]=<span class="charliteral">&apos;\0&apos;</span>;
+<a name="l00313"></a>00313 
+<a name="l00314"></a>00314     fprintf(stdout,<span class="stringliteral">&quot;  &gt;&gt;&gt; Normalisation des entites [%s] du maillage [%s] \n&quot;</span>,
+<a name="l00315"></a>00315             <a class="code" href="a00499_ad72c4ec2628b95b86e62e893bdfc4d3a.html#ad72c4ec2628b95b86e62e893bdfc4d3a">MED_GET_ENTITY_TYPENAME</a>[<a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a9168c75d6fb79842aeb30740f5146d25">MED_DESCENDING_FACE</a>+1],_meshname);
+<a name="l00316"></a>00316     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a00309_a8fec5304760d1f7f7a6ecb0dcfb8a674.html#a8fec5304760d1f7f7a6ecb0dcfb8a674">MAJ_236_300_entites</a>( fid,_pathi, _pathf,_meshname, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a9168c75d6fb79842aeb30740f5146d25">MED_DESCENDING_FACE</a>) &lt; 0,
+<a name="l00317"></a>00317                      <a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot;MAJ_236_300_entites&quot;</span>);
+<a name="l00318"></a>00318     _pathf[_ftmplen]=<span class="charliteral">&apos;\0&apos;</span>;
+<a name="l00319"></a>00319     _pathi[_itmplen]=<span class="charliteral">&apos;\0&apos;</span>;
+<a name="l00320"></a>00320 
+<a name="l00321"></a>00321     fprintf(stdout,<span class="stringliteral">&quot;  &gt;&gt;&gt; Normalisation des entites [%s] du maillage [%s] \n&quot;</span>,
+<a name="l00322"></a>00322             <a class="code" href="a00499_ad72c4ec2628b95b86e62e893bdfc4d3a.html#ad72c4ec2628b95b86e62e893bdfc4d3a">MED_GET_ENTITY_TYPENAME</a>[<a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470aecea01a443c5512ff49ddba9f992aa0e">MED_DESCENDING_EDGE</a>+1],_meshname);
+<a name="l00323"></a>00323     <a class="code" href="a00349_a357e063e379bedc35c1d7159715582c1.html#a357e063e379bedc35c1d7159715582c1">MED_ERR_EXIT_IF</a>( <a class="code" href="a00309_a8fec5304760d1f7f7a6ecb0dcfb8a674.html#a8fec5304760d1f7f7a6ecb0dcfb8a674">MAJ_236_300_entites</a>( fid,_pathi, _pathf,_meshname, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470aecea01a443c5512ff49ddba9f992aa0e">MED_DESCENDING_EDGE</a>) &lt; 0,
+<a name="l00324"></a>00324                      <a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot;MAJ_236_300_entites&quot;</span>);
+<a name="l00325"></a>00325 
+<a name="l00326"></a>00326   }
+<a name="l00327"></a>00327 
+<a name="l00328"></a>00328 <span class="comment">/*   _MEDobjetsOuverts(fid); */</span>
+<a name="l00329"></a>00329 
+<a name="l00330"></a>00330 <span class="comment">/*   _ret=0; */</span>
+<a name="l00331"></a>00331 <span class="comment">/*  ERROR: */</span>
+<a name="l00332"></a>00332 <span class="comment">/*   return (int) _ret; */</span>
+<a name="l00333"></a>00333 }
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:34 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

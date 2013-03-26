@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: c/2.3.6/test3.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+<h1>c/2.3.6/test3.c</h1><div class="fragment"><pre class="fragment"><span class="comment">/*  This file is part of MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<span class="comment"> *  (at your option) any later version.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="comment"> */</span>
+
+
+<span class="comment">/******************************************************************************</span>
+<span class="comment"> * - Nom du fichier : test3.c</span>
+<span class="comment"> *</span>
+<span class="comment"> * - Description : lecture des informations sur les maillages d&apos;un fichier MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *****************************************************************************/</span>
+
+<span class="preprocessor">#include &lt;med.h&gt;</span>
+<span class="preprocessor">#define MESGERR 1</span>
+<span class="preprocessor"></span><span class="preprocessor">#include &quot;med_utils.h&quot;</span>
+<span class="preprocessor">#include &lt;string.h&gt;</span>
+
+<span class="preprocessor">#ifdef DEF_LECT_ECR</span>
+<span class="preprocessor"></span><span class="preprocessor">#define MODE_ACCES MED_LECTURE_ECRITURE</span>
+<span class="preprocessor"></span><span class="preprocessor">#elif DEF_LECT_AJOUT</span>
+<span class="preprocessor"></span><span class="preprocessor">#define MODE_ACCES MED_LECTURE_AJOUT</span>
+<span class="preprocessor"></span><span class="preprocessor">#else</span>
+<span class="preprocessor"></span><span class="preprocessor">#define MODE_ACCES MED_CREATION</span>
+<span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<span class="preprocessor"></span>
+<span class="keywordtype">int</span> <a name="a0"></a><a class="code" href="a00750_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv)
+
+
+{
+  <a name="a1"></a><a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> ret = 0;
+  <a name="a2"></a><a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid;
+  <a name="a3"></a><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nmaa,i,mdim,edim;
+  <span class="keywordtype">char</span> maa[<a name="a4"></a><a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>+1];
+  <span class="keywordtype">char</span> nomu[<a name="a5"></a><a class="code" href="a00320_a33da0ce26e6140524104f6c3983738f9.html#a33da0ce26e6140524104f6c3983738f9">MED_TAILLE_LNOM</a>+1];
+  <span class="keywordtype">char</span> desc[<a name="a6"></a><a class="code" href="a00320_aecfdcbb63702f8a9b97643d05cc63888.html#aecfdcbb63702f8a9b97643d05cc63888">MED_TAILLE_DESC</a>+1];
+  <a class="code" href="a00320_a921e2f33296e6bef48bbce3be3ae005a.html#a921e2f33296e6bef48bbce3be3ae005a">med_maillage</a> type;
+  <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> inomu;
+
+  <span class="comment">/* Ouverture du fichier &quot;test2.med&quot; en lecture seule */</span>
+  fid = <a name="a7"></a><a class="code" href="a00346_ae0cab324e1ab23d9cf780427f0ad561b.html#ae0cab324e1ab23d9cf780427f0ad561b">MEDouvrir</a>(<span class="stringliteral">&quot;test2.med&quot;</span>,<a name="a8"></a><a class="code" href="a00320_a6412dbfba9619f1b121a97a4ccfaff00.html#a6412dbfba9619f1b121a97a4ccfaff00a1e1c70755b1014521efa67ec9e0eff9b">MED_LECTURE</a>);
+  <span class="keywordflow">if</span> (fid &lt; 0) {
+    <a name="a9"></a><a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a l&apos;ouverture du fichier test2.med&quot;</span>);
+    <span class="keywordflow">return</span> -1;
+  }
+
+  <span class="comment">/* Lecture du nombre de maillage dans le fichier */</span>
+  nmaa = <a name="a10"></a><a class="code" href="a00346_a39250fcb827c6d1ce1e40c8acfcc94b9.html#a39250fcb827c6d1ce1e40c8acfcc94b9">MEDnMaa</a>(fid);
+  <span class="keywordflow">if</span> (nmaa &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture du nombre de maillage&quot;</span>);
+    ret = -1;
+  } 
+  <span class="keywordflow">if</span> (ret == 0)
+    printf(<span class="stringliteral">&quot;- Nombre de maillage dans test2.med = &quot;</span><a name="a11"></a><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot;\n&quot;</span>,nmaa);
+
+  <span class="comment">/* Boucle sur tous les maillages, pour chaque maillage, on lit :</span>
+<span class="comment">     - Le nom.</span>
+<span class="comment">     - Le type</span>
+<span class="comment">     - La dimension</span>
+<span class="comment">     - La description</span>
+<span class="comment">     - La dimension de l&apos;espace si elle existe</span>
+<span class="comment">     - Le nom universel s&apos;il existe </span>
+<span class="comment">     */</span>
+  <span class="keywordflow">if</span> (ret == 0)
+    <span class="keywordflow">for</span> (i=0;i&lt;nmaa;i++) {
+      <span class="comment">/* lecture des informations */</span>
+      <span class="keywordflow">if</span> (<a name="a12"></a><a class="code" href="a00346_ae3f79506613f66c077578ff43d3ea4d5.html#ae3f79506613f66c077578ff43d3ea4d5">MEDmaaInfo</a>(fid,i+1,maa,&amp;mdim,&amp;type,desc) &lt; 0) {
+        <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture des informations du maillage :&quot;</span>); <a name="a13"></a><a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(maa);
+        ret = -1;
+      }
+      <span class="comment">/* lecture de la dimension de l&apos;espace */</span>
+      edim = <a name="a14"></a><a class="code" href="a00346_a554ad04fe390b819b20ee9f40cc18a27.html#a554ad04fe390b819b20ee9f40cc18a27">MEDdimEspaceLire</a>(fid,maa);
+      <span class="comment">/* lecture du nom universel */</span>
+      inomu = <a name="a15"></a><a class="code" href="a00346_a5a8fc2989dcdd6405d55cc55de27f151.html#a5a8fc2989dcdd6405d55cc55de27f151">MEDunvLire</a>(fid,maa,nomu);
+      <span class="comment">/* affichage des donnees lues */</span>
+      <span class="keywordflow">if</span> (inomu &lt; 0)
+        printf(<span class="stringliteral">&quot;maillage &quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; de nom %s, de dimension &quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; \n&quot;</span>,i+1,maa,mdim);
+      <span class="keywordflow">else</span>
+        printf(<span class="stringliteral">&quot;maillage &quot;</span>IFORMAT<span class="stringliteral">&quot; de nom %s, de dimension &quot;</span>IFORMAT<span class="stringliteral">&quot; et de nom univ. %s\n&quot;</span>,i+1,maa,mdim,nomu);  
+      <span class="keywordflow">if</span> (edim &gt; 0)
+        printf(<span class="stringliteral">&quot;La dimension de l&apos;espace est &quot;</span>IFORMAT<span class="stringliteral">&quot; \n&quot;</span>,edim);
+      <span class="keywordflow">else</span>
+        printf(<span class="stringliteral">&quot;La dimension de l&apos;espace est &quot;</span>IFORMAT<span class="stringliteral">&quot; \n&quot;</span>,mdim);
+      <span class="keywordflow">if</span> (type == <a name="a16"></a><a class="code" href="a00320_a921e2f33296e6bef48bbce3be3ae005a.html#a921e2f33296e6bef48bbce3be3ae005aae2e520044d9b571a6c5081e7493e2794">MED_STRUCTURE</a>)
+        printf(<span class="stringliteral">&quot;Il s&apos;agit d&apos;un maillage structure \n&quot;</span>);
+      <span class="keywordflow">else</span>
+        printf(<span class="stringliteral">&quot;Il s&apos;agit d&apos;un maillage non structure \n&quot;</span>);
+      printf(<span class="stringliteral">&quot;Description associee au maillage : %s \n\n&quot;</span>,desc);
+    }
+
+  <span class="comment">/* Fermeture du fichier */</span>
+  ret = <a name="a17"></a><a class="code" href="a00346_ac4f893f1942397b74f4fb57f5ff99ca6.html#ac4f893f1942397b74f4fb57f5ff99ca6">MEDfermer</a>(fid);
+  <span class="keywordflow">if</span> (ret &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la fermeture du fichier test2.med&quot;</span>);
+    <span class="keywordflow">return</span> -1;
+  }
+  
+  <span class="keywordflow">return</span> ret;
+}
+
+
+
+
+</pre></div> </div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:33 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

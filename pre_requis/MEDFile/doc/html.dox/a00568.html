@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: Référence du fichier MEDmeshGridStructWr.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_6d8408d9855f99d1b33e274ba7d15ec1.html">src</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_fcfa33514a0b2dc319c6500a3d06641e.html">ci</a>
+  </div>
+</div>
+<div class="contents">
+<h1>Référence du fichier MEDmeshGridStructWr.c</h1><code>#include &lt;<a class="el" href="a00321_source.html">med.h</a>&gt;</code><br/>
+<code>#include &lt;<a class="el" href="a00334_source.html">med_config.h</a>&gt;</code><br/>
+<code>#include &lt;<a class="el" href="a00345_source.html">med_outils.h</a>&gt;</code><br/>
+<code>#include &lt;string.h&gt;</code><br/>
+<code>#include &lt;stdlib.h&gt;</code><br/>
+<div class="dynheader">
+Graphe des dépendances par inclusion de MEDmeshGridStructWr.c:</div>
+<div class="dynsection">
+<div class="center"><img src="a01500.jpg" border="0" usemap="#MEDmeshGridStructWr_8c_map" alt=""/></div>
+<map name="MEDmeshGridStructWr_8c_map" id="MEDmeshGridStructWr_8c">
+<area shape="rect" id="node3" href="a00321.html" title="med.h" alt="" coords="220,246,279,277"/><area shape="rect" id="node11" href="a00334.html" title="med_config.h" alt="" coords="5,246,104,277"/><area shape="rect" id="node13" href="a00345.html" title="med_outils.h" alt="" coords="311,86,407,117"/><area shape="rect" id="node7" href="a00347.html" title="med_proto.h" alt="" coords="305,326,399,357"/><area shape="rect" id="node9" href="a00364.html" title="medC_win_dll.h" alt="" coords="340,406,452,437"/><area shape="rect" id="node16" href="a00350.html" title="med_vargs.h" alt="" coords="75,166,171,197"/><area shape="rect" id="node21" href="a00343.html" title="med_misc.h" alt="" coords="355,166,448,197"/><area shape="rect" id="node29" href="a00339.html" title="med_hdfi.h" alt="" coords="195,166,280,197"/><area shape="rect" id="node32" href="a00349.html" title="med_utils.h" alt="" coords="472,166,560,197"/><area shape="rect" id="node26" href="a00337.html" title="med_exit_if.h" alt="" coords="396,246,495,277"/><area shape="rect" id="node37" href="a00335.html" title="med_err.h" alt="" coords="519,246,599,277"/></map>
+</div>
+
+<p><a href="a00568_source.html">Aller au code source de ce fichier.</a></p>
+<table border="0" cellpadding="0" cellspacing="0">
+<tr><td colspan="2"><h2>Fonctions</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="a00321_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="a01011_ga8096dfdacfbaf8d876c057956f249dee.html#ga8096dfdacfbaf8d876c057956f249dee">MEDmeshGridStructWr</a> (const <a class="el" href="a00321_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid, const char *const meshname, const <a class="el" href="a00321_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> numdt, const <a class="el" href="a00321_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> numit, const <a class="el" href="a00321_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> dt, const <a class="el" href="a00321_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *const gridstruct)</td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Cette routine définit la structure (nombre de points sur chaque axe du repère) d'un maillage structuré de type <a class="el" href="a00321_a517833b8b925b9187607241f1c6ddbb9.html#a517833b8b925b9187607241f1c6ddbb9af486ea0b9b71e610e9a03694d730c05e">MED_CURVILINEAR_GRID</a>.  <a href="a01011_ga8096dfdacfbaf8d876c057956f249dee.html#ga8096dfdacfbaf8d876c057956f249dee"></a><br/></td></tr>
+</table>
+</div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:42 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

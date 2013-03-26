@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: getContinuousBlocksOfEntities</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+  <div class="navpath"><a class="el" href="a00284.html">getBlocksOfEntitiesPartition.c</a>
+  </div>
+<table cellspacing="0" cellpadding="0" border="0">
+  <tr>
+   <td valign="top">
+      <div class="navtab">
+        <table>
+          <tr><td class="navtab"><a class="qindexHL" href="a00284_a1a1e5d889c1ec1e795b6663cbbac7e39.html#a1a1e5d889c1ec1e795b6663cbbac7e39">getContinuousBlocksOfEntities</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a00284_a9a1191a9ceaa2926cc07e5cdd38339cb.html#a9a1191a9ceaa2926cc07e5cdd38339cb">getCyclicBlocksOfEntities</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a00284_a8e315da8f14d473c025c8a1f6af2f979.html#a8e315da8f14d473c025c8a1f6af2f979">MESGERR</a></td></tr>
+        </table>
+      </div>
+   </td>
+   <td valign="top">
+<a class="anchor" id="a1a1e5d889c1ec1e795b6663cbbac7e39"></a><!-- doxytag: member="getBlocksOfEntitiesPartition.c::getContinuousBlocksOfEntities" ref="a1a1e5d889c1ec1e795b6663cbbac7e39" args="(const int myrank, const int nproc, const int nentities, med_size *const start, med_size *const stride, med_size *const count, med_size *blocksize, int *const lastusedrank, med_size *const lastblocksize)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void getContinuousBlocksOfEntities </td>
+          <td>(</td>
+          <td class="paramtype">const int&nbsp;</td>
+          <td class="paramname"> <em>myrank</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&nbsp;</td>
+          <td class="paramname"> <em>nproc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&nbsp;</td>
+          <td class="paramname"> <em>nentities</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="a00321_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> *const &nbsp;</td>
+          <td class="paramname"> <em>start</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="a00321_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> *const &nbsp;</td>
+          <td class="paramname"> <em>stride</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="a00321_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> *const &nbsp;</td>
+          <td class="paramname"> <em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="a00321_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> *&nbsp;</td>
+          <td class="paramname"> <em>blocksize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *const &nbsp;</td>
+          <td class="paramname"> <em>lastusedrank</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="a00321_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> *const &nbsp;</td>
+          <td class="paramname"> <em>lastblocksize</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<dl><dt><b>Exemples: </b></dt><dd><a class="el" href="a00002.html#a0">parallel/getBlocksOfEntitiesPartition.c</a>.</dd>
+</dl>
+<p>Définition à la ligne <a class="el" href="a00284_source.html#l00027">27</a> du fichier <a class="el" href="a00284_source.html">getBlocksOfEntitiesPartition.c</a>.</p>
+
+</div>
+</div>
+    </td>
+  </tr>
+</table>
+</div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:35 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de UsesCase_MEDmesh_11.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_ba46011aeafd781e3c350f50ac4ad407.html">tests</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_9a395515a435a9986fd8a1dd7050dffb.html">usecases</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_358be61bc0fd4057433ed64ed56bcbbe.html">c</a>
+  </div>
+</div>
+<div class="contents">
+<h1>UsesCase_MEDmesh_11.c</h1><a href="a00979.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment"> *</span>
+<a name="l00003"></a>00003 <span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment"> *  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment"> *</span>
+<a name="l00009"></a>00009 <span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment"> *</span>
+<a name="l00014"></a>00014 <span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment"> */</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 <span class="comment">/*</span>
+<a name="l00019"></a>00019 <span class="comment"> *  Use case 11 : read a 2D unstructured mesh with 15 nodes, 8 triangular cells, 4 quadragular cells with</span>
+<a name="l00020"></a>00020 <span class="comment"> *  nodes families</span>
+<a name="l00021"></a>00021 <span class="comment"> */</span>
+<a name="l00022"></a>00022 
+<a name="l00023"></a>00023 <span class="preprocessor">#include &lt;<a class="code" href="a00321.html">med.h</a>&gt;</span>
+<a name="l00024"></a><a class="code" href="a00979_a8e315da8f14d473c025c8a1f6af2f979.html#a8e315da8f14d473c025c8a1f6af2f979">00024</a> <span class="preprocessor">#define MESGERR 1</span>
+<a name="l00025"></a>00025 <span class="preprocessor"></span><span class="preprocessor">#include &lt;<a class="code" href="a00349.html">med_utils.h</a>&gt;</span>
+<a name="l00026"></a>00026 
+<a name="l00027"></a>00027 <span class="preprocessor">#include &lt;string.h&gt;</span>
+<a name="l00028"></a>00028 
+<a name="l00029"></a><a class="code" href="a00979_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">00029</a> <span class="keywordtype">int</span> <a class="code" href="a00750_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv) {
+<a name="l00030"></a>00030   <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid;
+<a name="l00031"></a>00031   <span class="keyword">const</span> <span class="keywordtype">char</span> meshname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1] = <span class="stringliteral">&quot;2D unstructured mesh&quot;</span>;
+<a name="l00032"></a>00032   <span class="keywordtype">char</span> meshdescription[<a class="code" href="a00321_ab69710ecf9f5257080a943579852d0f0.html#ab69710ecf9f5257080a943579852d0f0">MED_COMMENT_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+<a name="l00033"></a>00033   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> meshdim;
+<a name="l00034"></a>00034   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> spacedim;
+<a name="l00035"></a>00035   <a class="code" href="a00321_a5b97067a30629cd60470d074691d6798.html#a5b97067a30629cd60470d074691d6798">med_sorting_type</a> sortingtype;
+<a name="l00036"></a>00036   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nstep;
+<a name="l00037"></a>00037   <a class="code" href="a00321_a821a4dd94c5c6b095318432bdec8d8a1.html#a821a4dd94c5c6b095318432bdec8d8a1">med_mesh_type</a> meshtype;
+<a name="l00038"></a>00038   <a class="code" href="a00321_a57867e4bed1d104c865cfc9d23c9204d.html#a57867e4bed1d104c865cfc9d23c9204d">med_axis_type</a> axistype;
+<a name="l00039"></a>00039   <span class="keywordtype">char</span> axisname[2*<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+<a name="l00040"></a>00040   <span class="keywordtype">char</span> unitname[2*<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+<a name="l00041"></a>00041   <span class="keywordtype">char</span> dtunit[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1];
+<a name="l00042"></a>00042   <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *coordinates = NULL;
+<a name="l00043"></a>00043   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nnodes = 0;
+<a name="l00044"></a>00044   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *triaconnectivity = NULL;
+<a name="l00045"></a>00045   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> ntria3 = 0;
+<a name="l00046"></a>00046   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *quadconnectivity = NULL;
+<a name="l00047"></a>00047   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nquad4 = 0;
+<a name="l00048"></a>00048   <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a> coordinatechangement;
+<a name="l00049"></a>00049   <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a> geotransformation;
+<a name="l00050"></a>00050   <span class="keywordtype">int</span> i;
+<a name="l00051"></a>00051   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nfamily, ngroup;
+<a name="l00052"></a>00052   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> familynumber;
+<a name="l00053"></a>00053   <span class="keywordtype">char</span> *groupname=NULL;
+<a name="l00054"></a>00054   <span class="keywordtype">char</span> familyname[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+<a name="l00055"></a>00055   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *familynumbers = NULL;
+<a name="l00056"></a>00056   <span class="keywordtype">int</span> ret=-1;
+<a name="l00057"></a>00057 
+<a name="l00058"></a>00058   <span class="comment">/* open MED file with READ ONLY access mode */</span>
+<a name="l00059"></a>00059   fid = <a class="code" href="a01005_ga9376a1654b7bf099c3f8941074c5fdfb.html#ga9376a1654b7bf099c3f8941074c5fdfb" title="Ouverture d&amp;#39;un fichier MED.">MEDfileOpen</a>(<span class="stringliteral">&quot;UsesCase_MEDmesh_10.med&quot;</span>,<a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a616bf8345c622a34f0787f42eb400f25">MED_ACC_RDONLY</a>);
+<a name="l00060"></a>00060   <span class="keywordflow">if</span> (fid &lt; 0) {
+<a name="l00061"></a>00061     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : open file in READ ONLY ACCESS mode ...&quot;</span>);
+<a name="l00062"></a>00062     <span class="keywordflow">goto</span> ERROR;
+<a name="l00063"></a>00063   }
+<a name="l00064"></a>00064 
+<a name="l00065"></a>00065   <span class="comment">/* </span>
+<a name="l00066"></a>00066 <span class="comment">   * ... we know that the MED file has only one mesh, </span>
+<a name="l00067"></a>00067 <span class="comment">   * a real code working would check ... </span>
+<a name="l00068"></a>00068 <span class="comment">   */</span>
+<a name="l00069"></a>00069 
+<a name="l00070"></a>00070   <span class="comment">/* read mesh informations : mesh dimension, space dimension ... */</span>
+<a name="l00071"></a>00071   <span class="keywordflow">if</span> (<a class="code" href="a01011_gaf5e84a05155579ded1ba18a672385f97.html#gaf5e84a05155579ded1ba18a672385f97" title="Cette routine permet de lire les informations relatives à un maillage en précisant...">MEDmeshInfoByName</a>(fid, meshname, &amp;spacedim, &amp;meshdim, &amp;meshtype, meshdescription, 
+<a name="l00072"></a>00072                         dtunit, &amp;sortingtype, &amp;nstep, &amp;axistype, axisname, unitname) &lt; 0) {
+<a name="l00073"></a>00073     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : mesh info ...&quot;</span>);
+<a name="l00074"></a>00074     <span class="keywordflow">goto</span> ERROR;
+<a name="l00075"></a>00075   }
+<a name="l00076"></a>00076 
+<a name="l00077"></a>00077   <span class="comment">/* read how many nodes in the mesh */</span>
+<a name="l00078"></a>00078   <span class="keywordflow">if</span> ((nnodes = <a class="code" href="a01011_ga45758103360dacf7b8a6c53ebfa4d7e5.html#ga45758103360dacf7b8a6c53ebfa4d7e5" title="Cette routine permet de lire le nombre d&amp;#39;entités dans un maillage pour une séquence...">MEDmeshnEntity</a>(fid, meshname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a>, <a class="code" href="a00321_a865361460bec98f2ec3f5bb3237b9264.html#a865361460bec98f2ec3f5bb3237b9264">MED_NO_GEOTYPE</a>,
+<a name="l00079"></a>00079                                <a class="code" href="a00321_a25ee4b3675737fc23511b28b3245c61b.html#a25ee4b3675737fc23511b28b3245c61bad78949eab3c743083dfbf687c92bbdcb">MED_COORDINATE</a>, <a class="code" href="a00321_afcd26ca66a179b9aa82f5c90602c4ed8.html#afcd26ca66a179b9aa82f5c90602c4ed8a2b1e772016688b78b808e96a44d1ee02">MED_NO_CMODE</a>,&amp;coordinatechangement,
+<a name="l00080"></a>00080                                &amp;geotransformation)) &lt; 0) {
+<a name="l00081"></a>00081     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : number of nodes ...&quot;</span>);
+<a name="l00082"></a>00082     <span class="keywordflow">goto</span> ERROR;
+<a name="l00083"></a>00083   }
+<a name="l00084"></a>00084   
+<a name="l00085"></a>00085   <span class="comment">/* </span>
+<a name="l00086"></a>00086 <span class="comment">   * ... we know that we only have MED_TRIA3 and MED_QUAD4 in the mesh, </span>
+<a name="l00087"></a>00087 <span class="comment">   * a real code working would check all MED geometry cell types ... </span>
+<a name="l00088"></a>00088 <span class="comment">   */</span>
+<a name="l00089"></a>00089 
+<a name="l00090"></a>00090   <span class="comment">/* read how many triangular cells in the mesh */</span>
+<a name="l00091"></a>00091   <span class="keywordflow">if</span> ((ntria3 = <a class="code" href="a01011_ga45758103360dacf7b8a6c53ebfa4d7e5.html#ga45758103360dacf7b8a6c53ebfa4d7e5" title="Cette routine permet de lire le nombre d&amp;#39;entités dans un maillage pour une séquence...">MEDmeshnEntity</a>(fid, meshname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>,<a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>,
+<a name="l00092"></a>00092                                <a class="code" href="a00321_a25ee4b3675737fc23511b28b3245c61b.html#a25ee4b3675737fc23511b28b3245c61bac845229e0179819897411d7cb9186824">MED_CONNECTIVITY</a>, <a class="code" href="a00321_afcd26ca66a179b9aa82f5c90602c4ed8.html#afcd26ca66a179b9aa82f5c90602c4ed8a4ae92e7de0898383577cbba640006baa">MED_NODAL</a>,&amp;coordinatechangement,
+<a name="l00093"></a>00093                                &amp;geotransformation)) &lt; 0) {
+<a name="l00094"></a>00094     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : number of MED_TRIA3 ...&quot;</span>);
+<a name="l00095"></a>00095     <span class="keywordflow">goto</span> ERROR;
+<a name="l00096"></a>00096   }
+<a name="l00097"></a>00097 
+<a name="l00098"></a>00098   <span class="comment">/* read how many quadrangular cells in the mesh */</span>
+<a name="l00099"></a>00099   <span class="keywordflow">if</span> ((nquad4 = <a class="code" href="a01011_ga45758103360dacf7b8a6c53ebfa4d7e5.html#ga45758103360dacf7b8a6c53ebfa4d7e5" title="Cette routine permet de lire le nombre d&amp;#39;entités dans un maillage pour une séquence...">MEDmeshnEntity</a>(fid, meshname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>,<a class="code" href="a00321_a24ea9c52f5bde41d9a072925249ec06c.html#a24ea9c52f5bde41d9a072925249ec06c">MED_QUAD4</a>,
+<a name="l00100"></a>00100                                <a class="code" href="a00321_a25ee4b3675737fc23511b28b3245c61b.html#a25ee4b3675737fc23511b28b3245c61bac845229e0179819897411d7cb9186824">MED_CONNECTIVITY</a>, <a class="code" href="a00321_afcd26ca66a179b9aa82f5c90602c4ed8.html#afcd26ca66a179b9aa82f5c90602c4ed8a4ae92e7de0898383577cbba640006baa">MED_NODAL</a>, &amp;coordinatechangement,
+<a name="l00101"></a>00101                                &amp;geotransformation)) &lt; 0) {
+<a name="l00102"></a>00102     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : number of MED_QUAD4 ...&quot;</span>);
+<a name="l00103"></a>00103     <span class="keywordflow">goto</span> ERROR;
+<a name="l00104"></a>00104   }
+<a name="l00105"></a>00105 
+<a name="l00106"></a>00106   <span class="comment">/* read mesh nodes coordinates */</span>
+<a name="l00107"></a>00107   <span class="keywordflow">if</span> ((coordinates = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>*) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>)*nnodes*spacedim)) == NULL) {
+<a name="l00108"></a>00108     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+<a name="l00109"></a>00109     <span class="keywordflow">goto</span> ERROR;
+<a name="l00110"></a>00110   }
+<a name="l00111"></a>00111 
+<a name="l00112"></a>00112   <span class="keywordflow">if</span> (<a class="code" href="a01011_ga392a4bd4e6d340020755de7353f8a528.html#ga392a4bd4e6d340020755de7353f8a528" title="Cette routine permet de lire dans un maillage le tableau des coordonnées des noeuds...">MEDmeshNodeCoordinateRd</a>(fid, meshname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>,
+<a name="l00113"></a>00113                               coordinates) &lt; 0) {
+<a name="l00114"></a>00114     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : nodes coordinates ...&quot;</span>);
+<a name="l00115"></a>00115     free(coordinates);
+<a name="l00116"></a>00116     <span class="keywordflow">goto</span> ERROR;
+<a name="l00117"></a>00117   }
+<a name="l00118"></a>00118 
+<a name="l00119"></a>00119   free(coordinates);
+<a name="l00120"></a>00120 
+<a name="l00121"></a>00121   <span class="comment">/* read cells connectivity in the mesh */</span>
+<a name="l00122"></a>00122   <span class="keywordflow">if</span> ((triaconnectivity = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>)*ntria3*3)) == NULL) {
+<a name="l00123"></a>00123     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+<a name="l00124"></a>00124     <span class="keywordflow">goto</span> ERROR;
+<a name="l00125"></a>00125   }
+<a name="l00126"></a>00126   <span class="keywordflow">if</span> (<a class="code" href="a01011_ga014f716ad13c72466b4aa94237876bf5.html#ga014f716ad13c72466b4aa94237876bf5" title="Cette routine permet de lire dans un maillage le tableau des connectivités pour...">MEDmeshElementConnectivityRd</a>(fid, meshname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>,
+<a name="l00127"></a>00127                                    <a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>, <a class="code" href="a00321_afcd26ca66a179b9aa82f5c90602c4ed8.html#afcd26ca66a179b9aa82f5c90602c4ed8a4ae92e7de0898383577cbba640006baa">MED_NODAL</a>, <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, triaconnectivity) &lt; 0) {
+<a name="l00128"></a>00128     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : MED_TRIA3 connectivity ...&quot;</span>);
+<a name="l00129"></a>00129     free(triaconnectivity);
+<a name="l00130"></a>00130     <span class="keywordflow">goto</span> ERROR;
+<a name="l00131"></a>00131   }
+<a name="l00132"></a>00132   free(triaconnectivity);
+<a name="l00133"></a>00133 
+<a name="l00134"></a>00134   <span class="keywordflow">if</span> ((quadconnectivity = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>)*nquad4*4)) == NULL) {
+<a name="l00135"></a>00135     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+<a name="l00136"></a>00136     <span class="keywordflow">goto</span> ERROR;
+<a name="l00137"></a>00137   }
+<a name="l00138"></a>00138   <span class="keywordflow">if</span> (<a class="code" href="a01011_ga014f716ad13c72466b4aa94237876bf5.html#ga014f716ad13c72466b4aa94237876bf5" title="Cette routine permet de lire dans un maillage le tableau des connectivités pour...">MEDmeshElementConnectivityRd</a>(fid, meshname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>,
+<a name="l00139"></a>00139                                    <a class="code" href="a00321_a24ea9c52f5bde41d9a072925249ec06c.html#a24ea9c52f5bde41d9a072925249ec06c">MED_QUAD4</a>, <a class="code" href="a00321_afcd26ca66a179b9aa82f5c90602c4ed8.html#afcd26ca66a179b9aa82f5c90602c4ed8a4ae92e7de0898383577cbba640006baa">MED_NODAL</a>, <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>, quadconnectivity) &lt; 0) {
+<a name="l00140"></a>00140     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : MED_TRIA3 connectivity ...&quot;</span>);
+<a name="l00141"></a>00141     free(quadconnectivity);
+<a name="l00142"></a>00142     <span class="keywordflow">goto</span> ERROR;
+<a name="l00143"></a>00143   }
+<a name="l00144"></a>00144   free(quadconnectivity);
+<a name="l00145"></a>00145 
+<a name="l00146"></a>00146   <span class="comment">/* </span>
+<a name="l00147"></a>00147 <span class="comment">   * read families of entities...</span>
+<a name="l00148"></a>00148 <span class="comment">   */</span>
+<a name="l00149"></a>00149   <span class="keywordflow">if</span> ((nfamily = <a class="code" href="a01003_gac1b7e6f5ff0cb0ab1b4e1839a6ba5429.html#gac1b7e6f5ff0cb0ab1b4e1839a6ba5429" title="Cette routine permet de lire le nombre de famille dans un maillage.">MEDnFamily</a>(fid,meshname)) &lt; 0) {
+<a name="l00150"></a>00150     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read number of family ...&quot;</span>);
+<a name="l00151"></a>00151     <span class="keywordflow">goto</span> ERROR;
+<a name="l00152"></a>00152   }
+<a name="l00153"></a>00153   
+<a name="l00154"></a>00154   <span class="keywordflow">for</span> (i=0; i&lt;nfamily ; i++) {
+<a name="l00155"></a>00155 
+<a name="l00156"></a>00156     <span class="keywordflow">if</span> ((ngroup = <a class="code" href="a01003_gada394e14b0a6d90bdd7d31b7547c9d0f.html#gada394e14b0a6d90bdd7d31b7547c9d0f" title="Cette routine permet de lire le nombre de groupe dans une famille.">MEDnFamilyGroup</a>(fid, meshname, i+1)) &lt; 0) {
+<a name="l00157"></a>00157       <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read number of group in a family ...&quot;</span>);
+<a name="l00158"></a>00158       <span class="keywordflow">goto</span> ERROR;
+<a name="l00159"></a>00159     }
+<a name="l00160"></a>00160     
+<a name="l00161"></a>00161     <span class="keywordflow">if</span> (ngroup &gt; 0) {
+<a name="l00162"></a>00162       <span class="keywordflow">if</span> ((groupname = (<span class="keywordtype">char</span>*) malloc(<span class="keyword">sizeof</span>(<span class="keywordtype">char</span>)*<a class="code" href="a00321_a1d420c1b5fb1b2933059b81a1f2e1491.html#a1d420c1b5fb1b2933059b81a1f2e1491">MED_LNAME_SIZE</a>*ngroup+1)) == NULL) {
+<a name="l00163"></a>00163         <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+<a name="l00164"></a>00164         <span class="keywordflow">goto</span> ERROR;
+<a name="l00165"></a>00165       }
+<a name="l00166"></a>00166       
+<a name="l00167"></a>00167       <span class="keywordflow">if</span> (<a class="code" href="a01003_ga9d4a5724b9e010f3b0f2a44c74dddd7b.html#ga9d4a5724b9e010f3b0f2a44c74dddd7b" title="Cette routine permet de lire les informations relatives à une famille d&amp;#39;un maillage...">MEDfamilyInfo</a>(fid, meshname, i+1, familyname, &amp;familynumber, groupname) &lt; 0) {
+<a name="l00168"></a>00168         <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : family info ...&quot;</span>);
+<a name="l00169"></a>00169         free(groupname);
+<a name="l00170"></a>00170         <span class="keywordflow">goto</span> ERROR;
+<a name="l00171"></a>00171       }
+<a name="l00172"></a>00172       free(groupname);
+<a name="l00173"></a>00173     }
+<a name="l00174"></a>00174     
+<a name="l00175"></a>00175   }
+<a name="l00176"></a>00176 
+<a name="l00177"></a>00177   <span class="comment">/* read family numbers for nodes */</span>
+<a name="l00178"></a>00178   <span class="comment">/* By convention, if there is no numbers in the file, it means that 0 is the family </span>
+<a name="l00179"></a>00179 <span class="comment">     number of all nodes */</span>
+<a name="l00180"></a>00180   <span class="keywordflow">if</span> ((familynumbers = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>)*nnodes)) == NULL) {
+<a name="l00181"></a>00181     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+<a name="l00182"></a>00182     <span class="keywordflow">goto</span> ERROR;
+<a name="l00183"></a>00183   }
+<a name="l00184"></a>00184   <span class="keywordflow">if</span> (<a class="code" href="a01011_ga80350686841974f69c25ba9d7c1ed9d6.html#ga80350686841974f69c25ba9d7c1ed9d6" title="Cette routine permet la lecture des numéros de famille d&amp;#39;un type d&amp;#39;entité...">MEDmeshEntityFamilyNumberRd</a>(fid, meshname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>,
+<a name="l00185"></a>00185                                   <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a>,<a class="code" href="a00321_a9a2843c7d6eacffdd9377b5bfb8a6de3.html#a9a2843c7d6eacffdd9377b5bfb8a6de3">MED_NONE</a>,familynumbers ) &lt; 0) 
+<a name="l00186"></a>00186     <span class="keywordflow">for</span> (i=0; i&lt;nnodes; i++) *(familynumbers+i) = 0;
+<a name="l00187"></a>00187 
+<a name="l00188"></a>00188   <span class="keywordflow">for</span> (i=0; i&lt;nnodes; i++) printf(<span class="stringliteral">&quot;%d - &quot;</span>, *(familynumbers+i));
+<a name="l00189"></a>00189 
+<a name="l00190"></a>00190   <span class="keywordflow">if</span> (familynumbers)
+<a name="l00191"></a>00191     free (familynumbers);
+<a name="l00192"></a>00192 
+<a name="l00193"></a>00193   <span class="comment">/* read family numbers for cells */</span>
+<a name="l00194"></a>00194   <span class="keywordflow">if</span> ((familynumbers = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>)*ntria3)) == NULL) {
+<a name="l00195"></a>00195     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+<a name="l00196"></a>00196     <span class="keywordflow">goto</span> ERROR;
+<a name="l00197"></a>00197   }
+<a name="l00198"></a>00198   <span class="keywordflow">if</span> (<a class="code" href="a01011_ga80350686841974f69c25ba9d7c1ed9d6.html#ga80350686841974f69c25ba9d7c1ed9d6" title="Cette routine permet la lecture des numéros de famille d&amp;#39;un type d&amp;#39;entité...">MEDmeshEntityFamilyNumberRd</a>(fid, meshname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>,
+<a name="l00199"></a>00199                                   <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>,<a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>,familynumbers ) &lt; 0) 
+<a name="l00200"></a>00200     <span class="keywordflow">for</span> (i=0; i&lt;ntria3; i++) *(familynumbers+i) = 0;
+<a name="l00201"></a>00201 
+<a name="l00202"></a>00202     free (familynumbers);
+<a name="l00203"></a>00203 
+<a name="l00204"></a>00204 
+<a name="l00205"></a>00205   <span class="keywordflow">if</span> ((familynumbers = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>)*nquad4)) == NULL) {
+<a name="l00206"></a>00206     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+<a name="l00207"></a>00207     <span class="keywordflow">goto</span> ERROR;
+<a name="l00208"></a>00208   }
+<a name="l00209"></a>00209   <span class="keywordflow">if</span> (<a class="code" href="a01011_ga80350686841974f69c25ba9d7c1ed9d6.html#ga80350686841974f69c25ba9d7c1ed9d6" title="Cette routine permet la lecture des numéros de famille d&amp;#39;un type d&amp;#39;entité...">MEDmeshEntityFamilyNumberRd</a>(fid, meshname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>,
+<a name="l00210"></a>00210                                   <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>,<a class="code" href="a00321_a24ea9c52f5bde41d9a072925249ec06c.html#a24ea9c52f5bde41d9a072925249ec06c">MED_QUAD4</a>,familynumbers ) &lt; 0) 
+<a name="l00211"></a>00211     <span class="keywordflow">for</span> (i=0; i&lt;nquad4; i++) *(familynumbers+i) = 0;
+<a name="l00212"></a>00212 
+<a name="l00213"></a>00213   free (familynumbers);
+<a name="l00214"></a>00214 
+<a name="l00215"></a>00215   ret=0;
+<a name="l00216"></a>00216  ERROR:
+<a name="l00217"></a>00217 
+<a name="l00218"></a>00218   <span class="comment">/* close MED file */</span>
+<a name="l00219"></a>00219   <span class="keywordflow">if</span> (<a class="code" href="a01005_ga12a0e901c376be997a41a073ce426283.html#ga12a0e901c376be997a41a073ce426283" title="Fermeture d&amp;#39;un fichier MED.">MEDfileClose</a>(fid) &lt; 0) {
+<a name="l00220"></a>00220     <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : close file&quot;</span>);             
+<a name="l00221"></a>00221     ret= -1; 
+<a name="l00222"></a>00222   } 
+<a name="l00223"></a>00223 
+<a name="l00224"></a>00224   <span class="keywordflow">return</span> ret;
+<a name="l00225"></a>00225 }
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:35 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

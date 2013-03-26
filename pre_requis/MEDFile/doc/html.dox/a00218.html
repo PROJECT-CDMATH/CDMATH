@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: f/2.3.6/test21.f</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+<h1>f/2.3.6/test21.f</h1><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">C*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment">C*</span>
+<a name="l00003"></a>00003 <span class="comment">C*  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment">C*  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment">C*  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment">C*  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment">C*  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment">C*</span>
+<a name="l00009"></a>00009 <span class="comment">C*  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment">C*  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment">C*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment">C*  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment">C*</span>
+<a name="l00014"></a>00014 <span class="comment">C*  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment">C*  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment">C*</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 <span class="comment">C******************************************************************************</span>
+<a name="l00019"></a>00019 <span class="comment">C* - Nom du fichier : test21.f</span>
+<a name="l00020"></a>00020 <span class="comment">C*</span>
+<a name="l00021"></a>00021 <span class="comment">C* - Description : ecriture de valeurs scalaires numeriques dans un fichier MED</span>
+<a name="l00022"></a>00022 <span class="comment">C*</span>
+<a name="l00023"></a>00023 <span class="comment">C ******************************************************************************</span>
+<a name="l00024"></a>00024       <span class="keyword">program</span> <a class="code" href="a00810_af27b0f7059d106c21b372ba6a4072853.html#af27b0f7059d106c21b372ba6a4072853">test21</a>
+<a name="l00025"></a>00025 <span class="comment">C     </span>
+<a name="l00026"></a>00026       <span class="keyword">implicit none</span>
+<a name="l00027"></a>00027       include <span class="stringliteral">&apos;med.hf&apos;</span>
+<a name="l00028"></a>00028 <span class="comment">C</span>
+<a name="l00029"></a>00029       <span class="keywordtype">integer</span> cret, fid
+<a name="l00030"></a>00030       <span class="keywordtype">character*16</span> edtuni,dtunit1
+<a name="l00031"></a>00031       <span class="keywordtype">character*32</span> nom1, nom2
+<a name="l00032"></a>00032       <span class="keywordtype">character*200</span> desc1, desc2
+<a name="l00033"></a>00033       <span class="keywordtype">integer</span> vali1, vali2
+<a name="l00034"></a>00034       <span class="keywordtype">real*8</span> valr1,dt
+<a name="l00035"></a>00035 <span class="comment">C</span>
+<a name="l00036"></a>00036       parameter (nom1=<span class="stringliteral">&quot;VariableEntiere&quot;</span>)
+<a name="l00037"></a>00037       parameter (nom2=<span class="stringliteral">&quot;VariableFlottante&quot;</span>)
+<a name="l00038"></a>00038       <span class="keyword">data</span> desc1 / <span class="stringliteral">&quot;Une premiere description&quot;</span> /
+<a name="l00039"></a>00039       <span class="keyword">data</span> desc2 / <span class="stringliteral">&quot;Une seconde description&quot;</span> /
+<a name="l00040"></a>00040       parameter (vali1 = 56,vali2 = -789)
+<a name="l00041"></a>00041       parameter (valr1 = 67.98D0)
+<a name="l00042"></a>00042     
+<a name="l00043"></a>00043       parameter (edtuni=<span class="stringliteral">&quot;                &quot;</span>
+<a name="l00044"></a>00044      1         ,dtunit1=<span class="stringliteral">&quot;ms&quot;</span>)
+<a name="l00045"></a>00045 <span class="comment">C</span>
+<a name="l00046"></a>00046 <span class="comment">C     </span>
+<a name="l00047"></a>00047 <span class="comment">C     Creation du fichier test21.med</span>
+<a name="l00048"></a>00048 <span class="comment">C</span>
+<a name="l00049"></a>00049       call <a class="code" href="a00272_a52258574889f45fa4f8ddafa9f1a4889.html#a52258574889f45fa4f8ddafa9f1a4889">efouvr</a>(fid,<span class="stringliteral">&apos;test21.med&apos;</span>,<a class="code" href="a00320_a6412dbfba9619f1b121a97a4ccfaff00.html#a6412dbfba9619f1b121a97a4ccfaff00a76ce30d5569e6fffd12ce5cae0d7f9c0">MED_LECTURE_ECRITURE</a>,cret)
+<a name="l00050"></a>00050       print *,cret
+<a name="l00051"></a>00051       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00052"></a>00052          print *,<span class="stringliteral">&apos;Erreur creation du fichier&apos;</span>
+<a name="l00053"></a>00053          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00054"></a>00054       <span class="keyword">endif</span>      
+<a name="l00055"></a>00055       print *,<span class="stringliteral">&apos;Creation du fichier test21.med&apos;</span>
+<a name="l00056"></a>00056 <span class="comment">C</span>
+<a name="l00057"></a>00057 <span class="comment">C     Creation d&apos;une variable scalaire entiere </span>
+<a name="l00058"></a>00058 <span class="comment">C</span>
+<a name="l00059"></a>00059       call <a class="code" href="a00739_a6baf28bb2ab2c783158e022e1696cf89.html#a6baf28bb2ab2c783158e022e1696cf89">efscac</a>(fid,nom1,<a class="code" href="a00320_a7d730da9417184bffcdccc90a1749e27.html#a7d730da9417184bffcdccc90a1749e27a68b79221679f7b78dc1aec384ef30340">MED_INT</a>,desc1,cret)
+<a name="l00060"></a>00060       print *,cret
+<a name="l00061"></a>00061       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00062"></a>00062          print *,<span class="stringliteral">&apos;Erreur creation variable scalaire&apos;</span>
+<a name="l00063"></a>00063          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00064"></a>00064       <span class="keyword">endif</span>      
+<a name="l00065"></a>00065       print *,<span class="stringliteral">&apos;Creation d une variable scalaire entiere&apos;</span>
+<a name="l00066"></a>00066 <span class="comment">C</span>
+<a name="l00067"></a>00067 <span class="comment">C     Ecriture d&apos;une valeur sans pas de temps ni numero d&apos;ordre</span>
+<a name="l00068"></a>00068 <span class="comment">C</span>
+<a name="l00069"></a>00069       dt =0.0D0
+<a name="l00070"></a>00070       call <a class="code" href="a00739_acfb85967d68e048db1a91e27981b932b.html#acfb85967d68e048db1a91e27981b932b">efscee</a>(fid,nom1,vali1,<a class="code" href="a00320_a165f3d5665b9244b25cb34636021b0f1.html#a165f3d5665b9244b25cb34636021b0f1">MED_NOPDT</a>,edtuni,dt,<a class="code" href="a00320_a1ed6680c50a9d4592ec6a3aa3a332f99.html#a1ed6680c50a9d4592ec6a3aa3a332f99">MED_NONOR</a>,cret)
+<a name="l00071"></a>00071       print *,cret
+<a name="l00072"></a>00072       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00073"></a>00073          print *,<span class="stringliteral">&apos;Erreur ecriture valeur scalaire&apos;</span>
+<a name="l00074"></a>00074          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00075"></a>00075       <span class="keyword">endif</span>      
+<a name="l00076"></a>00076       print *,<span class="stringliteral">&apos;Ecriture valeur entiere sans pas de temps&apos;</span>
+<a name="l00077"></a>00077 <span class="comment">C</span>
+<a name="l00078"></a>00078 <span class="comment">C     Ecriture d&apos;une valeur avec pas de temps et sans numero d&apos;ordre</span>
+<a name="l00079"></a>00079 <span class="comment">C</span>
+<a name="l00080"></a>00080       dt = 5.5D0
+<a name="l00081"></a>00081       call <a class="code" href="a00739_acfb85967d68e048db1a91e27981b932b.html#acfb85967d68e048db1a91e27981b932b">efscee</a>(fid,nom1,vali2,1,dtunit1,dt,<a class="code" href="a00320_a1ed6680c50a9d4592ec6a3aa3a332f99.html#a1ed6680c50a9d4592ec6a3aa3a332f99">MED_NONOR</a>,cret)
+<a name="l00082"></a>00082       print *,cret
+<a name="l00083"></a>00083       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00084"></a>00084          print *,<span class="stringliteral">&apos;Erreur ecriture valeur scalaire&apos;</span>
+<a name="l00085"></a>00085          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00086"></a>00086       <span class="keyword">endif</span>      
+<a name="l00087"></a>00087       print *,<span class="stringliteral">&apos;Ecriture valeur entiere avec pas de temps&apos;</span>
+<a name="l00088"></a>00088 <span class="comment">C</span>
+<a name="l00089"></a>00089 <span class="comment">C     Creation d&apos;une variable scalaire flottante</span>
+<a name="l00090"></a>00090 <span class="comment">C</span>
+<a name="l00091"></a>00091       call <a class="code" href="a00739_a6baf28bb2ab2c783158e022e1696cf89.html#a6baf28bb2ab2c783158e022e1696cf89">efscac</a>(fid,nom2,<a class="code" href="a00320_a7d730da9417184bffcdccc90a1749e27.html#a7d730da9417184bffcdccc90a1749e27ad44e111629f7a5811626b87c8b42b3ea">MED_FLOAT64</a>,desc2,cret)
+<a name="l00092"></a>00092       print *,cret
+<a name="l00093"></a>00093       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00094"></a>00094          print *,<span class="stringliteral">&apos;Erreur creation variable sclaire&apos;</span>
+<a name="l00095"></a>00095          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00096"></a>00096       <span class="keyword">endif</span>      
+<a name="l00097"></a>00097       print *,<span class="stringliteral">&apos;Creation d une variable scalaire flottante&apos;</span>
+<a name="l00098"></a>00098 <span class="comment">C</span>
+<a name="l00099"></a>00099 <span class="comment">C     Ecriture d&apos;une valeur flottante avec pas de temps et numero d&apos;ordre</span>
+<a name="l00100"></a>00100 <span class="comment">C</span>
+<a name="l00101"></a>00101       call <a class="code" href="a00739_a40dbd469e72e0ce21930156f0debb54b.html#a40dbd469e72e0ce21930156f0debb54b">efscfe</a>(fid,nom2,valr1,1,dtunit1,dt,2,cret)
+<a name="l00102"></a>00102       print *,cret
+<a name="l00103"></a>00103       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00104"></a>00104          print *,<span class="stringliteral">&apos;Erreur ecriture valeur scalaire&apos;</span>
+<a name="l00105"></a>00105          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00106"></a>00106       <span class="keyword">endif</span>      
+<a name="l00107"></a>00107       print *,<span class="stringliteral">&apos;Ecriture valeur entiere avec pas de temps&apos;</span>
+<a name="l00108"></a>00108 <span class="comment">C</span>
+<a name="l00109"></a>00109 <span class="comment">C     Fermeture du fichier      </span>
+<a name="l00110"></a>00110 <span class="comment">C</span>
+<a name="l00111"></a>00111       call <a class="code" href="a00272_ae1883f4493e1cbf51239c485ce88937d.html#ae1883f4493e1cbf51239c485ce88937d">efferm</a>(fid,cret)
+<a name="l00112"></a>00112       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00113"></a>00113          print *,<span class="stringliteral">&apos;Erreur fermeture du fichier&apos;</span>
+<a name="l00114"></a>00114          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00115"></a>00115       <span class="keyword">endif</span>      
+<a name="l00116"></a>00116       print *,cret
+<a name="l00117"></a>00117       print *,<span class="stringliteral">&apos;Fermeture du fichier test21.med&apos;</span>
+<a name="l00118"></a>00118 <span class="comment">C</span>
+<a name="l00119"></a>00119 <span class="keyword">      end</span>
+<a name="l00120"></a>00120 <span class="comment">C</span>
+</pre></div> </div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:33 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: parallel/getBlocksOfEntitiesPartition.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+<h1>parallel/getBlocksOfEntitiesPartition.c</h1><div class="fragment"><pre class="fragment"><span class="comment">/*  This file is part of MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<span class="comment"> *  (at your option) any later version.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="comment"> */</span>
+
+
+<span class="preprocessor">#include &lt;med.h&gt;</span>
+<span class="preprocessor">#define MESGERR 1</span>
+<span class="preprocessor"></span><span class="preprocessor">#include &quot;med_utils.h&quot;</span>
+
+
+<span class="preprocessor">#include &quot;<a class="code" href="a00285.html">getBlocksOfEntitiesPartition.h</a>&quot;</span>
+
+
+<span class="keywordtype">void</span> <a name="a0"></a><a class="code" href="a00284_a1a1e5d889c1ec1e795b6663cbbac7e39.html#a1a1e5d889c1ec1e795b6663cbbac7e39">getContinuousBlocksOfEntities</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> myrank, <span class="keyword">const</span> <span class="keywordtype">int</span> nproc, <span class="keyword">const</span> <span class="keywordtype">int</span> nentities,
+                                    <a name="a1"></a><a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> * <span class="keyword">const</span> start, <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> * <span class="keyword">const</span> stride, <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> * <span class="keyword">const</span> count, <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> * blocksize,
+                                    <span class="keywordtype">int</span> * <span class="keyword">const</span> lastusedrank, <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> * <span class="keyword">const</span> lastblocksize ) {
+
+    <span class="keywordtype">int</span>      _nusedproc      = nproc;
+    <span class="keywordtype">int</span>      _lastusedrank   = 0;
+    <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> _blocksize      = nentities/nproc;
+    <span class="comment">/* _nblocks_pproc vaut 1 ou 0 si l&apos;on utilise pas tous les processus */</span>
+    <span class="keywordtype">int</span>      _nblocks_pproc  = 0;
+
+
+    <span class="comment">/*Tant que la taille des blocks est nulle on diminue le</span>
+<span class="comment">      nombre de processus utilisé jusqu&apos;au minimum d&apos;un processus</span>
+<span class="comment">    */</span>
+    <span class="keywordflow">for</span> (; (_blocksize &lt; 1) &amp;&amp; ( _nusedproc &gt; 1 ) ; ) {
+      <a name="a2"></a><a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(<span class="stringliteral">&quot;NOT USING ALL PROCESS&quot;</span>);
+      --_nusedproc;
+      _blocksize = nentities/_nusedproc;
+    }
+    _lastusedrank   = _nusedproc-1;
+
+    <span class="keywordflow">if</span> ( myrank &lt; _nusedproc)
+      _nblocks_pproc = 1;
+    <span class="keywordflow">else</span>
+      _blocksize = 0;
+
+<span class="comment">/*     if ( _blocksize == 0 ) { */</span>
+<span class="comment">/*       if (myrank == 0 ) { _nblocks_pproc=1;_blocksize=nentities;} */</span>
+<span class="comment">/*       _lastusedrank = 0; */</span>
+<span class="comment">/*       _nusedproc = 1; */</span>
+<span class="comment">/*       _blocksize    = nentities; */</span> <span class="comment">/*TODO : essayer de l&apos;enlever maintenant : Ajouté pour symétrie des opération MPI_File, *count == 0*/</span>
+<span class="comment">/*     } else { */</span>
+<span class="comment">/*       _nblocks_pproc = 1; */</span>
+<span class="comment">/*     } */</span>
+
+    *start         = myrank*_nblocks_pproc*_blocksize;
+    *stride        = _blocksize;
+    *count         = _nblocks_pproc;
+    *lastblocksize = 0;
+
+    <span class="keywordflow">if</span> ( myrank == _lastusedrank ) {
+      *blocksize = nentities+_blocksize*(1-_nusedproc);
+    } <span class="keywordflow">else</span> {
+      *blocksize =_blocksize;
+    }
+    ++(*start);
+    *lastusedrank=_lastusedrank;
+    printf(<span class="stringliteral">&quot;My rank %d , start %l , stride %l , blocksize %l , count %l , lastblocksize %l\n&quot;</span>,
+           myrank,*start,*stride,*blocksize,*count,*lastblocksize);
+    <span class="keywordflow">return</span>;
+}
+
+<span class="keywordtype">void</span> <a name="a3"></a><a class="code" href="a00284_a9a1191a9ceaa2926cc07e5cdd38339cb.html#a9a1191a9ceaa2926cc07e5cdd38339cb">getCyclicBlocksOfEntities</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> myrank, <span class="keyword">const</span> <span class="keywordtype">int</span> nproc, <span class="keyword">const</span> <span class="keywordtype">int</span> nentities,
+                               <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> * <span class="keyword">const</span> start, <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> * <span class="keyword">const</span> stride,  <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> * <span class="keyword">const</span> io_count, <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> * blocksize,
+                               <span class="keywordtype">int</span> * <span class="keyword">const</span> lastusedrank, <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> * <span class="keyword">const</span> lastblocksize ) {
+
+    <span class="keywordtype">int</span>      _nusedproc      = nproc;
+    <span class="keywordtype">int</span>      _lastusedrank   = nproc-1;
+    <span class="keywordtype">int</span>      _nblocks_pproc  = *io_count;
+    <span class="keywordtype">int</span>      _nblocks        = _nblocks_pproc*nproc;
+    <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> _blocksize      = 0;
+
+    <span class="keywordflow">if</span> (_nblocks) _blocksize=nentities/_nblocks;
+
+    <span class="comment">/*Tant que la taille des block est nulle on diminue le</span>
+<span class="comment">     nombre de blocks affecté par processus jusqu&apos;au minimum</span>
+<span class="comment">     d&apos;un block par processus</span>
+<span class="comment">    */</span>
+    <span class="keywordflow">for</span> (; (_blocksize &lt; 1) &amp;&amp; ( _nblocks_pproc &gt; 1 ) ; ) {
+      --_nblocks_pproc;
+      _nblocks   = _nblocks_pproc*nproc;
+      _blocksize = nentities/_nblocks;
+    }
+
+<span class="comment">/*     ISCRUTE(_nblocks_pproc); */</span>
+<span class="comment">/*     ISCRUTE(_blocksize); */</span>
+
+    <span class="comment">/*Si la taille des blocks est toujours nulle,</span>
+<span class="comment">      c&apos;est qu&apos;il y a trop de processus pour le nombre d&apos;entités :</span>
+<span class="comment">      -&gt; On effectue alors une répartition par block contigüs qui prend</span>
+<span class="comment">      en compte la possible non affectation de certains processus.</span>
+<span class="comment">    */</span>
+    <span class="keywordflow">if</span> ( _blocksize == 0 ) {
+      <a name="a4"></a><a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Downcasting getCyclicBlocksOfEntities to getContinuousBlocksOfEntities&quot;</span>);
+      <a class="code" href="a00284_a1a1e5d889c1ec1e795b6663cbbac7e39.html#a1a1e5d889c1ec1e795b6663cbbac7e39">getContinuousBlocksOfEntities</a>(myrank, nproc, nentities,
+                                    start, stride, io_count, blocksize, lastusedrank, lastblocksize );
+      <span class="keywordflow">return</span>;
+    }
+
+    <span class="comment">/* A partir d&apos;ici on est en mesure de calculer une répartition cyclique par block*/</span>
+    *blocksize     = _blocksize;
+    *stride        = _blocksize*nproc;
+    *start         = _blocksize*myrank;
+    *io_count      = _nblocks_pproc;
+
+    <span class="keywordflow">if</span> (myrank == _lastusedrank) {
+      *lastblocksize = nentities + _blocksize*(1-nproc*_nblocks_pproc);
+      <span class="comment">/*Dans le cas _nblocks_pproc==1 on a en fait une répartition contigüe des blocks</span>
+<span class="comment">       lastblocksize vaut alors 0 car il n&apos;est pas utilisé.*/</span>
+      <span class="keywordflow">if</span> ( _nblocks_pproc == 1 ) {*blocksize=*lastblocksize;*lastblocksize=0;}
+    } <span class="keywordflow">else</span>
+      *lastblocksize=0;
+
+    ++(*start);
+    *lastusedrank=_lastusedrank;
+<span class="comment">/*     printf(&quot;My rank %d, start %d, stride %d, blocksize %d, io_count %d, lastblocksize %d\n&quot;,myrank,*start,*stride,*blocksize,*io_count,*lastblocksize); */</span>
+    <span class="keywordflow">return</span>;
+}
+
+
+
+
+
+
+</pre></div> </div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:33 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

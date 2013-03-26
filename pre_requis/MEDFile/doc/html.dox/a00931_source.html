@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de Unittest_MEDprofile_2.f</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_ba46011aeafd781e3c350f50ac4ad407.html">tests</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_154b2e72a744367dcc25b5fbe06f8029.html">unittests</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_18e9598bc60a743eace07d7b0e807e64.html">f</a>
+  </div>
+</div>
+<div class="contents">
+<h1>Unittest_MEDprofile_2.f</h1><a href="a00931.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">C*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment">C*</span>
+<a name="l00003"></a>00003 <span class="comment">C*  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment">C*  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment">C*  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment">C*  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment">C*  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment">C*</span>
+<a name="l00009"></a>00009 <span class="comment">C*  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment">C*  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment">C*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment">C*  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment">C*</span>
+<a name="l00014"></a>00014 <span class="comment">C*  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment">C*  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment">C*</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 <span class="comment">C******************************************************************************</span>
+<a name="l00019"></a>00019 <span class="comment">C * Tests for profile module</span>
+<a name="l00020"></a>00020 <span class="comment">C *</span>
+<a name="l00021"></a>00021 <span class="comment">C *****************************************************************************</span>
+<a name="l00022"></a><a class="code" href="a00931_a112b044faaa67209828d43722d0b2cc7.html#a112b044faaa67209828d43722d0b2cc7">00022</a>       <span class="keyword">program</span> <a class="code" href="a00931_a112b044faaa67209828d43722d0b2cc7.html#a112b044faaa67209828d43722d0b2cc7">MEDprofile2</a>
+<a name="l00023"></a>00023 <span class="comment">C     </span>
+<a name="l00024"></a>00024       <span class="keyword">implicit none</span>
+<a name="l00025"></a>00025       include <span class="stringliteral">&apos;med.hf&apos;</span>
+<a name="l00026"></a>00026 <span class="comment">C</span>
+<a name="l00027"></a>00027 <span class="comment">C     </span>
+<a name="l00028"></a>00028       <span class="keywordtype">integer</span> cret
+<a name="l00029"></a>00029       <span class="keywordtype">integer</span> fid
+<a name="l00030"></a>00030       <span class="keywordtype">character*64</span>  fname, pname1, pname2
+<a name="l00031"></a>00031       parameter (fname=<span class="stringliteral">&quot;Unittest_MEDprofile_1.med&quot;</span>)  
+<a name="l00032"></a>00032       parameter (pname1=<span class="stringliteral">&quot;Profile name1&quot;</span>)
+<a name="l00033"></a>00033       parameter (pname2=<span class="stringliteral">&quot;Profile name 2&quot;</span>)
+<a name="l00034"></a>00034       <span class="keywordtype">integer</span> psize1,psize2
+<a name="l00035"></a>00035       parameter (psize1=4, psize2=2)
+<a name="l00036"></a>00036       <span class="keywordtype">integer</span> profile1(4), profile2(2)
+<a name="l00037"></a>00037       <span class="keyword">data</span> profile1 /1,2, 3,4/
+<a name="l00038"></a>00038       <span class="keyword">data</span> profile2 /5,6/ 
+<a name="l00039"></a>00039       <span class="keywordtype">integer</span> npro,n
+<a name="l00040"></a>00040       parameter (npro=2)
+<a name="l00041"></a>00041       <span class="keywordtype">integer</span> it,psize
+<a name="l00042"></a>00042       <span class="keywordtype">character*64</span> pname
+<a name="l00043"></a>00043       <span class="keywordtype">integer</span> profile(4)
+<a name="l00044"></a>00044 <span class="comment">C </span>
+<a name="l00045"></a>00045 <span class="comment">C</span>
+<a name="l00046"></a>00046 <span class="comment">C     open file</span>
+<a name="l00047"></a>00047       call <a class="code" href="a01020_ga68bd28216f39b6aac3f3cdeb58ca0343.html#ga68bd28216f39b6aac3f3cdeb58ca0343">mfiope</a>(fid,fname,<a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a616bf8345c622a34f0787f42eb400f25">MED_ACC_RDONLY</a>,cret)
+<a name="l00048"></a>00048       print *,cret
+<a name="l00049"></a>00049       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00050"></a>00050          print *,<span class="stringliteral">&apos;ERROR : open file&apos;</span>
+<a name="l00051"></a>00051          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00052"></a>00052       <span class="keyword">endif</span>  
+<a name="l00053"></a>00053 <span class="comment">C</span>
+<a name="l00054"></a>00054 <span class="comment">C</span>
+<a name="l00055"></a>00055 <span class="comment">C     how many profile </span>
+<a name="l00056"></a>00056       call <a class="code" href="a01028_ga4bf5d21abc7cf050d0d1cba12ebb385f.html#ga4bf5d21abc7cf050d0d1cba12ebb385f">mpfnpf</a>(fid,n,cret)
+<a name="l00057"></a>00057       print *,cret
+<a name="l00058"></a>00058       print *,n
+<a name="l00059"></a>00059       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00060"></a>00060          print *,<span class="stringliteral">&apos;ERROR : number of profile&apos;</span>
+<a name="l00061"></a>00061          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00062"></a>00062       <span class="keyword">endif</span>  
+<a name="l00063"></a>00063       <span class="keyword">if</span> (n .ne. npro)  <span class="keyword">then</span>
+<a name="l00064"></a>00064          print *,<span class="stringliteral">&apos;ERROR : number of profile&apos;</span>
+<a name="l00065"></a>00065          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00066"></a>00066       <span class="keyword">endif</span>
+<a name="l00067"></a>00067 <span class="comment">C</span>
+<a name="l00068"></a>00068 <span class="comment">C</span>
+<a name="l00069"></a>00069 <span class="comment">C     Read profile(s) name and size</span>
+<a name="l00070"></a>00070 <span class="comment">C     Then read profile array</span>
+<a name="l00071"></a>00071       <span class="keyword">do</span> it=1,n
+<a name="l00072"></a>00072          call <a class="code" href="a01028_gac4caf2428491261b2eee80bf56db70c7.html#gac4caf2428491261b2eee80bf56db70c7">mpfpfi</a>(fid,it,pname,psize,cret)
+<a name="l00073"></a>00073          print *,cret
+<a name="l00074"></a>00074          <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00075"></a>00075             print *,<span class="stringliteral">&apos;ERROR : name and size of profile&apos;</span>
+<a name="l00076"></a>00076             call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00077"></a>00077          <span class="keyword">endif</span>
+<a name="l00078"></a>00078 <span class="comment">c</span>
+<a name="l00079"></a>00079          call <a class="code" href="a01028_ga3c0b90345398a5d111b92e010144a87f.html#ga3c0b90345398a5d111b92e010144a87f">mpfprr</a>(fid,pname,profile,cret)
+<a name="l00080"></a>00080          print *,cret
+<a name="l00081"></a>00081          <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00082"></a>00082             print *,<span class="stringliteral">&apos;ERROR : read profile&apos;</span>
+<a name="l00083"></a>00083             call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00084"></a>00084          <span class="keyword">endif</span>    
+<a name="l00085"></a>00085 <span class="comment">c</span>
+<a name="l00086"></a>00086          <span class="keyword">if</span> (it .eq. 1) <span class="keyword">then</span>
+<a name="l00087"></a>00087             <span class="keyword">if</span> ((pname .ne. pname2) .or.
+<a name="l00088"></a>00088      &amp;          (psize .ne. psize2)) <span class="keyword">then</span>
+<a name="l00089"></a>00089                print *,<span class="stringliteral">&apos;ERROR : name and size of profile&apos;</span>
+<a name="l00090"></a>00090                call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00091"></a>00091             <span class="keyword">endif</span>
+<a name="l00092"></a>00092             <span class="keyword">if</span> ((profile(1) .ne. profile2(1)) .or.
+<a name="l00093"></a>00093      &amp;          (profile(2) .ne. profile2(2))) <span class="keyword">then</span>
+<a name="l00094"></a>00094                print *,<span class="stringliteral">&apos;ERROR : profile array&apos;</span>
+<a name="l00095"></a>00095                call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00096"></a>00096             <span class="keyword">endif</span>
+<a name="l00097"></a>00097          <span class="keyword">endif</span>
+<a name="l00098"></a>00098 <span class="comment">c</span>
+<a name="l00099"></a>00099          <span class="keyword">if</span> (it .eq. 2) <span class="keyword">then</span>
+<a name="l00100"></a>00100             <span class="keyword">if</span> ((pname .ne. pname1) .or.
+<a name="l00101"></a>00101      &amp;          (psize .ne. psize1)) <span class="keyword">then</span>
+<a name="l00102"></a>00102                 print *,<span class="stringliteral">&apos;ERROR : name and size of profile&apos;</span>
+<a name="l00103"></a>00103                 call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00104"></a>00104              <span class="keyword">endif</span>
+<a name="l00105"></a>00105             <span class="keyword">if</span> ((profile(1) .ne. profile1(1)) .or.
+<a name="l00106"></a>00106      &amp;          (profile(2) .ne. profile1(2)) .or.
+<a name="l00107"></a>00107      &amp;          (profile(3) .ne. profile1(3)) .or.
+<a name="l00108"></a>00108      &amp;          (profile(4) .ne. profile1(4)) )<span class="keyword">then</span>
+<a name="l00109"></a>00109                print *,<span class="stringliteral">&apos;ERROR : profile array&apos;</span>
+<a name="l00110"></a>00110                call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00111"></a>00111             <span class="keyword">endif</span>
+<a name="l00112"></a>00112          <span class="keyword">endif</span>
+<a name="l00113"></a>00113       <span class="keyword">enddo</span>
+<a name="l00114"></a>00114 <span class="comment">C</span>
+<a name="l00115"></a>00115 <span class="comment">C</span>
+<a name="l00116"></a>00116 <span class="comment">C     read profile size by the name</span>
+<a name="l00117"></a>00117       call <a class="code" href="a01028_ga8337e08bd4acc8530a18b4de1407cff5.html#ga8337e08bd4acc8530a18b4de1407cff5">mpfpsn</a>(fid,pname1,psize,cret)
+<a name="l00118"></a>00118       print *,cret
+<a name="l00119"></a>00119       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00120"></a>00120          print *,<span class="stringliteral">&apos;ERROR : size of profile&apos;</span>
+<a name="l00121"></a>00121          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00122"></a>00122       <span class="keyword">endif</span>  
+<a name="l00123"></a>00123 <span class="comment">c</span>
+<a name="l00124"></a>00124       <span class="keyword">if</span> (psize .ne. psize1) <span class="keyword">then</span>
+<a name="l00125"></a>00125          print *,<span class="stringliteral">&apos;ERROR : size of profile&apos;</span>
+<a name="l00126"></a>00126          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00127"></a>00127       <span class="keyword">endif</span>
+<a name="l00128"></a>00128 <span class="comment">c</span>
+<a name="l00129"></a>00129       call <a class="code" href="a01028_ga8337e08bd4acc8530a18b4de1407cff5.html#ga8337e08bd4acc8530a18b4de1407cff5">mpfpsn</a>(fid,pname2,psize,cret)
+<a name="l00130"></a>00130       print *,cret
+<a name="l00131"></a>00131       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00132"></a>00132          print *,<span class="stringliteral">&apos;ERROR : size of profile&apos;</span>
+<a name="l00133"></a>00133          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00134"></a>00134       <span class="keyword">endif</span>  
+<a name="l00135"></a>00135 <span class="comment">c</span>
+<a name="l00136"></a>00136       <span class="keyword">if</span> (psize .ne. psize2) <span class="keyword">then</span>
+<a name="l00137"></a>00137          print *,<span class="stringliteral">&apos;ERROR : size of profile&apos;</span>
+<a name="l00138"></a>00138          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00139"></a>00139       <span class="keyword">endif</span>
+<a name="l00140"></a>00140 <span class="comment">C</span>
+<a name="l00141"></a>00141 <span class="comment">C</span>
+<a name="l00142"></a>00142 <span class="comment">C     close file</span>
+<a name="l00143"></a>00143       call <a class="code" href="a01020_gabaf92f77da8cad332344587fca32c410.html#gabaf92f77da8cad332344587fca32c410">mficlo</a>(fid,cret)
+<a name="l00144"></a>00144       print *,cret
+<a name="l00145"></a>00145       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00146"></a>00146          print *,<span class="stringliteral">&apos;ERROR :  close file&apos;</span>
+<a name="l00147"></a>00147          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00148"></a>00148       <span class="keyword">endif</span>        
+<a name="l00149"></a>00149 <span class="comment">C</span>
+<a name="l00150"></a>00150 <span class="comment">C</span>
+<a name="l00151"></a>00151 <span class="comment">C</span>
+<a name="l00152"></a>00152 <span class="keyword">      end</span>
+<a name="l00153"></a>00153 
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:35 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

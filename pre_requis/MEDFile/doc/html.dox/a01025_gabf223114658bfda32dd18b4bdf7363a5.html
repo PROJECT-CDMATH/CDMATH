@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: mlclor</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+  <div class="navpath"><a class="el" href="a01025.html">Guide de référence du module fortran MEDlocalization</a>
+  </div>
+<table cellspacing="0" cellpadding="0" border="0">
+  <tr>
+   <td valign="top">
+      <div class="navtab">
+        <table>
+          <tr><td class="navtab"><a class="qindex" href="a01025_gab36033ae8452e632f1f97703f115f60e.html#gab36033ae8452e632f1f97703f115f60e">mlclci</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01025_ga6683562b497f7f70bc268f59ff01cbd2.html#ga6683562b497f7f70bc268f59ff01cbd2">mlclni</a></td></tr>
+          <tr><td class="navtab"><a class="qindexHL" href="a01025_gabf223114658bfda32dd18b4bdf7363a5.html#gabf223114658bfda32dd18b4bdf7363a5">mlclor</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01025_ga3e3019bacad60cb167ad43a7d6b2fc22.html#ga3e3019bacad60cb167ad43a7d6b2fc22">mlclow</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01025_ga3349b77eb4a864520044d01ab79c5aa2.html#ga3349b77eb4a864520044d01ab79c5aa2">mlcnlc</a></td></tr>
+        </table>
+      </div>
+   </td>
+   <td valign="top">
+<a class="anchor" id="gabf223114658bfda32dd18b4bdf7363a5"></a><!-- doxytag: member="medlocalization.f::mlclor" ref="gabf223114658bfda32dd18b4bdf7363a5" args="(fid, lname, swm, ecoo, ipcoo, wght, cret)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine mlclor </td>
+          <td>(</td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>fid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character*(*)&nbsp;</td>
+          <td class="paramname"> <em>lname</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>swm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real*8:dimension(*)&nbsp;</td>
+          <td class="paramname"> <em>ecoo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real*8:dimension(*)&nbsp;</td>
+          <td class="paramname"> <em>ipcoo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">real*8:dimension(*)&nbsp;</td>
+          <td class="paramname"> <em>wght</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>cret</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Cette routine permet la lecture d'une localisation <em>localizationname</em> de points d'intégration dans/autour d'un élément de référence de dimension <em>spacedimension</em>. </p>
+<dl><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>fid</em>&nbsp;</td><td>Identificateur du fichier. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>lname</em>&nbsp;</td><td>Nom de la localisation, de longueur maximum <a class="el" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a> . </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>swm</em>&nbsp;</td><td>Mode d'entrelacement utilisé pour le stockage de valeurs <a class="el" href="a00321_a0d451e4036adbb12b14cb16d7db0c37d.html#a0d451e4036adbb12b14cb16d7db0c37d">med_switch_mode</a>. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>ecoo</em>&nbsp;</td><td>Coordonnées des noeuds de l'éléments de référence. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>ipcoo</em>&nbsp;</td><td>Coordonnées des points d'intégration. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>wght</em>&nbsp;</td><td>Poids des points d'intégration. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>cret</em>&nbsp;</td><td>retour négatif en cas d'erreur, Zéro sinon. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="see"><dt><b>Voir également:</b></dt><dd><a class="el" href="a01010_ga613df7c12919f60dc27d49ff8f1f35a3.html#ga613df7c12919f60dc27d49ff8f1f35a3" title="Cette routine permet la lecture d&#39;une localisation localizationname de points...">MEDlocalizationRd</a></dd></dl>
+<p>Cette routine permet la lecture d'une localisation <em>localizationname</em> de points d'intégration dans/autour d'un élément de référence de dimension <em>spacedimension</em>. L'élément de référence est décrit par les coordonnées <em>elementcoordinate</em> de ses noeuds dans un repère absolu de dimension <em>spacedimension</em>. Les points d'intégrations sont positionnés dans l'élément de référence par leurs coordonnées <em>ipointcoordinate</em>. Les poids associés à chacun des points d'intégration est spécifié par le tableau <em>weight</em>.</p>
+<dl class="user"><dt><b>Définition</b></dt><dd>Dans le cadre des échanges de champs de résultats exprimés sur des points d'intégration, MED permet la localisation de ces points dans des éléments de référence en des lieux définis par la modélisation numérique choisie. Pour chaque type de modélisation, il est possible de spécifier nominativement cette localisation sur des éléments de référence. Chaque point d'intégration est localisé au sein d'un élément de référence par ses coordonnées et se voit associer un poids. </dd></dl>
+<dl class="remark"><dt><b>Remarques:</b></dt><dd><ul>
+<li>Si les points d'intégration se confondent avec les noeuds de l'élément, il est inutile de créer une localisation factice avec des poids qui ne signifient rien et des coordonnées des points d'intégration identiques à celles des noeuds. Dans ce cas de figure, il faut utiliser mot clé réservé <a class="el" href="a00321_a873a5b8b6a795c0bb74a9a7a6f964645.html#a873a5b8b6a795c0bb74a9a7a6f964645">MED_GAUSS_ELNO</a> comme nom de localisation à l'écriture des valeurs d'un champ. </li>
+<li>Il est possible d'associer à une localisation de points d'intégration une fonction de transformation/ d'interpolation géométrique qui projette les points de la maille de référence vers ceux de la maille réelle. </li>
+<li>Si le type géométrique <em>geotype</em> utilisé est celui d'un <a class="el" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470abdd6b14142920f599bbe4e97c4bb921e">MED_STRUCT_ELEMENT</a>, il est possible d'indiquer l'utilisation d'un maillage support définissant une section du modèle d'élément de structure. Ce maillage support est alors utilisé comme section de l'élément de structure à chaque point d'intégration. Auquel cas un champ utilisant cette localisation définira autant de valeur par élément qu'il y a de mailles dans le maillage section de chaque point d'intégration. </li>
+<li>Si le type géométrique <em>geotype</em> utilisé est celui d'un <a class="el" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470abdd6b14142920f599bbe4e97c4bb921e">MED_STRUCT_ELEMENT</a>, les coordonnées <em>elementcoordinate</em> des noeuds de l'élément de référence sont celles des noeuds du maillage support du modèle de cet élément. En effet l'élément de référence est déjà décrit à la définition de l'élément de structure. Le tableau <em>elementcoordinate</em> renvoie les coordonnées des noeuds du mailage support utilisé par le modèle d'élément de structure. Les coordonnées des points d'intégration y sont relatives. </li>
+</ul>
+</dd></dl>
+
+<p>Définition à la ligne <a class="el" href="a00527_source.html#l00101">101</a> du fichier <a class="el" href="a00527_source.html">medlocalization.f</a>.</p>
+
+</div>
+</div>
+    </td>
+  </tr>
+</table>
+</div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:46 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de MAJ_236_300_entites.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_85294a8a9f196cdbd7e42569a8b43d43.html">tools</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_a46d7e16343b264a6f70ad9d6544d474.html">medimport</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_c61f7ac308242b81179c815928c57e7c.html">2.3.6</a>
+  </div>
+</div>
+<div class="contents">
+<h1>MAJ_236_300_entites.c</h1><a href="a00309.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment"> *</span>
+<a name="l00003"></a>00003 <span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment"> *  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment"> *</span>
+<a name="l00009"></a>00009 <span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment"> *</span>
+<a name="l00014"></a>00014 <span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment"> */</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019 <span class="preprocessor">#include &quot;<a class="code" href="a00334.html">med_config.h</a>&quot;</span>
+<a name="l00020"></a>00020 <span class="preprocessor">#include &quot;<a class="code" href="a00345.html">med_outils.h</a>&quot;</span>
+<a name="l00021"></a>00021 <span class="preprocessor">#include &quot;<a class="code" href="a00352.html">med_versioned.h</a>&quot;</span>
+<a name="l00022"></a>00022 <span class="preprocessor">#include &lt;string.h&gt;</span>
+<a name="l00023"></a>00023 
+<a name="l00024"></a>00024 
+<a name="l00025"></a>00025 <span class="preprocessor">#include &quot;<a class="code" href="a00306.html">MAJ_236_300.h</a>&quot;</span>
+<a name="l00026"></a>00026 
+<a name="l00027"></a><a class="code" href="a00306_a8fec5304760d1f7f7a6ecb0dcfb8a674.html#a8fec5304760d1f7f7a6ecb0dcfb8a674">00027</a> <span class="keywordtype">int</span> <a class="code" href="a00309_a8fec5304760d1f7f7a6ecb0dcfb8a674.html#a8fec5304760d1f7f7a6ecb0dcfb8a674">MAJ_236_300_entites</a>(<a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid,
+<a name="l00028"></a>00028                         <span class="keywordtype">char</span> * <span class="keyword">const</span> _pathi,
+<a name="l00029"></a>00029                         <span class="keywordtype">char</span> * <span class="keyword">const</span> _pathf,
+<a name="l00030"></a>00030                         <span class="keyword">const</span> <span class="keywordtype">char</span> * <span class="keyword">const</span> meshname,
+<a name="l00031"></a>00031                         <span class="keyword">const</span> <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470">med_entity_type</a> enttype)
+<a name="l00032"></a>00032 {
+<a name="l00033"></a>00033   <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a>           _fret =-1,_ret=-1,ret=-1;
+<a name="l00034"></a>00034   <span class="keywordtype">int</span> dummy=0;
+<a name="l00035"></a>00035   <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>           _datagroupi=0,_datagroupf=0;
+<a name="l00036"></a>00036   <span class="keywordtype">char</span>              _enttypename[<a class="code" href="a00344_a297272b5640494706d977f1a9f8ed27d.html#a297272b5640494706d977f1a9f8ed27d">MED_TAILLE_NOM_ENTITE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+<a name="l00037"></a>00037   <span class="keywordtype">char</span>              _geotypename[<a class="code" href="a00344_a297272b5640494706d977f1a9f8ed27d.html#a297272b5640494706d977f1a9f8ed27d">MED_TAILLE_NOM_ENTITE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+<a name="l00038"></a>00038   <a class="code" href="a00321_a1043613afc3cd2e24785dfc7c0452ab8.html#a1043613afc3cd2e24785dfc7c0452ab8">med_geometry_type</a> _geotype    = <a class="code" href="a00321_a0d0392d06375b207dfb8ea0c45d0ce43.html#a0d0392d06375b207dfb8ea0c45d0ce43">MED_UNDEF_GEOMETRY_TYPE</a>;
+<a name="l00039"></a>00039   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>           _intgeotype = <a class="code" href="a00321_a0d0392d06375b207dfb8ea0c45d0ce43.html#a0d0392d06375b207dfb8ea0c45d0ce43">MED_UNDEF_GEOMETRY_TYPE</a>;
+<a name="l00040"></a>00040   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>           _ngeotype  = 0;
+<a name="l00041"></a>00041   <span class="keywordtype">int</span>               _itgeotype = 0;
+<a name="l00042"></a>00042   <span class="keywordtype">int</span>               _itmplen=0,_isavlen=0;
+<a name="l00043"></a>00043   <span class="keywordtype">int</span>               _ftmplen=0,_fsavlen=0;
+<a name="l00044"></a>00044   <span class="keywordtype">int</span>               _tmplen = 0;
+<a name="l00045"></a>00045   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>           _1 = 1;
+<a name="l00046"></a>00046   <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a>          _chgt=<a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190deea30b70cc2a253ed4141db9a78ba696046">MED_FALSE</a>, _trsf=<a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190deea30b70cc2a253ed4141db9a78ba696046">MED_FALSE</a>;
+<a name="l00047"></a>00047   <span class="keywordtype">char</span>                   _profilename[<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1]=<span class="stringliteral">&quot;&quot;</span>;
+<a name="l00048"></a>00048   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>                _profilesize=0;
+<a name="l00049"></a>00049 
+<a name="l00050"></a>00050     <span class="comment">/*</span>
+<a name="l00051"></a>00051 <span class="comment">     * Remarque : Cette procédure modifie le contenue des paramètres _pathi et pathf</span>
+<a name="l00052"></a>00052 <span class="comment">     */</span>
+<a name="l00053"></a>00053 
+<a name="l00054"></a>00054     <span class="comment">/* read how many geotype element there is in the mesh for each entitytype */</span>
+<a name="l00055"></a>00055   <a class="code" href="a00359_a8415d3573fd7820723adfec7c6c893d9.html#a8415d3573fd7820723adfec7c6c893d9">_MEDmeshnEntity236</a>(dummy,fid, meshname, (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>) <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>) <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, enttype, <a class="code" href="a00321_ad9a7aaf0f9d302fa8e22f98cb8fe0371.html#ad9a7aaf0f9d302fa8e22f98cb8fe0371">MED_GEO_ALL</a>,
+<a name="l00056"></a>00056                        <a class="code" href="a00321_a25ee4b3675737fc23511b28b3245c61b.html#a25ee4b3675737fc23511b28b3245c61bab36865870154d1aa71cda04491911275">MED_UNDEF_DATATYPE</a>, <a class="code" href="a00321_afcd26ca66a179b9aa82f5c90602c4ed8.html#afcd26ca66a179b9aa82f5c90602c4ed8a2b1e772016688b78b808e96a44d1ee02">MED_NO_CMODE</a>,<a class="code" href="a00321_a0d451e4036adbb12b14cb16d7db0c37d.html#a0d451e4036adbb12b14cb16d7db0c37da8c2ff3c323a55ab7c52781f9ca5b9fb4">MED_UNDEF_INTERLACE</a>,
+<a name="l00057"></a>00057                        _profilename, &amp;_profilesize,&amp;_chgt, &amp;_trsf,&amp;_ngeotype);
+<a name="l00058"></a>00058     <span class="keywordflow">if</span> ( _ngeotype &lt; 0) {
+<a name="l00059"></a>00059       <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot;MEDmeshnEntity&quot;</span>);
+<a name="l00060"></a>00060       <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(meshname);<a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(<a class="code" href="a00499_ad72c4ec2628b95b86e62e893bdfc4d3a.html#ad72c4ec2628b95b86e62e893bdfc4d3a">MED_GET_ENTITY_TYPENAME</a>[enttype+1]);
+<a name="l00061"></a>00061       <span class="keywordflow">goto</span> ERROR;
+<a name="l00062"></a>00062     }
+<a name="l00063"></a>00063 
+<a name="l00064"></a>00064 <span class="comment">/*     ISCRUTE(_ngeotype); */</span>
+<a name="l00065"></a>00065     <span class="keywordflow">if</span> (_ngeotype == 0) <span class="keywordflow">goto</span> SORTIE;
+<a name="l00066"></a>00066 
+<a name="l00067"></a>00067     <span class="keywordflow">if</span> (<a class="code" href="a00343_ab4e1c31aadc6ddd644b12f7837dbc64e.html#ab4e1c31aadc6ddd644b12f7837dbc64e">_MEDgetEntityTypeName</a>(_enttypename,enttype) &lt; 0) <span class="keywordflow">goto</span> ERROR;
+<a name="l00068"></a>00068 
+<a name="l00069"></a>00069 <span class="comment">/*     SSCRUTE(_enttypename); */</span>
+<a name="l00070"></a>00070 
+<a name="l00071"></a>00071     _itmplen=strlen(_pathi);
+<a name="l00072"></a>00072     _ftmplen=strlen(_pathf);
+<a name="l00073"></a>00073     _tmplen = strlen(_enttypename);
+<a name="l00074"></a>00074 
+<a name="l00075"></a>00075     strcpy(&amp;_pathi[_itmplen],_enttypename);
+<a name="l00076"></a>00076     strcpy(&amp;_pathf[_ftmplen],_enttypename);
+<a name="l00077"></a>00077     _itmplen += _tmplen;
+<a name="l00078"></a>00078     _ftmplen += _tmplen;;
+<a name="l00079"></a>00079 
+<a name="l00080"></a>00080 <span class="comment">/*     SSCRUTE(_pathi); */</span>
+<a name="l00081"></a>00081 <span class="comment">/*     SSCRUTE(_pathf); */</span>
+<a name="l00082"></a>00082 <span class="comment">/*     ISCRUTE(_itmplen); */</span>
+<a name="l00083"></a>00083 <span class="comment">/*     ISCRUTE(_ftmplen); */</span>
+<a name="l00084"></a>00084 <span class="comment">/*     ISCRUTE(_tmplen); */</span>
+<a name="l00085"></a>00085 
+<a name="l00086"></a>00086 
+<a name="l00087"></a>00087     <span class="comment">/*</span>
+<a name="l00088"></a>00088 <span class="comment">     * Creation/Ecriture de l&apos;attribut MED_NOM_CGT sur le datagroup &lt;entite&gt;</span>
+<a name="l00089"></a>00089 <span class="comment">     */</span>
+<a name="l00090"></a>00090     <span class="keywordflow">if</span> ( <a class="code" href="a00339_aa03e65058629a156c61f66821442d46b.html#aa03e65058629a156c61f66821442d46b">_MEDattributeNumWrByName</a>(fid,_pathi,<a class="code" href="a00345_a591a6c2892bbf547d9f480d7c2a0ce70.html#a591a6c2892bbf547d9f480d7c2a0ce70">MED_NOM_CGT</a>,
+<a name="l00091"></a>00091                                   <a class="code" href="a00321_a9e37f31e6c445d096158e87f07911845.html#a9e37f31e6c445d096158e87f07911845a272cd78f24373ef1d2519f359909838e">MED_INTERNAL_INT</a>,(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> * <span class="keyword">const</span>) &amp;_1 ) &lt; 0 ) {
+<a name="l00092"></a>00092       <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_ada9ad358d137c53e288ff59d49e45541.html#ada9ad358d137c53e288ff59d49e45541">MED_ERR_WRITE</a>,<a class="code" href="a00335_a839396052811187e23547f71d50ab39b.html#a839396052811187e23547f71d50ab39b">MED_ERR_ATTRIBUTE</a>,<a class="code" href="a00335_a543edbef3a7d3fbb35e4ef0a21b321c4.html#a543edbef3a7d3fbb35e4ef0a21b321c4">MED_ERR_MESH_MSG</a>);
+<a name="l00093"></a>00093       <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(_pathi);<a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(<a class="code" href="a00499_ad72c4ec2628b95b86e62e893bdfc4d3a.html#ad72c4ec2628b95b86e62e893bdfc4d3a">MED_GET_ENTITY_TYPENAME</a>[enttype+1]);
+<a name="l00094"></a>00094       <span class="keywordflow">goto</span> ERROR;
+<a name="l00095"></a>00095     }
+<a name="l00096"></a>00096 
+<a name="l00097"></a>00097     <span class="keywordflow">if</span> (enttype != <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a> ) {
+<a name="l00098"></a>00098       _pathi[_itmplen]=<span class="charliteral">&apos;/&apos;</span>;++_itmplen;_pathi[_itmplen]=<span class="charliteral">&apos;\0&apos;</span>;
+<a name="l00099"></a>00099       _pathf[_ftmplen]=<span class="charliteral">&apos;/&apos;</span>;++_ftmplen;_pathf[_ftmplen]=<span class="charliteral">&apos;\0&apos;</span>;
+<a name="l00100"></a>00100     }
+<a name="l00101"></a>00101     _isavlen=_itmplen;
+<a name="l00102"></a>00102     _fsavlen=_ftmplen;
+<a name="l00103"></a>00103 
+<a name="l00104"></a>00104 <span class="comment">/*     SSCRUTE(_pathi); */</span>
+<a name="l00105"></a>00105 <span class="comment">/*     SSCRUTE(_pathf); */</span>
+<a name="l00106"></a>00106 
+<a name="l00107"></a>00107     <span class="keywordflow">for</span> ( _itgeotype=1; _itgeotype &lt;= _ngeotype; ++_itgeotype) {
+<a name="l00108"></a>00108 
+<a name="l00109"></a>00109 <span class="comment">/*       ISCRUTE_int(_itgeotype); */</span>
+<a name="l00110"></a>00110       <span class="comment">/* read the geotype */</span>
+<a name="l00111"></a>00111       <a class="code" href="a00359_ac95fbeaacda7bd1fe7478a57ddda89b3.html#ac95fbeaacda7bd1fe7478a57ddda89b3">_MEDmeshEntityInfo236</a>(dummy,fid, meshname, MED_NO_DT, MED_NO_IT, enttype,_itgeotype,
+<a name="l00112"></a>00112                             _geotypename,&amp;_geotype,&amp;_fret);
+<a name="l00113"></a>00113       <span class="keywordflow">if</span> (_fret  &lt; 0) {
+<a name="l00114"></a>00114         <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot;MEDmeshEntityInfo&quot;</span>);
+<a name="l00115"></a>00115         <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(meshname);<a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(<a class="code" href="a00499_ad72c4ec2628b95b86e62e893bdfc4d3a.html#ad72c4ec2628b95b86e62e893bdfc4d3a">MED_GET_ENTITY_TYPENAME</a>[enttype+1]);<a class="code" href="a00348_ae7ba0433e91c450cd44c3808c2acb497.html#ae7ba0433e91c450cd44c3808c2acb497">ISCRUTE_int</a>(_itgeotype);
+<a name="l00116"></a>00116         <span class="keywordflow">goto</span> ERROR;
+<a name="l00117"></a>00117       }
+<a name="l00118"></a>00118 
+<a name="l00119"></a>00119       _tmplen = strlen(_geotypename);
+<a name="l00120"></a>00120       strcpy(&amp;_pathi[_isavlen],_geotypename);
+<a name="l00121"></a>00121       strcpy(&amp;_pathf[_fsavlen],_geotypename);
+<a name="l00122"></a>00122 
+<a name="l00123"></a>00123 <span class="comment">/*       _itmplen += _tmplen; */</span>
+<a name="l00124"></a>00124 <span class="comment">/*       _ftmplen += _tmplen; */</span>
+<a name="l00125"></a>00125 <span class="comment">/*       SSCRUTE(_pathi); */</span>
+<a name="l00126"></a>00126 <span class="comment">/*       SSCRUTE(_pathf); */</span>
+<a name="l00127"></a>00127 
+<a name="l00128"></a>00128       <span class="comment">/*</span>
+<a name="l00129"></a>00129 <span class="comment">       * Creation/Ecriture de l&apos;attribut MED_NOM_GEO sur le datagroup &lt;typegeo&gt;</span>
+<a name="l00130"></a>00130 <span class="comment">       */</span>
+<a name="l00131"></a>00131       _intgeotype = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>) _geotype;
+<a name="l00132"></a>00132       <span class="keywordflow">if</span> (enttype != <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a> )
+<a name="l00133"></a>00133         <span class="keywordflow">if</span> ( <a class="code" href="a00339_aa03e65058629a156c61f66821442d46b.html#aa03e65058629a156c61f66821442d46b">_MEDattributeNumWrByName</a>(fid,_pathi,<a class="code" href="a00344_ac1a95144a0aae3eb12db8e9966c386e7.html#ac1a95144a0aae3eb12db8e9966c386e7">MED_NOM_GEO</a>,<a class="code" href="a00321_a9e37f31e6c445d096158e87f07911845.html#a9e37f31e6c445d096158e87f07911845a272cd78f24373ef1d2519f359909838e">MED_INTERNAL_INT</a>,
+<a name="l00134"></a>00134                                       (<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> * <span class="keyword">const</span>) &amp;_intgeotype) &lt; 0 ) {
+<a name="l00135"></a>00135           <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_ada9ad358d137c53e288ff59d49e45541.html#ada9ad358d137c53e288ff59d49e45541">MED_ERR_WRITE</a>,<a class="code" href="a00335_a839396052811187e23547f71d50ab39b.html#a839396052811187e23547f71d50ab39b">MED_ERR_ATTRIBUTE</a>,<a class="code" href="a00335_a543edbef3a7d3fbb35e4ef0a21b321c4.html#a543edbef3a7d3fbb35e4ef0a21b321c4">MED_ERR_MESH_MSG</a>);
+<a name="l00136"></a>00136           <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(_pathi);<a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(<a class="code" href="a00499_ad72c4ec2628b95b86e62e893bdfc4d3a.html#ad72c4ec2628b95b86e62e893bdfc4d3a">MED_GET_ENTITY_TYPENAME</a>[enttype+1]);<a class="code" href="a00348_ae7ba0433e91c450cd44c3808c2acb497.html#ae7ba0433e91c450cd44c3808c2acb497">ISCRUTE_int</a>(_itgeotype);
+<a name="l00137"></a>00137           <a class="code" href="a00348_a818470a84d2ad18a3fbb48170296cd95.html#a818470a84d2ad18a3fbb48170296cd95">ISCRUTE</a>(_intgeotype);
+<a name="l00138"></a>00138           <span class="keywordflow">goto</span> ERROR;
+<a name="l00139"></a>00139         }
+<a name="l00140"></a>00140 
+<a name="l00141"></a>00141       <span class="comment">/*</span>
+<a name="l00142"></a>00142 <span class="comment">       * Creation/Ecriture de l&apos;attribut MED_NOM_PFL sur le datagroup &lt;typegeo&gt;</span>
+<a name="l00143"></a>00143 <span class="comment">       */</span>
+<a name="l00144"></a>00144       <span class="keywordflow">if</span> ( <a class="code" href="a00339_a50312280b6e3cc4de19542b3fda2cb79.html#a50312280b6e3cc4de19542b3fda2cb79">_MEDattributeStringWrByName</a>(fid,_pathi,<a class="code" href="a00344_a7f0b01d2c3f1b1530cac18f7e6d7c289.html#a7f0b01d2c3f1b1530cac18f7e6d7c289">MED_NOM_PFL</a>,<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>,<a class="code" href="a00321_a2b8d782c9838cbe5a5fdb89ed5af4381.html#a2b8d782c9838cbe5a5fdb89ed5af4381">MED_NO_PROFILE_INTERNAL</a>) &lt; 0) {
+<a name="l00145"></a>00145         <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_ada9ad358d137c53e288ff59d49e45541.html#ada9ad358d137c53e288ff59d49e45541">MED_ERR_WRITE</a>,<a class="code" href="a00335_a839396052811187e23547f71d50ab39b.html#a839396052811187e23547f71d50ab39b">MED_ERR_ATTRIBUTE</a>,<a class="code" href="a00335_a543edbef3a7d3fbb35e4ef0a21b321c4.html#a543edbef3a7d3fbb35e4ef0a21b321c4">MED_ERR_MESH_MSG</a>);
+<a name="l00146"></a>00146         <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(meshname);<a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(<a class="code" href="a00499_ad72c4ec2628b95b86e62e893bdfc4d3a.html#ad72c4ec2628b95b86e62e893bdfc4d3a">MED_GET_ENTITY_TYPENAME</a>[enttype+1]);<a class="code" href="a00348_ae7ba0433e91c450cd44c3808c2acb497.html#ae7ba0433e91c450cd44c3808c2acb497">ISCRUTE_int</a>(_itgeotype);
+<a name="l00147"></a>00147         <a class="code" href="a00348_a818470a84d2ad18a3fbb48170296cd95.html#a818470a84d2ad18a3fbb48170296cd95">ISCRUTE</a>(_intgeotype);<a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(<a class="code" href="a00344_a7f0b01d2c3f1b1530cac18f7e6d7c289.html#a7f0b01d2c3f1b1530cac18f7e6d7c289">MED_NOM_PFL</a>);<a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(<a class="code" href="a00321_a2b8d782c9838cbe5a5fdb89ed5af4381.html#a2b8d782c9838cbe5a5fdb89ed5af4381">MED_NO_PROFILE_INTERNAL</a>);
+<a name="l00148"></a>00148         <span class="keywordflow">goto</span> ERROR;
+<a name="l00149"></a>00149       }
+<a name="l00150"></a>00150 
+<a name="l00151"></a>00151       <span class="comment">/*</span>
+<a name="l00152"></a>00152 <span class="comment">       * Creation/Ecriture de l&apos;attribut MED_NOM_CGT sur le datagroup &lt;typegeo&gt;</span>
+<a name="l00153"></a>00153 <span class="comment">       */</span>
+<a name="l00154"></a>00154       <span class="comment">/* Le modify ne fonctionne pas dans _MEDattributeNumWrByName à cause hdf5 ? */</span>
+<a name="l00155"></a>00155       <span class="keywordflow">if</span> (enttype != <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a> )
+<a name="l00156"></a>00156         <span class="keywordflow">if</span> ( <a class="code" href="a00339_aa03e65058629a156c61f66821442d46b.html#aa03e65058629a156c61f66821442d46b">_MEDattributeNumWrByName</a>(fid,_pathi,<a class="code" href="a00345_a591a6c2892bbf547d9f480d7c2a0ce70.html#a591a6c2892bbf547d9f480d7c2a0ce70">MED_NOM_CGT</a>,<a class="code" href="a00321_a9e37f31e6c445d096158e87f07911845.html#a9e37f31e6c445d096158e87f07911845a272cd78f24373ef1d2519f359909838e">MED_INTERNAL_INT</a>,
+<a name="l00157"></a>00157                                       (<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> * <span class="keyword">const</span>) &amp;_1 ) &lt; 0 ) {
+<a name="l00158"></a>00158           <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_ada9ad358d137c53e288ff59d49e45541.html#ada9ad358d137c53e288ff59d49e45541">MED_ERR_WRITE</a>,<a class="code" href="a00335_a839396052811187e23547f71d50ab39b.html#a839396052811187e23547f71d50ab39b">MED_ERR_ATTRIBUTE</a>,<a class="code" href="a00335_a543edbef3a7d3fbb35e4ef0a21b321c4.html#a543edbef3a7d3fbb35e4ef0a21b321c4">MED_ERR_MESH_MSG</a>);
+<a name="l00159"></a>00159           <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(_pathi);<a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(<a class="code" href="a00499_ad72c4ec2628b95b86e62e893bdfc4d3a.html#ad72c4ec2628b95b86e62e893bdfc4d3a">MED_GET_ENTITY_TYPENAME</a>[enttype+1]);
+<a name="l00160"></a>00160           <span class="keywordflow">goto</span> ERROR;
+<a name="l00161"></a>00161         }
+<a name="l00162"></a>00162 
+<a name="l00163"></a>00163       <span class="comment">/*</span>
+<a name="l00164"></a>00164 <span class="comment">       * Creation/Ecriture de l&apos;attribut MED_NOM_CGT sur le dataset</span>
+<a name="l00165"></a>00165 <span class="comment">       * Creation/Ecriture de l&apos;attribut MED_NOM_CGS sur le datagroup</span>
+<a name="l00166"></a>00166 <span class="comment">       */</span>
+<a name="l00167"></a>00167 
+<a name="l00168"></a>00168       <span class="keywordflow">if</span> ( <a class="code" href="a00314_a742c967ea7c81d55b29ee09f19f83b4e.html#a742c967ea7c81d55b29ee09f19f83b4e">MAJ_236_300_mesh_datasets</a>(fid, _pathi, _pathf, meshname, enttype, _geotype)&lt; 0) {
+<a name="l00169"></a>00169         <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_a377256003f35c6b58a85a2a465e36637.html#a377256003f35c6b58a85a2a465e36637">MED_ERR_CALL</a>,<a class="code" href="a00335_aaaf11c912310b2b8513c9afcbfb01f03.html#aaaf11c912310b2b8513c9afcbfb01f03">MED_ERR_API</a>,<span class="stringliteral">&quot;MAJ_236_300_mesh_datasets&quot;</span>);
+<a name="l00170"></a>00170         <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(_pathi);
+<a name="l00171"></a>00171         <span class="keywordflow">goto</span> ERROR;
+<a name="l00172"></a>00172       }
+<a name="l00173"></a>00173 
+<a name="l00174"></a>00174     }
+<a name="l00175"></a>00175 
+<a name="l00176"></a>00176 
+<a name="l00177"></a>00177     <span class="comment">/* Déplacement de toute la branche du type de l&apos;entité.*/</span>
+<a name="l00178"></a>00178     _pathi[_isavlen]=<span class="charliteral">&apos;\0&apos;</span>;
+<a name="l00179"></a>00179     _pathf[_fsavlen]=<span class="charliteral">&apos;\0&apos;</span>;
+<a name="l00180"></a>00180 <span class="comment">/*     SSCRUTE(_pathf); */</span>
+<a name="l00181"></a>00181 <span class="comment">/*     SSCRUTE(_pathi); */</span>
+<a name="l00182"></a>00182     ret = H5Gmove(fid, _pathi, _pathf  );
+<a name="l00183"></a>00183     <a class="code" href="a00348_a1490910810b7b26086f3df4911027426.html#a1490910810b7b26086f3df4911027426">EXIT_IF</a>(ret &lt; 0,<span class="stringliteral">&quot;Déplacement des entités de type&quot;</span>,<a class="code" href="a00499_ad72c4ec2628b95b86e62e893bdfc4d3a.html#ad72c4ec2628b95b86e62e893bdfc4d3a">MED_GET_ENTITY_TYPENAME</a>[enttype+1]);
+<a name="l00184"></a>00184 
+<a name="l00185"></a>00185  SORTIE:
+<a name="l00186"></a>00186   _ret=0;
+<a name="l00187"></a>00187  ERROR:
+<a name="l00188"></a>00188   <span class="keywordflow">return</span> (<span class="keywordtype">int</span>) _ret;
+<a name="l00189"></a>00189 }
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:34 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

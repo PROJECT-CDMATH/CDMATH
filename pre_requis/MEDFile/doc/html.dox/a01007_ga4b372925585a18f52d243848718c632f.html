@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: MEDinterpBaseFunctionRd</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+  <div class="navpath"><a class="el" href="a01007.html">Guide de référence du module MEDinterp</a>
+  </div>
+<table cellspacing="0" cellpadding="0" border="0">
+  <tr>
+   <td valign="top">
+      <div class="navtab">
+        <table>
+          <tr><td class="navtab"><a class="qindex" href="a01007_ga39b5f9f4822173655561a8e558bc9745.html#ga39b5f9f4822173655561a8e558bc9745">MEDinterpBaseFunctionCoefSize</a></td></tr>
+          <tr><td class="navtab"><a class="qindexHL" href="a01007_ga4b372925585a18f52d243848718c632f.html#ga4b372925585a18f52d243848718c632f">MEDinterpBaseFunctionRd</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01007_ga092f59b381b4374b4225e947ca64a31d.html#ga092f59b381b4374b4225e947ca64a31d">MEDinterpBaseFunctionWr</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01007_ga0ce117ef792d8e10af325a57158bf58c.html#ga0ce117ef792d8e10af325a57158bf58c">MEDinterpCr</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01007_ga9627e71ada4bcf04274dce8b0c0d0c7a.html#ga9627e71ada4bcf04274dce8b0c0d0c7a">MEDinterpInfo</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01007_ga52db69ec1e254d7bce0db9e28b4a1c5b.html#ga52db69ec1e254d7bce0db9e28b4a1c5b">MEDinterpInfoByName</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01007_ga926e9c439534535a36ab17ed0d531f4c.html#ga926e9c439534535a36ab17ed0d531f4c">MEDnInterp</a></td></tr>
+        </table>
+      </div>
+   </td>
+   <td valign="top">
+<a class="anchor" id="ga4b372925585a18f52d243848718c632f"></a><!-- doxytag: member="MEDinterpBaseFunctionRd.c::MEDinterpBaseFunctionRd" ref="ga4b372925585a18f52d243848718c632f" args="(const med_idt fid, const char *const interpname, const int basisfuncit, med_int *ncoef, med_int *const power, med_float *const coefficient)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="a00321_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> MEDinterpBaseFunctionRd </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="a00321_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>&nbsp;</td>
+          <td class="paramname"> <em>fid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *const &nbsp;</td>
+          <td class="paramname"> <em>interpname</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&nbsp;</td>
+          <td class="paramname"> <em>basisfuncit</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="a00321_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *&nbsp;</td>
+          <td class="paramname"> <em>ncoef</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="a00321_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *const &nbsp;</td>
+          <td class="paramname"> <em>power</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="a00321_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *const &nbsp;</td>
+          <td class="paramname"> <em>coefficient</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Cette routine permet la lecture d'une fonction de base/forme de l'interpolation <em>interpname</em>. </p>
+<dl><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>fid</em>&nbsp;</td><td>Identificateur du fichier. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>interpname</em>&nbsp;</td><td>Nom de la fonction d'interpolation </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>basisfuncit</em>&nbsp;</td><td>Itérateur sur les fonctions de base/forme (&gt;0). </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>ncoef</em>&nbsp;</td><td>Nombre de coefficients (non null) du polynômes. Nombre de monômes de la fonction de base </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>power</em>&nbsp;</td><td>Tableau des puissances des monômes d'un polynôme (taille minimum <em>ncoef</em> * <em>nvariable</em>) </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>coefficient</em>&nbsp;</td><td>Tableau contenant le coefficient multiplicateur de chaque monôme (taille minimum <em>ncoef</em>) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Renvoie:</b></dt><dd>retour négatif en cas d'erreur, Zéro sinon.</dd></dl>
+<p>Cette routine lit la fonction de base/forme n° <em>basisfuncit</em> de la fonction d'inerpolation <em>interpname</em>. Cette fonction possède <em>ncoef</em> monômes dont les coefficients sont lus dans <em>coefficient</em> et les puissances dans <em>power</em>. </p>
+<dl class="remark"><dt><b>Remarques:</b></dt><dd><ul>
+<li>L'allocation des tableaux power et coefficient peut être faite une fois à la plus grande taille en utilisant les paramètres <em>nmaxcoef</em> et <em>nvariable</em> (cf. <a class="el" href="a01007_ga9627e71ada4bcf04274dce8b0c0d0c7a.html#ga9627e71ada4bcf04274dce8b0c0d0c7a">MEDinterpInfo</a>). </li>
+<li>L'allocation des tableaux power et coefficient peut être faite <em>nbasisfunc</em> fois au plus juste en appelant au préalable <a class="el" href="a01007_ga39b5f9f4822173655561a8e558bc9745.html#ga39b5f9f4822173655561a8e558bc9745">MEDinterpBaseFunctionCoefSize</a>. </li>
+</ul>
+</dd></dl>
+
+<p>Définition à la ligne <a class="el" href="a00493_source.html#l00041">41</a> du fichier <a class="el" href="a00493_source.html">MEDinterpBaseFunctionRd.c</a>.</p>
+
+</div>
+</div>
+    </td>
+  </tr>
+</table>
+</div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:46 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

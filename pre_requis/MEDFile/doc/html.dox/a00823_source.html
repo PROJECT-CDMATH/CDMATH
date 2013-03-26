@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de test24.f</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_ba46011aeafd781e3c350f50ac4ad407.html">tests</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_48518ce8883b67c206b2fcc1b28260ff.html">f</a>
+  </div>
+</div>
+<div class="contents">
+<h1>test24.f</h1><a href="a00823.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">C*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment">C*</span>
+<a name="l00003"></a>00003 <span class="comment">C*  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment">C*  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment">C*  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment">C*  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment">C*  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment">C*</span>
+<a name="l00009"></a>00009 <span class="comment">C*  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment">C*  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment">C*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment">C*  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment">C*</span>
+<a name="l00014"></a>00014 <span class="comment">C*  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment">C*  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment">C*</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 <span class="comment">C       *******************************************************************************</span>
+<a name="l00019"></a>00019 <span class="comment">C       * - Nom du fichier : test24.f</span>
+<a name="l00020"></a>00020 <span class="comment">C       *</span>
+<a name="l00021"></a>00021 <span class="comment">C       * - Description : lecture de mailles MED_POLYGONE dans le maillage MED</span>
+<a name="l00022"></a>00022 <span class="comment">C       *                 du fichier test23.med   </span>
+<a name="l00023"></a>00023 <span class="comment">C       *</span>
+<a name="l00024"></a>00024 <span class="comment">C       ******************************************************************************</span>
+<a name="l00025"></a><a class="code" href="a00823_a69465f7d6de9e5017cf0d872738adf5c.html#a69465f7d6de9e5017cf0d872738adf5c">00025</a>         <span class="keyword">program</span> <a class="code" href="a00818_a69465f7d6de9e5017cf0d872738adf5c.html#a69465f7d6de9e5017cf0d872738adf5c">test23</a>
+<a name="l00026"></a>00026 <span class="comment">C       </span>
+<a name="l00027"></a>00027         <span class="keyword">implicit none</span>
+<a name="l00028"></a>00028         include <span class="stringliteral">&apos;med.hf&apos;</span>
+<a name="l00029"></a>00029 <span class="comment">C       </span>
+<a name="l00030"></a>00030         <span class="keywordtype">integer</span> cret, fid,mdim,nmaa,npoly,i,j,k,taille
+<a name="l00031"></a>00031         <span class="keywordtype">integer</span> edim,nstep,stype,atype, chgt, tsf
+<a name="l00032"></a>00032         <span class="keywordtype">character*64</span> maa
+<a name="l00033"></a>00033         <span class="keywordtype">character*200</span> desc
+<a name="l00034"></a>00034         <span class="keywordtype">integer</span> ni, n, isize;
+<a name="l00035"></a>00035         parameter (ni=4, n=3)
+<a name="l00036"></a>00036         <span class="keywordtype">integer</span> index(ni),ind1,ind2
+<a name="l00037"></a>00037         <span class="keywordtype">character*16</span> nom(n)
+<a name="l00038"></a>00038         <span class="keywordtype">integer</span> num(n),fam(n)
+<a name="l00039"></a>00039         <span class="keywordtype">integer</span> con(16)
+<a name="l00040"></a>00040         <span class="keywordtype">integer</span> type
+<a name="l00041"></a>00041         <span class="keywordtype">character*16</span> nomcoo(2)
+<a name="l00042"></a>00042         <span class="keywordtype">character*16</span> unicoo(2)
+<a name="l00043"></a>00043         <span class="keywordtype">character(16)  </span>:: dtunit
+<a name="l00044"></a>00044 <span class="comment">C</span>
+<a name="l00045"></a>00045 <span class="comment">C       Ouverture du fichier test23.med en lecture seule</span>
+<a name="l00046"></a>00046         call <a class="code" href="a01020_ga68bd28216f39b6aac3f3cdeb58ca0343.html#ga68bd28216f39b6aac3f3cdeb58ca0343">mfiope</a>(fid,<span class="stringliteral">&apos;test23.med&apos;</span>,<a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a616bf8345c622a34f0787f42eb400f25">MED_ACC_RDONLY</a>, cret)
+<a name="l00047"></a>00047         print *,cret
+<a name="l00048"></a>00048         <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00049"></a>00049            print *,<span class="stringliteral">&apos;Erreur ouverture du fichier&apos;</span>
+<a name="l00050"></a>00050            call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00051"></a>00051         <span class="keyword">endif</span>      
+<a name="l00052"></a>00052         print *,<span class="stringliteral">&apos;Ouverture du fichier test23.med&apos;</span>
+<a name="l00053"></a>00053 <span class="comment">C</span>
+<a name="l00054"></a>00054 <span class="comment">C       Lecture du nombre de maillages</span>
+<a name="l00055"></a>00055         call <a class="code" href="a01026_gaa5b32afa34c872e3dc8a844040fe0657.html#gaa5b32afa34c872e3dc8a844040fe0657">mmhnmh</a>(fid,nmaa,cret)
+<a name="l00056"></a>00056         print *,cret
+<a name="l00057"></a>00057         <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00058"></a>00058            print *,<span class="stringliteral">&apos;Erreur lecture nombre de maillage&apos;</span>
+<a name="l00059"></a>00059            call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00060"></a>00060         <span class="keyword">endif</span>      
+<a name="l00061"></a>00061         print *,<span class="stringliteral">&apos;Nombre de maillages : &apos;</span>,nmaa
+<a name="l00062"></a>00062 <span class="comment">C   </span>
+<a name="l00063"></a>00063 <span class="comment">C       Lecture de toutes les mailles MED_POLYGONE</span>
+<a name="l00064"></a>00064 <span class="comment">C       dans chaque maillage</span>
+<a name="l00065"></a>00065         <span class="keyword">do</span> 10 i=1,nmaa
+<a name="l00066"></a>00066 <span class="comment">C</span>
+<a name="l00067"></a>00067 <span class="comment">C          Info sur chaque maillage</span>
+<a name="l00068"></a>00068            call <a class="code" href="a01026_gaf119a6264944d32e884b6d148bf17bcf.html#gaf119a6264944d32e884b6d148bf17bcf">mmhmii</a>(fid,i,maa,edim,mdim,type,desc,
+<a name="l00069"></a>00069      &amp;                 dtunit,stype,nstep,atype,
+<a name="l00070"></a>00070      &amp;                 nomcoo,unicoo,cret)
+<a name="l00071"></a>00071            <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00072"></a>00072               print *,<span class="stringliteral">&apos;Erreur lecture infos maillage&apos;</span>
+<a name="l00073"></a>00073               call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00074"></a>00074            <span class="keyword">endif</span>      
+<a name="l00075"></a>00075            print *,cret
+<a name="l00076"></a>00076            print *,<span class="stringliteral">&apos;Maillage : &apos;</span>,maa
+<a name="l00077"></a>00077            print *,<span class="stringliteral">&apos;Dimension : &apos;</span>,mdim
+<a name="l00078"></a>00078 <span class="comment">C     </span>
+<a name="l00079"></a>00079 <span class="comment">C          Combien de mailles polygones</span>
+<a name="l00080"></a>00080            call <a class="code" href="a01026_gad8041d49270c560eb727621625424759.html#gad8041d49270c560eb727621625424759">mmhnme</a>(fid,maa,<a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>,<a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>,<a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>,<a class="code" href="a00321_a85eec62d6ac09df04ee4e0ca89586273.html#a85eec62d6ac09df04ee4e0ca89586273">MED_POLYGON</a>,
+<a name="l00081"></a>00081      &amp;                 <a class="code" href="a00321_a25ee4b3675737fc23511b28b3245c61b.html#a25ee4b3675737fc23511b28b3245c61baeeb4405ba174bcfebed019cf268ca8f2">MED_INDEX_NODE</a>,<a class="code" href="a00321_afcd26ca66a179b9aa82f5c90602c4ed8.html#afcd26ca66a179b9aa82f5c90602c4ed8a4ae92e7de0898383577cbba640006baa">MED_NODAL</a>,chgt,tsf,isize,cret) 
+<a name="l00082"></a>00082            npoly = isize - 1;
+<a name="l00083"></a>00083            print *,cret
+<a name="l00084"></a>00084            <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00085"></a>00085               print *,<span class="stringliteral">&apos;Erreur lecture du nombre de polygone&apos;</span>
+<a name="l00086"></a>00086               call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00087"></a>00087            <span class="keyword">endif</span>      
+<a name="l00088"></a>00088            print *,<span class="stringliteral">&apos;Nombre de mailles MED_POLYGONE : &apos;</span>,npoly
+<a name="l00089"></a>00089 <span class="comment">C</span>
+<a name="l00090"></a>00090 <span class="comment">C          Taille des connectivites</span>
+<a name="l00091"></a>00091            call <a class="code" href="a01026_gad8041d49270c560eb727621625424759.html#gad8041d49270c560eb727621625424759">mmhnme</a>(fid,maa,<a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>,<a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>,<a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>,<a class="code" href="a00321_a85eec62d6ac09df04ee4e0ca89586273.html#a85eec62d6ac09df04ee4e0ca89586273">MED_POLYGON</a>,
+<a name="l00092"></a>00092      &amp;                 <a class="code" href="a00321_a25ee4b3675737fc23511b28b3245c61b.html#a25ee4b3675737fc23511b28b3245c61bac845229e0179819897411d7cb9186824">MED_CONNECTIVITY</a>,<a class="code" href="a00321_afcd26ca66a179b9aa82f5c90602c4ed8.html#afcd26ca66a179b9aa82f5c90602c4ed8a4ae92e7de0898383577cbba640006baa">MED_NODAL</a>,chgt,tsf,taille,cret)   
+<a name="l00093"></a>00093            print *,cret
+<a name="l00094"></a>00094            <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00095"></a>00095               print *,<span class="stringliteral">&apos;Erreur lecture infos polygones&apos;</span>
+<a name="l00096"></a>00096               call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00097"></a>00097            <span class="keyword">endif</span>      
+<a name="l00098"></a>00098            print *,<span class="stringliteral">&apos;Taille de la connectivite : &apos;</span>,taille
+<a name="l00099"></a>00099 <span class="comment">C</span>
+<a name="l00100"></a>00100 <span class="comment">C          Lecture de la connectivite</span>
+<a name="l00101"></a>00101            call <a class="code" href="a01026_ga24a3b956d5dcf009aa28eb4f85918f1d.html#ga24a3b956d5dcf009aa28eb4f85918f1d">mmhpgr</a>(fid,maa,<a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>,<a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>,<a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>,
+<a name="l00102"></a>00102      &amp;                 <a class="code" href="a00321_afcd26ca66a179b9aa82f5c90602c4ed8.html#afcd26ca66a179b9aa82f5c90602c4ed8a4ae92e7de0898383577cbba640006baa">MED_NODAL</a>,index,con,cret)
+<a name="l00103"></a>00103            print *,cret
+<a name="l00104"></a>00104            <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00105"></a>00105               print *,<span class="stringliteral">&apos;Erreur lecture des connectivites polygones&apos;</span>
+<a name="l00106"></a>00106               call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00107"></a>00107            <span class="keyword">endif</span>      
+<a name="l00108"></a>00108            print *,<span class="stringliteral">&apos;Lecture de la connectivite des polygones&apos;</span>
+<a name="l00109"></a>00109 <span class="comment">C</span>
+<a name="l00110"></a>00110 <span class="comment">C          Lecture des noms</span>
+<a name="l00111"></a>00111            call <a class="code" href="a01026_gae0130b95aea72a528929b59131782964.html#gae0130b95aea72a528929b59131782964">mmhear</a>(fid,maa,<a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>,<a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>,
+<a name="l00112"></a>00112      &amp;                 <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>,<a class="code" href="a00321_a85eec62d6ac09df04ee4e0ca89586273.html#a85eec62d6ac09df04ee4e0ca89586273">MED_POLYGON</a>,nom,cret)
+<a name="l00113"></a>00113            print *,cret
+<a name="l00114"></a>00114            <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00115"></a>00115               print *,<span class="stringliteral">&apos;Erreur lecture des noms des polygones&apos;</span>
+<a name="l00116"></a>00116               call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00117"></a>00117            <span class="keyword">endif</span>      
+<a name="l00118"></a>00118            print *,<span class="stringliteral">&apos;Lecture des noms&apos;</span>
+<a name="l00119"></a>00119 <span class="comment">C</span>
+<a name="l00120"></a>00120 <span class="comment">C          Lecture des numeros</span>
+<a name="l00121"></a>00121            call <a class="code" href="a01026_ga945c214fe2bc60cf07471c862dd69748.html#ga945c214fe2bc60cf07471c862dd69748">mmhfnr</a>(fid,maa,<a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>,<a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>,<a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>,<a class="code" href="a00321_a85eec62d6ac09df04ee4e0ca89586273.html#a85eec62d6ac09df04ee4e0ca89586273">MED_POLYGON</a>,
+<a name="l00122"></a>00122      &amp;                 num,cret)
+<a name="l00123"></a>00123            print *,cret
+<a name="l00124"></a>00124            <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00125"></a>00125               print *,<span class="stringliteral">&apos;Erreur lecture des numeros des polygones&apos;</span>
+<a name="l00126"></a>00126               call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00127"></a>00127            <span class="keyword">endif</span>      
+<a name="l00128"></a>00128            print *,<span class="stringliteral">&apos;Lecture des numeros&apos;</span>
+<a name="l00129"></a>00129 <span class="comment">C</span>
+<a name="l00130"></a>00130 <span class="comment">C          Lecture des numeros de familles</span>
+<a name="l00131"></a>00131            call <a class="code" href="a01026_ga945c214fe2bc60cf07471c862dd69748.html#ga945c214fe2bc60cf07471c862dd69748">mmhfnr</a>(fid,maa,<a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>,<a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>,<a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>,<a class="code" href="a00321_a85eec62d6ac09df04ee4e0ca89586273.html#a85eec62d6ac09df04ee4e0ca89586273">MED_POLYGON</a>,
+<a name="l00132"></a>00132      &amp;                 fam,cret)
+<a name="l00133"></a>00133            print *,cret
+<a name="l00134"></a>00134            <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00135"></a>00135               print *,
+<a name="l00136"></a>00136 <span class="stringliteral">&apos;Erreur lecture des numeros de famille des     &amp; polygones&apos;</span>
+<a name="l00137"></a>00137               call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00138"></a>00138            <span class="keyword">endif</span>      
+<a name="l00139"></a>00139            print *,<span class="stringliteral">&apos;Lecture des numeros de famille&apos;</span>
+<a name="l00140"></a>00140 <span class="comment">C</span>
+<a name="l00141"></a>00141 <span class="comment">C          Affichage des resultats</span>
+<a name="l00142"></a>00142            print *,<span class="stringliteral">&apos;Affichage des resultats&apos;</span>
+<a name="l00143"></a>00143            <span class="keyword">do</span> 20 j=1,npoly
+<a name="l00144"></a>00144 <span class="comment">C       </span>
+<a name="l00145"></a>00145               print *,<span class="stringliteral">&apos;&gt;&gt; Maille polygone &apos;</span>,j
+<a name="l00146"></a>00146               print *,<span class="stringliteral">&apos;---- Connectivite      ---- : &apos;</span>
+<a name="l00147"></a>00147               ind1 = index(j)
+<a name="l00148"></a>00148               ind2 = index(j+1)
+<a name="l00149"></a>00149               <span class="keyword">do</span> 30 k=ind1,ind2-1
+<a name="l00150"></a>00150                  print *,con(k)
+<a name="l00151"></a>00151  30           continue
+<a name="l00152"></a>00152 <span class="comment">c             print *,&apos;---- Nom               ---- : &apos;,nom(j)</span>
+<a name="l00153"></a>00153               print *,<span class="stringliteral">&apos;---- Numero            ----:  &apos;</span>,num(j)
+<a name="l00154"></a>00154               print *,<span class="stringliteral">&apos;---- Numero de famille ---- : &apos;</span>,fam(j)
+<a name="l00155"></a>00155 <span class="comment">C</span>
+<a name="l00156"></a>00156  20        continue
+<a name="l00157"></a>00157 <span class="comment">C</span>
+<a name="l00158"></a>00158  10     continue
+<a name="l00159"></a>00159 <span class="comment">C</span>
+<a name="l00160"></a>00160 <span class="comment">C       Fermeture du fichier</span>
+<a name="l00161"></a>00161         call <a class="code" href="a01020_gabaf92f77da8cad332344587fca32c410.html#gabaf92f77da8cad332344587fca32c410">mficlo</a>(fid,cret)
+<a name="l00162"></a>00162         print *,cret
+<a name="l00163"></a>00163         <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00164"></a>00164            print *,<span class="stringliteral">&apos;Erreur fermeture du fichier&apos;</span>
+<a name="l00165"></a>00165            call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00166"></a>00166         <span class="keyword">endif</span>      
+<a name="l00167"></a>00167         print *,<span class="stringliteral">&apos;Fermeture du fichier&apos;</span>
+<a name="l00168"></a>00168 <span class="comment">C</span>
+<a name="l00169"></a>00169 <span class="keyword">        end</span>
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:35 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

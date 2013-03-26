@@ -1,0 +1,5 @@
+<map id="Graphe hiérarchique des classes" name="Graphe hiérarchique des classes">
+<area shape="rect" id="node1" href="$classField.html" title="Field" alt="" coords="5,30,56,58"/>
+<area shape="rect" id="node3" href="$classFieldOnCell.html" title="FieldOnCell" alt="" coords="109,5,197,33"/>
+<area shape="rect" id="node5" href="$classFieldOnNode.html" title="FieldOnNode" alt="" coords="105,55,201,83"/>
+</map>

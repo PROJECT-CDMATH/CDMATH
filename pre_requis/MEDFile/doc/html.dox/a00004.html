@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: parallel/generateDatas.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+<h1>parallel/generateDatas.c</h1><div class="fragment"><pre class="fragment"><span class="comment">/*  This file is part of MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<span class="comment"> *  (at your option) any later version.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="comment"> */</span>
+
+
+
+<span class="preprocessor">#include &lt;med.h&gt;</span>
+<span class="preprocessor">#define MESGERR 1</span>
+<span class="preprocessor"></span><span class="preprocessor">#include &quot;med_utils.h&quot;</span>
+
+<span class="comment">/*Les données générées, le sont uniquement aux endroits utilisés */</span>
+<span class="keywordtype">void</span> <a name="a0"></a><a class="code" href="a00280_aacb98bb0155d664e9d8a9626b9144bc3.html#aacb98bb0155d664e9d8a9626b9144bc3">generateFullIDatas</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> myrank, <span class="keyword">const</span> <span class="keywordtype">int</span> lastrank, <span class="keyword">const</span> <span class="keywordtype">int</span> sizeoftype,
+                        <span class="keyword">const</span> <a class="code" href="a00321_a3f7b3a3c5ddcaba3fa1741a367503c8d.html#a3f7b3a3c5ddcaba3fa1741a367503c8d">med_storage_mode</a> profilemode, <span class="keyword">const</span> <a name="a1"></a><a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> profilesize, <span class="keyword">const</span> <a name="a2"></a><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> * <span class="keyword">const</span> profilearray,
+                        <span class="keyword">const</span> <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> start, <span class="keyword">const</span> <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> stride, <span class="keyword">const</span> <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> count, <span class="keyword">const</span> <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> blocksize, <span class="keyword">const</span> <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> lastblocksize,
+                        <span class="keyword">const</span> <span class="keywordtype">int</span> nentities, <span class="keyword">const</span> <span class="keywordtype">int</span> nvaluesperentity, <span class="keyword">const</span> <span class="keywordtype">int</span> nconstituentpervalue,
+                        <a name="a3"></a><a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> ** valuesarray ) {
+
+  <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> _start=start-1,_blockstart = 0,_blocksize=blocksize,_allblocksize=0,_index=0;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>  (*_profilearrayfunc)(int)=0;
+  <span class="keyword">inline</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> _identity  (<span class="keywordtype">int</span> i)  { <span class="keywordflow">return</span> i; }
+  <span class="keyword">inline</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> _withprofilearray(<span class="keywordtype">int</span> i) { <span class="keywordflow">return</span> (profilearray[i]-1); }
+  <span class="keywordtype">int</span> _blocknum=0,_i=0,_j=0,_k=0;
+
+  <span class="keywordflow">if</span> (profilesize) {
+    <span class="keywordflow">if</span> ( profilearray == NULL ) {<a name="a4"></a><a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Error, profilesize &gt; 0 &amp;&amp; profilearray == 0&quot;</span>); }
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Using a profile...&quot;</span>);
+    _profilearrayfunc = _withprofilearray;
+  } <span class="keywordflow">else</span> {
+    _profilearrayfunc = _identity;
+  }
+
+  <span class="keywordflow">switch</span>(profilemode) {
+
+  <span class="keywordflow">case</span> <a name="a5"></a><a class="code" href="a00321_a3f7b3a3c5ddcaba3fa1741a367503c8d.html#a3f7b3a3c5ddcaba3fa1741a367503c8da56cfcdcbbab7ddfc577de288697cd291">MED_GLOBAL_PFLMODE</a> :
+
+    <span class="comment">/*       ISCRUTE(lastblocksize); */</span>
+    <span class="comment">/*En mode global on n&apos;a normalement pas besoin de prendre en compte les profils. Il ne peut pas y en avoir.</span>
+<span class="comment">      Celà n&apos;a pas de sens sauf si la sélection demandée est un seul block !</span>
+<span class="comment">      Tous les processus possèdent le tableau global. */</span>
+    *valuesarray = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *) calloc(nentities*nvaluesperentity*nconstituentpervalue,sizeoftype);
+    <span class="keywordflow">for</span> (_blocknum=0; _blocknum&lt; count; ++_blocknum) {
+      _blockstart=_blocknum*stride;
+      <span class="comment">/*        ISCRUTE(_blockstart); */</span>
+      <span class="keywordflow">if</span> ( (count &gt; 1) &amp;&amp; (_blocknum == (count-1) ) &amp;&amp; (myrank == lastrank) ) _blocksize=lastblocksize;
+      <span class="comment">/*        ISCRUTE(_blocksize); */</span>
+      <span class="keywordflow">for</span> (_i=0; _i&lt;_blocksize; ++_i)
+        <span class="keywordflow">for</span> (_j=0; _j &lt; nvaluesperentity; ++_j)
+          <span class="keywordflow">for</span> (_k=0; _k &lt; nconstituentpervalue; ++_k) {
+            _index = _profilearrayfunc(_start+_blockstart+_i)*nvaluesperentity*nconstituentpervalue
+              +_j*nconstituentpervalue+_k;
+            (*valuesarray)[_index]= (myrank+1)*1000+_blocknum*100+_i+0.1*_j+0.01*_k;
+            <span class="comment">/*      ISCRUTE(_index); */</span>
+            <span class="comment">/*      RSCRUTE((*valuesarray)[_index]); */</span>
+
+          }
+    }
+    <span class="keywordflow">break</span>;
+
+  <span class="keywordflow">case</span> <a name="a6"></a><a class="code" href="a00321_a3f7b3a3c5ddcaba3fa1741a367503c8d.html#a3f7b3a3c5ddcaba3fa1741a367503c8da285ff6474ec39fcb4c49b66a9376ec92">MED_COMPACT_PFLMODE</a> :
+
+    <span class="comment">/*Idem avec ou sans profil*/</span>
+    <span class="keywordflow">if</span> ( (myrank == lastrank) ) _allblocksize=blocksize*count+lastblocksize; <span class="keywordflow">else</span> _allblocksize = blocksize*count;
+    *valuesarray = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *) calloc(_allblocksize*nvaluesperentity*nconstituentpervalue,sizeoftype);
+
+    _index = 0;
+    <span class="keywordflow">for</span> (_blocknum=0; _blocknum&lt; count; ++_blocknum) {
+      <span class="keywordflow">if</span> ( (count &gt; 1) &amp;&amp; (_blocknum == (count-1) ) &amp;&amp; (myrank == lastrank) ) _blocksize=lastblocksize;
+      <span class="keywordflow">for</span> (_i=0; _i&lt;_blocksize; ++_i)
+        <span class="keywordflow">for</span> (_j=0; _j &lt; nvaluesperentity; ++_j)
+          <span class="keywordflow">for</span> (_k=0; _k &lt; nconstituentpervalue; ++_k) {
+            (*valuesarray)[_index]= (myrank+1)*1000+_blocknum*100+_i+0.1*_j+0.01*_k;
+            <span class="comment">/*      ISCRUTE(_index); */</span>
+            <span class="comment">/*      RSCRUTE((*valuesarray)[_index]); */</span>
+            _index++;
+          }
+    }
+
+    <span class="keywordflow">break</span>;
+  <span class="keywordflow">default</span>:
+    <span class="keywordflow">break</span>;
+  }
+}
+
+<span class="keywordtype">void</span> <a name="a7"></a><a class="code" href="a00280_aa5abc2daa1769bad363d8d7d935a3249.html#aa5abc2daa1769bad363d8d7d935a3249">generateNoIDatas</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> myrank, <span class="keyword">const</span> <span class="keywordtype">int</span> lastrank, <span class="keyword">const</span> <span class="keywordtype">int</span> sizeoftype,
+                      <span class="keyword">const</span> <a class="code" href="a00321_a3f7b3a3c5ddcaba3fa1741a367503c8d.html#a3f7b3a3c5ddcaba3fa1741a367503c8d">med_storage_mode</a> storagemode, <span class="keyword">const</span> <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> profilearraysize, <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> * <span class="keyword">const</span> profilearray,
+                      <span class="keyword">const</span> <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> start, <span class="keyword">const</span> <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> stride, <span class="keyword">const</span> <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> count, <span class="keyword">const</span> <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> blocksize, <span class="keyword">const</span> <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> lastblocksize,
+                      <span class="keyword">const</span> <span class="keywordtype">int</span> nentities, <span class="keyword">const</span> <span class="keywordtype">int</span> nvaluesperentity, <span class="keyword">const</span> <span class="keywordtype">int</span> nconstituentpervalue,
+                      <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> ** valuesarray ) {
+
+  <a class="code" href="a00320_abc4b2f6b68a545b7b3441b0d3d860629.html#abc4b2f6b68a545b7b3441b0d3d860629">med_size</a> _start=start-1,_blockstart = 0,_blocksize=blocksize,_allblocksize=0,_index=0,_dim=0;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>  (*_profilearrayfunc)(int)=0;
+  <span class="keyword">inline</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> _identity  (<span class="keywordtype">int</span> i)  { <span class="keywordflow">return</span> i; }
+  <span class="keyword">inline</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> _withprofilearray(<span class="keywordtype">int</span> i) { <span class="keywordflow">return</span> (profilearray[i]-1); }
+  <span class="keywordtype">int</span> _blocknum=0,_i=0,_j=0,_k=0;
+
+  <span class="keywordflow">if</span> (profilearraysize) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Using a profile...&quot;</span>);
+    <span class="keywordflow">if</span> ( profilearray == NULL ) {<a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Error, profilearraysize &gt; 0 &amp;&amp; profilearray == 0&quot;</span>); }
+    _profilearrayfunc = _withprofilearray;
+  } <span class="keywordflow">else</span> {
+    _profilearrayfunc = _identity;
+  }
+
+  <span class="keywordflow">switch</span>(storagemode) {
+
+  <span class="keywordflow">case</span> <a class="code" href="a00321_a3f7b3a3c5ddcaba3fa1741a367503c8d.html#a3f7b3a3c5ddcaba3fa1741a367503c8da56cfcdcbbab7ddfc577de288697cd291">MED_GLOBAL_PFLMODE</a> :
+
+    <span class="comment">/*En mode global on n&apos;a normalement pas besoin de prendre en compte les profils. Il ne peut pas y en avoir.</span>
+<span class="comment">      Celà n&apos;a pas de sens sauf si la sélection demandée est un seul block !</span>
+<span class="comment">      Tous les processus possèdent le tableau global. */</span>
+    *valuesarray = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *) calloc(nentities*nvaluesperentity*nconstituentpervalue,sizeoftype);
+
+    <span class="keywordflow">for</span> (_dim=0; _dim&lt; nconstituentpervalue; ++_dim) {
+      _blocksize = blocksize;
+      <span class="keywordflow">for</span> (_blocknum=0; _blocknum&lt; count; ++_blocknum) {
+        _blockstart=_blocknum*stride;
+        <span class="keywordflow">if</span> ( (count &gt; 1) &amp;&amp; (_blocknum == (count-1) ) &amp;&amp; (myrank == lastrank) ) _blocksize=lastblocksize;
+        <span class="keywordflow">for</span> (_i=0; _i&lt;_blocksize; ++_i)
+          <span class="keywordflow">for</span> (_j=0; _j &lt; nvaluesperentity; ++_j) {
+            _index = ( _dim*nentities
+                       +_profilearrayfunc(_start+_blockstart+_i) )
+              *nvaluesperentity + _j;
+            (*valuesarray)[_index]= (myrank+1)*1000+_blocknum*100+_i+0.1*_j+0.01*_dim;
+            <span class="comment">/*      ISCRUTE(_index); */</span>
+            <span class="comment">/*      RSCRUTE((*valuesarray)[_index]); */</span>
+          }
+      }
+    }
+    <span class="keywordflow">break</span>;
+
+  <span class="keywordflow">case</span> <a class="code" href="a00321_a3f7b3a3c5ddcaba3fa1741a367503c8d.html#a3f7b3a3c5ddcaba3fa1741a367503c8da285ff6474ec39fcb4c49b66a9376ec92">MED_COMPACT_PFLMODE</a> :
+    <span class="keywordflow">if</span> ( (myrank == lastrank) ) _allblocksize=blocksize*count+lastblocksize; <span class="keywordflow">else</span> _allblocksize = blocksize*count;
+    *valuesarray = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *) calloc(_allblocksize*nvaluesperentity*nconstituentpervalue,sizeoftype);
+
+    _index = 0;
+    <span class="keywordflow">for</span> (_dim=0; _dim&lt; nconstituentpervalue; ++_dim) {
+      _blocksize = blocksize;
+      <span class="keywordflow">for</span> (_blocknum=0; _blocknum&lt; count; ++_blocknum) {
+        <span class="keywordflow">if</span> ( (count &gt; 1) &amp;&amp; (_blocknum == (count-1) ) &amp;&amp; (myrank == lastrank) ) _blocksize=lastblocksize;
+        <span class="keywordflow">for</span> (_i=0; _i&lt;_blocksize; ++_i)
+          <span class="keywordflow">for</span> (_j=0; _j &lt; nvaluesperentity; ++_j) {
+            (*valuesarray)[_index]= (myrank+1)*1000+_blocknum*100+_i+0.1*_j+0.01*_dim;
+            <span class="comment">/*      ISCRUTE(_index); */</span>
+            <span class="comment">/*      RSCRUTE((*valuesarray)[_index]); */</span>
+            _index++;
+          }
+      }
+    }
+
+    <span class="keywordflow">break</span>;
+  <span class="keywordflow">default</span>:
+    <span class="keywordflow">break</span>;
+  }
+}
+</pre></div> </div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:33 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

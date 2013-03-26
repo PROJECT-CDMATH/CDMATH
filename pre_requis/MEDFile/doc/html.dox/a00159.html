@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: c/2.3.6/test13.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+<h1>c/2.3.6/test13.c</h1><div class="fragment"><pre class="fragment"><span class="comment">/*  This file is part of MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<span class="comment"> *  (at your option) any later version.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="comment"> */</span>
+
+<span class="comment">/******************************************************************************</span>
+<span class="comment"> * - Nom du fichier : test13.c</span>
+<span class="comment"> *</span>
+<span class="comment"> * - Description : lecture des equivalences d&apos;un maillage MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *****************************************************************************/</span>
+
+<span class="preprocessor">#include &lt;med.h&gt;</span>
+<span class="preprocessor">#define MESGERR 1</span>
+<span class="preprocessor"></span><span class="preprocessor">#include &lt;med_utils.h&gt;</span>
+
+<span class="preprocessor">#ifdef DEF_LECT_ECR</span>
+<span class="preprocessor"></span><span class="preprocessor">#define MODE_ACCES MED_LECTURE_ECRITURE</span>
+<span class="preprocessor"></span><span class="preprocessor">#elif DEF_LECT_AJOUT</span>
+<span class="preprocessor"></span><span class="preprocessor">#define MODE_ACCES MED_LECTURE_AJOUT</span>
+<span class="preprocessor"></span><span class="preprocessor">#else</span>
+<span class="preprocessor"></span><span class="preprocessor">#define MODE_ACCES MED_CREATION</span>
+<span class="preprocessor"></span><span class="preprocessor">#endif</span>
+<span class="preprocessor"></span>
+<span class="comment">/* On prend en compte tous les types de mailles concernees</span>
+<span class="comment"> *    par les equivalences */</span>
+<span class="preprocessor">#define MED_NBR_MAILLE_EQU 8</span>
+<span class="preprocessor"></span> 
+<span class="keywordtype">int</span> <a name="a0"></a><a class="code" href="a00750_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv)
+
+
+{
+  <a name="a1"></a><a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> ret = 0;
+  <a name="a2"></a><a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid;
+  <span class="keywordtype">char</span> maa[<a name="a3"></a><a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>+1];
+  <a name="a4"></a><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> mdim;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nequ,ncor;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *cor;
+  <span class="keywordtype">char</span> equ[<a class="code" href="a00320_a194b9a1675c23f66fc766e206cc9a019.html#a194b9a1675c23f66fc766e206cc9a019">MED_TAILLE_NOM</a>+1];
+  <span class="keywordtype">char</span> des[<a name="a5"></a><a class="code" href="a00320_aecfdcbb63702f8a9b97643d05cc63888.html#aecfdcbb63702f8a9b97643d05cc63888">MED_TAILLE_DESC</a>+1];
+  <a class="code" href="a00320_ab93ab4475f81e2db98705aca718115a9.html#ab93ab4475f81e2db98705aca718115a9">med_geometrie_element</a> <a name="a6"></a><a class="code" href="a00318_a23177e52deed15ecdc7cd7642dbc7ba6.html#a23177e52deed15ecdc7cd7642dbc7ba6">typmai</a>[<a name="a7"></a><a class="code" href="a00320_a8add57f7491ab37c07fca17b1b81ed93.html#a8add57f7491ab37c07fca17b1b81ed93">MED_NBR_GEOMETRIE_MAILLE</a>+1] = {<a name="a8"></a><a class="code" href="a00321_aae1e86a4a1fce025bdadecb5e3e4a705.html#aae1e86a4a1fce025bdadecb5e3e4a705">MED_POINT1</a>,<a name="a9"></a><a class="code" href="a00321_a29927daaa1a87f2129295a68264ad526.html#a29927daaa1a87f2129295a68264ad526">MED_SEG2</a>, 
+                                                              <a name="a10"></a><a class="code" href="a00321_abcdb0eb0e7fc585c10f8986c105135fb.html#abcdb0eb0e7fc585c10f8986c105135fb">MED_SEG3</a>,<a name="a11"></a><a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>,
+                                                              <a name="a12"></a><a class="code" href="a00321_a85970ad0ffaf58419c2afa36e43b1ea3.html#a85970ad0ffaf58419c2afa36e43b1ea3">MED_TRIA6</a>,<a name="a13"></a><a class="code" href="a00321_a24ea9c52f5bde41d9a072925249ec06c.html#a24ea9c52f5bde41d9a072925249ec06c">MED_QUAD4</a>,
+                                                              <a name="a14"></a><a class="code" href="a00321_ac44f7967364889697b30b672df222578.html#ac44f7967364889697b30b672df222578">MED_QUAD8</a>,<a name="a15"></a><a class="code" href="a00320_ab93ab4475f81e2db98705aca718115a9.html#ab93ab4475f81e2db98705aca718115a9a0a59b78b1b3a39aa0ec344fbfe060d3d">MED_POLYGONE</a>};
+  <a class="code" href="a00320_ab93ab4475f81e2db98705aca718115a9.html#ab93ab4475f81e2db98705aca718115a9">med_geometrie_element</a> <a name="a16"></a><a class="code" href="a00318_a4447d14196935d212b710dc4107d24fc.html#a4447d14196935d212b710dc4107d24fc">typfac</a>[<a name="a17"></a><a class="code" href="a00320_aa2235671226a8b72bcb7beefa5615f53.html#aa2235671226a8b72bcb7beefa5615f53">MED_NBR_GEOMETRIE_FACE</a>+1] = {<a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>,<a class="code" href="a00321_a85970ad0ffaf58419c2afa36e43b1ea3.html#a85970ad0ffaf58419c2afa36e43b1ea3">MED_TRIA6</a>,
+                                                            <a class="code" href="a00321_a24ea9c52f5bde41d9a072925249ec06c.html#a24ea9c52f5bde41d9a072925249ec06c">MED_QUAD4</a>,<a class="code" href="a00321_ac44f7967364889697b30b672df222578.html#ac44f7967364889697b30b672df222578">MED_QUAD8</a>,
+                                                            <a class="code" href="a00320_ab93ab4475f81e2db98705aca718115a9.html#ab93ab4475f81e2db98705aca718115a9a0a59b78b1b3a39aa0ec344fbfe060d3d">MED_POLYGONE</a>};
+  <a class="code" href="a00320_ab93ab4475f81e2db98705aca718115a9.html#ab93ab4475f81e2db98705aca718115a9">med_geometrie_element</a> <a name="a18"></a><a class="code" href="a00318_a53ebfab5f817eb092b89fc5883d08906.html#a53ebfab5f817eb092b89fc5883d08906">typare</a>[<a name="a19"></a><a class="code" href="a00320_ae3e9addb935923b7fefe16e91cadc8b0.html#ae3e9addb935923b7fefe16e91cadc8b0">MED_NBR_GEOMETRIE_ARETE</a>] = {<a class="code" href="a00321_a29927daaa1a87f2129295a68264ad526.html#a29927daaa1a87f2129295a68264ad526">MED_SEG2</a>,<a class="code" href="a00321_abcdb0eb0e7fc585c10f8986c105135fb.html#abcdb0eb0e7fc585c10f8986c105135fb">MED_SEG3</a>};  
+  <span class="keywordtype">int</span> i,j,k;
+  <a class="code" href="a00320_a921e2f33296e6bef48bbce3be3ae005a.html#a921e2f33296e6bef48bbce3be3ae005a">med_maillage</a> type;
+
+  <span class="keywordflow">if</span> (argc != 2) {
+    <a name="a20"></a><a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Il faut passer un fichier MED en paramètre&quot;</span>);
+    <span class="keywordflow">return</span> -1;
+  }
+
+  <span class="comment">/* Ouverture du fichier passe en argument en lecture seule */</span>
+  <span class="keywordflow">if</span> ((fid = <a name="a21"></a><a class="code" href="a00346_ae0cab324e1ab23d9cf780427f0ad561b.html#ae0cab324e1ab23d9cf780427f0ad561b">MEDouvrir</a>(argv[1],<a name="a22"></a><a class="code" href="a00320_a6412dbfba9619f1b121a97a4ccfaff00.html#a6412dbfba9619f1b121a97a4ccfaff00a1e1c70755b1014521efa67ec9e0eff9b">MED_LECTURE</a>)) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a l&apos;ouverture du fichier : &quot;</span>); <a name="a23"></a><a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(argv[1]);
+    <span class="keywordflow">return</span> -1;
+  }
+  
+  <span class="comment">/* Lecture des infos sur le premier maillage */</span>
+  <span class="keywordflow">if</span> (<a name="a24"></a><a class="code" href="a00346_ae3f79506613f66c077578ff43d3ea4d5.html#ae3f79506613f66c077578ff43d3ea4d5">MEDmaaInfo</a>(fid,1,maa,&amp;mdim,&amp;type,des) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a lecture des infos sur le 1er maillage&quot;</span>); 
+    <span class="keywordflow">return</span> -1;
+  }
+  printf(<span class="stringliteral">&quot;Maillage de nom %s et de dimension &quot;</span><a name="a25"></a><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; \n&quot;</span>,maa,mdim);
+
+  <span class="comment">/* Lecture du nombre d&apos;equivalence */</span>
+  <span class="keywordflow">if</span> ((nequ = <a name="a26"></a><a class="code" href="a00346_a5ce682583288108683b017cee8e00bb7.html#a5ce682583288108683b017cee8e00bb7">MEDnEquiv</a>(fid,maa)) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture du nombre d&apos;equivalence&quot;</span>); 
+    <span class="keywordflow">return</span> -1;
+  }
+  printf(<span class="stringliteral">&quot;Nombre d&apos;equivalences : &quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; \n&quot;</span>,nequ);
+
+  <span class="comment">/* Lecture de toutes les equivalences du maillage */</span>
+  <span class="keywordflow">if</span> (nequ &gt; 0)
+    <span class="keywordflow">for</span> (i = 0;i&lt;nequ;i++) {
+      printf(<span class="stringliteral">&quot;Equivalence numero : %d \n&quot;</span>,i+1);
+
+      <span class="comment">/* Lecture des infos sur l&apos;equivalence */</span>
+      <span class="keywordflow">if</span> (<a name="a27"></a><a class="code" href="a00346_a0aacffe69777c1e305945c54dd10768a.html#a0aacffe69777c1e305945c54dd10768a">MEDequivInfo</a>(fid,maa,i+1,equ,des) &lt; 0) {
+        <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture de l&apos;equivalence d&apos;indice&quot;</span>);
+        <a name="a28"></a><a class="code" href="a00348_ae7ba0433e91c450cd44c3808c2acb497.html#ae7ba0433e91c450cd44c3808c2acb497">ISCRUTE_int</a>(i+1);
+        <span class="keywordflow">return</span> -1;
+      }
+      printf(<span class="stringliteral">&quot;Nom de l&apos;equivalence: %s \n&quot;</span>,equ);
+      printf(<span class="stringliteral">&quot;Description de l&apos;equivalence : %s \n&quot;</span>,des);
+
+      <span class="comment">/* Lecture des correspondances sur les differents types d&apos;entites */</span>
+
+      <span class="comment">/* Les noeuds */</span>
+      <span class="keywordflow">if</span> ((ncor = <a name="a29"></a><a class="code" href="a00346_adb308626e6a0a85c6aee4cabdbc061f5.html#adb308626e6a0a85c6aee4cabdbc061f5">MEDnCorres</a>(fid,maa,equ,<a name="a30"></a><a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08a1403b108df73119422ccabd619560c4c">MED_NOEUD</a>,0)) &lt; 0) {
+        <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture du nombre de correspondance sur les noeuds&quot;</span>);
+        <span class="keywordflow">return</span> -1;
+      }
+      printf(<span class="stringliteral">&quot;Il y a &quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; correspondances sur les noeuds \n&quot;</span>,ncor);
+      <span class="keywordflow">if</span> (ncor &gt; 0) {
+        cor = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>*) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>)*ncor*2);
+        <span class="keywordflow">if</span> (<a name="a31"></a><a class="code" href="a00346_af19aef8dcbc1da2d8c9efce77bf07ddf.html#af19aef8dcbc1da2d8c9efce77bf07ddf">MEDequivLire</a>(fid,maa,equ,cor,ncor,<a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08a1403b108df73119422ccabd619560c4c">MED_NOEUD</a>,0) &lt; 0) {
+          <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture des correspondances sur les noeuds&quot;</span>);
+          ret = -1;
+        }
+        <span class="keywordflow">if</span> (ret == 0)
+          <span class="keywordflow">for</span> (j=0;j&lt;ncor;j++)
+            printf(<span class="stringliteral">&quot;Correspondance %d : &quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; et &quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; \n&quot;</span>,j+1,*(cor+2*j),
+                   *(cor+2*j+1));
+        free(cor);
+      }
+            
+      <span class="comment">/* Les mailles : on ne prend pas en compte les mailles 3D */</span>
+      <span class="keywordflow">if</span> (ret == 0)
+        <span class="keywordflow">for</span> (j=0;j&lt;<a name="a32"></a><a class="code" href="a00766_aeaafcf19cf103fefd4ca8afe0e363bed.html#aeaafcf19cf103fefd4ca8afe0e363bed">MED_NBR_MAILLE_EQU</a>;j++) {
+
+          <span class="keywordflow">if</span> ((ncor = <a class="code" href="a00346_adb308626e6a0a85c6aee4cabdbc061f5.html#adb308626e6a0a85c6aee4cabdbc061f5">MEDnCorres</a>(fid,maa,equ,<a name="a33"></a><a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08aa99fcc0abf1e176a8c7ef5453bd1f446">MED_MAILLE</a>,typmai[j])) &lt; 0) {
+            <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture du nombre de correspondance sur les mailles : &quot;</span>);
+            <a class="code" href="a00348_ae7ba0433e91c450cd44c3808c2acb497.html#ae7ba0433e91c450cd44c3808c2acb497">ISCRUTE_int</a>(typmai[j]);
+            <span class="keywordflow">return</span> -1;
+          }
+          printf(<span class="stringliteral">&quot;Il y a &quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; correspondances sur les mailles %d \n&quot;</span>,ncor,
+                 typmai[j]);
+          <span class="keywordflow">if</span> (ncor &gt; 0) {
+            cor = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>*) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>)*ncor*2);
+            <span class="keywordflow">if</span> (<a class="code" href="a00346_af19aef8dcbc1da2d8c9efce77bf07ddf.html#af19aef8dcbc1da2d8c9efce77bf07ddf">MEDequivLire</a>(fid,maa,equ,cor,ncor,<a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08aa99fcc0abf1e176a8c7ef5453bd1f446">MED_MAILLE</a>,
+                             typmai[j]) &lt; 0) {
+              <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture des correspondances sur les mailles : &quot;</span>);
+              <a class="code" href="a00348_ae7ba0433e91c450cd44c3808c2acb497.html#ae7ba0433e91c450cd44c3808c2acb497">ISCRUTE_int</a>(typmai[j]);
+              ret = -1;
+            }
+            <span class="keywordflow">if</span> (ret == 0)
+              <span class="keywordflow">for</span> (k=0;k&lt;ncor;k++)
+                printf(<span class="stringliteral">&quot;Correspondance %d : &quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; et &quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; \n&quot;</span>,k+1,*(cor+2*k),
+                       *(cor+2*k+1));
+            free(cor);
+          }
+        }
+
+      <span class="comment">/* Les faces */</span>
+      <span class="keywordflow">if</span> (ret == 0)
+        <span class="keywordflow">for</span> (j=0;j&lt;<a class="code" href="a00320_aa2235671226a8b72bcb7beefa5615f53.html#aa2235671226a8b72bcb7beefa5615f53">MED_NBR_GEOMETRIE_FACE</a>+1;j++) {
+          <span class="keywordflow">if</span> ((ncor = <a class="code" href="a00346_adb308626e6a0a85c6aee4cabdbc061f5.html#adb308626e6a0a85c6aee4cabdbc061f5">MEDnCorres</a>(fid,maa,equ,<a name="a34"></a><a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08ab0641799ff99918e8e95edca23114f83">MED_FACE</a>,typfac[j])) &lt; 0) {
+            <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture du nombre de correspondance sur les faces : &quot;</span>);
+            <a class="code" href="a00348_ae7ba0433e91c450cd44c3808c2acb497.html#ae7ba0433e91c450cd44c3808c2acb497">ISCRUTE_int</a>(typfac[j]);
+            <span class="keywordflow">return</span> -1;
+          }
+          printf(<span class="stringliteral">&quot;Il y a %d correspondances sur les faces &quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; \n&quot;</span>,ncor,
+                 typfac[j]);
+          <span class="keywordflow">if</span> (ncor &gt; 0) {
+            cor = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>*) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>)*ncor*2);
+            <span class="keywordflow">if</span> (<a class="code" href="a00346_af19aef8dcbc1da2d8c9efce77bf07ddf.html#af19aef8dcbc1da2d8c9efce77bf07ddf">MEDequivLire</a>(fid,maa,equ,cor,ncor,<a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08ab0641799ff99918e8e95edca23114f83">MED_FACE</a>,
+                             typfac[j]) &lt; 0) {
+              <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture des correspondances sur les faces : &quot;</span>);
+              <a class="code" href="a00348_ae7ba0433e91c450cd44c3808c2acb497.html#ae7ba0433e91c450cd44c3808c2acb497">ISCRUTE_int</a>(typfac[j]);
+              ret = -1;
+            }
+            <span class="keywordflow">if</span> (ret == 0)  
+              <span class="keywordflow">for</span> (k=0;k&lt;ncor;k++)
+                printf(<span class="stringliteral">&quot;Correspondance %d : &quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; et &quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; \n&quot;</span>,k+1,*(cor+2*k),
+                       *(cor+2*k+1));
+            free(cor);
+          }
+        }
+
+      <span class="comment">/*  Les aretes */</span>
+      <span class="keywordflow">if</span> (ret == 0)
+        <span class="keywordflow">for</span> (j=0;j&lt;<a class="code" href="a00320_ae3e9addb935923b7fefe16e91cadc8b0.html#ae3e9addb935923b7fefe16e91cadc8b0">MED_NBR_GEOMETRIE_ARETE</a>;j++) {
+          <span class="keywordflow">if</span> ((ncor = <a class="code" href="a00346_adb308626e6a0a85c6aee4cabdbc061f5.html#adb308626e6a0a85c6aee4cabdbc061f5">MEDnCorres</a>(fid,maa,equ,<a name="a35"></a><a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08ace31cb42b6f0ecacdafc847f04f89cce">MED_ARETE</a>,typare[j])) &lt; 0) {
+            <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture du nombre de correspondance sur les aretes : &quot;</span>);
+            <a class="code" href="a00348_ae7ba0433e91c450cd44c3808c2acb497.html#ae7ba0433e91c450cd44c3808c2acb497">ISCRUTE_int</a>(typare[j]);
+            <span class="keywordflow">return</span> -1;
+          }
+          printf(<span class="stringliteral">&quot;Il y a &quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; correspondances sur les aretes %d \n&quot;</span>,ncor,
+                 typare[j]);
+          <span class="keywordflow">if</span> (ncor &gt; 0) {
+            cor = (<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>*) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>)*ncor*2);
+           <span class="keywordflow">if</span> (<a class="code" href="a00346_af19aef8dcbc1da2d8c9efce77bf07ddf.html#af19aef8dcbc1da2d8c9efce77bf07ddf">MEDequivLire</a>(fid,maa,equ,cor,ncor,<a class="code" href="a00320_ab8d5af112dbaeca64aa1d1965030ff08.html#ab8d5af112dbaeca64aa1d1965030ff08ace31cb42b6f0ecacdafc847f04f89cce">MED_ARETE</a>,
+                               typare[j]) &lt; 0) {
+             <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la lecture des correspondances sur les faces : &quot;</span>);
+             <a class="code" href="a00348_ae7ba0433e91c450cd44c3808c2acb497.html#ae7ba0433e91c450cd44c3808c2acb497">ISCRUTE_int</a>(typare[j]);
+             ret = -1;
+           }
+           <span class="keywordflow">if</span> (ret == 0)
+             <span class="keywordflow">for</span> (k=0;k&lt;ncor;k++)
+               printf(<span class="stringliteral">&quot;Correspondance %d : &quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; et &quot;</span><a class="code" href="a00348_ad1c568efb9ee28e7f3b0e20bf7e79ff4.html#ad1c568efb9ee28e7f3b0e20bf7e79ff4">IFORMAT</a><span class="stringliteral">&quot; \n&quot;</span>,k+1,*(cor+2*k),
+                      *(cor+2*k+1));
+           free(cor);
+          }
+        }
+
+    }                       
+
+  <span class="comment">/* Fermeture du fichier */</span>
+  <span class="keywordflow">if</span> (<a name="a36"></a><a class="code" href="a00346_ac4f893f1942397b74f4fb57f5ff99ca6.html#ac4f893f1942397b74f4fb57f5ff99ca6">MEDfermer</a>(fid) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;Erreur a la fermeture du fichier &quot;</span>);
+    <span class="keywordflow">return</span> -1;
+  }
+
+  <span class="keywordflow">return</span> ret;
+}
+
+
+
+
+</pre></div> </div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:33 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

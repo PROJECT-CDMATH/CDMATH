@@ -1,0 +1,3 @@
+ADD_SUBDIRECTORY(medimport)
+ADD_SUBDIRECTORY(mdump)
+ADD_SUBDIRECTORY(medconforme)

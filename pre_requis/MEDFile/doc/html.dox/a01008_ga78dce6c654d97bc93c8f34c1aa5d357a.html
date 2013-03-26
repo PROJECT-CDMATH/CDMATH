@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: MEDlibraryHdfNumVersion</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+  <div class="navpath"><a class="el" href="a01008.html">Guide de référence du module MEDlibrary</a>
+  </div>
+<table cellspacing="0" cellpadding="0" border="0">
+  <tr>
+   <td valign="top">
+      <div class="navtab">
+        <table>
+          <tr><td class="navtab"><a class="qindex" href="a01008_ga4ae0b014dbc25d9a2178da1404f3c8f7.html#ga4ae0b014dbc25d9a2178da1404f3c8f7">MEDlibraryClose</a></td></tr>
+          <tr><td class="navtab"><a class="qindexHL" href="a01008_ga78dce6c654d97bc93c8f34c1aa5d357a.html#ga78dce6c654d97bc93c8f34c1aa5d357a">MEDlibraryHdfNumVersion</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01008_ga0ccb781af8d4308bc164012047efed43.html#ga0ccb781af8d4308bc164012047efed43">MEDlibraryHdfStrVersion</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01008_gaf2b28f5d2a2d5e0dbc2b03df9adbe4f1.html#gaf2b28f5d2a2d5e0dbc2b03df9adbe4f1">MEDlibraryNumVersion</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01008_gaca57a917869066297e11cd3fee0b8061.html#gaca57a917869066297e11cd3fee0b8061">MEDlibraryStrVersion</a></td></tr>
+        </table>
+      </div>
+   </td>
+   <td valign="top">
+<a class="anchor" id="ga78dce6c654d97bc93c8f34c1aa5d357a"></a><!-- doxytag: member="MEDlibraryHdfNumVersion.c::MEDlibraryHdfNumVersion" ref="ga78dce6c654d97bc93c8f34c1aa5d357a" args="(med_int *const major, med_int *const minor, med_int *const release)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="a00321_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a> MEDlibraryHdfNumVersion </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="a00321_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *const &nbsp;</td>
+          <td class="paramname"> <em>major</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="a00321_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *const &nbsp;</td>
+          <td class="paramname"> <em>minor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="a00321_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> *const &nbsp;</td>
+          <td class="paramname"> <em>release</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Renvoie les 3 numéros de version de la librairie HDF5 utilisée par MED. </p>
+<dl><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>major</em>&nbsp;</td><td>Numéro de version majeur. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>minor</em>&nbsp;</td><td>Numéro de version mineur. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>release</em>&nbsp;</td><td>Numéro de release. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl><dt><b>Valeurs retournées:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>med_err</em>&nbsp;</td><td>retour négatif en cas d'erreur, Zéro sinon.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Cette routine retourne le numéro de version de la bibliothèque HDF5 utilisée par MED. Le numéro de version est renvoyé sous la forme de trois entiers (majeur, mineur, release). </p>
+
+<p>Définition à la ligne <a class="el" href="a00514_source.html#l00033">33</a> du fichier <a class="el" href="a00514_source.html">MEDlibraryHdfNumVersion.c</a>.</p>
+
+</div>
+</div>
+    </td>
+  </tr>
+</table>
+</div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:46 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

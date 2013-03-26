@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: mpfpsn</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+  <div class="navpath"><a class="el" href="a01028.html">Guide de référence du module fortran MEDprofile</a>
+  </div>
+<table cellspacing="0" cellpadding="0" border="0">
+  <tr>
+   <td valign="top">
+      <div class="navtab">
+        <table>
+          <tr><td class="navtab"><a class="qindex" href="a01028_ga4bf5d21abc7cf050d0d1cba12ebb385f.html#ga4bf5d21abc7cf050d0d1cba12ebb385f">mpfnpf</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01028_gac4caf2428491261b2eee80bf56db70c7.html#gac4caf2428491261b2eee80bf56db70c7">mpfpfi</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01028_ga3c0b90345398a5d111b92e010144a87f.html#ga3c0b90345398a5d111b92e010144a87f">mpfprr</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01028_ga946e7c43a115f9a0357571ceaceda78a.html#ga946e7c43a115f9a0357571ceaceda78a">mpfprw</a></td></tr>
+          <tr><td class="navtab"><a class="qindexHL" href="a01028_ga8337e08bd4acc8530a18b4de1407cff5.html#ga8337e08bd4acc8530a18b4de1407cff5">mpfpsn</a></td></tr>
+        </table>
+      </div>
+   </td>
+   <td valign="top">
+<a class="anchor" id="ga8337e08bd4acc8530a18b4de1407cff5"></a><!-- doxytag: member="medprofile.f::mpfpsn" ref="ga8337e08bd4acc8530a18b4de1407cff5" args="(fid, pname, psize, cret)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine mpfpsn </td>
+          <td>(</td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>fid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character *(*)&nbsp;</td>
+          <td class="paramname"> <em>pname</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>psize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>cret</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Cette routine permet de lire la taille d'un profil dont on connait le nom. </p>
+<dl><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>fid</em>&nbsp;</td><td>Identificateur du fichier. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>pname</em>&nbsp;</td><td>Nom du profil utilisé (de taille maximum <a class="el" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a> ) ou (<a class="el" href="a00321_aaa89a5e5e6d32de69614b70cf74e29cc.html#aaa89a5e5e6d32de69614b70cf74e29cc">MED_NO_PROFILE</a> | <a class="el" href="a00321_a35f886ccd78c3f756148e02b768dae9c.html#a35f886ccd78c3f756148e02b768dae9c">MED_ALLENTITIES_PROFILE</a> ) s'il n'y a pas de profil. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>psize</em>&nbsp;</td><td>Taille du profil. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>cret</em>&nbsp;</td><td>retour négatif en cas d'erreur, Zéro sinon. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="see"><dt><b>Voir également:</b></dt><dd><a class="el" href="a01013_ga2871de707744621f6a29a29633cc2e7b.html#ga2871de707744621f6a29a29633cc2e7b" title="Cette routine permet de lire la taille d&#39;un profil dont on connait le nom.">MEDprofileSizeByName</a></dd></dl>
+<p>Cette routine permet de lire la taille d'un profil dont on connait le nom. </p>
+<dl class="user"><dt><b>Remarques</b></dt><dd>Un profil est un tableau de numéros d'entités (numérotation MED relative à un type géométrique d'élément commence à 1. ) associés aux valeurs à traiter. Un profil permet de sélectionner les entités d'un maillage lors de la lecture ou l'écriture d'un champ ou d'un maillage. La définition d'un profil se fait selon les conventions suivantes : <ul>
+<li>Les numéros d'entité utilisés pour définir un profil sont ceux de la numérotation implicite (ordre d'apparition des entités par ordre croissant). </li>
+<li>Il s'agit d'une liste compacte : on ne met que les numéros représentatifs. Exemple : sur un maillage de 30 noeuds, si on a un champ portant sur les noeuds de numéros de référence 4, 5 et 12, le profil correspondant sera la liste (4,5,12). </li>
+</ul>
+</dd></dl>
+
+<p>Définition à la ligne <a class="el" href="a00672_source.html#l00075">75</a> du fichier <a class="el" href="a00672_source.html">medprofile.f</a>.</p>
+
+</div>
+</div>
+    </td>
+  </tr>
+</table>
+</div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:47 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

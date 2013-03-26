@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: usecases/c/UsesCase_MEDmesh_5.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+<h1>usecases/c/UsesCase_MEDmesh_5.c</h1><div class="fragment"><pre class="fragment"><span class="comment">/*  This file is part of MED.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<span class="comment"> *  (at your option) any later version.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<span class="comment"> *</span>
+<span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="comment"> */</span>
+
+<span class="comment">/*</span>
+<span class="comment"> * Mesh Use case 5 : read a 2D structured mesh</span>
+<span class="comment"> *                   5x3 cartesian grid</span>
+<span class="comment"> * </span>
+<span class="comment"> */</span>
+
+<span class="preprocessor">#include &lt;med.h&gt;</span>
+<span class="preprocessor">#define MESGERR 1</span>
+<span class="preprocessor"></span><span class="preprocessor">#include &lt;med_utils.h&gt;</span>
+
+<span class="preprocessor">#include &lt;string.h&gt;</span>
+
+<span class="keywordtype">int</span> <a name="a0"></a><a class="code" href="a00750_a3c04138a5bfe5d72780bb7e82a18e627.html#a3c04138a5bfe5d72780bb7e82a18e627">main</a> (<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv) {
+  <a name="a1"></a><a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a> fid;
+  <span class="keyword">const</span> <span class="keywordtype">char</span> meshname[<a name="a2"></a><a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1]=<span class="stringliteral">&quot;2D structured mesh&quot;</span>;
+  <a name="a3"></a><a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> spacedim;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> meshdim;
+  <span class="keywordtype">char</span> meshdescription[<a name="a4"></a><a class="code" href="a00321_ab69710ecf9f5257080a943579852d0f0.html#ab69710ecf9f5257080a943579852d0f0">MED_COMMENT_SIZE</a>+1];
+  <span class="keywordtype">char</span> axisname[2*<a name="a5"></a><a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1];
+  <span class="keywordtype">char</span> unitname[2*<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1];
+  <span class="keywordtype">char</span> dtunit[<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1];
+  <a class="code" href="a00321_a821a4dd94c5c6b095318432bdec8d8a1.html#a821a4dd94c5c6b095318432bdec8d8a1">med_mesh_type</a> meshtype;
+  <a class="code" href="a00321_a57867e4bed1d104c865cfc9d23c9204d.html#a57867e4bed1d104c865cfc9d23c9204d">med_axis_type</a> axistype;
+  <a class="code" href="a00321_a517833b8b925b9187607241f1c6ddbb9.html#a517833b8b925b9187607241f1c6ddbb9">med_grid_type</a> gridtype;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> axis, size ;
+  <a name="a6"></a><a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *cooXaxis = NULL;
+  <a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *cooYaxis = NULL;
+  <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a> coordinatechangement;
+  <a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190dee">med_bool</a> geotransformation;
+  <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a> nstep;
+  <a class="code" href="a00321_a5b97067a30629cd60470d074691d6798.html#a5b97067a30629cd60470d074691d6798">med_sorting_type</a> sortingtype;
+  <span class="keywordtype">int</span> j;
+  <span class="keywordtype">int</span> ret=-1;
+  <span class="keywordtype">int</span> ncell=0;
+  <span class="keywordtype">char</span> *cellsname=NULL;
+
+  <span class="comment">/* open MED file */</span>
+  fid = <a name="a7"></a><a class="code" href="a01005_ga9376a1654b7bf099c3f8941074c5fdfb.html#ga9376a1654b7bf099c3f8941074c5fdfb" title="Ouverture d&amp;#39;un fichier MED.">MEDfileOpen</a>(<span class="stringliteral">&quot;UsesCase_MEDmesh_4.med&quot;</span>,<a name="a8"></a><a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a616bf8345c622a34f0787f42eb400f25">MED_ACC_RDONLY</a>);
+  <span class="keywordflow">if</span> (fid &lt; 0) {
+    <a name="a9"></a><a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : open file ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  <span class="comment">/* read mesh informations : meshname, mesh dimension, space dimension ... */</span>
+  <span class="keywordflow">if</span> (<a name="a10"></a><a class="code" href="a01011_gaf5e84a05155579ded1ba18a672385f97.html#gaf5e84a05155579ded1ba18a672385f97" title="Cette routine permet de lire les informations relatives à un maillage en précisant...">MEDmeshInfoByName</a>(fid, meshname, &amp;spacedim, &amp;meshdim, &amp;meshtype, meshdescription, 
+                        dtunit, &amp;sortingtype, &amp;nstep, &amp;axistype, axisname, unitname) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : mesh info ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  
+  <span class="comment">/* read the grid type : MED_CARTESIAN_GRID or MED_CURVILINEAR_GRID */</span>
+  <span class="keywordflow">if</span> (<a name="a11"></a><a class="code" href="a01011_gab54860c0382df0945049455ab0f96f3b.html#gab54860c0382df0945049455ab0f96f3b" title="Cette routine permet de lire le type d&amp;#39;un maillage structuré (MED_STRUCTURED_MESH)...">MEDmeshGridTypeRd</a>(fid, meshname, &amp;gridtype) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read grid type ...&quot;</span>);
+  }
+
+  <span class="comment">/* </span>
+<span class="comment">   * ... we know that we the mesh is a cartesian grid, </span>
+<span class="comment">   * a real code working would check  ... </span>
+<span class="comment">   */</span>
+
+  <span class="comment">/* read the axis coordinates (MED_CARTESIAN coordinates system */</span>
+  <span class="comment">/* X */</span>
+  axis = 1;
+  <span class="keywordflow">if</span> ((size = <a name="a12"></a><a class="code" href="a01011_ga45758103360dacf7b8a6c53ebfa4d7e5.html#ga45758103360dacf7b8a6c53ebfa4d7e5" title="Cette routine permet de lire le nombre d&amp;#39;entités dans un maillage pour une séquence...">MEDmeshnEntity</a>(fid, meshname, <a name="a13"></a><a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a name="a14"></a><a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, 
+                             <a name="a15"></a><a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a>, <a name="a16"></a><a class="code" href="a00321_a9a2843c7d6eacffdd9377b5bfb8a6de3.html#a9a2843c7d6eacffdd9377b5bfb8a6de3">MED_NONE</a>, <a name="a17"></a><a class="code" href="a00321_a25ee4b3675737fc23511b28b3245c61b.html#a25ee4b3675737fc23511b28b3245c61ba79668597c50e29e46f722fb1d88e2fb4">MED_COORDINATE_AXIS1</a>, <a name="a18"></a><a class="code" href="a00321_afcd26ca66a179b9aa82f5c90602c4ed8.html#afcd26ca66a179b9aa82f5c90602c4ed8a2b1e772016688b78b808e96a44d1ee02">MED_NO_CMODE</a>,
+                             &amp;coordinatechangement, &amp;geotransformation)) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : number of coordinates on X axis ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  ncell = size-1;
+
+  <span class="keywordflow">if</span> ((cooXaxis = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>)*size)) == NULL) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  <span class="keywordflow">if</span> (<a name="a19"></a><a class="code" href="a01011_gaa8a8f3715e119f30a78766c851774d75.html#gaa8a8f3715e119f30a78766c851774d75" title="Cette routine permet la lecture des coordonnées des noeuds d&amp;#39;un maillage structuré...">MEDmeshGridIndexCoordinateRd</a>(fid, meshname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, 
+                                   axis, cooXaxis) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read axis X coordinates ...&quot;</span>);
+    free(cooXaxis);
+    <span class="keywordflow">goto</span> ERROR;
+  }  
+  
+  free(cooXaxis);
+
+  <span class="comment">/* Y */</span>
+  axis = 2; 
+  <span class="keywordflow">if</span> ((size = <a class="code" href="a01011_ga45758103360dacf7b8a6c53ebfa4d7e5.html#ga45758103360dacf7b8a6c53ebfa4d7e5" title="Cette routine permet de lire le nombre d&amp;#39;entités dans un maillage pour une séquence...">MEDmeshnEntity</a>(fid, meshname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, 
+                             <a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a>, <a class="code" href="a00321_a9a2843c7d6eacffdd9377b5bfb8a6de3.html#a9a2843c7d6eacffdd9377b5bfb8a6de3">MED_NONE</a>, <a name="a20"></a><a class="code" href="a00321_a25ee4b3675737fc23511b28b3245c61b.html#a25ee4b3675737fc23511b28b3245c61ba7d7a0caeff458115841339469b8cc164">MED_COORDINATE_AXIS2</a>, <a class="code" href="a00321_afcd26ca66a179b9aa82f5c90602c4ed8.html#afcd26ca66a179b9aa82f5c90602c4ed8a2b1e772016688b78b808e96a44d1ee02">MED_NO_CMODE</a>,
+                             &amp;coordinatechangement, &amp;geotransformation)) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : number of coordinates on Y axis ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  ncell = ncell * (size-1);
+
+  <span class="keywordflow">if</span> ((cooYaxis = (<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a> *) malloc(<span class="keyword">sizeof</span>(<a class="code" href="a00320_ab1eab99ca56ac95ce5b1c0e4ae0f095a.html#ab1eab99ca56ac95ce5b1c0e4ae0f095a">med_float</a>)*size)) == NULL) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : memory allocation ...&quot;</span>);
+    <span class="keywordflow">goto</span> ERROR;
+  }
+  <span class="keywordflow">if</span> (<a class="code" href="a01011_gaa8a8f3715e119f30a78766c851774d75.html#gaa8a8f3715e119f30a78766c851774d75" title="Cette routine permet la lecture des coordonnées des noeuds d&amp;#39;un maillage structuré...">MEDmeshGridIndexCoordinateRd</a>(fid, meshname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, 
+                                   axis, cooYaxis) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read axis Y coordinates ...&quot;</span>);
+    free(cooYaxis); 
+    <span class="keywordflow">goto</span> ERROR;
+  }
+
+  free(cooYaxis);   
+
+  cellsname = (<span class="keywordtype">char</span> *) malloc((<span class="keyword">sizeof</span>(<span class="keywordtype">char</span>))*ncell*<a class="code" href="a00321_a213ecd1a546eb96092b980a870bc386b.html#a213ecd1a546eb96092b980a870bc386b">MED_SNAME_SIZE</a>+1);
+  <span class="keywordflow">if</span> (<a name="a21"></a><a class="code" href="a01011_ga54413edd055b4c606938c15f06f7cd64.html#ga54413edd055b4c606938c15f06f7cd64" title="Cette routine permet de lire les noms d&amp;#39;un type d&amp;#39;entité d&amp;#39;un maillage...">MEDmeshEntityNameRd</a>(fid, meshname, <a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>, <a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>, 
+                          <a name="a22"></a><a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>, <a name="a23"></a><a class="code" href="a00321_a24ea9c52f5bde41d9a072925249ec06c.html#a24ea9c52f5bde41d9a072925249ec06c">MED_QUAD4</a>, cellsname) &lt; 0)  {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : read cells name ...&quot;</span>);
+    free(cellsname); 
+    <span class="keywordflow">goto</span> ERROR;
+  } 
+  free(cellsname);
+
+  ret=0;
+ ERROR:
+ 
+  <span class="comment">/* close MED file */</span>
+  <span class="keywordflow">if</span> (<a name="a24"></a><a class="code" href="a01005_ga12a0e901c376be997a41a073ce426283.html#ga12a0e901c376be997a41a073ce426283" title="Fermeture d&amp;#39;un fichier MED.">MEDfileClose</a>(fid) &lt; 0) {
+    <a class="code" href="a00348_a3756046b0a6a7e51b8eb544d0d77c17c.html#a3756046b0a6a7e51b8eb544d0d77c17c">MESSAGE</a>(<span class="stringliteral">&quot;ERROR : close file ...&quot;</span>);             
+    ret = -1; 
+  }
+
+  <span class="keywordflow">return</span> ret;
+}
+</pre></div> </div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:34 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

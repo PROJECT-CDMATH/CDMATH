@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de Unittest_MEDstructElement_3.f</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_ba46011aeafd781e3c350f50ac4ad407.html">tests</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_154b2e72a744367dcc25b5fbe06f8029.html">unittests</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_18e9598bc60a743eace07d7b0e807e64.html">f</a>
+  </div>
+</div>
+<div class="contents">
+<h1>Unittest_MEDstructElement_3.f</h1><a href="a00936.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">C*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment">C*</span>
+<a name="l00003"></a>00003 <span class="comment">C*  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment">C*  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment">C*  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment">C*  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment">C*  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment">C*</span>
+<a name="l00009"></a>00009 <span class="comment">C*  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment">C*  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment">C*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment">C*  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment">C*</span>
+<a name="l00014"></a>00014 <span class="comment">C*  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment">C*  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment">C*</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 <span class="comment">C******************************************************************************</span>
+<a name="l00019"></a>00019 <span class="comment">C * Tests for struct element module</span>
+<a name="l00020"></a>00020 <span class="comment">C *</span>
+<a name="l00021"></a>00021 <span class="comment">C *****************************************************************************</span>
+<a name="l00022"></a><a class="code" href="a00936_ad600ddbfa07a63caa6e2cbe77aac40aa.html#ad600ddbfa07a63caa6e2cbe77aac40aa">00022</a>       <span class="keyword">program</span> <a class="code" href="a00936_ad600ddbfa07a63caa6e2cbe77aac40aa.html#ad600ddbfa07a63caa6e2cbe77aac40aa">MEDstructElement3</a>
+<a name="l00023"></a>00023 <span class="comment">C     </span>
+<a name="l00024"></a>00024       <span class="keyword">implicit none</span>
+<a name="l00025"></a>00025       include <span class="stringliteral">&apos;med.hf&apos;</span>
+<a name="l00026"></a>00026 <span class="comment">C</span>
+<a name="l00027"></a>00027 <span class="comment">C     </span>
+<a name="l00028"></a>00028       <span class="keywordtype">integer</span> cret
+<a name="l00029"></a>00029       <span class="keywordtype">integer</span> fid
+<a name="l00030"></a>00030       <span class="keywordtype">character*64</span>  fname
+<a name="l00031"></a>00031       parameter (fname = <span class="stringliteral">&quot;Unittest_MEDstructElement_1.med&quot;</span>)
+<a name="l00032"></a>00032       <span class="keywordtype">character*64</span>  mname1, mname2, mname3
+<a name="l00033"></a>00033       parameter (mname1 = <span class="stringliteral">&quot;model name 1&quot;</span>)
+<a name="l00034"></a>00034       parameter (mname2 = <span class="stringliteral">&quot;model name 2&quot;</span>)
+<a name="l00035"></a>00035       parameter (mname3 = <span class="stringliteral">&quot;model name 3&quot;</span>)
+<a name="l00036"></a>00036       <span class="keywordtype">integer</span> dim1, dim2, dim3
+<a name="l00037"></a>00037       parameter (dim1=2)
+<a name="l00038"></a>00038       parameter (dim2=2)
+<a name="l00039"></a>00039       parameter (dim3=2)
+<a name="l00040"></a>00040       <span class="keywordtype">character*64</span>  smname1
+<a name="l00041"></a>00041       parameter (smname1=<a class="code" href="a00321_afd1f2684a3484575283e2a46f2d809da.html#afd1f2684a3484575283e2a46f2d809da">MED_NO_NAME</a>)
+<a name="l00042"></a>00042       <span class="keywordtype">character*64</span>  smname2
+<a name="l00043"></a>00043       parameter (smname2=<span class="stringliteral">&quot;support mesh name&quot;</span>)
+<a name="l00044"></a>00044       <span class="keywordtype">integer</span> setype1
+<a name="l00045"></a>00045       parameter (setype1=<a class="code" href="a00321_a9a2843c7d6eacffdd9377b5bfb8a6de3.html#a9a2843c7d6eacffdd9377b5bfb8a6de3">MED_NONE</a>)
+<a name="l00046"></a>00046       <span class="keywordtype">integer</span> setype2
+<a name="l00047"></a>00047       parameter (setype2=<a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a>)
+<a name="l00048"></a>00048       <span class="keywordtype">integer</span> setype3
+<a name="l00049"></a>00049       parameter (setype3=<a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a227d14957ec5f221685cb1d6ec3b6c67">MED_CELL</a>)
+<a name="l00050"></a>00050       <span class="keywordtype">integer</span> sgtype1
+<a name="l00051"></a>00051       parameter (sgtype1=<a class="code" href="a00321_a865361460bec98f2ec3f5bb3237b9264.html#a865361460bec98f2ec3f5bb3237b9264">MED_NO_GEOTYPE</a>)
+<a name="l00052"></a>00052       <span class="keywordtype">integer</span> sgtype2
+<a name="l00053"></a>00053       parameter (sgtype2=<a class="code" href="a00321_a865361460bec98f2ec3f5bb3237b9264.html#a865361460bec98f2ec3f5bb3237b9264">MED_NO_GEOTYPE</a>)
+<a name="l00054"></a>00054       <span class="keywordtype">integer</span> sgtype3
+<a name="l00055"></a>00055       parameter (sgtype3=<a class="code" href="a00321_a29927daaa1a87f2129295a68264ad526.html#a29927daaa1a87f2129295a68264ad526">MED_SEG2</a>)
+<a name="l00056"></a>00056       <span class="keywordtype">integer</span> mtype1,mtype2,mtype3
+<a name="l00057"></a>00057       parameter (mtype1=601)
+<a name="l00058"></a>00058       parameter (mtype2=602)
+<a name="l00059"></a>00059       parameter (mtype3=603)
+<a name="l00060"></a>00060       <span class="keywordtype">integer</span> nnode1,nnode2
+<a name="l00061"></a>00061       parameter (nnode1=1)
+<a name="l00062"></a>00062       parameter (nnode2=3)
+<a name="l00063"></a>00063       <span class="keywordtype">integer</span> ncell2
+<a name="l00064"></a>00064       parameter (ncell2=2)
+<a name="l00065"></a>00065       <span class="keywordtype">integer</span> ncell1
+<a name="l00066"></a>00066       parameter (ncell1=0)
+<a name="l00067"></a>00067       <span class="keywordtype">integer</span> ncatt1,profile1,nvatt1
+<a name="l00068"></a>00068       parameter (ncatt1=0)
+<a name="l00069"></a>00069       parameter (nvatt1=0)
+<a name="l00070"></a>00070       parameter (profile1=0)
+<a name="l00071"></a>00071       <span class="keywordtype">integer</span> nsm
+<a name="l00072"></a>00072       parameter (nsm=3)
+<a name="l00073"></a>00073 <span class="comment">c</span>
+<a name="l00074"></a>00074       <span class="keywordtype">integer</span> it,nsmr
+<a name="l00075"></a>00075       <span class="keywordtype">integer</span> mgtype,mdim,setype,snnode,sncell
+<a name="l00076"></a>00076       <span class="keywordtype">integer</span> sgtype,ncatt,nvatt,profile
+<a name="l00077"></a>00077       <span class="keywordtype">character*64</span> smname,mname
+<a name="l00078"></a>00078 <span class="comment">C </span>
+<a name="l00079"></a>00079 <span class="comment">C</span>
+<a name="l00080"></a>00080 <span class="comment">C     open file</span>
+<a name="l00081"></a>00081       call <a class="code" href="a01020_ga68bd28216f39b6aac3f3cdeb58ca0343.html#ga68bd28216f39b6aac3f3cdeb58ca0343">mfiope</a>(fid,fname,<a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a616bf8345c622a34f0787f42eb400f25">MED_ACC_RDONLY</a>,cret)
+<a name="l00082"></a>00082       print *,<span class="stringliteral">&apos;Open file&apos;</span>,cret
+<a name="l00083"></a>00083       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00084"></a>00084          print *,<span class="stringliteral">&apos;ERROR : file creation&apos;</span>
+<a name="l00085"></a>00085          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00086"></a>00086       <span class="keyword">endif</span> 
+<a name="l00087"></a>00087 <span class="comment">C</span>
+<a name="l00088"></a>00088 <span class="comment">C</span>
+<a name="l00089"></a>00089 <span class="comment">C     read number of struct model</span>
+<a name="l00090"></a>00090       call <a class="code" href="a01029_gae14abb17891b6f1f480ebc88c6e080a6.html#gae14abb17891b6f1f480ebc88c6e080a6">msense</a>(fid,nsmr,cret)
+<a name="l00091"></a>00091       print *,<span class="stringliteral">&apos;Read number of struct model&apos;</span>,nsmr,cret
+<a name="l00092"></a>00092       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00093"></a>00093          print *,<span class="stringliteral">&apos;ERROR : number of struct model&apos;</span>
+<a name="l00094"></a>00094          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00095"></a>00095       <span class="keyword">endif</span> 
+<a name="l00096"></a>00096       <span class="keyword">if</span> (nsmr .ne. nsm) <span class="keyword">then</span>
+<a name="l00097"></a>00097          print *,<span class="stringliteral">&apos;ERROR : number of struct model&apos;</span>
+<a name="l00098"></a>00098          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00099"></a>00099       <span class="keyword">endif</span>
+<a name="l00100"></a>00100 <span class="comment">C</span>
+<a name="l00101"></a>00101 <span class="comment">C</span>
+<a name="l00102"></a>00102 <span class="comment">C     Read informations by iteration</span>
+<a name="l00103"></a>00103       <span class="keyword">do</span> it=1,nsmr
+<a name="l00104"></a>00104 <span class="comment">c</span>
+<a name="l00105"></a>00105          call  <a class="code" href="a01029_gade1dab05fe45f14eb5bac31d4fd6cad5.html#gade1dab05fe45f14eb5bac31d4fd6cad5">msesei</a>(fid,it,mname,mgtype,mdim,smname,
+<a name="l00106"></a>00106      &amp;        setype,snnode,sncell,sgtype,
+<a name="l00107"></a>00107      &amp;        ncatt,profile,nvatt,cret)
+<a name="l00108"></a>00108          print *,<span class="stringliteral">&apos;Read information about struct element&apos;</span>,cret
+<a name="l00109"></a>00109          <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00110"></a>00110             print *,<span class="stringliteral">&apos;ERROR : information about struct element&apos;</span>
+<a name="l00111"></a>00111             call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00112"></a>00112          <span class="keyword">endif</span> 
+<a name="l00113"></a>00113 <span class="comment">c</span>
+<a name="l00114"></a>00114          <span class="keyword">if</span> (it .eq. 1) <span class="keyword">then</span>
+<a name="l00115"></a>00115             <span class="keyword">if</span> ( (mname .ne. mname1) .or.
+<a name="l00116"></a>00116      &amp;           (mgtype .ne. mtype1) .or.
+<a name="l00117"></a>00117      &amp;           (mdim .ne. dim1) .or.
+<a name="l00118"></a>00118      &amp;           (smname .ne. smname1) .or.
+<a name="l00119"></a>00119      &amp;           (setype .ne. setype1) .or.
+<a name="l00120"></a>00120      &amp;           (snnode .ne. nnode1) .or.
+<a name="l00121"></a>00121      &amp;           (sncell .ne. ncell1) .or.
+<a name="l00122"></a>00122      &amp;           (sgtype .ne. sgtype1) .or.
+<a name="l00123"></a>00123      &amp;           (ncatt .ne. ncatt1) .or.
+<a name="l00124"></a>00124      &amp;           (profile .ne. profile1) .or.
+<a name="l00125"></a>00125      &amp;           (nvatt .ne. nvatt1) 
+<a name="l00126"></a>00126      &amp;           )  <span class="keyword">then</span>
+<a name="l00127"></a>00127                print *,<span class="stringliteral">&apos;ERROR : information about struct element&apos;</span>
+<a name="l00128"></a>00128                call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00129"></a>00129             <span class="keyword">endif</span> 
+<a name="l00130"></a>00130          <span class="keyword">endif</span>
+<a name="l00131"></a>00131 <span class="comment">c     </span>
+<a name="l00132"></a>00132          <span class="keyword">if</span> (it .eq. 2) <span class="keyword">then</span>
+<a name="l00133"></a>00133             <span class="keyword">if</span> ( (mname .ne. mname2) .or.
+<a name="l00134"></a>00134      &amp;           (mgtype .ne. mtype2) .or.
+<a name="l00135"></a>00135      &amp;           (mdim .ne. dim2) .or.
+<a name="l00136"></a>00136      &amp;           (smname .ne. smname2) .or.
+<a name="l00137"></a>00137      &amp;           (setype .ne. setype2) .or.
+<a name="l00138"></a>00138      &amp;           (snnode .ne. nnode2) .or.
+<a name="l00139"></a>00139      &amp;           (sncell .ne. ncell1) .or.
+<a name="l00140"></a>00140      &amp;           (sgtype .ne. sgtype2) .or.
+<a name="l00141"></a>00141      &amp;           (ncatt .ne. ncatt1) .or.
+<a name="l00142"></a>00142      &amp;           (profile .ne. profile1) .or.
+<a name="l00143"></a>00143      &amp;           (nvatt .ne. nvatt1) 
+<a name="l00144"></a>00144      &amp;    )  <span class="keyword">then</span>
+<a name="l00145"></a>00145          print *,<span class="stringliteral">&apos;ERROR : information about struct element &apos;</span>
+<a name="l00146"></a>00146          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00147"></a>00147       <span class="keyword">endif</span> 
+<a name="l00148"></a>00148          <span class="keyword">endif</span>
+<a name="l00149"></a>00149 <span class="comment">c</span>
+<a name="l00150"></a>00150          <span class="keyword">if</span> (it .eq. 3)  <span class="keyword">then</span>
+<a name="l00151"></a>00151             <span class="keyword">if</span> ( (mname .ne. mname3) .or.
+<a name="l00152"></a>00152      &amp;           (mgtype .ne. mtype3) .or.
+<a name="l00153"></a>00153      &amp;           (mdim .ne. dim3) .or.
+<a name="l00154"></a>00154      &amp;           (smname .ne. smname2) .or.
+<a name="l00155"></a>00155      &amp;           (setype .ne. setype3) .or.
+<a name="l00156"></a>00156      &amp;           (snnode .ne. nnode2) .or.
+<a name="l00157"></a>00157      &amp;           (sncell .ne. ncell2) .or.
+<a name="l00158"></a>00158      &amp;           (sgtype .ne. sgtype3) .or.
+<a name="l00159"></a>00159      &amp;           (ncatt .ne. ncatt1) .or.
+<a name="l00160"></a>00160      &amp;           (profile .ne. profile1) .or.
+<a name="l00161"></a>00161      &amp;           (nvatt .ne. nvatt1) 
+<a name="l00162"></a>00162      &amp;           )  <span class="keyword">then</span>
+<a name="l00163"></a>00163                print *,<span class="stringliteral">&apos;ERROR : information about struct element&apos;</span>
+<a name="l00164"></a>00164                call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00165"></a>00165             <span class="keyword">endif</span> 
+<a name="l00166"></a>00166          <span class="keyword">endif</span>
+<a name="l00167"></a>00167 <span class="comment">c     </span>
+<a name="l00168"></a>00168       <span class="keyword">enddo</span>
+<a name="l00169"></a>00169 <span class="comment">C</span>
+<a name="l00170"></a>00170 <span class="comment">C</span>
+<a name="l00171"></a>00171 <span class="comment">C     Read struct model name from type</span>
+<a name="l00172"></a>00172       call <a class="code" href="a01029_ga43e688e823d3ddd0c1c559451a3894ae.html#ga43e688e823d3ddd0c1c559451a3894ae">msesen</a>(fid,mtype1,mname,cret)
+<a name="l00173"></a>00173       print *,<span class="stringliteral">&apos;Read struct element name from the type&apos;</span>,cret
+<a name="l00174"></a>00174       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00175"></a>00175          print *,<span class="stringliteral">&apos;ERROR : struct element name from the type&apos;</span>
+<a name="l00176"></a>00176          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00177"></a>00177       <span class="keyword">endif</span> 
+<a name="l00178"></a>00178       <span class="keyword">if</span> (mname .ne. mname1)  <span class="keyword">then</span>
+<a name="l00179"></a>00179          print *,<span class="stringliteral">&apos;ERROR : struct element name from the type&apos;</span>
+<a name="l00180"></a>00180          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00181"></a>00181       <span class="keyword">endif</span> 
+<a name="l00182"></a>00182 <span class="comment">c</span>
+<a name="l00183"></a>00183       call <a class="code" href="a01029_ga43e688e823d3ddd0c1c559451a3894ae.html#ga43e688e823d3ddd0c1c559451a3894ae">msesen</a>(fid,mtype2,mname,cret)
+<a name="l00184"></a>00184       print *,<span class="stringliteral">&apos;Read struct element name from the type&apos;</span>,cret
+<a name="l00185"></a>00185       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00186"></a>00186          print *,<span class="stringliteral">&apos;ERROR : struct element name from the type&apos;</span>
+<a name="l00187"></a>00187          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00188"></a>00188       <span class="keyword">endif</span> 
+<a name="l00189"></a>00189       <span class="keyword">if</span> (mname .ne. mname2)  <span class="keyword">then</span>
+<a name="l00190"></a>00190          print *,<span class="stringliteral">&apos;ERROR : struct element name from the type&apos;</span>
+<a name="l00191"></a>00191          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00192"></a>00192       <span class="keyword">endif</span> 
+<a name="l00193"></a>00193 <span class="comment">c</span>
+<a name="l00194"></a>00194       call <a class="code" href="a01029_ga43e688e823d3ddd0c1c559451a3894ae.html#ga43e688e823d3ddd0c1c559451a3894ae">msesen</a>(fid,mtype3,mname,cret)
+<a name="l00195"></a>00195       print *,<span class="stringliteral">&apos;Read struct element name from the type&apos;</span>,cret
+<a name="l00196"></a>00196       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00197"></a>00197          print *,<span class="stringliteral">&apos;ERROR : struct element name from the type&apos;</span>
+<a name="l00198"></a>00198          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00199"></a>00199       <span class="keyword">endif</span> 
+<a name="l00200"></a>00200       <span class="keyword">if</span> (mname .ne. mname3)  <span class="keyword">then</span>
+<a name="l00201"></a>00201          print *,<span class="stringliteral">&apos;ERROR : struct element name from the type&apos;</span>
+<a name="l00202"></a>00202          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00203"></a>00203       <span class="keyword">endif</span> 
+<a name="l00204"></a>00204 <span class="comment">C</span>
+<a name="l00205"></a>00205 <span class="comment">C</span>
+<a name="l00206"></a>00206 <span class="comment">C     close file</span>
+<a name="l00207"></a>00207       call <a class="code" href="a01020_gabaf92f77da8cad332344587fca32c410.html#gabaf92f77da8cad332344587fca32c410">mficlo</a>(fid,cret)
+<a name="l00208"></a>00208       print *,<span class="stringliteral">&apos;Close file&apos;</span>,cret
+<a name="l00209"></a>00209       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00210"></a>00210          print *,<span class="stringliteral">&apos;ERROR :  close file&apos;</span>
+<a name="l00211"></a>00211          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00212"></a>00212       <span class="keyword">endif</span>  
+<a name="l00213"></a>00213 <span class="comment">C</span>
+<a name="l00214"></a>00214 <span class="comment">C</span>
+<a name="l00215"></a>00215 <span class="comment">C</span>
+<a name="l00216"></a>00216 <span class="keyword">      end</span>
+<a name="l00217"></a>00217 
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:35 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de MEDstructElementVarAttCr.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_6d8408d9855f99d1b33e274ba7d15ec1.html">src</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_fcfa33514a0b2dc319c6500a3d06641e.html">ci</a>
+  </div>
+</div>
+<div class="contents">
+<h1>MEDstructElementVarAttCr.c</h1><a href="a00702.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment"> *</span>
+<a name="l00003"></a>00003 <span class="comment"> *  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment"> *  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment"> *  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment"> *  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment"> *  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment"> *</span>
+<a name="l00009"></a>00009 <span class="comment"> *  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment"> *  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment"> *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment"> *  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment"> *</span>
+<a name="l00014"></a>00014 <span class="comment"> *  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment"> *  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment"> */</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019 <span class="preprocessor">#include &lt;<a class="code" href="a00321.html">med.h</a>&gt;</span>
+<a name="l00020"></a>00020 <span class="preprocessor">#include &lt;<a class="code" href="a00334.html">med_config.h</a>&gt;</span>
+<a name="l00021"></a>00021 <span class="preprocessor">#include &lt;<a class="code" href="a00345.html">med_outils.h</a>&gt;</span>
+<a name="l00022"></a>00022 
+<a name="l00023"></a>00023 <span class="preprocessor">#include &lt;string.h&gt;</span>
+<a name="l00024"></a>00024 <span class="preprocessor">#include &lt;stdlib.h&gt;</span>
+<a name="l00025"></a>00025 
+<a name="l00041"></a>00041 <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a>
+<a name="l00042"></a><a class="code" href="a01014_gab486f3f6ba5622b8e22562286921bdd1.html#gab486f3f6ba5622b8e22562286921bdd1">00042</a> <a class="code" href="a01014_gab486f3f6ba5622b8e22562286921bdd1.html#gab486f3f6ba5622b8e22562286921bdd1" title="Cette routine déclare la présence d&amp;#39;un attribut caractéristique variable attaché...">MEDstructElementVarAttCr</a>(<span class="keyword">const</span> <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>                  fid,
+<a name="l00043"></a>00043                          <span class="keyword">const</span> <span class="keywordtype">char</span>*              <span class="keyword">const</span> modelname,
+<a name="l00044"></a>00044                          <span class="keyword">const</span> <span class="keywordtype">char</span>*              <span class="keyword">const</span> varattname,
+<a name="l00045"></a>00045                          <span class="keyword">const</span> <a class="code" href="a00321_ab6689ff0f472c1b88f02f030d34825b8.html#ab6689ff0f472c1b88f02f030d34825b8">med_attribute_type</a>       varatttype,
+<a name="l00046"></a>00046                          <span class="keyword">const</span> <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>                  ncomponent
+<a name="l00047"></a>00047                          )
+<a name="l00048"></a>00048 {
+<a name="l00049"></a>00049   <a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85">med_access_mode</a>   _MED_ACCESS_MODE;
+<a name="l00050"></a>00050   <a class="code" href="a00320_abd29d7c6abaef5da2a5ed1b73464f0ba.html#abd29d7c6abaef5da2a5ed1b73464f0ba">med_err</a>           _ret=-1;
+<a name="l00051"></a>00051   <a class="code" href="a00320_afa4ec8284026c8c5545e5333475fb65a.html#afa4ec8284026c8c5545e5333475fb65a">med_idt</a>           _attid=0, _elemid=0, _varid=0;
+<a name="l00052"></a>00052   <span class="keywordtype">char</span>              _path[<a class="code" href="a00345_af8e6d85621eb35ee998c5f6730b29029.html#af8e6d85621eb35ee998c5f6730b29029">MED_TAILLE_STRCT</a>+<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1+<a class="code" href="a00345_ae750f7cbf26e9cb821b86779a4a1c510.html#ae750f7cbf26e9cb821b86779a4a1c510">MED_TAILLE_VARATR</a>+<a class="code" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a>+1]=<a class="code" href="a00345_ac3421224f2dff6d30f07f7ba7970045e.html#ac3421224f2dff6d30f07f7ba7970045e">MED_STRCT</a>;
+<a name="l00053"></a>00053   <a class="code" href="a00320_a88dc15143f934cc7b771bc89f46372dc.html#a88dc15143f934cc7b771bc89f46372dc">med_int</a>           _medintvaratttype=varatttype;
+<a name="l00054"></a>00054 
+<a name="l00055"></a>00055 <span class="keywordflow">if</span> (<a class="code" href="a00343_a02375afd4bb9afe51c45df39d321a252.html#a02375afd4bb9afe51c45df39d321a252">_MEDcheckVersion30</a>(fid) &lt; 0) <span class="keywordflow">goto</span> ERROR;
+<a name="l00056"></a>00056 
+<a name="l00057"></a>00057   <span class="keywordflow">if</span> ( (_MED_ACCESS_MODE = <a class="code" href="a00342_a9041638d8648f7e5b2596000974d9e6e.html#a9041638d8648f7e5b2596000974d9e6e">_MEDmodeAcces</a>(fid) ) == <a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a1fbd497dd0343db55bc31ef90d1dcb40">MED_ACC_UNDEF</a> ) {
+<a name="l00058"></a>00058     <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_add62721a58cc720bd2cdea796d56df80.html#add62721a58cc720bd2cdea796d56df80">MED_ERR_UNRECOGNIZED</a>,<a class="code" href="a00335_a13579736db8ffd37161c68a31d53416c.html#a13579736db8ffd37161c68a31d53416c">MED_ERR_ACCESSMODE</a>,<a class="code" href="a00335_ad824855b4091cf4da765648675f531c3.html#ad824855b4091cf4da765648675f531c3">MED_ERR_FILE_MSG</a>);
+<a name="l00059"></a>00059     <span class="keywordflow">goto</span> ERROR;
+<a name="l00060"></a>00060   }
+<a name="l00061"></a>00061 
+<a name="l00062"></a>00062   <span class="keywordflow">if</span> ( _MED_ACCESS_MODE == <a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a616bf8345c622a34f0787f42eb400f25">MED_ACC_RDONLY</a>) {
+<a name="l00063"></a>00063     <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_a5a17f3bad93080ab05839ddef1420c9e.html#a5a17f3bad93080ab05839ddef1420c9e">MED_ERR_INVALID</a>,<a class="code" href="a00335_a13579736db8ffd37161c68a31d53416c.html#a13579736db8ffd37161c68a31d53416c">MED_ERR_ACCESSMODE</a>,<a class="code" href="a00335_ad824855b4091cf4da765648675f531c3.html#ad824855b4091cf4da765648675f531c3">MED_ERR_FILE_MSG</a>);
+<a name="l00064"></a>00064     <a class="code" href="a00348_ae7ba0433e91c450cd44c3808c2acb497.html#ae7ba0433e91c450cd44c3808c2acb497">ISCRUTE_int</a>(_MED_ACCESS_MODE);
+<a name="l00065"></a>00065     <span class="keywordflow">goto</span> ERROR;
+<a name="l00066"></a>00066   }
+<a name="l00067"></a>00067 
+<a name="l00068"></a>00068   <a class="code" href="a00348_ac74d790a13110c04d37e8c7c374e6822.html#ac74d790a13110c04d37e8c7c374e6822">NOFINALBLANK</a>(modelname,ERROR);
+<a name="l00069"></a>00069   <a class="code" href="a00348_ac74d790a13110c04d37e8c7c374e6822.html#ac74d790a13110c04d37e8c7c374e6822">NOFINALBLANK</a>(varattname,ERROR);
+<a name="l00070"></a>00070 
+<a name="l00071"></a>00071   <span class="keywordflow">if</span> ( _medintvaratttype == <a class="code" href="a00321_ab6689ff0f472c1b88f02f030d34825b8.html#ab6689ff0f472c1b88f02f030d34825b8a99b48248d57c520923f0c93f0b38d436">MED_ATT_UNDEF</a> ) {
+<a name="l00072"></a>00072     <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_a5a17f3bad93080ab05839ddef1420c9e.html#a5a17f3bad93080ab05839ddef1420c9e">MED_ERR_INVALID</a>, <a class="code" href="a00335_ab3d5932043d08e77c1bd4f5089be04bb.html#ab3d5932043d08e77c1bd4f5089be04bb">MED_ERR_PARAMETER</a>, <a class="code" href="a00335_a3465f75018bc1aaefeb3fd79cd2d01e7.html#a3465f75018bc1aaefeb3fd79cd2d01e7">MED_ERR_TYPEOF_MSG</a> <a class="code" href="a00335_a839396052811187e23547f71d50ab39b.html#a839396052811187e23547f71d50ab39b">MED_ERR_ATTRIBUTE</a>);
+<a name="l00073"></a>00073     <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(<a class="code" href="a00344_ae1a0cf8414f3272d019cf2b123cb172d.html#ae1a0cf8414f3272d019cf2b123cb172d">MED_NOM_ATT</a>);<a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(varattname);<a class="code" href="a00348_ae7ba0433e91c450cd44c3808c2acb497.html#ae7ba0433e91c450cd44c3808c2acb497">ISCRUTE_int</a>(varatttype);
+<a name="l00074"></a>00074     <span class="keywordflow">goto</span> ERROR;
+<a name="l00075"></a>00075   }
+<a name="l00076"></a>00076 
+<a name="l00077"></a>00077   strcat(_path,modelname);
+<a name="l00078"></a>00078 
+<a name="l00079"></a>00079   <span class="comment">/*</span>
+<a name="l00080"></a>00080 <span class="comment">   * Si le DataGroup /STRUCT/&lt;modelname&gt; n&apos;existe pas =&gt; erreur</span>
+<a name="l00081"></a>00081 <span class="comment">   */</span>
+<a name="l00082"></a>00082   <span class="keywordflow">if</span> ((_elemid = <a class="code" href="a00339_a778c188d23dbbf5488cc9339ffb73938.html#a778c188d23dbbf5488cc9339ffb73938">_MEDdatagroupOpen</a>(fid,_path)) &lt; 0)  {
+<a name="l00083"></a>00083     <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_a0bbda4699e6c5e9a9c3189b702e6f6e6.html#a0bbda4699e6c5e9a9c3189b702e6f6e6">MED_ERR_OPEN</a>,<a class="code" href="a00335_a3e3ac48003b7eac5a1aecac139bcc201.html#a3e3ac48003b7eac5a1aecac139bcc201">MED_ERR_DATAGROUP</a>,_path);
+<a name="l00084"></a>00084     <span class="keywordflow">goto</span> ERROR;
+<a name="l00085"></a>00085   }
+<a name="l00086"></a>00086 
+<a name="l00087"></a>00087   <span class="comment">/*</span>
+<a name="l00088"></a>00088 <span class="comment">   * Si le DataGroup /STRUCT/&lt;modelname&gt;/VARATR/ n&apos;existe pas on le crée</span>
+<a name="l00089"></a>00089 <span class="comment">   */</span>
+<a name="l00090"></a>00090   <span class="keywordflow">if</span> ((_varid = <a class="code" href="a00339_a778c188d23dbbf5488cc9339ffb73938.html#a778c188d23dbbf5488cc9339ffb73938">_MEDdatagroupOpen</a>(_elemid,<a class="code" href="a00345_a1037709bda60f8530d53e07dcf74f57f.html#a1037709bda60f8530d53e07dcf74f57f">MED_VARATR_NOM</a>)) &lt; 0)
+<a name="l00091"></a>00091     <span class="keywordflow">if</span> ((_varid = <a class="code" href="a00338_a035c29f443adaee7c8aa4550ef59b807.html#a035c29f443adaee7c8aa4550ef59b807">_MEDdatagroupCreer</a>(_elemid,<a class="code" href="a00345_a1037709bda60f8530d53e07dcf74f57f.html#a1037709bda60f8530d53e07dcf74f57f">MED_VARATR_NOM</a>)) &lt; 0) {
+<a name="l00092"></a>00092       <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_a92354d1153d9e053407f2f8c0dedbda7.html#a92354d1153d9e053407f2f8c0dedbda7">MED_ERR_CREATE</a>,<a class="code" href="a00335_a3e3ac48003b7eac5a1aecac139bcc201.html#a3e3ac48003b7eac5a1aecac139bcc201">MED_ERR_DATAGROUP</a>,<a class="code" href="a00345_a1037709bda60f8530d53e07dcf74f57f.html#a1037709bda60f8530d53e07dcf74f57f">MED_VARATR_NOM</a>);
+<a name="l00093"></a>00093       <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(_path);<span class="keywordflow">goto</span> ERROR;
+<a name="l00094"></a>00094     }
+<a name="l00095"></a>00095   strcat(_path,<a class="code" href="a00345_a53833736498a1f83f13c8e4e8a2d9c18.html#a53833736498a1f83f13c8e4e8a2d9c18">MED_VARATR</a>);
+<a name="l00096"></a>00096 
+<a name="l00097"></a>00097   <span class="comment">/*</span>
+<a name="l00098"></a>00098 <span class="comment">   * Si le DataGroup /STRUCT/&lt;modelname&gt;/VARATR/&lt;varattname&gt; n&apos;existe pas on le crée</span>
+<a name="l00099"></a>00099 <span class="comment">   */</span>
+<a name="l00100"></a>00100   <span class="keywordflow">if</span> ((_attid = <a class="code" href="a00339_a778c188d23dbbf5488cc9339ffb73938.html#a778c188d23dbbf5488cc9339ffb73938">_MEDdatagroupOpen</a>(_varid,varattname)) &lt; 0)
+<a name="l00101"></a>00101     <span class="keywordflow">if</span> ((_attid = <a class="code" href="a00338_a035c29f443adaee7c8aa4550ef59b807.html#a035c29f443adaee7c8aa4550ef59b807">_MEDdatagroupCreer</a>(_varid,varattname)) &lt; 0) {
+<a name="l00102"></a>00102       <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_a92354d1153d9e053407f2f8c0dedbda7.html#a92354d1153d9e053407f2f8c0dedbda7">MED_ERR_CREATE</a>,<a class="code" href="a00335_a3e3ac48003b7eac5a1aecac139bcc201.html#a3e3ac48003b7eac5a1aecac139bcc201">MED_ERR_DATAGROUP</a>,varattname);
+<a name="l00103"></a>00103       <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(_path);<span class="keywordflow">goto</span> ERROR;
+<a name="l00104"></a>00104     }
+<a name="l00105"></a>00105   strcat(_path,varattname);
+<a name="l00106"></a>00106 
+<a name="l00107"></a>00107   <span class="comment">/*</span>
+<a name="l00108"></a>00108 <span class="comment">   * Creation/Ecriture de l&apos;attribut MED_NOM_ATT (type des valeurs de l&apos;attribut.)</span>
+<a name="l00109"></a>00109 <span class="comment">   */</span>
+<a name="l00110"></a>00110   <span class="keywordflow">if</span> ( <a class="code" href="a00339_aa31453a965b24bbe0e5165ef7fad0d4d.html#aa31453a965b24bbe0e5165ef7fad0d4d">_MEDattributeIntWr</a>(_attid,<a class="code" href="a00344_ae1a0cf8414f3272d019cf2b123cb172d.html#ae1a0cf8414f3272d019cf2b123cb172d">MED_NOM_ATT</a>,&amp;_medintvaratttype) &lt; 0 ) {
+<a name="l00111"></a>00111     <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_ada9ad358d137c53e288ff59d49e45541.html#ada9ad358d137c53e288ff59d49e45541">MED_ERR_WRITE</a>,<a class="code" href="a00335_a839396052811187e23547f71d50ab39b.html#a839396052811187e23547f71d50ab39b">MED_ERR_ATTRIBUTE</a>,_path);
+<a name="l00112"></a>00112     <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(<a class="code" href="a00344_ae1a0cf8414f3272d019cf2b123cb172d.html#ae1a0cf8414f3272d019cf2b123cb172d">MED_NOM_ATT</a>);<a class="code" href="a00348_a818470a84d2ad18a3fbb48170296cd95.html#a818470a84d2ad18a3fbb48170296cd95">ISCRUTE</a>(_medintvaratttype);
+<a name="l00113"></a>00113     <span class="keywordflow">goto</span> ERROR;
+<a name="l00114"></a>00114   }
+<a name="l00115"></a>00115 
+<a name="l00116"></a>00116   <span class="comment">/*</span>
+<a name="l00117"></a>00117 <span class="comment">   * Creation/Ecriture de l&apos;attribut MED_NOM_NCO (nombre de composantes des valeurs de l&apos;attribut.)</span>
+<a name="l00118"></a>00118 <span class="comment">   */</span>
+<a name="l00119"></a>00119   <span class="keywordflow">if</span> ( <a class="code" href="a00339_aa31453a965b24bbe0e5165ef7fad0d4d.html#aa31453a965b24bbe0e5165ef7fad0d4d">_MEDattributeIntWr</a>(_attid,<a class="code" href="a00344_a9093ad026ef70fb3ddfaf8059863df2c.html#a9093ad026ef70fb3ddfaf8059863df2c">MED_NOM_NCO</a>,&amp;ncomponent) &lt; 0 ) {
+<a name="l00120"></a>00120     <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_ada9ad358d137c53e288ff59d49e45541.html#ada9ad358d137c53e288ff59d49e45541">MED_ERR_WRITE</a>,<a class="code" href="a00335_a839396052811187e23547f71d50ab39b.html#a839396052811187e23547f71d50ab39b">MED_ERR_ATTRIBUTE</a>,_path);
+<a name="l00121"></a>00121     <a class="code" href="a00348_a257959db0a78623caa051d11ceb2f8cb.html#a257959db0a78623caa051d11ceb2f8cb">SSCRUTE</a>(<a class="code" href="a00344_a9093ad026ef70fb3ddfaf8059863df2c.html#a9093ad026ef70fb3ddfaf8059863df2c">MED_NOM_NCO</a>);<a class="code" href="a00348_a818470a84d2ad18a3fbb48170296cd95.html#a818470a84d2ad18a3fbb48170296cd95">ISCRUTE</a>(ncomponent);
+<a name="l00122"></a>00122     <span class="keywordflow">goto</span> ERROR;
+<a name="l00123"></a>00123   }
+<a name="l00124"></a>00124 
+<a name="l00125"></a>00125 
+<a name="l00126"></a>00126   _ret=0;
+<a name="l00127"></a>00127  ERROR:
+<a name="l00128"></a>00128 
+<a name="l00129"></a>00129   <span class="keywordflow">if</span> (_attid&gt;0)            <span class="keywordflow">if</span> (<a class="code" href="a00338_ae3ba55fd16381090e93f0ee8e3f9e6c6.html#ae3ba55fd16381090e93f0ee8e3f9e6c6">_MEDdatagroupFermer</a>(_attid) &lt; 0) {
+<a name="l00130"></a>00130     <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_a444c5e2cb5b9f60b769909297300ac14.html#a444c5e2cb5b9f60b769909297300ac14">MED_ERR_CLOSE</a>,<a class="code" href="a00335_a3e3ac48003b7eac5a1aecac139bcc201.html#a3e3ac48003b7eac5a1aecac139bcc201">MED_ERR_DATAGROUP</a>,_path);
+<a name="l00131"></a>00131     <a class="code" href="a00348_a842c3eacac6f6ea4c36848cd7cd955c2.html#a842c3eacac6f6ea4c36848cd7cd955c2">ISCRUTE_id</a>(_attid);
+<a name="l00132"></a>00132   }
+<a name="l00133"></a>00133 
+<a name="l00134"></a>00134   <span class="keywordflow">if</span> (_varid&gt;0)            <span class="keywordflow">if</span> (<a class="code" href="a00338_ae3ba55fd16381090e93f0ee8e3f9e6c6.html#ae3ba55fd16381090e93f0ee8e3f9e6c6">_MEDdatagroupFermer</a>(_varid) &lt; 0) {
+<a name="l00135"></a>00135     <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_a444c5e2cb5b9f60b769909297300ac14.html#a444c5e2cb5b9f60b769909297300ac14">MED_ERR_CLOSE</a>,<a class="code" href="a00335_a3e3ac48003b7eac5a1aecac139bcc201.html#a3e3ac48003b7eac5a1aecac139bcc201">MED_ERR_DATAGROUP</a>,<a class="code" href="a00345_a1037709bda60f8530d53e07dcf74f57f.html#a1037709bda60f8530d53e07dcf74f57f">MED_VARATR_NOM</a>);
+<a name="l00136"></a>00136     <a class="code" href="a00348_a842c3eacac6f6ea4c36848cd7cd955c2.html#a842c3eacac6f6ea4c36848cd7cd955c2">ISCRUTE_id</a>(_varid);
+<a name="l00137"></a>00137   }
+<a name="l00138"></a>00138 
+<a name="l00139"></a>00139   <span class="keywordflow">if</span> (_elemid&gt;0)            <span class="keywordflow">if</span> (<a class="code" href="a00338_ae3ba55fd16381090e93f0ee8e3f9e6c6.html#ae3ba55fd16381090e93f0ee8e3f9e6c6">_MEDdatagroupFermer</a>(_elemid) &lt; 0) {
+<a name="l00140"></a>00140     <a class="code" href="a00349_a07852156956867e0134fc219d370b8d4.html#a07852156956867e0134fc219d370b8d4">MED_ERR_</a>(_ret,<a class="code" href="a00335_a444c5e2cb5b9f60b769909297300ac14.html#a444c5e2cb5b9f60b769909297300ac14">MED_ERR_CLOSE</a>,<a class="code" href="a00335_a3e3ac48003b7eac5a1aecac139bcc201.html#a3e3ac48003b7eac5a1aecac139bcc201">MED_ERR_DATAGROUP</a>,modelname);
+<a name="l00141"></a>00141     <a class="code" href="a00348_a842c3eacac6f6ea4c36848cd7cd955c2.html#a842c3eacac6f6ea4c36848cd7cd955c2">ISCRUTE_id</a>(_elemid);
+<a name="l00142"></a>00142   }
+<a name="l00143"></a>00143 
+<a name="l00144"></a>00144   <span class="keywordflow">return</span> _ret;
+<a name="l00145"></a>00145 }
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:35 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de test31.f</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_ba46011aeafd781e3c350f50ac4ad407.html">tests</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_48518ce8883b67c206b2fcc1b28260ff.html">f</a>
+  </div>
+</div>
+<div class="contents">
+<h1>test31.f</h1><a href="a00855.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">C*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment">C*</span>
+<a name="l00003"></a>00003 <span class="comment">C*  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment">C*  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment">C*  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment">C*  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment">C*  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment">C*</span>
+<a name="l00009"></a>00009 <span class="comment">C*  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment">C*  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment">C*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment">C*  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment">C*</span>
+<a name="l00014"></a>00014 <span class="comment">C*  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment">C*  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment">C*</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 
+<a name="l00019"></a>00019 <span class="comment">C ******************************************************************************</span>
+<a name="l00020"></a>00020 <span class="comment">C * - Nom du fichier : test31.f</span>
+<a name="l00021"></a>00021 <span class="comment">C *</span>
+<a name="l00022"></a>00022 <span class="comment">C * - Description : ecriture d&apos;une numerotation globale dans un maillage MED</span>
+<a name="l00023"></a>00023 <span class="comment">C *</span>
+<a name="l00024"></a>00024 <span class="comment">C ******************************************************************************</span>
+<a name="l00025"></a><a class="code" href="a00855_ab6650e0a3a8d12fdd930d216c62b451d.html#ab6650e0a3a8d12fdd930d216c62b451d">00025</a>         <span class="keyword">program</span> <a class="code" href="a00854_ab6650e0a3a8d12fdd930d216c62b451d.html#ab6650e0a3a8d12fdd930d216c62b451d">test31</a>
+<a name="l00026"></a>00026 <span class="comment">C     </span>
+<a name="l00027"></a>00027         <span class="keyword">implicit none</span>
+<a name="l00028"></a>00028         include <span class="stringliteral">&apos;med.hf&apos;</span>
+<a name="l00029"></a>00029 <span class="comment">C</span>
+<a name="l00030"></a>00030 <span class="comment">C</span>
+<a name="l00031"></a>00031         <span class="keywordtype">integer</span> cret,fid
+<a name="l00032"></a>00032         <span class="keywordtype">character*64</span> maa
+<a name="l00033"></a>00033         <span class="keywordtype">character*200</span> des
+<a name="l00034"></a>00034         <span class="keywordtype">integer</span> nmaa, mdim , nnoe, type, ind,sdim
+<a name="l00035"></a>00035         <span class="keywordtype">integer</span> numglb(100),i
+<a name="l00036"></a>00036         <span class="keywordtype">character*16</span> nomcoo(2)   
+<a name="l00037"></a>00037         <span class="keywordtype">character*16</span> unicoo(2)
+<a name="l00038"></a>00038         <span class="keywordtype">character(16)  </span>:: dtunit
+<a name="l00039"></a>00039         <span class="keywordtype">real*8</span>   coo(8)
+<a name="l00040"></a>00040         <span class="keywordtype">integer</span> nstep, stype, atype,chgt,tsf
+<a name="l00041"></a>00041         <span class="keywordtype">real*8</span> dt
+<a name="l00042"></a>00042         parameter    (mdim = 2, maa = <span class="stringliteral">&quot;maa1&quot;</span>,sdim=2)
+<a name="l00043"></a>00043         parameter    (dt = 0.0)
+<a name="l00044"></a>00044         <span class="keyword">data</span>  coo    /0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0/
+<a name="l00045"></a>00045         <span class="keyword">data</span>  nomcoo /<span class="stringliteral">&quot;x&quot;</span>,<span class="stringliteral">&quot;y&quot;</span>/, unicoo /<span class="stringliteral">&quot;cm&quot;</span>,<span class="stringliteral">&quot;cm&quot;</span>/
+<a name="l00046"></a>00046 
+<a name="l00047"></a>00047 
+<a name="l00048"></a>00048 <span class="comment">C       ** Ouverture du fichier test4.med **</span>
+<a name="l00049"></a>00049         call <a class="code" href="a01020_ga68bd28216f39b6aac3f3cdeb58ca0343.html#ga68bd28216f39b6aac3f3cdeb58ca0343">mfiope</a>(fid,<span class="stringliteral">&apos;test31.med&apos;</span>,<a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85ab53f10a6b700d1087d7a50710fe29f00">MED_ACC_RDWR</a>, cret)
+<a name="l00050"></a>00050         print *,cret
+<a name="l00051"></a>00051         <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00052"></a>00052            print *,<span class="stringliteral">&apos;Erreur ouverture du fichier test31.med&apos;</span>
+<a name="l00053"></a>00053            call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00054"></a>00054         <span class="keyword">endif</span>      
+<a name="l00055"></a>00055         
+<a name="l00056"></a>00056 <span class="comment">C       ** Creation du maillage maa de dimension 2 **</span>
+<a name="l00057"></a>00057 <span class="comment">C       **  et de type non structure               **</span>
+<a name="l00058"></a>00058         nnoe=4
+<a name="l00059"></a>00059         call <a class="code" href="a01026_ga2197e06484561ced5e71f6edd39fd1fd.html#ga2197e06484561ced5e71f6edd39fd1fd">mmhcre</a>(fid,maa,mdim,sdim,
+<a name="l00060"></a>00060      &amp;              <a class="code" href="a00321_a821a4dd94c5c6b095318432bdec8d8a1.html#a821a4dd94c5c6b095318432bdec8d8a1a3719e53a4838d222f0a58148292fda41">MED_UNSTRUCTURED_MESH</a>,
+<a name="l00061"></a>00061      &amp;              <span class="stringliteral">&apos;un premier maillage pour test4&apos;</span>, 
+<a name="l00062"></a>00062      &amp;              <span class="stringliteral">&quot;&quot;</span>,<a class="code" href="a00321_a5b97067a30629cd60470d074691d6798.html#a5b97067a30629cd60470d074691d6798ae896b6adfbde9870b4e875e5167eddd0">MED_SORT_DTIT</a>,<a class="code" href="a00321_a57867e4bed1d104c865cfc9d23c9204d.html#a57867e4bed1d104c865cfc9d23c9204da682ef7f1042079519664eae87f90297e">MED_CARTESIAN</a>,nomcoo,unicoo,cret)
+<a name="l00063"></a>00063         print *,cret
+<a name="l00064"></a>00064         <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00065"></a>00065            print *,<span class="stringliteral">&apos;Erreur creation du maillage&apos;</span>
+<a name="l00066"></a>00066            call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00067"></a>00067         <span class="keyword">endif</span>      
+<a name="l00068"></a>00068         
+<a name="l00069"></a>00069 <span class="comment">C       ** Ecriture des coordonnees en mode MED_FULL_INTERLACE : **</span>
+<a name="l00070"></a>00070 <span class="comment">C       ** (X1,Y1, X2,Y2, X3,Y3, ...)  dans un repere cartesien **</span>
+<a name="l00071"></a>00071         call <a class="code" href="a01026_gadb3dbf89cb22d5e80a4ded7d6a35adf8.html#gadb3dbf89cb22d5e80a4ded7d6a35adf8">mmhcow</a>(fid,maa,<a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>,<a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>,dt,
+<a name="l00072"></a>00072      &amp;     <a class="code" href="a00320_a0ac861d71fe5e0be056a86f9212f1c6a.html#a0ac861d71fe5e0be056a86f9212f1c6aa9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>,nnoe,coo,cret)
+<a name="l00073"></a>00073         print *,cret         
+<a name="l00074"></a>00074         <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00075"></a>00075            print *,<span class="stringliteral">&apos;Erreur ecriture des coordonnees des noeuds&apos;</span>
+<a name="l00076"></a>00076            call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00077"></a>00077         <span class="keyword">endif</span>      
+<a name="l00078"></a>00078 
+<a name="l00079"></a>00079         print <span class="stringliteral">&apos;(A,I1,A,A4,A,I1,A,I4)&apos;</span>,<span class="stringliteral">&apos;maillage &apos;</span>
+<a name="l00080"></a>00080      &amp;        ,ind,<span class="stringliteral">&apos; de nom &apos;</span>,maa,<span class="stringliteral">&apos; et de dimension &apos;</span>,mdim,
+<a name="l00081"></a>00081      &amp;        <span class="stringliteral">&apos; comportant le nombre de noeud &apos;</span>,nnoe
+<a name="l00082"></a>00082 
+<a name="l00083"></a>00083 <span class="comment">C ** construction des numeros globaux</span>
+<a name="l00084"></a>00084          
+<a name="l00085"></a>00085          <span class="keyword">if</span> (nnoe.gt.100) nnoe=100
+<a name="l00086"></a>00086 
+<a name="l00087"></a>00087          <span class="keyword">do</span> i=1,nnoe
+<a name="l00088"></a>00088             numglb(i)=i+100
+<a name="l00089"></a>00089          <span class="keyword">enddo</span>
+<a name="l00090"></a>00090 
+<a name="l00091"></a>00091 <span class="comment">C ** ecriture de la numerotation globale</span>
+<a name="l00092"></a>00092          call  <a class="code" href="a01026_ga556ce42f1aed2f6d9a87a5300701ae39.html#ga556ce42f1aed2f6d9a87a5300701ae39">mmhgnw</a>(fid,maa,<a class="code" href="a00321_a8f72b6ceb3b6f5a67f9efd46cb90707a.html#a8f72b6ceb3b6f5a67f9efd46cb90707a">MED_NO_DT</a>,<a class="code" href="a00321_a95919207fd7a18ba26e6e03f04811e3f.html#a95919207fd7a18ba26e6e03f04811e3f">MED_NO_IT</a>,<a class="code" href="a00321_aab0e957294723517d5c3641bb71b0470.html#aab0e957294723517d5c3641bb71b0470a074507163b07b6d764823a78c5c07f0f">MED_NODE</a>,<a class="code" href="a00321_a9a2843c7d6eacffdd9377b5bfb8a6de3.html#a9a2843c7d6eacffdd9377b5bfb8a6de3">MED_NONE</a>, 
+<a name="l00093"></a>00093      &amp;                nnoe,numglb,cret)
+<a name="l00094"></a>00094 
+<a name="l00095"></a>00095         <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00096"></a>00096            print *,<span class="stringliteral">&apos;Erreur ecriture numerotation globale &apos;</span>
+<a name="l00097"></a>00097            call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00098"></a>00098         <span class="keyword">endif</span>      
+<a name="l00099"></a>00099 <span class="comment">C ** Fermeture du fichier                                **</span>
+<a name="l00100"></a>00100         call <a class="code" href="a01020_gabaf92f77da8cad332344587fca32c410.html#gabaf92f77da8cad332344587fca32c410">mficlo</a>(fid,cret)
+<a name="l00101"></a>00101         print *,cret
+<a name="l00102"></a>00102         <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00103"></a>00103            print *,<span class="stringliteral">&apos;Erreur fermeture du fichier&apos;</span>
+<a name="l00104"></a>00104            call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00105"></a>00105         <span class="keyword">endif</span>      
+<a name="l00106"></a>00106 <span class="comment">C     </span>
+<a name="l00107"></a>00107 <span class="keyword">        end</span>
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:35 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

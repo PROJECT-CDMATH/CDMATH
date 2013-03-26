@@ -1,0 +1,631 @@
+<A NAME="____Concepts et fonctionnalit&eacute;s avanc&eacute;s sur les maillages____">
+</A>
+<A HREF="#1.">Cr&eacute;er et lire dans un maillage des &eacute;l&eacute;ments
+de type polygones et poly&egrave;dres quelconques</A> 
+</P>
+<P><A HREF="#2.">Cr&eacute;er et lire un maillage avec gestion des
+profils sur les entit&eacute;s</A> 
+</P>
+<P><A HREF="#3.">Cr&eacute;er et lire un maillage &eacute;volutif</A>
+</P>
+<P><A HREF="#4.">Cr&eacute;er et lire une &eacute;quivalence entre
+les entit&eacute;s d'un maillage</A> 
+</P>
+<P><A HREF="#5.">Cr&eacute;er et lire un maillage avec des &eacute;l&eacute;ments
+de structure</A> 
+</P>
+<P><A HREF="#6.">Ecriture et lecture en parall&egrave;le par la
+d&eacute;composition de domaine </A>
+</P>
+<H3><A NAME="1."></A>Cr&eacute;er et lire dans un maillage des
+&eacute;l&eacute;ments de type polygones et poly&egrave;dres
+quelconques</H3>
+<P>En plus des types g&eacute;om&eacute;triques pr&eacute;d&eacute;finis
+(exemples : MED_SEG2, MED_SEG3, MED_TRIA3, ...), il est possible de
+d&eacute;finir dans un maillage non structur&eacute; des &eacute;l&eacute;ments
+qui correspondent &agrave; des polygones (mailles ou faces) ou des
+poly&egrave;dres (mailles) quelconques. 
+</P>
+<P>Pour d&eacute;crire la g&eacute;om&eacute;trie et la connectivit&eacute;
+des mailles/faces polygones quelconques, il s'agit d'adopter la
+convention suivante. L'ordre de stockage des polygones est libre
+-i.e. n'est pas r&eacute;gi par l'ordre des types g&eacute;om&eacute;triques
+(donn&eacute; par le nombre de sommets). Par exemple, si on a 2
+polygones &agrave; 5 sommets (P5) et 1 polygone &agrave; 6 sommets
+(P6), on peut stocker la connectivit&eacute; de ces &eacute;l&eacute;ments
+dans l'ordre suivant : P5, P6, P5. On acc&egrave;de &agrave; la
+connectivit&eacute; de chaque polygone par l'interm&eacute;diaire
+d'un tableau d'indexation. Pour notre exemple cela revient &agrave;
+avoir les 2 tableaux suivants (les indexations dans MED d&eacute;butent
+par convention &agrave; l'indice 1) : 
+</P>
+<P ALIGN=CENTER><IMG SRC="../png/exemple_connectivite_polygones.png" NAME="Image3" ALIGN=BOTTOM WIDTH=660 HEIGHT=224 BORDER=0>
+</P>
+<P>En connectivit&eacute; nodale, les entiers stock&eacute;s dans le
+tableau de connectivit&eacute; correspondent &agrave; des num&eacute;ros
+de noeuds alors qu'en connectivit&eacute; descendante, ils
+correspondent &agrave; des num&eacute;ros d'ar&ecirc;tes. 
+</P>
+<P>L'&eacute;criture de la connectivit&eacute; des polygones d'un
+maillage s'appuie sur une routine d&eacute;di&eacute;e \ref
+MEDmeshPolygonWr / \ref mmhpgw qui prend en param&egrave;tres les
+tableaux d'indexation et de connectivit&eacute;. A noter que le seul
+mode de stockage possible du tableau de connectivit&eacute; est le
+mode non entrelac&eacute;.</P>
+<P>\include UsesCase_MEDmesh_13.c</P>
+<P>La lecture de la connectivit&eacute; des polygones d'un maillage
+demande une approche sp&eacute;cifique. Il est d'abord n&eacute;cessaire
+d'appeler 2 fois la routine \ref MEDmeshnEntity / \ref mmhnme. Le
+premier appel permet de r&eacute;cup&eacute;rer la taille du tableau
+d'indexation (le nombre de polygone pr&eacute;sent dans le maillage
+est &eacute;gal &agrave; la taille de ce tableau -1). Le second appel
+permet de lire la taille du tableau de connectivit&eacute; qu'il est
+n&eacute;cessaire d'allouer en m&eacute;moire. Enfin la routine \ref
+MEDmeshPolygonRd / \ref mmhpgr va lire les tableaux d'indexation et
+de connectivit&eacute;.</P>
+<P>Le cas d'utilisation suivant montre comment lire la connectivit&eacute;
+des polygones d'un maillage.</P>
+<P>\include UsesCase_MEDmesh_14.c</P>
+<P>Pour d&eacute;crire la g&eacute;om&eacute;trie et la connectivit&eacute;
+des mailles poly&egrave;dres quelconques, il s'agit d'adopter la
+convention suivante. Pour la connectivit&eacute; nodale, on acc&egrave;de
+&agrave; la connectivit&eacute; via un syst&egrave;me de double
+indexation : un premier tableau d'indexation &quot;indexp&quot;
+renvoie &agrave; la liste des faces de chaque poly&egrave;dre ; un
+second tableau &quot;indexf&quot; renvoie pour chaque face &agrave;
+la liste des noeuds la composant. Voici un exemple d'illustration
+pour d&eacute;finir la connectivit&eacute; de &quot;n&quot; poly&egrave;dres
+en mode nodal : 
+</P>
+<P ALIGN=CENTER><IMG SRC="../png/exemple_connectivite_nodale_polyedres.png" NAME="Image1" ALIGN=BOTTOM WIDTH=660 HEIGHT=286 BORDER=0>
+</P>
+<P STYLE="margin-bottom: 0cm">A noter que les faces communes sont
+d&eacute;crites 2 fois (m&ecirc;mes listes de noeuds mais
+orientations diff&eacute;rentes) et la normale des faces doit &ecirc;tre
+ext&eacute;rieure.</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P STYLE="margin-bottom: 0cm">Pour la connectivit&eacute;
+descendante, un seul niveau d'indexation suffit (indexp). Le tableau
+des connectivit&eacute;s contient les num&eacute;ros des faces. Le
+tableau &quot;indexf&quot; contient alors le type g&eacute;om&eacute;trique
+de chaque face (exemple : MED_TRIA3). A noter que dans ce cas, &quot;nf
+= consiz&quot;. 
+</P>
+<P>Voici un exemple d'illustration :</P>
+<P ALIGN=CENTER><IMG SRC="../png/exemple_connectivite_descendante_polyedres.png" NAME="Image2" ALIGN=BOTTOM WIDTH=660 HEIGHT=335 BORDER=0>
+</P>
+<P><BR><BR>
+</P>
+<P>L'&eacute;criture de la connectivit&eacute; des poly&egrave;dres
+d'un maillage s'appuie sur une routine d&eacute;di&eacute;e \ref
+MEDmeshPolyhedronWr / \ref mmhphw qui prend en param&egrave;tres les
+tableaux d'indexation et de connectivit&eacute;. A noter que le seul
+mode de stockage possible du tableau de connectivit&eacute; est le
+mode non entrelac&eacute;. 
+</P>
+<P>L'exemple suivant propose l'&eacute;criture de la connectivit&eacute;
+de mailles poly&egrave;dres selon les deux modes de connectivit&eacute;
+possibles. A noter qu'au m&ecirc;me titre que les autres entit&eacute;s
+d'un maillage, les poly&egrave;dres (tout comme les polygones)
+portent un num&eacute;ro de famille (0 par d&eacute;faut) et peuvent
+porter un nom ou un num&eacute;ro optionnel.</P>
+<P>\include test25.c</P>
+<P>La lecture de la connectivit&eacute; des poly&egrave;dres d'un
+maillage demande une approche sp&eacute;cifique. Il est d'abord
+n&eacute;cessaire d'appeler plusieurs fois la routine \ref
+MEDmeshnEntity / \ref mmhnme afin de r&eacute;cup&eacute;rer la
+taille des tableaux d'indexation. Enfin la routine \ref
+MEDmeshPolyhedronRd / \ref mmhphr va lire les tableaux d'indexation
+et de connectivit&eacute;, comme l'illustre le cas d'utilisation
+suivant.</P>
+<P>\include test26.c</P>
+<H3><A NAME="2."></A>Cr&eacute;er et lire un maillage avec gestion
+des profils sur les entit&eacute;s</H3>
+<P>Un profil sur les entit&eacute;s d'un maillage permet l'&eacute;criture
+ou la lecture sur un sous-ensemble de ces entit&eacute;s. Un profil
+est un objet stock&eacute; dans un fichier MED. Un profil est un
+tableau de num&eacute;ros d'entit&eacute;s (num&eacute;rotation MED
+relative &agrave; un type g&eacute;om&eacute;trique d'&eacute;l&eacute;ment
+commen&ccedil;ant &agrave; 1) associ&eacute;s aux valeurs &agrave;
+traiter. La d&eacute;finition d'un profil se fait selon les
+conventions suivantes : les num&eacute;ros d'entit&eacute; utilis&eacute;s
+pour d&eacute;finir un profil sont ceux de la num&eacute;rotation
+implicite (ordre d'apparition des entit&eacute;s par ordre
+croissant). Un profil est une liste compacte : on ne met que les
+num&eacute;ros repr&eacute;sentatifs. Exemple : sur un maillage de 30
+noeuds, si on a un champ portant sur les noeuds de num&eacute;ros de
+r&eacute;f&eacute;rence 4, 5 et 12, le profil correspondant sera la
+liste (4,5,12).</P>
+<P>La routine \ref MEDprofileWr / \ref mpfprw permet d'&eacute;crire
+un profil dans un fichier MED. Un profil est identifi&eacute; par son
+nom (cha&icirc;ne de taille \ref MED_NAME_SIZE caract&egrave;res). 
+</P>
+<P>A la lecture, la routine \ref MEDnProfile / \ref mpfnpf va lire le
+nombre de profil dans un fichier. Il s'agit ensuite d'it&eacute;rer
+sur chaque profil afin de r&eacute;cup&eacute;rer pour chacun d'eux :
+le nom et la taille du tableau du profil avec la routine \ref
+MEDprofileInfo / \ref mpfpfi, le tableau des num&eacute;ros d'entit&eacute;s
+avec \ref MEDprofileRd / \ref mpfprr. 
+</P>
+<P>Lorsqu'on conna&icirc;t le nom du profil, la routine permet \ref
+MEDprofileSizeByName / \ref mpfpsn de lire la taille du tableau.</P>
+<P>Au niveau de l'API sur les maillages, l'utilisation des profils
+est possible en &eacute;criture ou en lecture des coordon&eacute;es
+des noeuds et de la connectivit&eacute; des &eacute;l&eacute;ments
+d'un maillage non structur&eacute; avec les routines : \ref
+MEDmeshNodeCoordinateWithProfileWr / \ref mmhcow pour l'&eacute;criture
+des coordonn&eacute;es, \ref MEDmeshNodeCoordinateWithProfileRd /
+\ref mmhcor pour la lecture des coordonn&eacute;es, \ref
+MEDmeshElementConnectivityWithProfileWr / \ref mmhypw pour l'&eacute;criture
+des connectivit&eacute;s, \ref
+MEDmeshElementConnectivityWithProfileRd / \ref mmhypr pour la lecture
+des connectivit&eacute;s. A noter &eacute;galement la routine \ref
+MEDmeshnEntityWithProfile / \ref mmhnep qui peut r&eacute;cup&eacute;rer
+le nombre d'entit&eacute; &agrave; lire selon un profil donn&eacute;.
+</P>
+<P><A NAME="a3f7b3a3c5ddcaba3fa1741a367503c8da285ff6474ec39fcb4c49b66a9376ec92"></A>
+Pour toutes ces routines, il est possible de sp&eacute;cifier le mode
+de stockage des tableaux de coordonn&eacute;es ou de connectivit&eacute;
+en m&eacute;moire. Deux modes sont possibles : le mode \ref
+MED_GLOBAL_PFLMODE indique que le stockage utilis&eacute; contient en
+m&eacute;moire toutes les valeurs relatives &agrave; toutes les
+entit&eacute;s d'un m&ecirc;me type ; le mode \ref
+MED_COMPACT_PFLMODE indique que le stockage utilis&eacute; est
+compact et ne contient en m&eacute;moire que le sous-ensemble de
+valeurs relatives au profil.</P>
+<H3><A NAME="3."></A>Cr&eacute;er et lire un maillage &eacute;volutif</H3>
+<P>Dans MED, un maillage peut &eacute;voluer par &eacute;tape, chaque
+&eacute;tape &eacute;tant estampill&eacute;e par un couple &lt;pas de
+temps, num&eacute;ro d'ordre&gt; &agrave; l'instar des &eacute;tapes
+de calcul d'un champ de r&eacute;sultat. 
+</P>
+<P>Une &eacute;volution peut porter un maillage d&eacute;formable &agrave;
+topologie constante (les coordonn&eacute;es des noeuds ou d'un
+sous-ensemble des noeuds sont modifi&eacute;es &agrave; chaque
+&eacute;tape), un maillage &agrave; d&eacute;formation solide (selon
+une matrice de transformation pour chaque &eacute;tape applicable aux
+coordonn&eacute;es des noeuds), un maillage red&eacute;finissable
+(les connectivit&eacute;s des mailles changent au cours des &eacute;tapes).</P>
+<P>A la cr&eacute;ation d'une &eacute;tape de calcul, les
+informations de l'&eacute;tape pr&eacute;c&eacute;dente inchang&eacute;es
+sont automatiquement report&eacute;es : coordonn&eacute;es,
+connectivit&eacute;s, num&eacute;ros optionnels, noms optionnels,
+num&eacute;ros de famille. Il est donc possible de cr&eacute;er une
+&eacute;tape d'&eacute;volution sans avoir &agrave; y reporter toutes
+ces donn&eacute;es. L'utilisateur a la responsabilit&eacute; de
+maintenir la coh&eacute;rence des informations covariantes au cours
+des diff&eacute;rentes &eacute;tapes.</P>
+<P>A noter qu'un champ de r&eacute;sultat repose d&eacute;sormais sur
+une &eacute;tape d'&eacute;volution existante d'un maillage (par
+d&eacute;faut l'&eacute;tape initiale &lt;MED_NO_DT, MED_NO_IT&gt;).
+Il est n&eacute;cessaire de stocker le maillage initial &lt;MED_NO_DT,
+MED_NO_IT&gt; avant toute &eacute;volution. 
+</P>
+<P>Au cours des &eacute;volutions d'un maillage, les types
+g&eacute;om&eacute;triques d'&eacute;l&eacute;ments doivent rester
+identiques. Si de nouveaux types g&eacute;om&eacute;triques
+apparaissent, il faut cr&eacute;er un nouveau maillage.</P>
+<P>Pour ce qui concerne l'&eacute;criture des maillages d&eacute;formables
+&agrave; topologie constante, il faut utiliser la routine \ref
+MEDmeshNodeCoordinateWithProfileWr / \ref mmhcow en passant en
+param&egrave;tre le pas de temps et ou le num&eacute;ro d'ordre
+correspondant &agrave; l'&eacute;tape, le profil s&eacute;lectionnant
+les noeuds dont les coordonn&eacute;es sont modifi&eacute;es, le
+tableau des nouvelles coordonn&eacute;es.</P>
+<P>Le cas d'utilisation suivant apr&egrave;s cr&eacute;ation du
+maillage initial, cr&eacute;&eacute;e 2 &eacute;volutions successives
+de sous-ensembles des coordonn&eacute;es des noeuds du maillage. 
+</P>
+<P>\include UsesCase_MEDmesh_6.c</P>
+<P>A la lecture des maillages d&eacute;formables &agrave; topologie
+constante, une fois la lecture du maillage initiale effectu&eacute;e,
+il faut it&eacute;rer sur les diff&eacute;rentes &eacute;tapes
+d'&eacute;volution pr&eacute;sentes dans le maillage (le nombre
+d'&eacute;tape est lue par les routines \ref MEDmeshInfoByName / \ref
+mmhmin ou \ref MEDmeshInfo / \ref mmhmii) et &agrave; chaque &eacute;tape
+: r&eacute;cup&eacute;rer les valeurs du pas de temps et du num&eacute;ro
+d'it&eacute;ration avec la routine \ref MEDmeshComputationStepInfo /
+\ref mmhcsi ; d&eacute;terminer la nature du changement parmi les cas
+possibles pr&eacute;-cit&eacute;s avec la routine \ref
+MEDmeshnEntityWithProfile / \ref mmhnep et &eacute;galement r&eacute;cup&eacute;rer
+le nombre de noeuds &agrave; lire selon le mode de stockage m&eacute;moire
+pass&eacute; en param&egrave;tre ; lire les nouvelles coordonn&eacute;es
+des noeuds avec la routine \ref MEDmeshNodeCoordinateWithProfileRd /
+\ref mmhcor.</P>
+<P>C'est ce que fait le cas d'utilisation suivant.</P>
+<P>\include UsesCase_MEDmesh_7.c</P>
+<P>Le cas d'utilisation suivant propose une approche plus g&eacute;n&eacute;rique
+dans la lecture des maillages d&eacute;formables &agrave; topologie
+constante.</P>
+<P>\include UsesCase_MEDmesh_8.c</P>
+<P>Pour ce qui concerne l'&eacute;criture des maillages avec
+d&eacute;formation solide, il faut utiliser la routine \ref
+MEDmeshNodeCoordinateTrsfWr / \ref mmhtfw en passant en param&egrave;tre
+le pas de temps et ou le num&eacute;ro d'ordre correspondant &agrave;
+l'&eacute;tape et la matrice de transformation. Cette matrice
+comporte 7 valeurs r&eacute;elles : les trois premi&egrave;res
+d&eacute;finissent la translation &agrave; appliquer selon l'ordre
+des axes d&eacute;finis pour le maillage et les quatres suivantes
+d&eacute;finissent une rotation phi par le quarternion (p4,p5-7) o&ugrave;
+p4 est le scalaire et p5-7 le vecteur d&eacute;crit suivant l'ordre
+des axes d&eacute;finis pour le maillage. S'il y a moins de trois
+axes d&eacute;finis, les param&egrave;tres inutiles &agrave; la
+transformation doivent &ecirc;tre &agrave; z&eacute;ro.</P>
+<P>\include UsesCase_MEDmesh_9.c</P>
+<P>A la lecture des maillages avec d&eacute;formation solide, une
+fois la lecture du maillage initiale effectu&eacute;e, il faut it&eacute;rer
+sur les diff&eacute;rentes &eacute;tapes d'&eacute;volution pr&eacute;sentes
+dans le maillage (le nombre d'&eacute;tape est lue par les routines
+\ref MEDmeshInfoByName / \ref mmhmin ou \ref MEDmeshInfo / \ref
+mmhmii) et &agrave; chaque &eacute;tape : r&eacute;cup&eacute;rer les
+valeurs du pas de temps et du num&eacute;ro d'it&eacute;ration avec
+la routine \ref MEDmeshComputationStepInfo / \ref mmhcsi ; d&eacute;terminer
+la nature du changement parmi les cas possibles pr&eacute;-cit&eacute;s
+avec la routine \ref MEDmeshnEntityWithProfile / \ref mmhnep et
+&eacute;galement v&eacute;rifier la pr&eacute;sence de la matrice de
+transformation ; lire la matrice de transformation avec la routine
+\ref MEDmeshNodeCoordinateTrsfRd / \ref mmhtfr.</P>
+<P>Le cas d'utilisation suivant permet de lire de mani&egrave;re
+g&eacute;n&eacute;rique un maillage &eacute;volutif, &agrave; la fois
+s'il s'agit d'un maillage d&eacute;formable &agrave; topologie
+constante ou d'un maillage avec d&eacute;formation solide.</P>
+<P>\include UsesCase_MEDmesh_12.c</P>
+<H3><A NAME="4."></A>Cr&eacute;er et lire une &eacute;quivalence
+entre les entit&eacute;s d'un maillage</H3>
+<P ALIGN=LEFT>La notion d'&eacute;quivalence permet de g&eacute;rer
+des listes de correspondance mettant en relation deux entit&eacute;s
+de m&ecirc;me type (deux noeuds, deux mailles, deux ar&ecirc;tes ou
+deux faces). 
+</P>
+<P>Une &eacute;quivalence est identifi&eacute;e par son nom (cha&icirc;ne
+de \ref MED_NAME_SIZE caract&egrave;res) et poss&egrave;de &eacute;galement
+une description (cha&icirc;ne d'au plus \ref MED_COMMENT_SIZE). La
+routine \ref MEDequivalenceCr / \ref meqcre permet de cr&eacute;er
+une &eacute;quivalence. L'&eacute;criture des &eacute;quivalences est
+optionnelle : un fichier peut contenir de z&eacute;ro &agrave;
+plusieurs &eacute;quivalences. Une fois l'&eacute;quivalence cr&eacute;&eacute;e,
+il s'agit de lui associer des tableaux de correspondances entre les
+entit&eacute;s souhait&eacute;es. La routine \ref
+MEDequivalenceCorrespondenceWr / \ref meqcow permet d'&eacute;crire
+un tableau de correspondance dans une &eacute;quivalence pour un type
+d'entit&eacute; pour une &eacute;tape d'&eacute;volution du maillage
+(&lt;MED_NO_DT, MED_NO_IT&gt; par d&eacute;faut). Si cette entit&eacute;
+correspond &agrave; un &eacute;l&eacute;ment, il faut en plus
+pr&eacute;ciser le type g&eacute;om&eacute;trique de l'&eacute;l&eacute;ment.
+</P>
+<P STYLE="font-style: normal">Les correspondances entre entit&eacute;s
+sont stock&eacute;es 2 &agrave; 2 en m&eacute;moire dans une
+&eacute;quivalence : ainsi dans l'exemple suivant, le tableau de
+correspondances suivant {1,2,3,4,5,6} appliqu&eacute; &agrave; des
+entit&eacute;s de type MED_TRIA3 (triangle &agrave; 3 noeuds),
+signifie qu'on a les 3 correspondances suivantes : entre le triangle
+num&eacute;ro 1 et le triangle num&eacute;ro 2, entre le triangle
+num&eacute;ro 3 et le triangle num&eacute;ro 4, entre le triangle
+num&eacute;ro 5 et le triangle num&eacute;ro 6. 
+</P>
+<P>\include test12.c</P>
+<P>A la lecture, l'acc&egrave;s aux &eacute;quivalences dans un
+fichier peut se faire via un it&eacute;rateur. La routine \ref
+MEDnEquivalence / \ref meqneq permet de lire le nombre d'&eacute;quivalence
+dans un fichier. Il s'agit ensuite d'it&eacute;rer sur toutes les
+&eacute;quivalences et &agrave; chaque it&eacute;ration : la routine
+\ref MEDequivalenceInfo / \ref meqeqi lit les informations relatives
+&agrave; une &eacute;quivalence (nom, description, nombre d'&eacute;tape
+d'&eacute;volution du maillage, nombre de correspondance pour l'&eacute;tape
+par d&eacute;faut &lt;MED_NO_DT,MED_NO_IT&gt;) ; la routine \ref
+MEDequivalenceCorrespondenceSize / \ref meqcsz lit le nombre de
+correspondance par &eacute;tape d'&eacute;volution du maillage ; la
+routine \ref MEDequivalenceCorrespondenceRd / \ref meqcor permet de
+lire un tableau de correspondance pour un type d'entit&eacute; pour
+une &eacute;tape d'&eacute;volution du maillage.</P>
+<P STYLE="font-style: normal">A noter &eacute;galement l'existence de
+la routine \ref MEDequivalenceComputingStepInfo / \ref meqcsi qui
+permet de lire les informations relatives &agrave; une &eacute;quivalence
+pour une &eacute;tape d'&eacute;volution du maillage donn&eacute;e.</P>
+<P STYLE="font-style: normal">Le cas d'utilisation suivant propose
+une lecture g&eacute;n&eacute;rique de toutes les &eacute;quivalences
+qu'il est possible de trouver dans un fichier MED. 
+</P>
+<P>\include test13.c</P>
+<H3><A NAME="5."></A>Cr&eacute;er et lire un maillage avec des
+&eacute;l&eacute;ments de structure</H3>
+<P>MED permet de cr&eacute;er des mod&egrave;les d'&eacute;l&eacute;ments
+de structure. Un mod&egrave;le d'&eacute;l&eacute;ment est propre &agrave;
+un fichier qui doit &ecirc;tre celui de(s) maillage(s) de calcul qui
+utilisent le mod&egrave;le. Il peut y avoir plusieurs mod&egrave;les
+d'&eacute;l&eacute;ments de structures dans un m&ecirc;me fichier.
+Une fois le mod&egrave;le d&eacute;fini, l'&eacute;l&eacute;ment de
+structure devient un nouveau type d'&eacute;l&eacute;ment d'un
+maillage de calcul au m&ecirc;me titre que les autres types
+d'&eacute;l&eacute;ments pr&eacute;-d&eacute;finis dans le mod&egrave;le.</P>
+<P>Le mod&egrave;le MED r&eacute;serve des noms de mod&egrave;les
+pour les particules (\ref MED_PARTICLE_NAME), les billes (\ref
+MED_BALL_NAME) et les poutres (\ref MED_BEAM_NAME). Cette liste de
+noms r&eacute;serv&eacute;s est amen&eacute;e &agrave; s'&eacute;toffer
+au fil des versions de MED, de fait tous les noms de mod&egrave;le
+commen&ccedil;ant par &laquo;&nbsp;MED_&nbsp;&raquo; sont &eacute;galement
+r&eacute;serv&eacute;s. A chaque nom de mod&egrave;le r&eacute;serv&eacute;
+ou fix&eacute; par l'utilisateur est associ&eacute; un num&eacute;ro
+de type g&eacute;om&eacute;trique unique au fichier. Ce num&eacute;ro
+compl&egrave;te les num&eacute;ros existants pour les types
+g&eacute;om&eacute;triques &eacute;l&eacute;ments finis. Le num&eacute;ro
+de type d'un &eacute;l&eacute;ment de structure est utilisable comme
+celui des types g&eacute;om&eacute;triques classiques pour s'informer
+de la pr&eacute;sence du type d'&eacute;l&eacute;ment dans un
+maillage de calcul. Le type d'entit&eacute; de ce type d'&eacute;l&eacute;ment
+est \ref MED_STRUCT_ELEMENT.</P>
+<P>Un mod&egrave;le de structure utilis&eacute; dans un fichier doit
+&ecirc;tre compl&egrave;tement d&eacute;fini dans ce fichier. Ainsi
+les maillages et les champs s'appuyant sur des &eacute;lements de ce
+mod&egrave;le pourront &ecirc;tre relus par tout code s'int&eacute;ressant
+aux &eacute;l&eacute;ments de structure. La description d'un mod&egrave;le
+d'&eacute;l&eacute;ment de structure peut s'appuyer sur un maillage
+support. 
+</P>
+<P>Si le mod&egrave;le ne contient pas de maillage support, chaque
+&eacute;l&eacute;ment de structure associ&eacute; au mod&egrave;le,
+s'appuie sur les noeuds du maillage de calcul pour se positionner.
+C'est le cas par exemple du mod&egrave;le pr&eacute;-d&eacute;fini
+des particules. Les coordonn&eacute;es de ces noeuds peuvent &eacute;voluer
+au cours du temps selon le principe des maillages &eacute;volutifs
+pr&eacute;sent&eacute;s pr&eacute;c&eacute;demment. 
+</P>
+<P>Un maillage support contient 1 ou plusieurs noeuds et
+&eacute;ventuellement des mailles. La connectivit&eacute; des
+&eacute;l&eacute;ments de structure y est uniquement d&eacute;crite
+en mode nodal. Les noeuds d'un maillage support sont d&eacute;finis
+ind&eacute;pendamment des maillages de calcul. Ces noeuds ne sont pas
+r&eacute;f&eacute;renc&eacute;s dans les maillages de calculs. Les
+coordonn&eacute;es des noeuds sont d&eacute;finies dans un espace de
+dimension &eacute;gale &agrave; celle de l'&eacute;l&eacute;ment de
+structure. Le rep&egrave;re de coordonn&eacute;es est propre &agrave;
+la description du mod&egrave;le de l'&eacute;l&eacute;ment. Les
+mailles d&eacute;finies dans un maillage support sont ind&eacute;pendantes
+des maillages de calcul et ne sont pas r&eacute;f&eacute;renc&eacute;es
+dans les maillages de calcul. S'il y a des mailles dans le maillage
+support, la connectivit&eacute; des &eacute;l&eacute;ments de
+structure r&eacute;f&eacute;rence des num&eacute;ros de mailles dans
+les maillages de calcul. Il ne peut y avoir qu'un seul type
+g&eacute;om&eacute;trique de maille dans un maillage support. Dans un
+maillage support, il est pas utile d'&eacute;crire les num&eacute;ros
+de familles (toutes les entit&eacute;s sont rattach&eacute;es &agrave;
+la famille 0 par d&eacute;faut), les num&eacute;ros optionnels, les
+noms optionnels des entit&eacute;s du maillage. Un maillage support
+ne peut contenir de polygones ou poly&egrave;dres quelconques. 
+</P>
+<P>Les caract&eacute;ristiques d'un &eacute;l&eacute;ment de
+structure sont d&eacute;crites par des attributs. Il existe deux
+types d'attributs caract&eacute;ristiques : des attributs
+caract&eacute;ristiques &agrave; valeur constante pour tous les
+&eacute;l&eacute;ments du mod&egrave;le (ou attributs
+caract&eacute;ristiques du mod&egrave;le), des attributs
+caract&eacute;ristiques &agrave; valeur variable selon les &eacute;l&eacute;ments
+du mod&egrave;le (la valeur est alors d&eacute;finie au niveau des
+&eacute;l&eacute;ments dans les maillage de calcul). Les attributs
+caract&eacute;ristiques sont typ&eacute; par les types MED standards
+(entier, r&eacute;el, cha&icirc;ne de caract&egrave;res de taille
+\ref MED_NAME_SIZE). Un attribut peut comporter plusieurs composantes
+au m&ecirc;me titre qu'un champ. 
+</P>
+<P>La cr&eacute;ation d'un mod&egrave;le d'&eacute;l&eacute;ment de
+structure se fait avec la routine \ref MEDstructElementCr / \ref
+msecre. Un mod&egrave;le est identifi&eacute; par son nom qui est une
+cha&icirc;ne de \ref MED_NAME_SIZE caract&egrave;res. La cr&eacute;ation
+d'un attribut caract&eacute;ristique &agrave; valeur variable se fait
+avec la routine \ref MEDstructElementVarAttCr / \ref msevac. La
+cr&eacute;ation d'un attribut caract&eacute;ristique du mod&egrave;le
+se fait avec les routines \ref MEDstructElementConstAttWr / \ref
+mseraw, \ref mseiaw, \ref msesaw. La routine \ref
+MEDmeshStructElementVarAttWr / \ref mmhraw, \ref mmhiaw, \ref mmhsaw
+permet d'&eacute;crire les valeurs d'un attribut &agrave; valeur
+variable, l'appel &agrave; cette routine se faisant au moment de la
+cr&eacute;ation d'un maillage de calcul. Les routines \ref
+MEDstructElementConstAttWr / \ref mseraw, \ref mseiaw, \ref msesaw et
+\ref MEDstructElementConstAttWithProfileWr / \ref mserpw, \ref
+mseipw, \ref msespw permettent d'&eacute;crire les valeurs d'un
+attribut constant respectivement sans et avec un profil. 
+</P>
+<P>La cr&eacute;ation d'un maillage support se fait avec une routine
+sp&eacute;cifique \ref MEDsupportMeshCr / \ref msmcre. L'&eacute;criture
+des coordonn&eacute;es des noeuds et de la connectivit&eacute; des
+mailles se fait avec les m&ecirc;mes routines que celles utilis&eacute;es
+pour les maillages de calcul. Un maillage support est identifi&eacute;
+par son nom qui est une cha&icirc;ne de \ref MED_NAME_SIZE
+caract&egrave;res.</P>
+<P>Le cas d'utilisation suivant d&eacute;finit 3 mod&egrave;les
+d'&eacute;l&eacute;ments de structure diff&eacute;rents pour les
+particules, les billes et les poutres. Les deux derniers mod&egrave;les
+s'appuient sur des maillages support &eacute;galement d&eacute;finis
+dans le fichier. Des &eacute;l&eacute;ments de structure qui
+correspondent &agrave; ces mod&egrave;les sont finalement utilis&eacute;s
+dans un maillage de calcul. 
+</P>
+<P>\include UsesCase_MEDstructElement_1.c</P>
+<P>La routine \ref MEDstructElementInfoByName / \ref msesin permet de
+r&eacute;cup&eacute;rer les informations relatives &agrave; un mod&egrave;le
+d'&eacute;l&eacute;ment de structure dont on conna&icirc;t le nom. Un
+autre mode d'acc&egrave;s en lecture consiste &agrave; utiliser la
+routine \ref MEDnStructElement / \ref msense pour lire le nombre de
+mod&egrave;le dans un fichier. Il s'agit ensuite d'it&eacute;rer sur
+ces mod&egrave;les. La routine \ref MEDstructElementInfo / \ref
+msesei permet de lire &agrave; chaque it&eacute;ration les
+informations relatives &agrave; un mod&egrave;le d'&eacute;l&eacute;ment
+de structure. Pour ce qui concerne la lecture des attributs
+constants, la routine \ref MEDstructElementConstAttInfo / \ref msecai
+permet de lire les informations relatives &agrave; ce type d'attribut
+et les routines \ref MEDstructElementConstAttRd / \ref mserar, \ref
+mseiar, \ref msesar permettent de lire les valeurs d'un attribut
+constant sans et avec un profil. Pour ce qui concerne les attributs
+variables, la routine \ref MEDstructElementVarAttInfo / \ref msevai
+permet de lire les informations relatives &agrave; ce type d'attribut
+et les routines \ref MEDmeshStructElementVarAttRd / \ref mmhrar, \ref
+mmhiar, \ref mmhsar permettent de lire les valeurs d'un attribut
+variable. 
+</P>
+<P>A noter &eacute;galement l'existence : de la routine \ref
+MEDstructElementName / \ref msesen qui &agrave; partir du num&eacute;ro
+de type g&eacute;om&eacute;trique de l'&eacute;l&eacute;ment de
+structure, fournit le nom de cet &eacute;l&eacute;ment ; de la
+routine \ref MEDstructElementGeotype / \ref msesgt qui &agrave;
+partir du nom de l'&eacute;l&eacute;ment renvoie son type. Enfin la
+routine \ref MEDstructElementAttSizeof / \ref mseasz renvoie la
+taille en octets du type &eacute;l&eacute;mentaire d'un attribut
+constant ou variable, ce qui permet d'allouer correctement la taille
+des tableaux pour lire les valeurs des attributs. 
+</P>
+<P>La routine \ref MEDsupportMeshInfoByName / \ref msmsni permet de
+r&eacute;cup&eacute;rer les informations relatives &agrave; un
+maillage support dont on conna&icirc;t le nom. Un autre mode d'acc&egrave;s
+en lecture consiste &agrave; utiliser la routine \ref MEDnSupportMesh
+/ \ref msmnsm afin de lire le nombre de maillage support dans un
+fichier. Il s'agit ensuite d'it&eacute;rer sur ces maillages support
+et &agrave; chaque it&eacute;ration de lire les informations relative
+au maillage avec la routine \ref MEDsupportMeshInfo / \ref msmsmi. La
+lecture des coordonn&eacute;es des noeuds et de la connectivit&eacute;
+des mailles se fait avec les m&ecirc;mes routines que celles
+utilis&eacute;es pour les maillages de calcul.</P>
+<P>Ce cas d'utilisation montre comment &agrave; partir d'un maillage
+de calcul, acc&eacute;der aux mod&egrave;les d'&eacute;l&eacute;ments
+de structure et aux maillages supports.</P>
+<P>\include UsesCase_MEDstructElement_3.c</P>
+<H3 STYLE="page-break-before: always"><A NAME="6."></A>Ecriture et
+lecture en parall&egrave;le par la d&eacute;composition de domaine 
+</H3>
+<P STYLE="margin-bottom: 0cm">En vue de calculs parall&egrave;les, le
+domaine de calcul est subdivis&eacute; en sous-domaines o&ugrave; se
+r&eacute;partissent les maillages. Classiquement, chaque sous-domaine
+sera trait&eacute; par un seul processeur qui aura uniquement acc&egrave;s
+aux donn&eacute;es des autres sous-domaines par l'interm&eacute;diaire
+de messages.</P>
+<P ALIGN=CENTER STYLE="margin-bottom: 0cm"><IMG SRC="../png/sous-domaines.png" NAME="Image4" ALIGN=BOTTOM WIDTH=508 HEIGHT=617 BORDER=0>
+</P>
+<P><BR>Du point de vue du stockage, un maillage distribu&eacute; a la
+m&ecirc;me structure qu'un maillage MED classique mais ses
+composantes (entit&eacute;s g&eacute;om&eacute;trique, familles,
+groupes) peuvent &ecirc;tre r&eacute;parties sur plusieurs
+sous-domaines affect&eacute;s &agrave; des processeurs disjoints.
+Lors de cette distribution certains sommets, faces, ar&ecirc;tes ou
+mailles se retrouvent sur la fronti&egrave;re commune de deux
+sous-domaines. L'ensemble de ces &eacute;l&eacute;ments communs &agrave;
+deux sous-domaines constitue un joint. Dans un cadre tr&egrave;s
+g&eacute;n&eacute;ral, les &eacute;l&eacute;ments communs &agrave;
+deux sous-domaines peuvent appara&icirc;tre comme : la jointure de
+deux maillages qui se correspondent parfaitement (on parle alors de
+<I>raccordement conforme), </I>la jointure de deux maillages de
+pavage diff&eacute;rent (<I>raccordement non conforme),</I> le
+recouvrement de deux maillages qu'il soit conforme ou non. 
+</P>
+<P STYLE="margin-bottom: 0cm">La notion de joint est assez g&eacute;n&eacute;rale
+pour permettre de stocker ces trois types d'interface. Elle consiste
+&agrave; donner la liste des couples des num&eacute;ros correspondant
+des entit&eacute;s en regard vues du domaine local et vues du domaine
+distant. 
+</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P ALIGN=CENTER STYLE="margin-bottom: 0cm"><IMG SRC="../png/description-joint.png" NAME="Image5" ALIGN=BOTTOM WIDTH=627 HEIGHT=275 BORDER=0>
+</P>
+<P><A NAME="1.3"></A><BR>Un maillage distribu&eacute; est donc
+enti&egrave;rement d&eacute;termin&eacute; par la donn&eacute;e des
+maillages affect&eacute;s &agrave; chacun des sous-domaines, par la
+d&eacute;finition de &laquo; joints &raquo; - raccord entre les
+maillages de sous-domaines voisins, par une num&eacute;rotation
+globale optionnelle des entit&eacute;s. 
+</P>
+<P>Comme les maillages sont distribu&eacute;s, les donn&eacute;es MED
+s'y rattachant peuvent &ecirc;tre stock&eacute;es dans plusieurs
+fichiers. La liste de ces fichiers est rassembl&eacute;e dans un
+fichier ma&icirc;tre au format ASCII. Ce fichier permet de rep&eacute;rer
+o&ugrave; se trouvent stock&eacute;es les parties de maillages
+distribu&eacute;es correspondant &agrave; chaque sous-domaine. Il
+contient : un ent&ecirc;te d'identification ; le nombre de
+sous-domaines sur lesquels sont distribu&eacute;s les maillages ; les
+informations n&eacute;cessaires pour rep&eacute;rer les parties de
+maillages affect&eacute;es &agrave; chaque sous-domaine. Pour ce
+faire, il y a autant de lignes que de parties de maillages
+distribu&eacute;s. Chaque ligne se compose : du nom de maillage
+global, du num&eacute;ro de sous-domaine concern&eacute;, du nom de
+maillage local correspondant au maillage global sur ce sous-domaine,
+du nom de la machine h&eacute;bergeant le fichier MED contenant ces
+informations (ce nom peut &eacute;ventuellement &ecirc;tre une
+adresse IP de la machine et ne comportera pas de blanc), du chemin
+absolu ou relatif menant &agrave; ce fichier 
+</P>
+<P>Le fichier ASCII sera au format unix, et le retour &agrave; la
+ligne est un caract&egrave;re ASCII 10 (caract&egrave;re Carriage
+Return seul sans caract&egrave;re Line Feed comme sous windows). Dans
+les chemins, les sous r&eacute;pertoires seront d&eacute;limit&eacute;s
+par le caract&egrave;re '/'. Toute ligne commen&ccedil;ant par '#'
+sera ignor&eacute;e par la librairie (commentaires). Mais un '#' en
+cours de ligne ne sera pas interpr&eacute;t&eacute; comme un
+commentaire. <BR><BR>Les fichiers MED correspondant &agrave; chaque
+sous-domaine sont rep&eacute;r&eacute;s par leur chemin absolu ou
+relatif dans le syst&egrave;me de fichier. Dans le cas relatif,
+l'acc&egrave;s aux fichiers depuis la librairie pourra d&eacute;pendre
+de la machine ou du syst&egrave;me d'exploitation sur lequel on
+s'ex&eacute;cute. A charge de l'utilisateur de v&eacute;rifier
+l'interpr&eacute;tation coh&eacute;rente des chemins de fichiers
+relatifs. <BR><BR><BR>
+</P>
+<P ALIGN=CENTER STYLE="margin-bottom: 0cm"><IMG SRC="../png/temp-vitesse.png" NAME="Image6" ALIGN=BOTTOM WIDTH=618 HEIGHT=479 BORDER=0>
+</P>
+<P><BR><BR><BR>
+</P>
+<P STYLE="margin-bottom: 0cm">Voici un exemple de fichier ma&icirc;tre,
+d&eacute;crivant la r&eacute;partition de 2 maillages VIT et TEMP sur
+4 sous domaines disjoints. Le calcul s'effectue sur un solide (o&ugrave;
+seule est d&eacute;finie la temp&eacute;rature) baign&eacute;e d'un
+liquide (ou sont d&eacute;finies les vitesses et temp&eacute;ratures)
+</P>
+<PRE># MED Fichier v3.0
+#
+# Nombre de sous-domaines
+4
+#
+# fichiers MED par sous-domaine
+VIT 1 VIT_1 localhost /absolute/path/fichier_dom_1
+VIT 2 VIT_2 localhost /absolute/path/fichier_dom_2
+TEMP 1 TEMP_1 localhost /absolute/path/fichier_dom_1
+TEMP 2 TEMP_2 localhost /absolute/path/fichier_dom_2
+TEMP 3 TEMP_3 localhost /absolute/path/fichier_dom_3
+TEMP 4 TEMP_4 localhost /absolute/path/fichier_dom_4</PRE><P>
+La cr&eacute;ation ou la transformation du fichier ma&icirc;tre est &agrave;
+la charge du d&eacute;coupeur. On suppose que ce fichier est coh&eacute;rent
+dans l'utilisation de la librairie.</P>
+<P STYLE="margin-bottom: 0cm">A l'&eacute;criture, les routines
+disponibles permettent de : cr&eacute;er un joint dans un maillage
+(\ref MEDsubdomainJointCr / \ref msdjcr) ; &eacute;crire un tableau
+de correspondances entre bin&ocirc;mes d'entit&eacute;s du maillage
+dans un joint (\ref MEDsubdomainCorrespondenceWr / \ref msdcrw) ;
+&eacute;crire la num&eacute;rotation globale associ&eacute;e &agrave;
+un type d'entit&eacute; pour la rep&eacute;rer sur le domaine global
+(\ref MEDmeshGlobalNumberWr / \ref mmhgnw).</P>
+<P STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P>A la lecture, les routines disponibles permettent de : lire le
+nombre de joints dans un maillage (\ref MEDnSubdomainJoint / \ref
+msdnjn) ; lire les informations concernant un joint (\ref
+MEDsubdomainJointInfo / \ref msdjni), lire le nombre de couple en
+correspondance d'un type donn&eacute; dans un joint (\ref
+MEDsubdomainComputingStepInfo / \ref msdcsi) ; lire le nombre
+d'entit&eacute;s en correspondance dans un joint pour un couple
+d'entit&eacute;s et une s&eacute;quence de calcul donn&eacute;s (\ref
+MEDsubdomainCorrespondenceSize / \ref msdcsz); lire les informations
+sur les couples d'entit&eacute;s en correspondance dans un joint pour
+une s&eacute;quence de calcul donn&eacute;e (\ref
+MEDsubdomainCorrespondenceSizeInfo / \ref msdszi) ; lire un tableau
+de correspondances entre bin&ocirc;mes d'entit&eacute;s du maillage
+dans un joint (\ref MEDsubdomainCorrespondenceRd / \ref msdcrr) ;
+lire la num&eacute;rotation globale associ&eacute;e &agrave; un type
+d'entit&eacute; pour la rep&eacute;rer sur le domaine global (\ref
+MEDmeshGlobalNumberRd / \ref mmhgnr).</P>
+<P>Les cas d'utilisation suivant illustrent comment &eacute;crire et
+lire des maillages avec des joints et un syst&egrave;me de
+num&eacute;rotation global.</P>
+<P>\include test29.c</P>
+<P>\include test30.c</P>
+<P STYLE="page-break-before: always">\include test31.c</P>
+<P>\include test32.c</P>
+<P><BR><BR>
+</P>

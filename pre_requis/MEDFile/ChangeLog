@@ -1,0 +1,194 @@
+Modification dans la version 2.3.6 :
+
+- ID 59 : Support HDF5-1.6.8 ou 1.6 au choix
+
+- ID 73 : Fonctionnement des tests MED identique quelque soit la version de HDF utilisée
+
+- ID 35 : Suppression des blancs terminaux dans les noms de maillages/champs par medimport
+
+- ID 68 : Corrections diverses pour portage GCC4.4.0
+
+- ID 74 : Modifications pour faciliter le portage Windows
+
+- ID 61 : Taille des noms des variables scalaires
+
+Modification dans la version 2.3.5 :
+
+- ID 67 : Problème de lecture des types géométriques en correspondance dans des joints en F90 avec int64
+	
+- ID 65 : Objets HDF restant ouverts après utilisation de MEDjointnCoress et MEDglobalNumLire.
+
+- ID 62 : Dysfontionement de la routine MEDglobalNumEcr en l'absence de
+	  numérotation optionnelle.
+
+- ID 63 : Ajout d'un include cstring dans MEDerreur.cxx necessaire à la compilation sous gcc 4.3.1.
+
+- ID 64 : Correction du Makefile.am de medimport (difficulté de compilation
+          sous OSX)
+
+Modification dans la version 2.3.4 :
+
+- ID55 : Une optimisation dans la couche basse de MED fichier permet aux routines MEDnAttribut et MEDnGroupe d'avoir 
+	 un temps d'execution très réduit par rapport aux versions MED antérieures.
+
+- ID52 :  MED_NUM_MAJEUR, MED_NUM_MINEUR, et MED_NUM_RELEASE sont définis dans med.h
+
+- ID53 :  Correction d'un bug dans MEDunvCr qui provoquait parfois un débordement mémoire 
+	
+Modification dans la version 2.3.3 :
+
+- ID37 :  Anomalie de la routine "MEDgro2famCr" corrigée
+
+- ID38 :  Symboles indéfinis dans la bibliothèque libMedC supprimés
+
+- ID39 :  Possibilité d'enregistrer des champs aux noeuds par élément (indépendant des points de Gauss)
+
+- ID40 :  Documentation sur la numérotation des processeurs dans l'utilisation des joints
+
+- ID41 :  La documentation précise d'utiliser MED_NONE pour la correspondance des noeuds dans les joints
+	
+- ID48 :  Ecriture du nombre de points de gauss incorrect dans le nom de la localisation de référence généré par medimport
+  	  (présence d'un blanc si le nombre de points de Gauss est sur 1 digit)
+
+- ID43 :  medimport est maintenant disponible sous forme de bibliothèque C et C++ (avec exceptions standards et MEDerreur)
+
+- ID44 :  Ajout de paramètres à l'utilitaire "mdump" (mdump --champs, mdump --sequence, mdump --maillage)
+	
+Modification dans la version 2.3.2 :
+
+- ID4  :  Affichage des maillages structurés dans l'utilitaire "mdump"
+	
+- ID22 :  Divers bugs concernant les liens
+	
+- ID19 :  Affichage erroné des équivalences et joints dans mdump
+	
+- ID15 :  Incohérence entre les routines MEDcoordLire/Ecr et MEDdimEspaceCr dans la documentation
+	
+- ID17 :  Affichage désordonné de la connectivité dans mdump
+	
+- ID33 :  Verification de la présence de la famille 0 dans mdump
+
+- ID31 :  Evolution de l'utilitaire medimport pour MED 2.3.2
+	
+- ID14 :  Correction d'affichages multiples des champs en présence de plusieurs maillages dans "mdump"
+	
+- ID28 :  Vérifier la version du fichier dans mdump avant de lancer l'affichage
+	
+- ID34 :  Indiquer dans la FAQ que l'écriture du n° de famille 0 pour les noeuds et les éléments est optionnel
+	
+- ID3  :  Compactage dans le fichier des valeurs des champs définies selon un profil
+
+- ID23 :  Gestion des droits d'accès aux fichiers en cas d'ouvertures multiples
+
+- ID32 :  Problème dans l'activation des messages d'erreur
+
+- ID18 :  Installation de type cross-compilation possible en précisant manuellement la taille du int fortran
+
+- ID9  :  Prise en compte complète du mode d'ouverture de fichier MED_LECTURE_ECRITURE 
+
+- ID24 :  Intégration des modifs proposées par OCC pour portage WINDOWS (cf med_win_dll.h )
+
+- ID25 :  Quelque soit le type de connectivité (nodale/descendante), la numérotation optionnelle si elle est présente n'est jamais utilisée dans la définition des connectivités.
+
+- ID21 :  Mécanisme de drivers pour assurer la compatibilité ascendante entre les versions mineures de MED
+
+- ID11 : Compatibilité avec la procédure d'installation  Code_SATURNE sous Auto Make
+
+- ID35 : Vérification à la création de datagroups que les noms ne se terminent pas par un blanc (en C).
+
+Modification dans la version 2.3.1 :
+
+- FT56 : Par convention, le stockage du n° de famille d'un type déentité donnée
+	 n'est pas necessaire pour la famille 0.
+
+- FT99 : Problème dans l'interface C/F77 lors de la lecture du paramètre de localisation des points de Gauss
+	 (MEDchampLire/efchal).
+
+- FT108 : Problème en C lors de la lecture de la localisation des points de Gauss (MEDchampLire/efchal). Lorsqu'il
+	 n'y a pas de localisation une chaine blanche était renvoyée au lieu d'une chaine vide.
+
+- FT109 : Fichier de modelededonnee.html tronqué  (manque HEXA27...)
+
+- FT111 : Il n'est plus necessaire de définir le type de plateforme à la compilation.
+	  Le paramétrage de la taille du med_int est défini automatiquement en fonction des compilateurs utilisés.
+
+- FT112 : Définition d'un nom de localisation réservée pour des points de Gauss aux noeuds par élément.
+
+Modification dans la version 2.3.0 :
+
+- FT96 : Amélioration de l'affichage des numéros des entités dans mdump
+
+- FT98 : Correction du bug dans medimport sur la génération de la localisation
+	 des points de Gauss (1 type géométrique -> plusieurs modèles)
+
+- FT99 : Correction du bug sur la lecture de la localisation des points 
+	 de Gauss dans la routine fortran efchar
+
+- FT100 : Pb lors de la lecture avec l'API FORTRAN d'une
+          famille écrite avec l'API C, si la famille comporte
+          plusieurs groupes.
+	
+- EVOL1 : Support des joints et gestion de la numérotation globale.
+	
+
+Modification dans la version 2.2.3 :
+
+- FT95 : Lecture de la localisation des points de Gauss avec 
+	 MEDchamplire/efchal incorrecte.
+	
+- FT85 : TEST 26 ne passe pas en mode OSF_32.
+
+- FT86 : Bug dans MEDstructureCoordEcr/Lire pour
+         les maillages structures 3D.
+
+- FT83 : Portage sous LINUX 64 bits (Opteron).
+
+- FT89 : Type géométrique écrit incorrectement par MEDGaussEcr.
+	 Sur TRUE64 le test C n°10 enregistre le type géométrique 
+	 de façon incorrecte.
+
+- FT91 : medimport et hdf 5-1.4.4. Pb de conversion des familles 
+	 avec hdf 5-1.4.4.
+
+- FT88 : Localisation des points de Gauss. Dans le dump, quand un champ 
+	comporte des points de Gauss, il faudrait mettre le nom 
+	de la localisation associée.
+
+- FT90 : Type de champ incorrectement géré dans MEDchampLire MEDscalaireInfo 
+	MEDchampInfo MEDgaussLire sur TRUE64.
+
+- FT92 : Erreur dans la description de la routine efngau.
+
+- FT93 : Pb de fermeture avec MEDnoeudLire. Pb de fermeture du fichier apres ex         ecution de MEDnoeudLire.
+
+- FT94:	 Mise a jour de l affichage des coordonnees dans  mdump.
+
+
+
+Modification dans la version 2.2.2 :
+
+- FT79 : Retour du nom de maillage dans la routine efpdti.
+Le nom de maillage retourne comporte maintenant des blancs.
+
+- FT74 : Declaration de MED_NOREF dans med.hf.
+
+- FT75 :  Affichage des polyèdres dans mdump.
+Le problème d'affichage est corrigé.
+
+- FT73 :  Affichage des polygones dans mdump.
+Les polygones déclarés comme des faces dans un fichier ne sont plus affichés par "mdump".
+
+- FT80 : Routine efmaai
+Le problème de la routine efmaai pour la lecture du type du maillage est corrigé.
+
+- FT81 : Routines efgaue et efgaul
+Le problème de déclaration des paramètres des types géométriques et du mode de stockage des coordonnées est corrigé.
+
+- FT77 : Affichage des groupes dans mdump 
+Ancien mode d'affichage de la numérotation : 0..(N-1).
+Nouveau mode d'affichage : 1..N
+
+- FT78 : Documentation de MEDpasDeTempsInfo/efpdti.
+Les unités des pas de temps sont desormais  définies comme étant à 16 caractères.
+Quand il n'y a pas de points de Gauss MED_NOPG est renvoyé.
+

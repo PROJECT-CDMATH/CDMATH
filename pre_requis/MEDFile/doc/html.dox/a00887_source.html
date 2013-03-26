@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de test9.f90</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_ba46011aeafd781e3c350f50ac4ad407.html">tests</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_48518ce8883b67c206b2fcc1b28260ff.html">f</a>
+  </div>
+</div>
+<div class="contents">
+<h1>test9.f90</h1><a href="a00887.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">!*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment">!*</span>
+<a name="l00003"></a>00003 <span class="comment">!*  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment">!*  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment">!*  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment">!*  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment">!*  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment">!*</span>
+<a name="l00009"></a>00009 <span class="comment">!*  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment">!*  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment">!*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment">!*  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment">!*</span>
+<a name="l00014"></a>00014 <span class="comment">!*  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment">!*  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment">!*</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 <span class="comment">! ******************************************************************************</span>
+<a name="l00019"></a>00019 <span class="comment">! * - Nom du fichier : test9.f90</span>
+<a name="l00020"></a>00020 <span class="comment">! *</span>
+<a name="l00021"></a>00021 <span class="comment">! * - Description : lecture des familles d&apos;un maillage MED </span>
+<a name="l00022"></a>00022 <span class="comment">! *</span>
+<a name="l00023"></a>00023 <span class="comment">! ******************************************************************************</span>
+<a name="l00024"></a><a class="code" href="a00887_ae199ef8efe9c1c7d530644eed8a5eef9.html#ae199ef8efe9c1c7d530644eed8a5eef9">00024</a> <span class="keyword">program</span> <a class="code" href="a00886_ae199ef8efe9c1c7d530644eed8a5eef9.html#ae199ef8efe9c1c7d530644eed8a5eef9">test9</a>
+<a name="l00025"></a>00025   
+<a name="l00026"></a>00026   <span class="keyword">implicit none</span>
+<a name="l00027"></a>00027   include <span class="stringliteral">&apos;med.hf90&apos;</span>
+<a name="l00028"></a>00028 <span class="comment">!</span>
+<a name="l00029"></a>00029   <span class="keywordtype">integer</span>        ret,cret,fid
+<a name="l00030"></a>00030   <span class="keywordtype">character*64</span>   maa
+<a name="l00031"></a>00031   <span class="keywordtype">integer</span>        mdim,sdim
+<a name="l00032"></a>00032   <span class="keywordtype">integer</span>        nfam
+<a name="l00033"></a>00033   <span class="keywordtype">integer</span>        i,j
+<a name="l00034"></a>00034   <span class="keywordtype">integer</span>        ngro,natt 
+<a name="l00035"></a>00035   <span class="keywordtype">character*80</span>,  <span class="keywordtype">allocatable</span>, <span class="keywordtype">dimension (:) </span>:: gro  
+<a name="l00036"></a>00036   <span class="keywordtype">integer</span>,       <span class="keywordtype">allocatable</span>, <span class="keywordtype">dimension (:) </span>:: attid
+<a name="l00037"></a>00037   <span class="keywordtype">integer</span>,       <span class="keywordtype">allocatable</span>, <span class="keywordtype">dimension (:) </span>:: attval
+<a name="l00038"></a>00038   <span class="keywordtype">character*200</span>, <span class="keywordtype">allocatable</span>, <span class="keywordtype">dimension (:) </span>:: attdes
+<a name="l00039"></a>00039   <span class="keywordtype">character*200</span>  desc     
+<a name="l00040"></a>00040   <span class="keywordtype">character*64</span>   nomfam
+<a name="l00041"></a>00041   <span class="keywordtype">integer</span>        numfam
+<a name="l00042"></a>00042   <span class="keywordtype">integer</span>        type
+<a name="l00043"></a>00043   <span class="keywordtype">character(16)  </span>:: dtunit
+<a name="l00044"></a>00044   <span class="keywordtype">integer</span> nstep, stype, atype
+<a name="l00045"></a>00045   <span class="keywordtype">character*16</span> nomcoo(2)   
+<a name="l00046"></a>00046   <span class="keywordtype">character*16</span> unicoo(2)
+<a name="l00047"></a>00047 
+<a name="l00048"></a>00048 
+<a name="l00049"></a>00049 <span class="comment">!  ** Ouverture du fichier test8.med en lecture seule **</span>
+<a name="l00050"></a>00050   call <a class="code" href="a01020_ga68bd28216f39b6aac3f3cdeb58ca0343.html#ga68bd28216f39b6aac3f3cdeb58ca0343">mfiope</a>(fid,<span class="stringliteral">&apos;test8.med&apos;</span>,<a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a616bf8345c622a34f0787f42eb400f25">MED_ACC_RDONLY</a>, cret)
+<a name="l00051"></a>00051   print *,cret
+<a name="l00052"></a>00052 
+<a name="l00053"></a>00053 <span class="comment">!  ** Lecture des infos sur le 1er maillage **</span>
+<a name="l00054"></a>00054   <span class="keyword">if</span> (cret.eq.0) <span class="keyword">then</span>
+<a name="l00055"></a>00055      call <a class="code" href="a01026_gaf119a6264944d32e884b6d148bf17bcf.html#gaf119a6264944d32e884b6d148bf17bcf">mmhmii</a>(fid,1,maa,sdim,mdim,type,desc,dtunit,stype,nstep,atype,nomcoo,unicoo,cret)
+<a name="l00056"></a>00056      print *,<span class="stringliteral">&quot;Maillage de nom : &quot;</span>,maa,<span class="stringliteral">&quot; et de dimension : &quot;</span>, mdim
+<a name="l00057"></a>00057   <span class="keyword">endif</span>
+<a name="l00058"></a>00058   print *,cret
+<a name="l00059"></a>00059 
+<a name="l00060"></a>00060 <span class="comment">!  ** Lecture du nombre de famille **</span>
+<a name="l00061"></a>00061   <span class="keyword">if</span> (cret .eq. 0) <span class="keyword">then</span>
+<a name="l00062"></a>00062      call <a class="code" href="a01018_gab8d1b1fc4257ee62083b128ca4df7bd1.html#gab8d1b1fc4257ee62083b128ca4df7bd1">mfanfa</a>(fid,maa,nfam,cret)
+<a name="l00063"></a>00063      print *,<span class="stringliteral">&apos; Nombre de familles a lire : &apos;</span>,nfam
+<a name="l00064"></a>00064   <span class="keyword">endif</span>
+<a name="l00065"></a>00065   print *,cret
+<a name="l00066"></a>00066 
+<a name="l00067"></a>00067 <span class="comment">!  ** Lecture de chaque famille **</span>
+<a name="l00068"></a>00068   <span class="keyword">if</span> (cret .eq. 0) <span class="keyword">then</span>
+<a name="l00069"></a>00069      <span class="keyword">do</span> i=1,nfam
+<a name="l00070"></a>00070         
+<a name="l00071"></a>00071 <span class="comment">!       ** Lecture du nombre de groupe **</span>
+<a name="l00072"></a>00072         <span class="keyword">if</span> (cret .eq. 0) <span class="keyword">then</span>
+<a name="l00073"></a>00073            call <a class="code" href="a01018_ga09c4f588738e444b7e6dc9dc87600ba1.html#ga09c4f588738e444b7e6dc9dc87600ba1">mfanfg</a>(fid,maa,i,ngro,cret)
+<a name="l00074"></a>00074         <span class="keyword">endif</span>
+<a name="l00075"></a>00075         print *,cret
+<a name="l00076"></a>00076 
+<a name="l00077"></a>00077 <span class="comment">!       ** Lecture du nombre d&apos;attributs pour les</span>
+<a name="l00078"></a>00078 <span class="comment">!          fichiers 2.3 **</span>
+<a name="l00079"></a>00079         <span class="keyword">if</span> (cret .eq. 0) <span class="keyword">then</span>
+<a name="l00080"></a>00080            call <a class="code" href="a01018_gac9a74229ba054a10a40bfe7edc0bdd59.html#gac9a74229ba054a10a40bfe7edc0bdd59">mfaona</a>(fid,maa,i,natt,cret)
+<a name="l00081"></a>00081         <span class="keyword">endif</span>
+<a name="l00082"></a>00082         print *,cret
+<a name="l00083"></a>00083 
+<a name="l00084"></a>00084         print *,<span class="stringliteral">&quot;Famille &quot;</span>,i,<span class="stringliteral">&quot; a &quot;</span>,ngro,<span class="stringliteral">&quot; groupes et &quot;</span>, natt, <span class="stringliteral">&quot; attributs&quot;</span> 
+<a name="l00085"></a>00085 
+<a name="l00086"></a>00086 <span class="comment">!       ** Lecture de : nom,numero,attributs,groupes **</span>
+<a name="l00087"></a>00087         <span class="keyword">if</span> (cret .eq. 0) <span class="keyword">then</span>
+<a name="l00088"></a>00088            <span class="keyword">allocate</span>(gro(ngro), attid(natt), attval(natt), attdes(natt),STAT=ret)
+<a name="l00089"></a>00089            print *,ret
+<a name="l00090"></a>00090 
+<a name="l00091"></a>00091            call <a class="code" href="a01018_ga410695b8c3f71bba0e227bdbbb3b3e5a.html#ga410695b8c3f71bba0e227bdbbb3b3e5a">mfaofi</a>(fid,maa,i,nomfam,attid,attval,attdes,numfam,gro,cret)
+<a name="l00092"></a>00092            print *,cret
+<a name="l00093"></a>00093            print *,<span class="stringliteral">&quot;Famille de nom &quot;</span>,nomfam,<span class="stringliteral">&quot; et de numero &quot;</span>,numfam
+<a name="l00094"></a>00094            <span class="keyword">do</span> j=1,natt
+<a name="l00095"></a>00095               print *,<span class="stringliteral">&quot;attid = &quot;</span>, attid(j)
+<a name="l00096"></a>00096               print *,<span class="stringliteral">&quot;attval = &quot;</span>, attval(j)
+<a name="l00097"></a>00097               print *,<span class="stringliteral">&quot;attdes =&quot;</span>, attdes(j)
+<a name="l00098"></a>00098            <span class="keyword">enddo</span>
+<a name="l00099"></a>00099            <span class="keyword">do</span> j=1,ngro
+<a name="l00100"></a>00100               print *,<span class="stringliteral">&quot;gro = &quot;</span>,gro(j)
+<a name="l00101"></a>00101            <span class="keyword">enddo</span>
+<a name="l00102"></a>00102 
+<a name="l00103"></a>00103            <span class="keyword">deallocate</span>(gro, attval, attid, attdes)
+<a name="l00104"></a>00104         <span class="keyword">endif</span>
+<a name="l00105"></a>00105      <span class="keyword">enddo</span>
+<a name="l00106"></a>00106   <span class="keyword">endif</span>
+<a name="l00107"></a>00107      
+<a name="l00108"></a>00108      
+<a name="l00109"></a>00109 <span class="comment">!  ** Fermeture du fichier                                           **</span>
+<a name="l00110"></a>00110      call <a class="code" href="a01020_gabaf92f77da8cad332344587fca32c410.html#gabaf92f77da8cad332344587fca32c410">mficlo</a>(fid,cret)
+<a name="l00111"></a>00111      print *,cret
+<a name="l00112"></a>00112      
+<a name="l00113"></a>00113 <span class="comment">!  ** Code retour</span>
+<a name="l00114"></a>00114      call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(cret)
+<a name="l00115"></a>00115      
+<a name="l00116"></a>00116 <span class="keyword">   end program test9</span>
+<a name="l00117"></a>00117 
+<a name="l00118"></a>00118 
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:35 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

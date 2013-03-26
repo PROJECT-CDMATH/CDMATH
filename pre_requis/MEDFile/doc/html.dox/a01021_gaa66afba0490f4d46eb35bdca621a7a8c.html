@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier: mfrcre</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+</div>
+<div class="contents">
+  <div class="navpath"><a class="el" href="a01021.html">Guide de référence du module fortran MEDfilter</a>
+  </div>
+<table cellspacing="0" cellpadding="0" border="0">
+  <tr>
+   <td valign="top">
+      <div class="navtab">
+        <table>
+          <tr><td class="navtab"><a class="qindex" href="a01021_gabc69b90f5af8c5aca1dbd4b685b5a953.html#gabc69b90f5af8c5aca1dbd4b685b5a953">mfrall</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01021_ga160e0f69194873d2265bc7eed58cf74c.html#ga160e0f69194873d2265bc7eed58cf74c">mfrblc</a></td></tr>
+          <tr><td class="navtab"><a class="qindexHL" href="a01021_gaa66afba0490f4d46eb35bdca621a7a8c.html#gaa66afba0490f4d46eb35bdca621a7a8c">mfrcre</a></td></tr>
+          <tr><td class="navtab"><a class="qindex" href="a01021_gad95791e5fe16d7d6c7b99ef5f39923e2.html#gad95791e5fe16d7d6c7b99ef5f39923e2">mfrdea</a></td></tr>
+        </table>
+      </div>
+   </td>
+   <td valign="top">
+<a class="anchor" id="gaa66afba0490f4d46eb35bdca621a7a8c"></a><!-- doxytag: member="medfilter.f::mfrcre" ref="gaa66afba0490f4d46eb35bdca621a7a8c" args="(fid, nent, nvent, ncent, cs, swm, stm, pname, fltas, flta, flt, cret)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">subroutine mfrcre </td>
+          <td>(</td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>fid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>nent</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>nvent</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>ncent</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>cs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>swm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>stm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">character*(*)&nbsp;</td>
+          <td class="paramname"> <em>pname</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>fltas</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer:dimension(*)&nbsp;</td>
+          <td class="paramname"> <em>flta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer*8&nbsp;</td>
+          <td class="paramname"> <em>flt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">integer&nbsp;</td>
+          <td class="paramname"> <em>cret</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Crée un filtre élémentaire en selectionnant les entités pour lesquelles on veut lire/écrire des valeurs. Le tableau <em>filterarray</em> contient des index croissants d'un tableau de profil. Cette sélection permet une lecture/écriture avancée vers/depuis les emplacements mémoire sélectionnés. Elle s'utilise uniquement <b>en mode séquentiel</b> (un seul processus). </p>
+<dl><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>fid</em>&nbsp;</td><td>Identificateur du fichier. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>nent</em>&nbsp;</td><td>Nombre de correspondance. Ce paramètre ne prend pas en compte <em>nvaluesperentity</em> et <em>nconstituentpervalue</em>. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>nvent</em>&nbsp;</td><td>Nombre de valeurs par entité. Utiliser la valeur 1 pour un filtre d'éléments de maillage. Cela peut être le nombre de points d'intégration utilisé dans un champ résultat. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>ncent</em>&nbsp;</td><td>Nombre de constituants par valeur. Cela peut être le nombre de coordonnées des noeuds, le nombre de noeuds d'une connectivité, le nombre de composantes d'un champ résultat. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>cs</em>&nbsp;</td><td>Numéro de constituant des valeurs à filtrer (commence à 1). Le mot clé <a class="el" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a> permet de selectionner tous les constituants. Cela peut être le numéro de coordonnées des noeuds, le numéro de noeuds d'une connectivité, le numéro de composantes d'un champ résultat. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>swm</em>&nbsp;</td><td>Mode d'entrelacement utilisé pour le stockage de valeurs <a class="el" href="a00321_a0d451e4036adbb12b14cb16d7db0c37d.html#a0d451e4036adbb12b14cb16d7db0c37d">med_switch_mode</a>. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>stm</em>&nbsp;</td><td>Indique le mode de stockage en mémoire <a class="el" href="a00321_a3f7b3a3c5ddcaba3fa1741a367503c8d.html#a3f7b3a3c5ddcaba3fa1741a367503c8d">med_storage_mode</a> des valeurs associées au profil utilisé. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>pname</em>&nbsp;</td><td>Nom du profil utilisé (de taille maximum <a class="el" href="a00321_a0ae989cbbfeecbb5296b3ceba8dab886.html#a0ae989cbbfeecbb5296b3ceba8dab886">MED_NAME_SIZE</a> ) ou (<a class="el" href="a00321_aaa89a5e5e6d32de69614b70cf74e29cc.html#aaa89a5e5e6d32de69614b70cf74e29cc">MED_NO_PROFILE</a> | <a class="el" href="a00321_a35f886ccd78c3f756148e02b768dae9c.html#a35f886ccd78c3f756148e02b768dae9c">MED_ALLENTITIES_PROFILE</a> ) s'il n'y a pas de profil. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>fltas</em>&nbsp;</td><td>Nombre d'entités à filtrer et taille du tableau <em>filterarray</em>. Ne prend pas en compte <em>nvaluesperentity</em> et <em>nconstituentpervalue</em>. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>flta</em>&nbsp;</td><td>Tableau d'index du profil des numéros d'entités associées aux valeurs à sélectionner. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>flt</em>&nbsp;</td><td>Filtre sur entités (<a class="el" href="a00245.html">med_filter</a>) appliqué en lecture/écriture de valeurs. La déallocation est à la charge de l'utilisateur (cf. <a class="el" href="a01006_ga5e48f17469f18350f3dd1d9bee49e1fb.html#ga5e48f17469f18350f3dd1d9bee49e1fb">MEDfilterClose</a> <a class="el" href="a01006_ga6c987c612fe52678b0c90f6d713634e7.html#ga6c987c612fe52678b0c90f6d713634e7">MEDfilterDeAllocate</a>). </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>cret</em>&nbsp;</td><td>retour négatif en cas d'erreur, Zéro sinon. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="see"><dt><b>Voir également:</b></dt><dd><a class="el" href="a01006.html">Guide de référence du module MEDfilter</a></dd></dl>
+<p>La sélection des emplacements mémoire lus/écrits s'opère dans l'espace mémoire d'un seul processus. Les entités sélectionnées le sont avec toutes leurs valeurs (<em>nvaluesperentity</em>). Il est possible de sélectionner l'ensemble des constituants par valeur ( <a class="el" href="a00321_a65a18ab6db672a2d21312d1813a3bb19.html#a65a18ab6db672a2d21312d1813a3bb19">MED_ALL_CONSTITUENT</a> ) ou uniquement les constituants n° <em>constituentselect</em> . Les constituants sont lus/écrits en mode <a class="el" href="a00321_a0d451e4036adbb12b14cb16d7db0c37d.html#a0d451e4036adbb12b14cb16d7db0c37da9a1509b3f93e5915a24f555890c73ee1">MED_FULL_INTERLACE</a>|<a class="el" href="a00321_a0d451e4036adbb12b14cb16d7db0c37d.html#a0d451e4036adbb12b14cb16d7db0c37da5c7f85d1c271fe5dbaf9e9f1d3211fea">MED_NO_INTERLACE</a> (<a class="el" href="a00321_a0d451e4036adbb12b14cb16d7db0c37d.html#a0d451e4036adbb12b14cb16d7db0c37d">med_switch_mode</a>). Le mode de stockage peut être <a class="el" href="a00327_afc7ce1d801c10d9348a0349e664fb9e5.html#afc7ce1d801c10d9348a0349e664fb9e5a8033456ab724f047c670dee0d0c099cb">MED_GLOBAL</a> ou <a class="el" href="a00327_afc7ce1d801c10d9348a0349e664fb9e5.html#afc7ce1d801c10d9348a0349e664fb9e5a08ab0ed3632a34f0bc42548cd5133f0b">MED_COMPACT</a> (<a class="el" href="a00321_a3f7b3a3c5ddcaba3fa1741a367503c8d.html#a3f7b3a3c5ddcaba3fa1741a367503c8d">med_storage_mode</a>). Les index définis dans le tableau de filtre (<em>filterarray</em>) sont des index relatifs à un tableau profil (eventuellement le tableau virtuel <a class="el" href="a00321_a35f886ccd78c3f756148e02b768dae9c.html#a35f886ccd78c3f756148e02b768dae9c">MED_ALLENTITIES_PROFILE</a> ou <a class="el" href="a00321_aaa89a5e5e6d32de69614b70cf74e29cc.html#aaa89a5e5e6d32de69614b70cf74e29cc">MED_NO_PROFILE</a> ). La numérotation des index commence à 1. Les index se définissent de la façon suivante : </p>
+<ul>
+<li>Si le filtre opère sur un tableau de valeurs sans profil, les index sont les numéros d'entités utilisées selon la numérotation MED relative au type géométrique de l'entité (équivaut aux index d'un profil <a class="el" href="a00321_a35f886ccd78c3f756148e02b768dae9c.html#a35f886ccd78c3f756148e02b768dae9c">MED_ALLENTITIES_PROFILE</a>). </li>
+<li>Si le filtre opère sur un tableau de valeurs avec profil en mode <a class="el" href="a00327_afc7ce1d801c10d9348a0349e664fb9e5.html#afc7ce1d801c10d9348a0349e664fb9e5a8033456ab724f047c670dee0d0c099cb">MED_GLOBAL</a>, les index du tableau <em>filterarray</em> indiquent les numéros d'entités à selectionner dans le tableau <em>profil</em>. </li>
+<li>Si le filtre opère sur un tableau de valeurs avec profil en mode <a class="el" href="a00327_afc7ce1d801c10d9348a0349e664fb9e5.html#afc7ce1d801c10d9348a0349e664fb9e5a08ab0ed3632a34f0bc42548cd5133f0b">MED_COMPACT</a>, les index du tableau <em>filterarray</em> indiquent les numéros d'entités à selectionner dans le tableau <em>profil</em>. <dl class="user"><dt><b>Remarques</b></dt><dd>Le filtre crée prend en compte les paramètres <em>nvaluesperentity</em> et <em>nconstituentpervalue</em> pour selectionner les emplacements en mémoire en fonction du mode de stockage utilisé (<a class="el" href="a00321_a3f7b3a3c5ddcaba3fa1741a367503c8d.html#a3f7b3a3c5ddcaba3fa1741a367503c8d">med_storage_mode</a>). </dd></dl>
+</li>
+</ul>
+
+<p>Définition à la ligne <a class="el" href="a00464_source.html#l00020">20</a> du fichier <a class="el" href="a00464_source.html">medfilter.f</a>.</p>
+
+</div>
+</div>
+    </td>
+  </tr>
+</table>
+</div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:46 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

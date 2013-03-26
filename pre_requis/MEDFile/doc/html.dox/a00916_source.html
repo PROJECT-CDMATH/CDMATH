@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<title>MED fichier:  Fichier source de Unittest_MEDinterp_2.f</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<!-- Généré par Doxygen 1.6.1 -->
+<div class="navigation" id="top">
+  <div class="tabs">
+    <ul>
+      <li><a href="index.html"><span>Documentation&nbsp;MED</span></a></li>
+      <li><a href="pages.html"><span>Guides&nbsp;d'utilisation</span></a></li>
+      <li><a href="modules.html"><span>Guides&nbsp;de&nbsp;référence</span></a></li>
+    </ul>
+  </div>
+  <div class="navpath"><a class="el" href="dir_ba46011aeafd781e3c350f50ac4ad407.html">tests</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_154b2e72a744367dcc25b5fbe06f8029.html">unittests</a>&nbsp;&raquo&nbsp;<a class="el" href="dir_18e9598bc60a743eace07d7b0e807e64.html">f</a>
+  </div>
+</div>
+<div class="contents">
+<h1>Unittest_MEDinterp_2.f</h1><a href="a00916.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">C*  This file is part of MED.</span>
+<a name="l00002"></a>00002 <span class="comment">C*</span>
+<a name="l00003"></a>00003 <span class="comment">C*  COPYRIGHT (C) 1999 - 2012  EDF R&amp;D, CEA/DEN</span>
+<a name="l00004"></a>00004 <span class="comment">C*  MED is free software: you can redistribute it and/or modify</span>
+<a name="l00005"></a>00005 <span class="comment">C*  it under the terms of the GNU Lesser General Public License as published by</span>
+<a name="l00006"></a>00006 <span class="comment">C*  the Free Software Foundation, either version 3 of the License, or</span>
+<a name="l00007"></a>00007 <span class="comment">C*  (at your option) any later version.</span>
+<a name="l00008"></a>00008 <span class="comment">C*</span>
+<a name="l00009"></a>00009 <span class="comment">C*  MED is distributed in the hope that it will be useful,</span>
+<a name="l00010"></a>00010 <span class="comment">C*  but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00011"></a>00011 <span class="comment">C*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00012"></a>00012 <span class="comment">C*  GNU Lesser General Public License for more details.</span>
+<a name="l00013"></a>00013 <span class="comment">C*</span>
+<a name="l00014"></a>00014 <span class="comment">C*  You should have received a copy of the GNU Lesser General Public License</span>
+<a name="l00015"></a>00015 <span class="comment">C*  along with MED.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00016"></a>00016 <span class="comment">C*</span>
+<a name="l00017"></a>00017 
+<a name="l00018"></a>00018 <span class="comment">C******************************************************************************</span>
+<a name="l00019"></a>00019 <span class="comment">C * Tests for interp module</span>
+<a name="l00020"></a>00020 <span class="comment">C *</span>
+<a name="l00021"></a>00021 <span class="comment">C *****************************************************************************</span>
+<a name="l00022"></a><a class="code" href="a00916_af456f2c85adc718855f7652f0653b50e.html#af456f2c85adc718855f7652f0653b50e">00022</a>       <span class="keyword">program</span> <a class="code" href="a00916_af456f2c85adc718855f7652f0653b50e.html#af456f2c85adc718855f7652f0653b50e">MEDinterp2</a>
+<a name="l00023"></a>00023 <span class="comment">C     </span>
+<a name="l00024"></a>00024       <span class="keyword">implicit none</span>
+<a name="l00025"></a>00025       include <span class="stringliteral">&apos;med.hf&apos;</span>
+<a name="l00026"></a>00026 <span class="comment">C</span>
+<a name="l00027"></a>00027 <span class="comment">C     </span>
+<a name="l00028"></a>00028       <span class="keywordtype">integer</span> cret
+<a name="l00029"></a>00029       <span class="keywordtype">integer</span> fid
+<a name="l00030"></a>00030       <span class="keywordtype">character*64</span> fname
+<a name="l00031"></a>00031       parameter (fname = <span class="stringliteral">&quot;Unittest_MEDinterp_1.med&quot;</span>)
+<a name="l00032"></a>00032       <span class="keywordtype">character *64</span> name1
+<a name="l00033"></a>00033       parameter (name1=<span class="stringliteral">&quot;Interpolation family name&quot;</span>)
+<a name="l00034"></a>00034       <span class="keywordtype">integer</span> gtype1,gtype
+<a name="l00035"></a>00035       parameter (gtype1=<a class="code" href="a00321_a4a1eb7ba296742a6f5eb8b5b23b39670.html#a4a1eb7ba296742a6f5eb8b5b23b39670">MED_TRIA3</a>)
+<a name="l00036"></a>00036       <span class="keywordtype">integer</span> cnode1,cnode
+<a name="l00037"></a>00037       parameter (cnode1=<a class="code" href="a00321_a23f7fa6d76886ed3c91dc33b59190dee.html#a23f7fa6d76886ed3c91dc33b59190deea30b70cc2a253ed4141db9a78ba696046">MED_FALSE</a>)
+<a name="l00038"></a>00038       <span class="keywordtype">integer</span> nvar1,maxd1,nmaxc1
+<a name="l00039"></a>00039       <span class="keywordtype">integer</span> nvar,maxd,nmaxc
+<a name="l00040"></a>00040       parameter (nvar1=2,maxd1=1,nmaxc1=3)
+<a name="l00041"></a>00041       <span class="keywordtype">integer</span> ncoef1,ncoef2,ncoef3,ncoef
+<a name="l00042"></a>00042       parameter (ncoef1=3,ncoef2=1,ncoef3=1)
+<a name="l00043"></a>00043       <span class="keywordtype">integer</span> power1(6),power2(2),power3(2)
+<a name="l00044"></a>00044       <span class="keywordtype">integer</span> power(6)
+<a name="l00045"></a>00045       <span class="keyword">data</span> power1 / 0,0, 1,0, 0,1 /
+<a name="l00046"></a>00046       <span class="keyword">data</span> power2 / 1,0 /
+<a name="l00047"></a>00047       <span class="keyword">data</span> power3 / 0,1 /
+<a name="l00048"></a>00048       <span class="keywordtype">real*8</span> coef1(3), coef2(1), coef3(1)
+<a name="l00049"></a>00049       <span class="keywordtype">real*8</span> coef(3)
+<a name="l00050"></a>00050       <span class="keyword">data</span> coef1 / 1., -1., -1. /
+<a name="l00051"></a>00051       <span class="keyword">data</span> coef2 / 1. /
+<a name="l00052"></a>00052       <span class="keyword">data</span> coef3 / 1. /
+<a name="l00053"></a>00053       <span class="keywordtype">integer</span> nbf,nbf1,it,size,size1,size2,size3
+<a name="l00054"></a>00054       parameter (nbf1=3,size1=3,size2=1,size3=1) 
+<a name="l00055"></a>00055 <span class="comment">C </span>
+<a name="l00056"></a>00056 <span class="comment">C</span>
+<a name="l00057"></a>00057 <span class="comment">C     file creation</span>
+<a name="l00058"></a>00058       call <a class="code" href="a01020_ga68bd28216f39b6aac3f3cdeb58ca0343.html#ga68bd28216f39b6aac3f3cdeb58ca0343">mfiope</a>(fid,fname,<a class="code" href="a00321_adcd0322de9fec3b5e199ffeda3f44c85.html#adcd0322de9fec3b5e199ffeda3f44c85a616bf8345c622a34f0787f42eb400f25">MED_ACC_RDONLY</a>,cret)
+<a name="l00059"></a>00059       print *,<span class="stringliteral">&apos;Open file&apos;</span>,cret
+<a name="l00060"></a>00060       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00061"></a>00061          print *,<span class="stringliteral">&apos;ERROR : open file&apos;</span>
+<a name="l00062"></a>00062          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00063"></a>00063       <span class="keyword">endif</span> 
+<a name="l00064"></a>00064 <span class="comment">C</span>
+<a name="l00065"></a>00065 <span class="comment">C</span>
+<a name="l00066"></a>00066 <span class="comment">C     interpolation information</span>
+<a name="l00067"></a>00067       call <a class="code" href="a01022_gaa7dc205e0c8064ecfa76afaf828bb42e.html#gaa7dc205e0c8064ecfa76afaf828bb42e">mipiin</a>(fid,name1,gtype,cnode,nbf,nvar,
+<a name="l00068"></a>00068      &amp;            maxd,nmaxc,cret)
+<a name="l00069"></a>00069       print *,<span class="stringliteral">&apos;interpolation information&apos;</span>,cret
+<a name="l00070"></a>00070       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00071"></a>00071          print *,<span class="stringliteral">&apos;ERROR : interpolation information&apos;</span>
+<a name="l00072"></a>00072          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00073"></a>00073       <span class="keyword">endif</span> 
+<a name="l00074"></a>00074 <span class="comment">c</span>
+<a name="l00075"></a>00075       <span class="keyword">if</span> ( (gtype .ne. gtype1) .or.
+<a name="l00076"></a>00076      &amp;     (cnode .ne. cnode1) .or.
+<a name="l00077"></a>00077      &amp;     (nbf .ne. nbf1) .or.
+<a name="l00078"></a>00078      &amp;     (nvar .ne. nvar1) .or.
+<a name="l00079"></a>00079      &amp;     (maxd .ne. maxd1) .or.
+<a name="l00080"></a>00080      &amp;     (nmaxc .ne. nmaxc1) ) <span class="keyword">then</span>
+<a name="l00081"></a>00081          print *,<span class="stringliteral">&apos;ERROR : interpolation information&apos;</span>
+<a name="l00082"></a>00082          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00083"></a>00083       <span class="keyword">endif</span>
+<a name="l00084"></a>00084 <span class="comment">C</span>
+<a name="l00085"></a>00085 <span class="comment">C</span>
+<a name="l00086"></a>00086 <span class="comment">C     read functions</span>
+<a name="l00087"></a>00087       <span class="keyword">do</span> it=1,nbf
+<a name="l00088"></a>00088          call <a class="code" href="a01022_gaab6a18c32556fc0a7d1501c304cc4c7d.html#gaab6a18c32556fc0a7d1501c304cc4c7d">mipcsz</a>(fid,name1,it,<span class="keyword">size</span>,cret)
+<a name="l00089"></a>00089          print *,<span class="stringliteral">&apos;memory size&apos;</span>,cret
+<a name="l00090"></a>00090          <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00091"></a>00091             print *,<span class="stringliteral">&apos;ERROR : memory size&apos;</span>
+<a name="l00092"></a>00092             call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00093"></a>00093          <span class="keyword">endif</span> 
+<a name="l00094"></a>00094 <span class="comment">c</span>
+<a name="l00095"></a>00095          <span class="keyword">if</span> (it .eq. 1) <span class="keyword">then</span>
+<a name="l00096"></a>00096             <span class="keyword">if</span> (<span class="keyword">size</span> .ne. size1) <span class="keyword">then</span>
+<a name="l00097"></a>00097                print *,<span class="stringliteral">&apos;ERROR : memory size size&apos;</span>
+<a name="l00098"></a>00098                call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00099"></a>00099             <span class="keyword">endif</span>
+<a name="l00100"></a>00100          <span class="keyword">endif</span>
+<a name="l00101"></a>00101 <span class="comment">c</span>
+<a name="l00102"></a>00102          <span class="keyword">if</span> (it .eq. 2) <span class="keyword">then</span>
+<a name="l00103"></a>00103             <span class="keyword">if</span> (<span class="keyword">size</span> .ne. size2) <span class="keyword">then</span>
+<a name="l00104"></a>00104                print *,<span class="stringliteral">&apos;ERROR : allocation size&apos;</span>
+<a name="l00105"></a>00105                call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00106"></a>00106             <span class="keyword">endif</span>
+<a name="l00107"></a>00107          <span class="keyword">endif</span>
+<a name="l00108"></a>00108 <span class="comment">c</span>
+<a name="l00109"></a>00109          <span class="keyword">if</span> (it .eq. 3) <span class="keyword">then</span>
+<a name="l00110"></a>00110             <span class="keyword">if</span> (<span class="keyword">size</span> .ne. size3) <span class="keyword">then</span>
+<a name="l00111"></a>00111                print *,<span class="stringliteral">&apos;ERROR : allocation size&apos;</span>
+<a name="l00112"></a>00112                call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00113"></a>00113             <span class="keyword">endif</span>
+<a name="l00114"></a>00114          <span class="keyword">endif</span>
+<a name="l00115"></a>00115 <span class="comment">C</span>
+<a name="l00116"></a>00116          call <a class="code" href="a01022_gaffcbfcdc12ace78e5fdfa3d3162f8785.html#gaffcbfcdc12ace78e5fdfa3d3162f8785">mipbfr</a>(fid,name1,it,ncoef,power,coef,cret)
+<a name="l00117"></a>00117          print *,<span class="stringliteral">&apos;read function&apos;</span>,cret
+<a name="l00118"></a>00118          <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00119"></a>00119             print *,<span class="stringliteral">&apos;ERROR : read function&apos;</span>
+<a name="l00120"></a>00120             call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00121"></a>00121          <span class="keyword">endif</span> 
+<a name="l00122"></a>00122 <span class="comment">c</span>
+<a name="l00123"></a>00123          <span class="keyword">if</span> (it .eq. 1) <span class="keyword">then</span>
+<a name="l00124"></a>00124             <span class="keyword">if</span> ( (ncoef .ne. ncoef1) .or.  
+<a name="l00125"></a>00125      &amp;           (power(1) .ne. power1(1)) .or.
+<a name="l00126"></a>00126      &amp;           (power(2) .ne. power1(2)) .or.
+<a name="l00127"></a>00127      &amp;           (power(3) .ne. power1(3)) .or.
+<a name="l00128"></a>00128      &amp;           (power(4) .ne. power1(4)) .or.
+<a name="l00129"></a>00129      &amp;           (power(5) .ne. power1(5)) .or.
+<a name="l00130"></a>00130      &amp;           (power(6) .ne. power1(6)) .or. 
+<a name="l00131"></a>00131      &amp;           (coef(1) .ne. coef1(1)) .or.
+<a name="l00132"></a>00132      &amp;           (coef(2) .ne. coef1(2)) .or.
+<a name="l00133"></a>00133      &amp;           (coef(3) .ne. coef1(3)) ) <span class="keyword">then</span>
+<a name="l00134"></a>00134                print *,<span class="stringliteral">&apos;ERROR : read function&apos;</span>
+<a name="l00135"></a>00135                call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00136"></a>00136             <span class="keyword">endif</span>
+<a name="l00137"></a>00137          <span class="keyword">endif</span>
+<a name="l00138"></a>00138 <span class="comment">c</span>
+<a name="l00139"></a>00139          <span class="keyword">if</span> (it .eq. 2) <span class="keyword">then</span>
+<a name="l00140"></a>00140             <span class="keyword">if</span> ( (ncoef .ne. ncoef2) .or.  
+<a name="l00141"></a>00141      &amp;           (power(1) .ne. power2(1)) .or.
+<a name="l00142"></a>00142      &amp;           (power(2) .ne. power2(2)) .or.
+<a name="l00143"></a>00143      &amp;           (coef(1) .ne. coef2(1)) ) <span class="keyword">then</span>
+<a name="l00144"></a>00144                print *,<span class="stringliteral">&apos;ERROR : read function&apos;</span>
+<a name="l00145"></a>00145                call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00146"></a>00146             <span class="keyword">endif</span>
+<a name="l00147"></a>00147          <span class="keyword">endif</span>
+<a name="l00148"></a>00148 <span class="comment">c</span>
+<a name="l00149"></a>00149          <span class="keyword">if</span> (it .eq. 3) <span class="keyword">then</span>
+<a name="l00150"></a>00150             <span class="keyword">if</span> ( (ncoef .ne. ncoef3) .or.  
+<a name="l00151"></a>00151      &amp;           (power(1) .ne. power3(1)) .or.
+<a name="l00152"></a>00152      &amp;           (power(2) .ne. power3(2)) .or.
+<a name="l00153"></a>00153      &amp;           (coef(1) .ne. coef3(1)) ) <span class="keyword">then</span>
+<a name="l00154"></a>00154                print *,<span class="stringliteral">&apos;ERROR : read function&apos;</span>
+<a name="l00155"></a>00155                call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00156"></a>00156             <span class="keyword">endif</span>
+<a name="l00157"></a>00157          <span class="keyword">endif</span>
+<a name="l00158"></a>00158       <span class="keyword">enddo</span>
+<a name="l00159"></a>00159 <span class="comment">C</span>
+<a name="l00160"></a>00160 <span class="comment">C</span>
+<a name="l00161"></a>00161 <span class="comment">C     close file</span>
+<a name="l00162"></a>00162       call <a class="code" href="a01020_gabaf92f77da8cad332344587fca32c410.html#gabaf92f77da8cad332344587fca32c410">mficlo</a>(fid,cret)
+<a name="l00163"></a>00163       print *,<span class="stringliteral">&apos;Close file&apos;</span>,cret
+<a name="l00164"></a>00164       <span class="keyword">if</span> (cret .ne. 0 ) <span class="keyword">then</span>
+<a name="l00165"></a>00165          print *,<span class="stringliteral">&apos;ERROR :  close file&apos;</span>
+<a name="l00166"></a>00166          call <a class="code" href="a00264_a4702607ffef0e46107f67ed28b53bdef.html#a4702607ffef0e46107f67ed28b53bdef">efexit</a>(-1)
+<a name="l00167"></a>00167       <span class="keyword">endif</span>  
+<a name="l00168"></a>00168 <span class="comment">C</span>
+<a name="l00169"></a>00169 <span class="comment">C</span>
+<a name="l00170"></a>00170 <span class="comment">C</span>
+<a name="l00171"></a>00171 <span class="keyword">      end</span>
+<a name="l00172"></a>00172 
+</pre></div></div>
+<hr size="1"/><address style="text-align: right;"><small>Généré le Mon Nov 19 15:43:35 2012 pour MED fichier par&nbsp;
+<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.6.1 </small></address>
+</body>
+</html>

@@ -1,0 +1,8 @@
+<map id="Edge::operator=" name="Edge::operator=">
+<area shape="rect" id="node3" href="$classEdge.html#a831d8189d5d293b5e481b35f2952e4a8" title="Edge::getCellsId" alt="" coords="193,5,308,33"/>
+<area shape="rect" id="node5" href="$classEdge.html#a53fdcd6adc2307624f37d514a776aa4c" title="Edge::getFacesId" alt="" coords="191,55,311,83"/>
+<area shape="rect" id="node7" href="$classEdge.html#a310d15a4fd5f7594815c64bc2ac7cf15" title="Edge::getNodesId" alt="" coords="189,106,312,134"/>
+<area shape="rect" id="node9" href="$classEdge.html#af460cb8c266409790daca60823c07bea" title="Edge::getNumberOfCells" alt="" coords="169,157,332,185"/>
+<area shape="rect" id="node11" href="$classEdge.html#a14c985b23fd5bcce08b3bae859ead05e" title="Edge::getNumberOfFaces" alt="" coords="167,207,335,235"/>
+<area shape="rect" id="node13" href="$classEdge.html#a2f9b5b967c39bdca533da0fc57a0854c" title="Edge::getNumberOfNodes" alt="" coords="165,258,336,286"/>
+</map>
