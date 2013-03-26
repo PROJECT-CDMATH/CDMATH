@@ -9,12 +9,12 @@ var searchData=
   ['getfaces',['getFaces',['../classMesh.html#aee7fb09f789ec681d289327ba4f61e44',1,'Mesh']]],
   ['getfacesid',['getFacesId',['../classCell.html#aa79fc2eaef058f7a1e8326932f3ce315',1,'Cell::getFacesId()'],['../classNode.html#a924de5c78faef0a53dc3dd06a4378d08',1,'Node::getFacesId()']]],
   ['getfield',['getField',['../classField.html#a67ecd3bf4d1b3b0b91a77b5cf2a0cdbd',1,'Field']]],
-  ['getfieldname',['getFieldName',['../classField.html#afa44f4170c9c2774187bf2c6372ef9ac',1,'Field']]],
   ['getgroupname',['getGroupName',['../classFace.html#ab6689c588d8823e28f4bb72a15cce195',1,'Face']]],
   ['getindexfaceperiodic',['getIndexFacePeriodic',['../classMesh.html#a03411ed39000b45c1b40bcc4162af52d',1,'Mesh::getIndexFacePeriodic(int indexFace) const '],['../classMesh.html#a7d69a554d8279479071418713706dd20',1,'Mesh::getIndexFacePeriodic(void) const ']]],
   ['getmeasure',['getMeasure',['../classCell.html#ab5f76139f91d941a842d88c06333285e',1,'Cell::getMeasure()'],['../classFace.html#ad8226356168dc13cf6062a6574f5e83c',1,'Face::getMeasure()']]],
   ['getmesh',['getMesh',['../classField.html#afa8a4673479bf43d241418ddb0f28ff7',1,'Field']]],
   ['getmeshu',['getMeshU',['../classMesh.html#a4d1d19c1a611e4f961711b82c320db9e',1,'Mesh']]],
+  ['getname',['getName',['../classField.html#ab68a79e2edd627dfc5da2ed0bbd3fea3',1,'Field']]],
   ['getnamesofgroups',['getNamesOfGroups',['../classMesh.html#a3f93816e486f83601e47b687a8fdd030',1,'Mesh']]],
   ['getnode',['getNode',['../classMesh.html#ad4163e0c1ceedee815b05d79ff66a506',1,'Mesh']]],
   ['getnodes',['getNodes',['../classMesh.html#a1fa31cd59e11d5ffb3def4b8ea8b8061',1,'Mesh']]],
@@ -33,5 +33,6 @@ var searchData=
   ['getpointer',['getPointer',['../classDoubleTab.html#a296eece872ba2a87807effd6b3d2b423',1,'DoubleTab::getPointer()'],['../classIntTab.html#a2aa82e2b723b8281096700e9ec6d0d11',1,'IntTab::getPointer()']]],
   ['getregion',['getRegion',['../classFace.html#ac751161df47f947435f5c3651ebe5deb',1,'Face']]],
   ['gettime',['getTime',['../classField.html#a6ef0ca0448dff2c272fa8e4f8109782b',1,'Field']]],
+  ['gettypeoffield',['getTypeOfField',['../classField.html#a218349353e6fc4e01ff76cceb15d69c8',1,'Field']]],
   ['getvalues',['getValues',['../classDoubleTab.html#a5e6abdfec183db07eb57336664ba1769',1,'DoubleTab::getValues()'],['../classField.html#a5c73d725c7dfce47b21dcd8fc99b7bc9',1,'Field::getValues()'],['../classIntTab.html#ac86c764f9d49e1f4a25078ff37011823',1,'IntTab::getValues()']]]
 ];
