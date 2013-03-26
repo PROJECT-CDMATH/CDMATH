@@ -10,6 +10,8 @@ cd /home/moi/codes/ (par exemple)
 
 git@github.com:PROJETC-CDMATH/CDMAT.git
 
+Ou recuperer un .zip a partir du site github
+
 -> le code CDMATH est recupere
 
 --------------------------------------------------------------------------------------------------
@@ -21,6 +23,8 @@ mkdir install
 cd build
 
 cmake -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/home/moi/codes/install -DCMAKE_BUILD_TYPE=DEBUG /home/moi/codes/CDMATH
+
+Rajouter -DCMAKE_CDMATH_SWIG=ON si on veut utiliser la toolbox en python
 
 make -j4
 

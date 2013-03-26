@@ -8,12 +8,17 @@
 #ifndef FIELD_HXX_
 #define FIELD_HXX_
 
-#include "MEDCouplingRefCountObject.hxx"
-
 namespace ParaMEDMEM
 {
   class MEDCouplingFieldDouble;
 }
+
+typedef enum
+  {
+    CELLS = 0,
+    NODES = 1,
+  } TypeField;
+
 #include "Mesh.hxx"
 
 
@@ -37,7 +42,7 @@ class Field
 	* @param numberOfComponents : number of the component
 	* @param time : time of the field
 	*/
-	Field( const std::string fieldName, ParaMEDMEM::TypeOfField type, const Mesh& mesh , int numberOfComponents, double time) ;
+	Field( const std::string fieldName, TypeField type, const Mesh& mesh , int numberOfComponents, double time) ;
 
 	/**
 	* constructor with data:
@@ -45,14 +50,14 @@ class Field
 	* @param mesh : mesh of the field
 	* @param numberOfComponents : number of the component
 	*/
-	Field( const std::string fieldName, ParaMEDMEM::TypeOfField type, const Mesh& mesh , int numberOfComponents) ;
+	Field( const std::string fieldName, TypeField type, const Mesh& mesh , int numberOfComponents) ;
 
 	/**
 	* constructor with data:
 	* @param fieldName : name of the field
 	* @param mesh : mesh of the field
 	*/
-	Field( const std::string fieldName, ParaMEDMEM::TypeOfField type, const Mesh& mesh) ;
+	Field( const std::string fieldName, TypeField type, const Mesh& mesh) ;
 
 	/**
 	* destructor
@@ -87,7 +92,7 @@ class Field
 
 	int getNumberOfElements ( void ) const ;
 
-	ParaMEDMEM::TypeOfField getTypeOfField ( void ) const ;
+	TypeField getTypeOfField ( void ) const ;
 
   	/**
   	 * return the mesh MEDCoupling

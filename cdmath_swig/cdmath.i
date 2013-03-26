@@ -50,6 +50,10 @@ def DoubleTabIdiv(self,*args):
 #include "Face.hxx"
 #include "Mesh.hxx"
 #include "Field.hxx"
+#include "Patch.hxx"
+#include "Grid.hxx"
+#include "AlgoAMR.hxx"
+#include "BergerAlgoAMR.hxx"
 
 #include <sstream>
 
@@ -71,6 +75,10 @@ def DoubleTabIdiv(self,*args):
 %include "Face.hxx"
 %include "Mesh.hxx"
 %include "Field.hxx"
+%include "Patch.hxx"
+%include "Grid.hxx"
+%include "AlgoAMR.hxx"
+%include "BergerAlgoAMR.hxx"
 
 %extend IntTab
 {
