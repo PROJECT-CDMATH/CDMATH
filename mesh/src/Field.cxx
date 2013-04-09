@@ -11,6 +11,8 @@
 #include "MEDCouplingUMesh.hxx"
 #include "MEDCouplingFieldDouble.hxx"
 
+#include <fstream>
+#include <sstream>
 using namespace ParaMEDMEM;
 using namespace std;
 
@@ -359,7 +361,54 @@ void
 Field::writeVTK ( const string fileName ) const
 //----------------------------------------------------------------------
 {
-	_field->writeVTK(fileName.c_str()) ;
+	writeVTK (fileName,true);
+}
+
+//----------------------------------------------------------------------
+void
+Field::writeVTK ( const string fileName, bool fromScratch ) const
+//----------------------------------------------------------------------
+{
+	string fname=fileName+".pvd";
+    int iter,order;
+    double time=_field->getTime(iter,order);
+
+    if (fromScratch)
+	{
+        ofstream file(fname.c_str()) ;
+		file << "<VTKFile type=\"Collection\" version=\"0.1\" byte_order=\"LittleEndian\"><Collection>\n" ;
+    	ostringstream numfile;
+        numfile << iter ;
+        string filetmp=fileName+"_";
+        filetmp=filetmp+numfile.str();
+    	filetmp=filetmp+".vtu";
+    	file << "<DataSet timestep=\""<< time << "\" group=\"\" part=\"0\" file=\"" << filetmp << "\"/>\n" ;
+    	_field->writeVTK(filetmp.c_str()) ;
+        file << "</Collection></VTKFile>\n" ;
+        file.close() ;
+	}
+	else
+	{
+        ifstream file1(fname.c_str()) ;
+	    string contenus;
+	    getline(file1, contenus, '\0');
+	    string to_remove="</Collection></VTKFile>";
+	    size_t m = contenus.find(to_remove);
+	    size_t n = contenus.find_first_of("\n", m + to_remove.length());
+	    contenus.erase(m, n - m + 1);
+        file1.close() ;
+        ofstream file(fname.c_str()) ;
+	    file << contenus ;
+	    ostringstream numfile;
+        numfile << iter ;
+        string filetmp=fileName+"_";
+        filetmp=filetmp+numfile.str();
+    	filetmp=filetmp+".vtu";
+    	file << "<DataSet timestep=\""<< time << "\" group=\"\" part=\"0\" file=\"" << filetmp << "\"/>\n" ;
+    	_field->writeVTK(filetmp.c_str()) ;
+        file << "</Collection></VTKFile>\n" ;
+        file.close() ;
+	}
 }
 
 //----------------------------------------------------------------------
@@ -367,6 +416,7 @@ void
 Field::writeMED ( const string fileName ) const
 //----------------------------------------------------------------------
 {
+	string fname=fileName+".med";
 	writeMED(fileName,true);
 }
 
@@ -375,8 +425,9 @@ void
 Field::writeMED ( const string fileName, bool fromScratch ) const
 //----------------------------------------------------------------------
 {
+	string fname=fileName+".med";
 	if (fromScratch)
-		MEDLoader::WriteField(fileName.c_str(),_field,fromScratch);
+		MEDLoader::WriteField(fname.c_str(),_field,fromScratch);
 	else
-		MEDLoader::WriteFieldUsingAlreadyWrittenMesh(fileName.c_str(),_field);
+		MEDLoader::WriteFieldUsingAlreadyWrittenMesh(fname.c_str(),_field);
 }

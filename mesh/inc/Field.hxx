@@ -128,6 +128,8 @@ class Field
 
 	void writeVTK ( const std::string fileName ) const ;
 
+	void writeVTK ( const std::string fileName, bool fromScratch ) const ;
+
 	void writeMED ( const std::string fileName ) const ;
 
 	void writeMED ( const std::string fileName, bool fromScratch ) const ;
