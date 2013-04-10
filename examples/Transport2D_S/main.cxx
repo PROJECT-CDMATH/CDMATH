@@ -121,7 +121,7 @@ void sigma_flux(double VitesseX, double VitesseY, double cfl, const Field& YY, c
 	}
 }
 
-void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double cfl, int freqSortie, const Mesh& M, const string fileMED)
+void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double cfl, int freqSortie, const Mesh& M, const string file)
 {
 	/* Condition initiale */
 	cout << "Construction de la condition initiale ... " << endl;
@@ -135,7 +135,9 @@ void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double c
 	double time=0.;
 	cout << "Post-traitement MED de la solution à T=" << time << " ..." << endl;
 	YY.setTime(time,iter);
-	YY.writeMED(fileMED);
+	YY.writeMED(file);
+	YY.writeVTK(file);
+	YY.writeASCII(file);
 	/* --------------------------------------------- */
 
 	/* boucle de temps */
@@ -158,7 +160,9 @@ void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double c
 		if (iter%freqSortie==0)
 		{
 			YY.setTime(time,iter);
-			YY.writeMED(fileMED,false);
+			YY.writeMED(file,false);
+			YY.writeVTK(file,false);
+			YY.writeASCII(file);
 		}
 	}
 }
@@ -191,7 +195,7 @@ int main()
     M.setGroupAtPlan(xinf,0,eps,"LeftEdge");
     M.setGroupAtPlan(yinf,1,eps,"BottomEdge");
     M.setGroupAtPlan(ysup,1,eps,"TopEdge");
-	string fileOutPutMEDCart="Exercie1.med";
-	EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,fileOutPutMEDCart);
+	string fileOutPutCart="Exercie1";
+	EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,fileOutPutCart);
 	return 0;
 }

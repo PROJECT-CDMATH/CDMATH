@@ -30,7 +30,6 @@ int main( void )
 
   Field conc("CONCENTRATION",CELLS,M,1);
 
-
   //conditions iniiales
   double sigma=sqrt(0.2);
   for (int i=0 ; i<M.getNumberOfCells() ; i++)
@@ -44,9 +43,11 @@ int main( void )
   int iter=0;
 
   cout << "Post-traitement MED de la solution à T=" << time << " ..." << endl;
-  string fileMED="EqTr1D.med";
+  string fileOutPut="EqTr1D";
   conc.setTime(time,iter);
-  conc.writeMED(fileMED);
+  conc.writeMED(fileOutPut);
+  conc.writeVTK(fileOutPut);
+  conc.writeASCII(fileOutPut);
   int freqSortie=10;
   // boucle en temps
   while (iter<ntmax && time <= tmax )
@@ -62,8 +63,12 @@ int main( void )
    if (iter%freqSortie==0)
    {
 	   conc.setTime(time,iter);
-	   conc.writeMED(fileMED,false);
+	   conc.writeMED(fileOutPut,false);
+	   conc.writeVTK(fileOutPut,false);
+	   conc.writeASCII(fileOutPut);
    }
   }
   return 0;
 }
+
+

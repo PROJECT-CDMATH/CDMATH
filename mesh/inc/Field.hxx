@@ -134,10 +134,16 @@ class Field
 
 	void writeMED ( const std::string fileName, bool fromScratch ) const ;
 
+	void writeASCII ( const std::string fileName ) const ;
+
     protected: //----------------------------------------------------------------
 
 	ParaMEDMEM::MEDCouplingFieldDouble* _field;
 	Mesh _mesh ;
+	TypeField _typeField;
+
+    private:
+	void writeDataASCII ( const std::string fileName ) const ;
 };
 
 #endif /* Field_HXX_ */

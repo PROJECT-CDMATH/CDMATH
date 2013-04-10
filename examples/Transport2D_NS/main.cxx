@@ -179,7 +179,7 @@ int main()
 
 	cout << "Construction du maillage Cartesien ... " << endl;
 	Mesh M("MeshTri.med");
-	string fileOutPutMEDCart="Exercie2.med";
+	string fileOutPutMEDCart="Exercie2";
 	EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,fileOutPutMEDCart);
 
 	return 0;

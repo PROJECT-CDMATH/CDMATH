@@ -155,7 +155,7 @@ def main():
 
     print "Construction du maillage Cartesien ... "
     M=Mesh("MeshTri.med");
-    fileOutPutMEDCart="Exercie1PyTest.med"
+    fileOutPutMEDCart="Exercie1PyTest"
     EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,fileOutPutMEDCart)
     return
 

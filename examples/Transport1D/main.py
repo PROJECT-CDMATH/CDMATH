@@ -31,9 +31,11 @@ def main():
     it=0;
 
     print "Post-traitement MED de la solution à T=",time," ..."
-    fileMED="EqTr1D.med";
+    file="EqTr1D";
     conc.setTime(time,it);
-    conc.writeMED(fileMED);
+    conc.writeMED(file);
+    conc.writeVTK(file);
+    conc.writeASCII(file);
     freqSortie=10;
     #boucle en temps
     while (it<ntmax and time <= tmax ):
@@ -46,7 +48,9 @@ def main():
         it+=1;
         if (it%freqSortie==0):
             conc.setTime(time,it);
-            conc.writeMED(fileMED,False);
+            conc.writeMED(file,False);
+            conc.writeVTK(file,False);
+            conc.writeASCII(file);
             pass
         pass
     return

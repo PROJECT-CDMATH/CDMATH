@@ -5,6 +5,8 @@
  *      Author: CDMAT
  */
 
+#include "Node.hxx"
+#include "Cell.hxx"
 #include "Field.hxx"
 #include "MEDFileMesh.hxx"
 #include "MEDLoader.hxx"
@@ -35,6 +37,7 @@ Field::Field( const string fieldName, TypeField type, const Mesh& mesh , int num
 {
 	_mesh=mesh ;
 	DataArrayDouble *array=DataArrayDouble::New();
+	_typeField=type;
 	if (type==CELLS)
 	{
 		_field=MEDCouplingFieldDouble::New(ON_CELLS);
@@ -56,6 +59,7 @@ Field::Field( const string fieldName, TypeField type, const Mesh& mesh , int num
 {
 	_mesh=mesh ;
 	DataArrayDouble *array=DataArrayDouble::New();
+	_typeField=type;
 	if (type==CELLS)
 	{
 		_field=MEDCouplingFieldDouble::New(ON_CELLS);
@@ -77,6 +81,7 @@ Field::Field( const string fieldName, TypeField type, const Mesh& mesh)
 {
 	_mesh=mesh ;
 	DataArrayDouble *array=DataArrayDouble::New();
+	_typeField=type;
 	if (type==CELLS)
 	{
 		_field=MEDCouplingFieldDouble::New(ON_CELLS);
@@ -96,10 +101,11 @@ Field::Field( const string fieldName, TypeField type, const Mesh& mesh)
 
 //----------------------------------------------------------------------
 Field::Field( const Field & f )
-//----------------------------------------------------------------------
+//-------------------------------t---------------------------------------
 {
 	_mesh=f.getMesh() ;
     _field=static_cast<MEDCouplingFieldDouble *>(f.getField()->deepCpy());
+	_typeField=f.getTypeOfField();
 }
 
 //----------------------------------------------------------------------
@@ -229,10 +235,7 @@ TypeField
 Field::getTypeOfField ( void ) const
 //----------------------------------------------------------------------
 {
-	if (_field->getTypeOfField()==ON_CELLS)
-		return CELLS;
-	else
-		return NODES;
+	return _typeField;
 }
 
 //----------------------------------------------------------------------
@@ -278,6 +281,7 @@ Field::operator= ( const Field& f )
 //----------------------------------------------------------------------
 {
 	_mesh=f.getMesh() ;
+	_typeField=f.getTypeOfField() ;
 	if (_field)
 		_field->decrRef();
 	_field=static_cast<MEDCouplingFieldDouble *>(f.getField()->deepCpy());
@@ -409,6 +413,66 @@ Field::writeVTK ( const string fileName, bool fromScratch ) const
         file << "</Collection></VTKFile>\n" ;
         file.close() ;
 	}
+}
+
+//----------------------------------------------------------------------
+void
+Field::writeASCII ( const string fileName ) const
+//----------------------------------------------------------------------
+{
+    int iter,order;
+    double time=_field->getTime(iter,order);
+
+	ostringstream numfile;
+	numfile << iter ;
+	string filetmp=fileName+"_";
+	filetmp=filetmp+numfile.str();
+	filetmp=filetmp+".csv";
+	ofstream file(filetmp.c_str()) ;
+	int dim=_mesh.getDim();
+	int nbElements;
+	if (getTypeOfField()==CELLS)
+		nbElements=_mesh.getNumberOfCells();
+	else
+		nbElements=_mesh.getNumberOfNodes();
+
+	if (dim==1)
+	{
+		file << "x," << _field->getName() << endl;
+		for (int i=0;i<nbElements;i++)
+			if (getTypeOfField()==CELLS)
+				file << _mesh.getCell(i).x() << "," << getValues()[i] << endl;
+			else
+				file << _mesh.getNode(i).x() << "," << getValues()[i] << endl;
+	}else if (dim==2)
+	{
+		int nbCompo=getNumberOfComponents();
+		if (nbCompo==1)
+			file << "x,y," << _field->getName() << endl;
+		else if (nbCompo>1)
+		{
+			file << "x,y";
+			for (int i=0;i<nbCompo;i++)
+			{
+		    	ostringstream numCompo;
+		    	numCompo << i+1 ;
+				file << "," << _field->getName() << " Compo " << numCompo;
+
+			}
+			file << endl;
+		}
+		for (int i=0;i<nbElements;i++)
+		{
+			if (getTypeOfField()==CELLS)
+				file << _mesh.getCell(i).x() << "," << _mesh.getCell(i).y() ;
+			else
+				file << _mesh.getNode(i).x() << "," << _mesh.getNode(i).y() ;
+			for (int j=0;j<nbCompo;j++)
+				file << "," << getValues()[i+j*nbCompo] ;
+			file << endl;
+		}
+	}
+    file.close() ;
 }
 
 //----------------------------------------------------------------------
