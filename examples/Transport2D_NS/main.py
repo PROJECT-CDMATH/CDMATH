@@ -103,7 +103,7 @@ def sigma_flux(VitesseX,VitesseY,cfl,YY,indexFacesPerio):
         pass
     return dt,SumFlux
 
-def EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,fileMED):
+def EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,fileOutPut):
 
     # Condition initiale #
     print "Construction de la condition initiale ... "
@@ -114,9 +114,11 @@ def EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,fileMED):
 
     it=0;
     time=0.;
-    print "Post-traitement MED de la solution aÂ  T=%s ..."%time
+    print "Post-traitement MED de la solution a  T=%s ..."%time
     YY.setTime(time,it);
-    YY.writeMED(fileMED);
+    YY.writeMED(fileOutPut);
+    YY.writeVTK(fileOutPut);
+    YY.writeASCII(fileOutPut);
 
     # boucle de temps #
     print " Resolution de l'equation de transport par un schema UPWIND ..."
@@ -134,7 +136,9 @@ def EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,fileMED):
         #sortie visu tous les freq iterations
         if (it%freqSortie==0):
             YY.setTime(time,it);
-            YY.writeMED(fileMED,False);
+            YY.writeMED(fileOutPut,False);
+            YY.writeVTK(fileOutPut,False);
+            YY.writeASCII(fileOutPut);
             pass
         pass
     return
@@ -155,8 +159,8 @@ def main():
 
     print "Construction du maillage Cartesien ... "
     M=Mesh("MeshTri.med");
-    fileOutPutMEDCart="Exercie1PyTest"
-    EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,fileOutPutMEDCart)
+    fileOutPut="Exercie2PyTest"
+    EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,fileOutPut)
     return
 
 if __name__ == '__main__':

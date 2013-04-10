@@ -109,13 +109,13 @@ def EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,file):
     print "Construction de la condition initiale ... "
     YY=conditions_initiales(M)
     #
-    #   Sortie MED de la condition initiale ÃÂÃÂ  t=0 et iter = 0
+    #   Sortie MED de la condition initiale ÃÂÃÂ  t=0 et it = 0
     #
 
-    iter=0;
+    it=0;
     time=0.;
-    print "Post-traitement MED de la solution aÂ  T=%s ..."%time
-    YY.setTime(time,iter);
+    print "Post-traitement MED de la solution a� T=%s ..."%time
+    YY.setTime(time,it);
     YY.writeMED(file);
     YY.writeVTK(file);
     YY.writeASCII(file);
@@ -125,16 +125,16 @@ def EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,file):
     ntmax=100000;
     indexFacesPerio=M.getIndexFacePeriodic();
     dt=0.
-    while (iter<ntmax and time <= tmax ):
+    while (it<ntmax and time <= tmax ):
         dt,SumFlux=sigma_flux(VitesseX,VitesseY,cfl,YY,indexFacesPerio);
-        print "-- Iter : ",iter," Time : ",time," dt : ",dt 
+        print "-- Iter : ",it," Time : ",time," dt : ",dt 
 
         #Avancement en temps#
         YY-=SumFlux;
         time+=dt;
         iter+=1;
         #sortie visu tous les freq iterations
-        if (iter%freqSortie==0):
+        if (it%freqSortie==0):
             YY.setTime(time,iter);
             YY.writeMED(file,False);
             YY.writeVTK(file,False);
