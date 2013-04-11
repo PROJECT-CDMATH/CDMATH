@@ -1,17 +1,17 @@
-<map id="Patch::operator=" name="Patch::operator=">
-<area shape="rect" id="node3" href="$classPatch.html#a5afb09f063a2e73d39aaf84eff08cb7a" title="Patch::getCoefRefinementX" alt="" coords="180,5,361,33"/>
-<area shape="rect" id="node5" href="$classPatch.html#af425e6176cd1f7977aab615504660cf6" title="Patch::getCoefRefinementY" alt="" coords="180,55,361,83"/>
-<area shape="rect" id="node7" href="$classPatch.html#a06dee8e9f55e1bc9988b834db8f48c07" title="Patch::getEfficiency" alt="" coords="204,106,337,134"/>
-<area shape="rect" id="node9" href="$classPatch.html#a930a8b3b969d919b158ca64bb1f38cc8" title="Patch::getFieldFlag" alt="" coords="204,157,337,185"/>
-<area shape="rect" id="node11" href="$classPatch.html#aa7df4f460bb5028d713f26305754f7e2" title="Patch::getIndex" alt="" coords="216,207,325,235"/>
-<area shape="rect" id="node13" href="$classPatch.html#aba148ee5ef56a54f2238d0d2f002e8e9" title="Patch::getIndexCellLeftHigh\lCorner" alt="" coords="180,258,361,302"/>
-<area shape="rect" id="node15" href="$classPatch.html#ae76df0cbc74fdbb6b4be716ed9a39fdc" title="Patch::getIndexCellLeftLow\lCorner" alt="" coords="181,325,360,369"/>
-<area shape="rect" id="node17" href="$classPatch.html#a4c1ea0c60effdf501ed8e32767df402e" title="Patch::getIndexCellRight\lHighCorner" alt="" coords="189,391,352,435"/>
-<area shape="rect" id="node19" href="$classPatch.html#a3dad23937045b8e330fc414a5f7d8866" title="Patch::getIndexCellRight\lLowCorner" alt="" coords="189,458,352,502"/>
-<area shape="rect" id="node21" href="$classPatch.html#a6192b126a704f9d012868de0aad512e2" title="Patch::getIndexCorners" alt="" coords="193,525,348,553"/>
-<area shape="rect" id="node23" href="$classPatch.html#a342b3a2be49ebb14739f1e7017d7c63f" title="Patch::getLevel" alt="" coords="216,575,325,603"/>
-<area shape="rect" id="node25" href="$classPatch.html#ad7cbca8aad38573d5febe217b3124957" title="Patch::getMesh" alt="" coords="216,626,325,654"/>
-<area shape="rect" id="node27" href="$classPatch.html#a3ad8a4dbe7711e0da0a69ce7b62fe598" title="Patch::getNumberOfCellsFlags" alt="" coords="172,677,369,705"/>
-<area shape="rect" id="node29" href="$classPatch.html#a9bdcab92f51bbfd29ae6097a21857c93" title="Patch::getNx" alt="" coords="224,727,317,755"/>
-<area shape="rect" id="node31" href="$classPatch.html#a4ac191e66540c3ce1e68cdf7076e8d42" title="Patch::getNy" alt="" coords="224,778,317,806"/>
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$classPatch.html#a5afb09f063a2e73d39aaf84eff08cb7a" title="Patch::getCoefRefinementX" alt="" coords="201,5,388,35"/>
+<area shape="rect" id="node5" href="$classPatch.html#af425e6176cd1f7977aab615504660cf6" title="Patch::getCoefRefinementY" alt="" coords="201,58,388,89"/>
+<area shape="rect" id="node7" href="$classPatch.html#a06dee8e9f55e1bc9988b834db8f48c07" title="Patch::getEfficiency" alt="" coords="225,111,364,142"/>
+<area shape="rect" id="node9" href="$classPatch.html#a930a8b3b969d919b158ca64bb1f38cc8" title="Patch::getFieldFlag" alt="" coords="225,165,364,195"/>
+<area shape="rect" id="node11" href="$classPatch.html#aa7df4f460bb5028d713f26305754f7e2" title="Patch::getIndex" alt="" coords="237,218,352,249"/>
+<area shape="rect" id="node13" href="$classPatch.html#aba148ee5ef56a54f2238d0d2f002e8e9" title="Patch::getIndexCellLeftHighCorner" alt="" coords="181,271,408,302"/>
+<area shape="rect" id="node15" href="$classPatch.html#ae76df0cbc74fdbb6b4be716ed9a39fdc" title="Patch::getIndexCellLeftLowCorner" alt="" coords="181,325,408,355"/>
+<area shape="rect" id="node17" href="$classPatch.html#a4c1ea0c60effdf501ed8e32767df402e" title="Patch::getIndexCellRightHighCorner" alt="" coords="176,378,413,409"/>
+<area shape="rect" id="node19" href="$classPatch.html#a3dad23937045b8e330fc414a5f7d8866" title="Patch::getIndexCellRightLowCorner" alt="" coords="177,431,412,462"/>
+<area shape="rect" id="node21" href="$classPatch.html#a6192b126a704f9d012868de0aad512e2" title="Patch::getIndexCorners" alt="" coords="213,485,376,515"/>
+<area shape="rect" id="node23" href="$classPatch.html#a342b3a2be49ebb14739f1e7017d7c63f" title="Patch::getLevel" alt="" coords="237,538,352,569"/>
+<area shape="rect" id="node25" href="$classPatch.html#ad7cbca8aad38573d5febe217b3124957" title="Patch::getMesh" alt="" coords="237,591,352,622"/>
+<area shape="rect" id="node27" href="$classPatch.html#a3ad8a4dbe7711e0da0a69ce7b62fe598" title="Patch::getNumberOfCellsFlags" alt="" coords="192,645,397,675"/>
+<area shape="rect" id="node29" href="$classPatch.html#a9bdcab92f51bbfd29ae6097a21857c93" title="Patch::getNx" alt="" coords="245,698,344,729"/>
+<area shape="rect" id="node31" href="$classPatch.html#a4ac191e66540c3ce1e68cdf7076e8d42" title="Patch::getNy" alt="" coords="245,751,344,782"/>
 </map>

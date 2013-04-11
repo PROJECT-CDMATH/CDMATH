@@ -4,34 +4,43 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <title>CDMATH:  Fichier source de mesh/inc/Cell.hxx</title>
+
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="dynsections.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
   $(document).ready(function() { searchBox.OnSelectItem(0); });
 </script>
-<link href="doxygen.css" rel="stylesheet" type="text/css" />
+
 </head>
 <body>
-<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="top"><!-- do not remove this div! -->
+
+
 <div id="titlearea">
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr style="height: 56px;">
+  
+  
   <td style="padding-left: 0.5em;">
    <div id="projectname">CDMATH
    &#160;<span id="projectnumber">0.1</span>
    </div>
    <div id="projectbrief">MECANIQUE DES FLUIDES</div>
   </td>
+  
+  
+  
  </tr>
  </tbody>
 </table>
 </div>
-<!-- end header part -->
-<!-- Généré par Doxygen 1.8.1.2 -->
+
+<!-- Généré par Doxygen 1.7.6.1 -->
 <script type="text/javascript">
 var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
 </script>
@@ -65,6 +74,107 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
       <li><a href="globals.html"><span>Membres&#160;de&#160;fichier</span></a></li>
     </ul>
   </div>
+</div>
+<div class="header">
+  <div class="headertitle">
+<div class="title">mesh/inc/Cell.hxx</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="Cell_8hxx.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
+<a name="l00002"></a>00002 <span class="comment"> * cell.hxx</span>
+<a name="l00003"></a>00003 <span class="comment"> *</span>
+<a name="l00004"></a>00004 <span class="comment"> *  Created on: 23 January. 2012</span>
+<a name="l00005"></a>00005 <span class="comment"> *      Authors: CDMAT</span>
+<a name="l00006"></a>00006 <span class="comment"> */</span>
+<a name="l00007"></a>00007 
+<a name="l00008"></a>00008 <span class="preprocessor">#ifndef CELL_HXX_</span>
+<a name="l00009"></a>00009 <span class="preprocessor"></span><span class="preprocessor">#define CELL_HXX_</span>
+<a name="l00010"></a>00010 <span class="preprocessor"></span>
+<a name="l00019"></a>00019 <span class="preprocessor">#include &quot;<a class="code" href="Point_8hxx.html">Point.hxx</a>&quot;</span>
+<a name="l00020"></a>00020 <span class="preprocessor">#include &quot;<a class="code" href="IntTab_8hxx.html">IntTab.hxx</a>&quot;</span>
+<a name="l00021"></a>00021 <span class="preprocessor">#include &quot;<a class="code" href="DoubleTab_8hxx.html">DoubleTab.hxx</a>&quot;</span>
+<a name="l00022"></a>00022 
+<a name="l00023"></a><a class="code" href="classCell.html">00023</a> <span class="keyword">class </span><a class="code" href="classCell.html">Cell</a>
+<a name="l00024"></a>00024 {
+<a name="l00025"></a>00025     <span class="keyword">public</span>: <span class="comment">//----------------------------------------------------------------</span>
+<a name="l00029"></a>00029 <span class="comment"></span>        <a class="code" href="classCell.html#aab24f3f223f86c03968096edbd40a9f0">Cell</a> ( <span class="keywordtype">void</span> ) ;
+<a name="l00030"></a>00030 
+<a name="l00038"></a>00038         <a class="code" href="classCell.html#aab24f3f223f86c03968096edbd40a9f0">Cell</a> ( <span class="keywordtype">int</span> numberOfNodes, <span class="keywordtype">int</span> numberOfFaces, <span class="keywordtype">double</span> measure, <span class="keyword">const</span> <a class="code" href="classPoint.html">Point</a> p ) ;
+<a name="l00039"></a>00039 
+<a name="l00044"></a>00044         <a class="code" href="classCell.html#aab24f3f223f86c03968096edbd40a9f0">Cell</a> ( <span class="keyword">const</span> <a class="code" href="classCell.html">Cell</a>&amp; cell ) ;
+<a name="l00045"></a>00045 
+<a name="l00049"></a>00049         <a class="code" href="classCell.html#a4206c923493126fb2f01c8cf53c78e69">~Cell</a> ( <span class="keywordtype">void</span> ) ;
+<a name="l00050"></a>00050 
+<a name="l00055"></a>00055         <span class="keywordtype">int</span> <a class="code" href="classCell.html#a7d490715adcb1958bf69c471d6ffde58">getNumberOfNodes</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;
+<a name="l00056"></a>00056 
+<a name="l00061"></a>00061         <span class="keywordtype">int</span> <a class="code" href="classCell.html#a25b6bb2368c7e6bda564286174234f8a">getNumberOfFaces</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;
+<a name="l00062"></a>00062 
+<a name="l00067"></a>00067         <a class="code" href="classIntTab.html">IntTab</a> <a class="code" href="classCell.html#acaedb18d64da8b00a58416e5f4e0ec0d">getNodesId</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;
+<a name="l00068"></a>00068 
+<a name="l00073"></a>00073         <a class="code" href="classIntTab.html">IntTab</a> <a class="code" href="classCell.html#aa79fc2eaef058f7a1e8326932f3ce315">getFacesId</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;
+<a name="l00074"></a>00074 
+<a name="l00078"></a>00078         <span class="keywordtype">double</span> <a class="code" href="classCell.html#aa085675b525d250e61e6e4df7aea1e84">getNormalVector</a> ( <span class="keyword">const</span> <span class="keywordtype">int</span> numNormalVector, <span class="keyword">const</span> <span class="keywordtype">int</span> numComposant ) <span class="keyword">const</span> ;
+<a name="l00079"></a>00079 
+<a name="l00083"></a>00083         <a class="code" href="classDoubleTab.html">DoubleTab</a> <a class="code" href="classCell.html#a1efc2900a7cbf98987d5f319cf15b22c">getNormalVectors</a> (<span class="keywordtype">void</span>) <span class="keyword">const</span> ;
+<a name="l00084"></a>00084 
+<a name="l00090"></a>00090         <span class="keywordtype">double</span> <a class="code" href="classCell.html#ab5f76139f91d941a842d88c06333285e">getMeasure</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;
+<a name="l00091"></a>00091 
+<a name="l00096"></a>00096         <a class="code" href="classPoint.html">Point</a> <a class="code" href="classCell.html#a25b1b84d6bf629de2ce93b7724b42733">getBarryCenter</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;
+<a name="l00097"></a>00097 
+<a name="l00101"></a>00101         <span class="keywordtype">double</span> <a class="code" href="classCell.html#af84905a83f74f4de4a066ef278cfc563">x</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;
+<a name="l00102"></a>00102 
+<a name="l00106"></a>00106         <span class="keywordtype">double</span> <a class="code" href="classCell.html#a6b37a6b94d467d55e04faeb0d977d6c5">y</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;
+<a name="l00107"></a>00107 
+<a name="l00111"></a>00111         <span class="keywordtype">double</span> <a class="code" href="classCell.html#a68e6d068a19109e2de89821d90977174">z</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;
+<a name="l00112"></a>00112 
+<a name="l00116"></a>00116         <span class="keywordtype">void</span> <a class="code" href="classCell.html#af6448d94776746e5649b1629f1e9a273">addFaceId</a> ( <span class="keywordtype">int</span> numFace, <span class="keywordtype">int</span> faceId ) ;
+<a name="l00117"></a>00117 
+<a name="l00121"></a>00121         <span class="keywordtype">void</span> <a class="code" href="classCell.html#aec12b8dde505168a7f2aeefa6daa61e0">addNodeId</a> ( <span class="keywordtype">int</span> numNode, <span class="keywordtype">int</span> nodeId ) ;
+<a name="l00122"></a>00122 
+<a name="l00127"></a>00127         <span class="keyword">const</span> <a class="code" href="classCell.html">Cell</a>&amp; <a class="code" href="classCell.html#a0c3857668e4a188ddae147be1883be1c">operator= </a>( <span class="keyword">const</span> <a class="code" href="classCell.html">Cell</a>&amp; cell ) ;
+<a name="l00128"></a>00128 
+<a name="l00132"></a>00132         <span class="keywordtype">void</span> <a class="code" href="classCell.html#a9f8baf2c6b3beb86a5b2996922a56c13">addNormalVector</a> ( <span class="keywordtype">int</span> numNormalVector, <span class="keywordtype">double</span> x, <span class="keywordtype">double</span> y, <span class="keywordtype">double</span> z ) ;
+<a name="l00133"></a>00133 
+<a name="l00134"></a>00134     <span class="keyword">private</span>: <span class="comment">//----------------------------------------------------------------</span>
+<a name="l00135"></a>00135 
+<a name="l00136"></a>00136         <span class="comment">/*</span>
+<a name="l00137"></a>00137 <span class="comment">         * The nodes ID in this cell.</span>
+<a name="l00138"></a>00138 <span class="comment">         */</span>
+<a name="l00139"></a><a class="code" href="classCell.html#a94b54d76daa1424ac0c5c79ab26879d6">00139</a>         <a class="code" href="classIntTab.html">IntTab</a> <a class="code" href="classCell.html#a94b54d76daa1424ac0c5c79ab26879d6">_nodesId</a> ;
+<a name="l00140"></a>00140 
+<a name="l00141"></a>00141         <span class="comment">/*</span>
+<a name="l00142"></a>00142 <span class="comment">         * The number of nodes in this cell.</span>
+<a name="l00143"></a>00143 <span class="comment">         */</span>
+<a name="l00144"></a><a class="code" href="classCell.html#a7278ff7b2039c4cfaf16658fcf30a23a">00144</a>         <span class="keywordtype">int</span> <a class="code" href="classCell.html#a7278ff7b2039c4cfaf16658fcf30a23a">_numberOfNodes</a> ;
+<a name="l00145"></a>00145 
+<a name="l00146"></a>00146         <span class="comment">/*</span>
+<a name="l00147"></a>00147 <span class="comment">         * The faces ID in this cell.</span>
+<a name="l00148"></a>00148 <span class="comment">         */</span>
+<a name="l00149"></a><a class="code" href="classCell.html#a5fc98488f8b01b5eea989f62e717d250">00149</a>         <a class="code" href="classIntTab.html">IntTab</a> <a class="code" href="classCell.html#a5fc98488f8b01b5eea989f62e717d250">_facesId</a> ;
+<a name="l00150"></a>00150 
+<a name="l00151"></a>00151         <span class="comment">/*</span>
+<a name="l00152"></a>00152 <span class="comment">         * The number of faces in this cell.</span>
+<a name="l00153"></a>00153 <span class="comment">         */</span>
+<a name="l00154"></a><a class="code" href="classCell.html#a032882c5459a177fc208e54036efba59">00154</a>         <span class="keywordtype">int</span> <a class="code" href="classCell.html#a032882c5459a177fc208e54036efba59">_numberOfFaces</a> ;
+<a name="l00155"></a>00155 
+<a name="l00156"></a>00156         <span class="comment">/*</span>
+<a name="l00157"></a>00157 <span class="comment">         * The length or surface or volume of the cell.</span>
+<a name="l00158"></a>00158 <span class="comment">         */</span>
+<a name="l00159"></a><a class="code" href="classCell.html#a4aa59ab20b0ef98a98a17a57a27e2f6d">00159</a>         <span class="keywordtype">double</span> <a class="code" href="classCell.html#a4aa59ab20b0ef98a98a17a57a27e2f6d">_measure</a> ;
+<a name="l00160"></a>00160 
+<a name="l00161"></a>00161         <span class="comment">/*</span>
+<a name="l00162"></a>00162 <span class="comment">         * The coordinate of barycenter the cell.</span>
+<a name="l00163"></a>00163 <span class="comment">         */</span>
+<a name="l00164"></a><a class="code" href="classCell.html#a6fce9c75ce8c03c205c99330e498cd0c">00164</a>         <a class="code" href="classPoint.html">Point</a> <a class="code" href="classCell.html#a6fce9c75ce8c03c205c99330e498cd0c">_point</a> ;
+<a name="l00165"></a>00165 
+<a name="l00166"></a>00166         <span class="comment">/*</span>
+<a name="l00167"></a>00167 <span class="comment">         * The coordinate of normal vector the cell.</span>
+<a name="l00168"></a>00168 <span class="comment">         */</span>
+<a name="l00169"></a><a class="code" href="classCell.html#aa393d284000776df159f40df79853d1d">00169</a>         <a class="code" href="classDoubleTab.html">DoubleTab</a> <a class="code" href="classCell.html#aa393d284000776df159f40df79853d1d">_normalVectors</a> ;
+<a name="l00170"></a>00170 };
+<a name="l00171"></a>00171 
+<a name="l00172"></a>00172 <span class="preprocessor">#endif </span><span class="comment">/* CELL_HXX_ */</span>
+</pre></div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -79,116 +189,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_71786b7bc69a081a150e1a2372e4c3f1.html">mesh</a></li><li class="navelem"><a class="el" href="dir_264b85ca918a91c2c0f567162aa925ed.html">inc</a></li>  </ul>
-</div>
-</div><!-- top -->
-<div class="header">
-  <div class="headertitle">
-<div class="title">Cell.hxx</div>  </div>
-</div><!--header-->
-<div class="contents">
-<a href="Cell_8hxx.html">Aller à la documentation de ce fichier.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/*</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * cell.hxx</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *  Created on: 23 January. 2012</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *      Authors: CDMAT</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#ifndef CELL_HXX_</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define CELL_HXX_</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Point_8hxx.html">Point.hxx</a>&quot;</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="IntTab_8hxx.html">IntTab.hxx</a>&quot;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="DoubleTab_8hxx.html">DoubleTab.hxx</a>&quot;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="code" href="classCell.html">   23</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCell.html">Cell</a></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;{</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keyword">public</span>: <span class="comment">//----------------------------------------------------------------</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"></span>        <a class="code" href="classCell.html#aab24f3f223f86c03968096edbd40a9f0">Cell</a> ( <span class="keywordtype">void</span> ) ;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <a class="code" href="classCell.html#aab24f3f223f86c03968096edbd40a9f0">Cell</a> ( <span class="keywordtype">int</span> numberOfNodes, <span class="keywordtype">int</span> numberOfFaces, <span class="keywordtype">double</span> measure, <span class="keyword">const</span> <a class="code" href="classPoint.html">Point</a> p ) ;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <a class="code" href="classCell.html#aab24f3f223f86c03968096edbd40a9f0">Cell</a> ( <span class="keyword">const</span> <a class="code" href="classCell.html">Cell</a>&amp; cell ) ;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <a class="code" href="classCell.html#a4206c923493126fb2f01c8cf53c78e69">~Cell</a> ( <span class="keywordtype">void</span> ) ;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="keywordtype">int</span> <a class="code" href="classCell.html#a7d490715adcb1958bf69c471d6ffde58">getNumberOfNodes</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keywordtype">int</span> <a class="code" href="classCell.html#a25b6bb2368c7e6bda564286174234f8a">getNumberOfFaces</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <a class="code" href="classIntTab.html">IntTab</a> <a class="code" href="classCell.html#acaedb18d64da8b00a58416e5f4e0ec0d">getNodesId</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <a class="code" href="classIntTab.html">IntTab</a> <a class="code" href="classCell.html#aa79fc2eaef058f7a1e8326932f3ce315">getFacesId</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classCell.html#aa085675b525d250e61e6e4df7aea1e84">getNormalVector</a> ( <span class="keyword">const</span> <span class="keywordtype">int</span> numNormalVector, <span class="keyword">const</span> <span class="keywordtype">int</span> numComposant ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <a class="code" href="classDoubleTab.html">DoubleTab</a> <a class="code" href="classCell.html#a1efc2900a7cbf98987d5f319cf15b22c">getNormalVectors</a> (<span class="keywordtype">void</span>) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classCell.html#ab5f76139f91d941a842d88c06333285e">getMeasure</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <a class="code" href="classPoint.html">Point</a> <a class="code" href="classCell.html#a25b1b84d6bf629de2ce93b7724b42733">getBarryCenter</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classCell.html#af84905a83f74f4de4a066ef278cfc563">x</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classCell.html#a6b37a6b94d467d55e04faeb0d977d6c5">y</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classCell.html#a68e6d068a19109e2de89821d90977174">z</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classCell.html#af6448d94776746e5649b1629f1e9a273">addFaceId</a> ( <span class="keywordtype">int</span> numFace, <span class="keywordtype">int</span> faceId ) ;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classCell.html#aec12b8dde505168a7f2aeefa6daa61e0">addNodeId</a> ( <span class="keywordtype">int</span> numNode, <span class="keywordtype">int</span> nodeId ) ;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        <span class="keyword">const</span> <a class="code" href="classCell.html">Cell</a>&amp; <a class="code" href="classCell.html#a0c3857668e4a188ddae147be1883be1c">operator= </a>( <span class="keyword">const</span> <a class="code" href="classCell.html">Cell</a>&amp; cell ) ;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classCell.html#a9f8baf2c6b3beb86a5b2996922a56c13">addNormalVector</a> ( <span class="keywordtype">int</span> numNormalVector, <span class="keywordtype">double</span> x, <span class="keywordtype">double</span> y, <span class="keywordtype">double</span> z ) ;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keyword">private</span>: <span class="comment">//----------------------------------------------------------------</span></div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <span class="comment">/*</span></div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="comment">         * The nodes ID in this cell.</span></div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">         */</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno"><a class="code" href="classCell.html#a94b54d76daa1424ac0c5c79ab26879d6">  139</a></span>&#160;        <a class="code" href="classIntTab.html">IntTab</a> <a class="code" href="classCell.html#a94b54d76daa1424ac0c5c79ab26879d6">_nodesId</a> ;</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        <span class="comment">/*</span></div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">         * The number of nodes in this cell.</span></div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment">         */</span></div>
-<div class="line"><a name="l00144"></a><span class="lineno"><a class="code" href="classCell.html#a7278ff7b2039c4cfaf16658fcf30a23a">  144</a></span>&#160;        <span class="keywordtype">int</span> <a class="code" href="classCell.html#a7278ff7b2039c4cfaf16658fcf30a23a">_numberOfNodes</a> ;</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        <span class="comment">/*</span></div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="comment">         * The faces ID in this cell.</span></div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="comment">         */</span></div>
-<div class="line"><a name="l00149"></a><span class="lineno"><a class="code" href="classCell.html#a5fc98488f8b01b5eea989f62e717d250">  149</a></span>&#160;        <a class="code" href="classIntTab.html">IntTab</a> <a class="code" href="classCell.html#a5fc98488f8b01b5eea989f62e717d250">_facesId</a> ;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;        <span class="comment">/*</span></div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="comment">         * The number of faces in this cell.</span></div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="comment">         */</span></div>
-<div class="line"><a name="l00154"></a><span class="lineno"><a class="code" href="classCell.html#a032882c5459a177fc208e54036efba59">  154</a></span>&#160;        <span class="keywordtype">int</span> <a class="code" href="classCell.html#a032882c5459a177fc208e54036efba59">_numberOfFaces</a> ;</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        <span class="comment">/*</span></div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="comment">         * The length or surface or volume of the cell.</span></div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;<span class="comment">         */</span></div>
-<div class="line"><a name="l00159"></a><span class="lineno"><a class="code" href="classCell.html#a4aa59ab20b0ef98a98a17a57a27e2f6d">  159</a></span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classCell.html#a4aa59ab20b0ef98a98a17a57a27e2f6d">_measure</a> ;</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        <span class="comment">/*</span></div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="comment">         * The coordinate of barycenter the cell.</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="comment">         */</span></div>
-<div class="line"><a name="l00164"></a><span class="lineno"><a class="code" href="classCell.html#a6fce9c75ce8c03c205c99330e498cd0c">  164</a></span>&#160;        <a class="code" href="classPoint.html">Point</a> <a class="code" href="classCell.html#a6fce9c75ce8c03c205c99330e498cd0c">_point</a> ;</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        <span class="comment">/*</span></div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="comment">         * The coordinate of normal vector the cell.</span></div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="comment">         */</span></div>
-<div class="line"><a name="l00169"></a><span class="lineno"><a class="code" href="classCell.html#aa393d284000776df159f40df79853d1d">  169</a></span>&#160;        <a class="code" href="classDoubleTab.html">DoubleTab</a> <a class="code" href="classCell.html#aa393d284000776df159f40df79853d1d">_normalVectors</a> ;</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;};</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* CELL_HXX_ */</span><span class="preprocessor"></span></div>
-</div><!-- fragment --></div><!-- contents -->
-<!-- start footer part -->
+
+
 <hr class="footer"/><address class="footer"><small>
-Généré le Mercredi Mars 27 2013 00:45:52 pour CDMATH par &#160;<a href="http://www.doxygen.org/index.html">
+Généré le Jeudi Avril 11 2013 18:40:13 pour CDMATH par &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
-</a> 1.8.1.2
+</a> 1.7.6.1
 </small></address>
+
 </body>
 </html>

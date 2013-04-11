@@ -4,34 +4,43 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <title>CDMATH:  Fichier source de mesh/src/Face.cxx</title>
+
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="dynsections.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
   $(document).ready(function() { searchBox.OnSelectItem(0); });
 </script>
-<link href="doxygen.css" rel="stylesheet" type="text/css" />
+
 </head>
 <body>
-<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="top"><!-- do not remove this div! -->
+
+
 <div id="titlearea">
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr style="height: 56px;">
+  
+  
   <td style="padding-left: 0.5em;">
    <div id="projectname">CDMATH
    &#160;<span id="projectnumber">0.1</span>
    </div>
    <div id="projectbrief">MECANIQUE DES FLUIDES</div>
   </td>
+  
+  
+  
  </tr>
  </tbody>
 </table>
 </div>
-<!-- end header part -->
-<!-- Généré par Doxygen 1.8.1.2 -->
+
+<!-- Généré par Doxygen 1.7.6.1 -->
 <script type="text/javascript">
 var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
 </script>
@@ -65,6 +74,199 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
       <li><a href="globals.html"><span>Membres&#160;de&#160;fichier</span></a></li>
     </ul>
   </div>
+</div>
+<div class="header">
+  <div class="headertitle">
+<div class="title">mesh/src/Face.cxx</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="Face_8cxx.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
+<a name="l00002"></a>00002 <span class="comment"> * face.cxx</span>
+<a name="l00003"></a>00003 <span class="comment"> *</span>
+<a name="l00004"></a>00004 <span class="comment"> *  Created on: 23 janv. 2012</span>
+<a name="l00005"></a>00005 <span class="comment"> *      Authors: CDMAT</span>
+<a name="l00006"></a>00006 <span class="comment"> */</span>
+<a name="l00007"></a>00007 
+<a name="l00008"></a>00008 <span class="preprocessor">#include &quot;<a class="code" href="Face_8hxx.html">Face.hxx</a>&quot;</span>
+<a name="l00009"></a>00009 <span class="preprocessor">#include &lt;cmath&gt;</span>
+<a name="l00010"></a>00010 
+<a name="l00011"></a>00011 <span class="keyword">using namespace </span>std;
+<a name="l00012"></a>00012 
+<a name="l00013"></a>00013 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00014"></a><a class="code" href="classFace.html#a283aed204ad89b5f081e7116ea403377">00014</a> <a class="code" href="classFace.html#a283aed204ad89b5f081e7116ea403377">Face::Face</a>( <span class="keywordtype">void</span> )
+<a name="l00015"></a>00015 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00016"></a>00016 {
+<a name="l00017"></a>00017         _measure = 0.0 ;
+<a name="l00018"></a>00018         _region=-1;
+<a name="l00019"></a>00019         _groupName=<span class="stringliteral">&quot;&quot;</span>;
+<a name="l00020"></a>00020         _numberOfCells = 0 ;
+<a name="l00021"></a>00021         _numberOfNodes = 0 ;
+<a name="l00022"></a>00022 }
+<a name="l00023"></a>00023 
+<a name="l00024"></a>00024 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00025"></a><a class="code" href="classFace.html#a3eee0159e631aead8dd7b7af7543143c">00025</a> <a class="code" href="classFace.html#a283aed204ad89b5f081e7116ea403377">Face::Face</a>( <span class="keyword">const</span> <a class="code" href="classFace.html">Face</a>&amp; face )
+<a name="l00026"></a>00026 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00027"></a>00027 {
+<a name="l00028"></a>00028         _measure = face.<a class="code" href="classFace.html#ad8226356168dc13cf6062a6574f5e83c">getMeasure</a>() ;
+<a name="l00029"></a>00029         _region=face.<a class="code" href="classFace.html#ac751161df47f947435f5c3651ebe5deb">getRegion</a>();
+<a name="l00030"></a>00030         _groupName=face.<a class="code" href="classFace.html#ab6689c588d8823e28f4bb72a15cce195">getGroupName</a>();
+<a name="l00031"></a>00031         _point = face.<a class="code" href="classFace.html#ac74b8d69413f4bbc6ffa9a2f99424099">getBarryCenter</a>();
+<a name="l00032"></a>00032         _numberOfCells = face.<a class="code" href="classFace.html#a0a2b3c58de1e202ec194334274eb6b8b">getNumberOfCells</a>() ;
+<a name="l00033"></a>00033         _numberOfNodes = face.<a class="code" href="classFace.html#ad5974ee55d079bb2f3c7778db0a6077c">getNumberOfNodes</a>() ;
+<a name="l00034"></a>00034         _nodesId=face.<a class="code" href="classFace.html#a0c87d3d6db4a9071110668bb65ed5ed3">getNodesId</a>();
+<a name="l00035"></a>00035         _cellsId=face.<a class="code" href="classFace.html#ab793c13146b55da503657b00ae9adb29">getCellsId</a>();
+<a name="l00036"></a>00036 }
+<a name="l00037"></a>00037 
+<a name="l00038"></a>00038 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00039"></a><a class="code" href="classFace.html#ac9e34b7ffc1228abd1e38d742ef514ab">00039</a> <a class="code" href="classFace.html#a283aed204ad89b5f081e7116ea403377">Face::Face</a>( <span class="keyword">const</span> <span class="keywordtype">int</span> numberOfNodes, <span class="keyword">const</span> <span class="keywordtype">int</span> numberOfCells, <span class="keyword">const</span> <span class="keywordtype">double</span> measure, <span class="keyword">const</span> <a class="code" href="classPoint.html">Point</a> p )
+<a name="l00040"></a>00040 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00041"></a>00041 {
+<a name="l00042"></a>00042         _point        = p ;
+<a name="l00043"></a>00043         _numberOfNodes = numberOfNodes ;
+<a name="l00044"></a>00044         _numberOfCells   = numberOfCells ;
+<a name="l00045"></a>00045         _nodesId = <a class="code" href="classIntTab.html">IntTab</a>(_numberOfNodes,0);
+<a name="l00046"></a>00046         _cellsId = <a class="code" href="classIntTab.html">IntTab</a>(_numberOfCells,0);
+<a name="l00047"></a>00047         _measure = measure ;
+<a name="l00048"></a>00048         _region=-1;
+<a name="l00049"></a>00049         _groupName=<span class="stringliteral">&quot;&quot;</span>;
+<a name="l00050"></a>00050 }
+<a name="l00051"></a>00051 
+<a name="l00052"></a>00052 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00053"></a><a class="code" href="classFace.html#a5bfbf21bc4522e5897ad9e5d6081c35e">00053</a> <a class="code" href="classFace.html#a5bfbf21bc4522e5897ad9e5d6081c35e">Face::~Face</a>( <span class="keywordtype">void</span> )
+<a name="l00054"></a>00054 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00055"></a>00055 {
+<a name="l00056"></a>00056 }
+<a name="l00057"></a>00057 
+<a name="l00058"></a>00058 <span class="keywordtype">int</span>
+<a name="l00059"></a><a class="code" href="classFace.html#ac751161df47f947435f5c3651ebe5deb">00059</a> <a class="code" href="classFace.html#ac751161df47f947435f5c3651ebe5deb">Face::getRegion</a>(<span class="keywordtype">void</span>)<span class="keyword"> const</span>
+<a name="l00060"></a>00060 <span class="keyword"></span>{
+<a name="l00061"></a>00061         <span class="keywordflow">return</span> _region;
+<a name="l00062"></a>00062 }
+<a name="l00063"></a>00063 
+<a name="l00064"></a>00064 <span class="keywordtype">string</span>
+<a name="l00065"></a><a class="code" href="classFace.html#ab6689c588d8823e28f4bb72a15cce195">00065</a> <a class="code" href="classFace.html#ab6689c588d8823e28f4bb72a15cce195">Face::getGroupName</a>(<span class="keywordtype">void</span>)<span class="keyword"> const</span>
+<a name="l00066"></a>00066 <span class="keyword"></span>{
+<a name="l00067"></a>00067         <span class="keywordflow">return</span> _groupName;
+<a name="l00068"></a>00068 }
+<a name="l00069"></a>00069 
+<a name="l00070"></a>00070 <span class="keywordtype">void</span>
+<a name="l00071"></a><a class="code" href="classFace.html#a6d317b62e9501dcbe3903fbdc48b1e7d">00071</a> <a class="code" href="classFace.html#a6d317b62e9501dcbe3903fbdc48b1e7d">Face::setGroupName</a>(<span class="keyword">const</span> <span class="keywordtype">string</span> groupName)
+<a name="l00072"></a>00072 {
+<a name="l00073"></a>00073         _groupName=groupName;
+<a name="l00074"></a>00074         _region=0;
+<a name="l00075"></a>00075 }
+<a name="l00076"></a>00076 
+<a name="l00077"></a>00077 <span class="keywordtype">bool</span>
+<a name="l00078"></a><a class="code" href="classFace.html#aef1c5ff47ce5816038190bf4aace3538">00078</a> <a class="code" href="classFace.html#aef1c5ff47ce5816038190bf4aace3538">Face::isBorder</a>(<span class="keywordtype">void</span>)
+<a name="l00079"></a>00079 {
+<a name="l00080"></a>00080         <span class="keywordflow">if</span> (_region==0)
+<a name="l00081"></a>00081                 <span class="keywordflow">return</span> <span class="keyword">true</span>;
+<a name="l00082"></a>00082         <span class="keywordflow">else</span>
+<a name="l00083"></a>00083                 <span class="keywordflow">return</span> <span class="keyword">false</span>;
+<a name="l00084"></a>00084 }
+<a name="l00085"></a>00085 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00086"></a>00086 <a class="code" href="classPoint.html">Point</a>
+<a name="l00087"></a><a class="code" href="classFace.html#ac74b8d69413f4bbc6ffa9a2f99424099">00087</a> <a class="code" href="classFace.html#ac74b8d69413f4bbc6ffa9a2f99424099">Face::getBarryCenter</a>( <span class="keywordtype">void</span> ) const
+<a name="l00088"></a>00088 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00089"></a>00089 {
+<a name="l00090"></a>00090         <span class="keywordflow">return</span> _point ;
+<a name="l00091"></a>00091 }
+<a name="l00092"></a>00092 
+<a name="l00093"></a>00093 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00094"></a>00094 <span class="keywordtype">double</span>
+<a name="l00095"></a><a class="code" href="classFace.html#a97478f29ff85ac89a150d262b80e7297">00095</a> <a class="code" href="classFace.html#a97478f29ff85ac89a150d262b80e7297">Face::x</a>( <span class="keywordtype">void</span> ) const
+<a name="l00096"></a>00096 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00097"></a>00097 {
+<a name="l00098"></a>00098   <span class="keywordflow">return</span> _point.x() ;
+<a name="l00099"></a>00099 }
+<a name="l00100"></a>00100 
+<a name="l00101"></a>00101 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00102"></a>00102 <span class="keywordtype">double</span>
+<a name="l00103"></a><a class="code" href="classFace.html#afcb6e076e7231af40a92a25ae10b9d44">00103</a> <a class="code" href="classFace.html#afcb6e076e7231af40a92a25ae10b9d44">Face::y</a>( <span class="keywordtype">void</span> ) const
+<a name="l00104"></a>00104 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00105"></a>00105 {
+<a name="l00106"></a>00106         <span class="keywordflow">return</span> _point.y() ;
+<a name="l00107"></a>00107 }
+<a name="l00108"></a>00108 
+<a name="l00109"></a>00109 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00110"></a>00110 <span class="keywordtype">double</span>
+<a name="l00111"></a><a class="code" href="classFace.html#ae82c131676877319cdfbc67231f1aa8c">00111</a> <a class="code" href="classFace.html#ae82c131676877319cdfbc67231f1aa8c">Face::z</a>( <span class="keywordtype">void</span> ) const
+<a name="l00112"></a>00112 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00113"></a>00113 {
+<a name="l00114"></a>00114         <span class="keywordflow">return</span> _point.z() ;
+<a name="l00115"></a>00115 }
+<a name="l00116"></a>00116 
+<a name="l00117"></a>00117 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00118"></a>00118 <a class="code" href="classIntTab.html">IntTab</a>
+<a name="l00119"></a><a class="code" href="classFace.html#ab793c13146b55da503657b00ae9adb29">00119</a> <a class="code" href="classFace.html#ab793c13146b55da503657b00ae9adb29">Face::getCellsId</a>( <span class="keywordtype">void</span> ) const
+<a name="l00120"></a>00120 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00121"></a>00121 {
+<a name="l00122"></a>00122         <span class="keywordflow">return</span> _cellsId ;
+<a name="l00123"></a>00123 }
+<a name="l00124"></a>00124 
+<a name="l00125"></a>00125 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00126"></a>00126 <a class="code" href="classIntTab.html">IntTab</a>
+<a name="l00127"></a><a class="code" href="classFace.html#a0c87d3d6db4a9071110668bb65ed5ed3">00127</a> <a class="code" href="classFace.html#a0c87d3d6db4a9071110668bb65ed5ed3">Face::getNodesId</a>( <span class="keywordtype">void</span> ) const
+<a name="l00128"></a>00128 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00129"></a>00129 {
+<a name="l00130"></a>00130         <span class="keywordflow">return</span> _nodesId ;
+<a name="l00131"></a>00131 }
+<a name="l00132"></a>00132 
+<a name="l00133"></a>00133 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00134"></a>00134 <span class="keywordtype">double</span>
+<a name="l00135"></a><a class="code" href="classFace.html#ad8226356168dc13cf6062a6574f5e83c">00135</a> <a class="code" href="classFace.html#ad8226356168dc13cf6062a6574f5e83c">Face::getMeasure</a>( <span class="keywordtype">void</span> ) const
+<a name="l00136"></a>00136 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00137"></a>00137 {
+<a name="l00138"></a>00138         <span class="keywordflow">return</span> _measure ;
+<a name="l00139"></a>00139 }
+<a name="l00140"></a>00140 
+<a name="l00141"></a>00141 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00142"></a>00142 <span class="keywordtype">int</span>
+<a name="l00143"></a><a class="code" href="classFace.html#a0a2b3c58de1e202ec194334274eb6b8b">00143</a> <a class="code" href="classFace.html#a0a2b3c58de1e202ec194334274eb6b8b">Face::getNumberOfCells</a>( <span class="keywordtype">void</span> ) const
+<a name="l00144"></a>00144 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00145"></a>00145 {
+<a name="l00146"></a>00146         <span class="keywordflow">return</span> _numberOfCells ;
+<a name="l00147"></a>00147 }
+<a name="l00148"></a>00148 
+<a name="l00149"></a>00149 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00150"></a>00150 <span class="keywordtype">int</span>
+<a name="l00151"></a><a class="code" href="classFace.html#ad5974ee55d079bb2f3c7778db0a6077c">00151</a> <a class="code" href="classFace.html#ad5974ee55d079bb2f3c7778db0a6077c">Face::getNumberOfNodes</a>( <span class="keywordtype">void</span> ) const
+<a name="l00152"></a>00152 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00153"></a>00153 {
+<a name="l00154"></a>00154         <span class="keywordflow">return</span> _numberOfNodes ;
+<a name="l00155"></a>00155 }
+<a name="l00156"></a>00156 
+<a name="l00157"></a>00157 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00158"></a>00158 <span class="keywordtype">void</span>
+<a name="l00159"></a><a class="code" href="classFace.html#a6e69f9dbd4f0e3997044e8414380918e">00159</a> <a class="code" href="classFace.html#a6e69f9dbd4f0e3997044e8414380918e">Face::addCellId</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> numCell, <span class="keyword">const</span> <span class="keywordtype">int</span> cellId )
+<a name="l00160"></a>00160 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00161"></a>00161 {
+<a name="l00162"></a>00162         _cellsId[numCell] = cellId ;
+<a name="l00163"></a>00163 }
+<a name="l00164"></a>00164 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00165"></a>00165 <span class="keywordtype">void</span>
+<a name="l00166"></a><a class="code" href="classFace.html#ae936a6da52399fa19f4c4e0d19bff872">00166</a> <a class="code" href="classFace.html#ae936a6da52399fa19f4c4e0d19bff872">Face::addNodeId</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> numNode, <span class="keyword">const</span> <span class="keywordtype">int</span> nodeId )
+<a name="l00167"></a>00167 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00168"></a>00168 {
+<a name="l00169"></a>00169         _nodesId[numNode] = nodeId ;
+<a name="l00170"></a>00170 }
+<a name="l00171"></a>00171 
+<a name="l00172"></a>00172 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00173"></a>00173 <span class="keyword">const</span> <a class="code" href="classFace.html">Face</a>&amp;
+<a name="l00174"></a><a class="code" href="classFace.html#a86ffd5d2325c83cd6002799c81dea143">00174</a> <a class="code" href="classFace.html#a86ffd5d2325c83cd6002799c81dea143">Face::operator= </a>( <span class="keyword">const</span> <a class="code" href="classFace.html">Face</a>&amp; face )
+<a name="l00175"></a>00175 <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00176"></a>00176 {
+<a name="l00177"></a>00177         _measure = face.<a class="code" href="classFace.html#ad8226356168dc13cf6062a6574f5e83c">getMeasure</a>() ;
+<a name="l00178"></a>00178         _point = face.<a class="code" href="classFace.html#ac74b8d69413f4bbc6ffa9a2f99424099">getBarryCenter</a>() ;
+<a name="l00179"></a>00179         _numberOfCells = face.<a class="code" href="classFace.html#a0a2b3c58de1e202ec194334274eb6b8b">getNumberOfCells</a>() ;
+<a name="l00180"></a>00180         _numberOfNodes = face.<a class="code" href="classFace.html#ad5974ee55d079bb2f3c7778db0a6077c">getNumberOfNodes</a>() ;
+<a name="l00181"></a>00181         _nodesId=face.<a class="code" href="classFace.html#a0c87d3d6db4a9071110668bb65ed5ed3">getNodesId</a>();
+<a name="l00182"></a>00182         _cellsId=face.<a class="code" href="classFace.html#ab793c13146b55da503657b00ae9adb29">getCellsId</a>();
+<a name="l00183"></a>00183         _groupName=face.<a class="code" href="classFace.html#ab6689c588d8823e28f4bb72a15cce195">getGroupName</a>();
+<a name="l00184"></a>00184         _region=face.<a class="code" href="classFace.html#ac751161df47f947435f5c3651ebe5deb">getRegion</a>();
+<a name="l00185"></a>00185         <span class="keywordflow">return</span> *<span class="keyword">this</span>;
+<a name="l00186"></a>00186 }
+</pre></div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -79,208 +281,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_71786b7bc69a081a150e1a2372e4c3f1.html">mesh</a></li><li class="navelem"><a class="el" href="dir_1d5600bd2e0010fe902ea3c6a86e1fdb.html">src</a></li>  </ul>
-</div>
-</div><!-- top -->
-<div class="header">
-  <div class="headertitle">
-<div class="title">Face.cxx</div>  </div>
-</div><!--header-->
-<div class="contents">
-<a href="Face_8cxx.html">Aller à la documentation de ce fichier.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/*</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * face.cxx</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *  Created on: 23 janv. 2012</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *      Authors: CDMAT</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Face_8hxx.html">Face.hxx</a>&quot;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;cmath&gt;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">using namespace </span>std;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno"><a class="code" href="classFace.html#a283aed204ad89b5f081e7116ea403377">   14</a></span>&#160;<a class="code" href="classFace.html#a283aed204ad89b5f081e7116ea403377">Face::Face</a>( <span class="keywordtype">void</span> )</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;{</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        _measure = 0.0 ;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        _region=-1;</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        _groupName=<span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        _numberOfCells = 0 ;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        _numberOfNodes = 0 ;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;}</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="code" href="classFace.html#a3eee0159e631aead8dd7b7af7543143c">   25</a></span>&#160;<a class="code" href="classFace.html#a283aed204ad89b5f081e7116ea403377">Face::Face</a>( <span class="keyword">const</span> <a class="code" href="classFace.html">Face</a>&amp; face )</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;{</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        _measure = face.<a class="code" href="classFace.html#ad8226356168dc13cf6062a6574f5e83c">getMeasure</a>() ;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        _region=face.<a class="code" href="classFace.html#ac751161df47f947435f5c3651ebe5deb">getRegion</a>();</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        _groupName=face.<a class="code" href="classFace.html#ab6689c588d8823e28f4bb72a15cce195">getGroupName</a>();</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        _point = face.<a class="code" href="classFace.html#ac74b8d69413f4bbc6ffa9a2f99424099">getBarryCenter</a>();</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        _numberOfCells = face.<a class="code" href="classFace.html#a0a2b3c58de1e202ec194334274eb6b8b">getNumberOfCells</a>() ;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        _numberOfNodes = face.<a class="code" href="classFace.html#ad5974ee55d079bb2f3c7778db0a6077c">getNumberOfNodes</a>() ;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        _nodesId=face.<a class="code" href="classFace.html#a0c87d3d6db4a9071110668bb65ed5ed3">getNodesId</a>();</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        _cellsId=face.<a class="code" href="classFace.html#ab793c13146b55da503657b00ae9adb29">getCellsId</a>();</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;}</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno"><a class="code" href="classFace.html#ac9e34b7ffc1228abd1e38d742ef514ab">   39</a></span>&#160;<a class="code" href="classFace.html#a283aed204ad89b5f081e7116ea403377">Face::Face</a>( <span class="keyword">const</span> <span class="keywordtype">int</span> numberOfNodes, <span class="keyword">const</span> <span class="keywordtype">int</span> numberOfCells, <span class="keyword">const</span> <span class="keywordtype">double</span> measure, <span class="keyword">const</span> <a class="code" href="classPoint.html">Point</a> p )</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;{</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        _point        = p ;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        _numberOfNodes = numberOfNodes ;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        _numberOfCells   = numberOfCells ;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        _nodesId = <a class="code" href="classIntTab.html">IntTab</a>(_numberOfNodes,0);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        _cellsId = <a class="code" href="classIntTab.html">IntTab</a>(_numberOfCells,0);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        _measure = measure ;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        _region=-1;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        _groupName=<span class="stringliteral">&quot;&quot;</span>;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;}</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="code" href="classFace.html#a5bfbf21bc4522e5897ad9e5d6081c35e">   53</a></span>&#160;<a class="code" href="classFace.html#a5bfbf21bc4522e5897ad9e5d6081c35e">Face::~Face</a>( <span class="keywordtype">void</span> )</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;{</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;}</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keywordtype">int</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno"><a class="code" href="classFace.html#ac751161df47f947435f5c3651ebe5deb">   59</a></span>&#160;<a class="code" href="classFace.html#ac751161df47f947435f5c3651ebe5deb">Face::getRegion</a>(<span class="keywordtype">void</span>)<span class="keyword"> const</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keywordflow">return</span> _region;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;}</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keywordtype">string</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno"><a class="code" href="classFace.html#ab6689c588d8823e28f4bb72a15cce195">   65</a></span>&#160;<a class="code" href="classFace.html#ab6689c588d8823e28f4bb72a15cce195">Face::getGroupName</a>(<span class="keywordtype">void</span>)<span class="keyword"> const</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keywordflow">return</span> _groupName;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;}</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno"><a class="code" href="classFace.html#a6d317b62e9501dcbe3903fbdc48b1e7d">   71</a></span>&#160;<a class="code" href="classFace.html#a6d317b62e9501dcbe3903fbdc48b1e7d">Face::setGroupName</a>(<span class="keyword">const</span> <span class="keywordtype">string</span> groupName)</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;{</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        _groupName=groupName;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        _region=0;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;}</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="keywordtype">bool</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno"><a class="code" href="classFace.html#aef1c5ff47ce5816038190bf4aace3538">   78</a></span>&#160;<a class="code" href="classFace.html#aef1c5ff47ce5816038190bf4aace3538">Face::isBorder</a>(<span class="keywordtype">void</span>)</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;{</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keywordflow">if</span> (_region==0)</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;}</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<a class="code" href="classPoint.html">Point</a></div>
-<div class="line"><a name="l00087"></a><span class="lineno"><a class="code" href="classFace.html#ac74b8d69413f4bbc6ffa9a2f99424099">   87</a></span>&#160;<a class="code" href="classFace.html#ac74b8d69413f4bbc6ffa9a2f99424099">Face::getBarryCenter</a>( <span class="keywordtype">void</span> ) const</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;{</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <span class="keywordflow">return</span> _point ;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;}</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="keywordtype">double</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno"><a class="code" href="classFace.html#a97478f29ff85ac89a150d262b80e7297">   95</a></span>&#160;<a class="code" href="classFace.html#a97478f29ff85ac89a150d262b80e7297">Face::x</a>( <span class="keywordtype">void</span> ) const</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;{</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  <span class="keywordflow">return</span> _point.x() ;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;}</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="keywordtype">double</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno"><a class="code" href="classFace.html#afcb6e076e7231af40a92a25ae10b9d44">  103</a></span>&#160;<a class="code" href="classFace.html#afcb6e076e7231af40a92a25ae10b9d44">Face::y</a>( <span class="keywordtype">void</span> ) const</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;{</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <span class="keywordflow">return</span> _point.y() ;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;}</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="keywordtype">double</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno"><a class="code" href="classFace.html#ae82c131676877319cdfbc67231f1aa8c">  111</a></span>&#160;<a class="code" href="classFace.html#ae82c131676877319cdfbc67231f1aa8c">Face::z</a>( <span class="keywordtype">void</span> ) const</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;{</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        <span class="keywordflow">return</span> _point.z() ;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;}</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<a class="code" href="classIntTab.html">IntTab</a></div>
-<div class="line"><a name="l00119"></a><span class="lineno"><a class="code" href="classFace.html#ab793c13146b55da503657b00ae9adb29">  119</a></span>&#160;<a class="code" href="classFace.html#ab793c13146b55da503657b00ae9adb29">Face::getCellsId</a>( <span class="keywordtype">void</span> ) const</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;{</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        <span class="keywordflow">return</span> _cellsId ;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;}</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<a class="code" href="classIntTab.html">IntTab</a></div>
-<div class="line"><a name="l00127"></a><span class="lineno"><a class="code" href="classFace.html#a0c87d3d6db4a9071110668bb65ed5ed3">  127</a></span>&#160;<a class="code" href="classFace.html#a0c87d3d6db4a9071110668bb65ed5ed3">Face::getNodesId</a>( <span class="keywordtype">void</span> ) const</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;{</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        <span class="keywordflow">return</span> _nodesId ;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;}</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="keywordtype">double</span></div>
-<div class="line"><a name="l00135"></a><span class="lineno"><a class="code" href="classFace.html#ad8226356168dc13cf6062a6574f5e83c">  135</a></span>&#160;<a class="code" href="classFace.html#ad8226356168dc13cf6062a6574f5e83c">Face::getMeasure</a>( <span class="keywordtype">void</span> ) const</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;{</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        <span class="keywordflow">return</span> _measure ;</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;}</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="keywordtype">int</span></div>
-<div class="line"><a name="l00143"></a><span class="lineno"><a class="code" href="classFace.html#a0a2b3c58de1e202ec194334274eb6b8b">  143</a></span>&#160;<a class="code" href="classFace.html#a0a2b3c58de1e202ec194334274eb6b8b">Face::getNumberOfCells</a>( <span class="keywordtype">void</span> ) const</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;{</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        <span class="keywordflow">return</span> _numberOfCells ;</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;}</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;<span class="keywordtype">int</span></div>
-<div class="line"><a name="l00151"></a><span class="lineno"><a class="code" href="classFace.html#ad5974ee55d079bb2f3c7778db0a6077c">  151</a></span>&#160;<a class="code" href="classFace.html#ad5974ee55d079bb2f3c7778db0a6077c">Face::getNumberOfNodes</a>( <span class="keywordtype">void</span> ) const</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;{</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;        <span class="keywordflow">return</span> _numberOfNodes ;</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;}</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00159"></a><span class="lineno"><a class="code" href="classFace.html#a6e69f9dbd4f0e3997044e8414380918e">  159</a></span>&#160;<a class="code" href="classFace.html#a6e69f9dbd4f0e3997044e8414380918e">Face::addCellId</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> numCell, <span class="keyword">const</span> <span class="keywordtype">int</span> cellId )</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;{</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        _cellsId[numCell] = cellId ;</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;}</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="keywordtype">void</span></div>
-<div class="line"><a name="l00166"></a><span class="lineno"><a class="code" href="classFace.html#ae936a6da52399fa19f4c4e0d19bff872">  166</a></span>&#160;<a class="code" href="classFace.html#ae936a6da52399fa19f4c4e0d19bff872">Face::addNodeId</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> numNode, <span class="keyword">const</span> <span class="keywordtype">int</span> nodeId )</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;{</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        _nodesId[numNode] = nodeId ;</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;}</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="keyword">const</span> <a class="code" href="classFace.html">Face</a>&amp;</div>
-<div class="line"><a name="l00174"></a><span class="lineno"><a class="code" href="classFace.html#a86ffd5d2325c83cd6002799c81dea143">  174</a></span>&#160;<a class="code" href="classFace.html#a86ffd5d2325c83cd6002799c81dea143">Face::operator= </a>( <span class="keyword">const</span> <a class="code" href="classFace.html">Face</a>&amp; face )</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="comment">//----------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;{</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        _measure = face.<a class="code" href="classFace.html#ad8226356168dc13cf6062a6574f5e83c">getMeasure</a>() ;</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;        _point = face.<a class="code" href="classFace.html#ac74b8d69413f4bbc6ffa9a2f99424099">getBarryCenter</a>() ;</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;        _numberOfCells = face.<a class="code" href="classFace.html#a0a2b3c58de1e202ec194334274eb6b8b">getNumberOfCells</a>() ;</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        _numberOfNodes = face.<a class="code" href="classFace.html#ad5974ee55d079bb2f3c7778db0a6077c">getNumberOfNodes</a>() ;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        _nodesId=face.<a class="code" href="classFace.html#a0c87d3d6db4a9071110668bb65ed5ed3">getNodesId</a>();</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;        _cellsId=face.<a class="code" href="classFace.html#ab793c13146b55da503657b00ae9adb29">getCellsId</a>();</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        _groupName=face.<a class="code" href="classFace.html#ab6689c588d8823e28f4bb72a15cce195">getGroupName</a>();</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        _region=face.<a class="code" href="classFace.html#ac751161df47f947435f5c3651ebe5deb">getRegion</a>();</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;}</div>
-</div><!-- fragment --></div><!-- contents -->
-<!-- start footer part -->
+
+
 <hr class="footer"/><address class="footer"><small>
-Généré le Mercredi Mars 27 2013 00:45:52 pour CDMATH par &#160;<a href="http://www.doxygen.org/index.html">
+Généré le Jeudi Avril 11 2013 18:40:13 pour CDMATH par &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
-</a> 1.8.1.2
+</a> 1.7.6.1
 </small></address>
+
 </body>
 </html>

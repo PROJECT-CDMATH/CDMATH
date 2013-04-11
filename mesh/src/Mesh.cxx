@@ -790,7 +790,8 @@ void
 Mesh::writeVTK ( const string fileName ) const
 //----------------------------------------------------------------------
 {
-	_mesh->writeVTK(fileName.c_str()) ;
+	string fname=fileName+".vtu";
+	_mesh->writeVTK(fname.c_str()) ;
 }
 
 //----------------------------------------------------------------------
@@ -798,5 +799,6 @@ void
 Mesh::writeMED ( const string fileName ) const
 //----------------------------------------------------------------------
 {
-	MEDLoader::WriteUMesh(fileName.c_str(),_mesh,true);
+	string fname=fileName+".med";
+	MEDLoader::WriteUMesh(fname.c_str(),_mesh,true);
 }

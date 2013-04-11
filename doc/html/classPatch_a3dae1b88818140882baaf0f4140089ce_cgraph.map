@@ -1,18 +1,18 @@
-<map id="Patch::dissectPatch" name="Patch::dissectPatch">
-<area shape="rect" id="node3" href="$classPatch.html#a8fbd47f2199a320adb74d0e37af6395d" title="Patch::computeFieldFlag" alt="" coords="189,131,355,159"/>
-<area shape="rect" id="node15" href="$classPatch.html#a9ee1159faa8e53096b9994e6413e3333" title="Patch::computeMesh" alt="" coords="201,359,343,387"/>
-<area shape="rect" id="node32" href="$classPatch.html#addb6551c7f29124d07bbcec84edbf9c8" title="Patch::getPosCellX" alt="" coords="205,410,339,438"/>
-<area shape="rect" id="node34" href="$classPatch.html#a86668fc1231256419fad1772e7274dda" title="Patch::getPosCellY" alt="" coords="205,461,339,489"/>
-<area shape="rect" id="node5" href="$classField.html#a67ecd3bf4d1b3b0b91a77b5cf2a0cdbd" title="Field::getField" alt="" coords="433,5,535,33"/>
-<area shape="rect" id="node7" href="$classField.html#afa8a4673479bf43d241418ddb0f28ff7" title="Field::getMesh" alt="" coords="432,55,536,83"/>
-<area shape="rect" id="node9" href="$classMesh.html#a726e2e9bcc9de22e1cf88f7333e225a8" title="Mesh::getNx" alt="" coords="439,207,529,235"/>
-<area shape="rect" id="node11" href="$classField.html#a068c3ae1a8badbdb3db377aea560ae4e" title="Field::getTypeOfField" alt="" coords="412,106,556,134"/>
-<area shape="rect" id="node13" href="$classIntTab.html#ac86c764f9d49e1f4a25078ff37011823" title="IntTab::getValues" alt="" coords="424,157,544,185"/>
-<area shape="rect" id="node17" href="$classMesh.html#aa45800286a862e71d0b592b8a12086ba" title="Mesh::getCell" alt="" coords="435,258,533,286"/>
-<area shape="rect" id="node19" href="$classMesh.html#ad4163e0c1ceedee815b05d79ff66a506" title="Mesh::getNode" alt="" coords="431,309,537,337"/>
-<area shape="rect" id="node21" href="$classCell.html#acaedb18d64da8b00a58416e5f4e0ec0d" title="Cell::getNodesId" alt="" coords="427,359,541,387"/>
-<area shape="rect" id="node23" href="$classCell.html#a7d490715adcb1958bf69c471d6ffde58" title="Cell::getNumberOfNodes" alt="" coords="403,410,565,438"/>
-<area shape="rect" id="node26" href="$classNode.html#aaf54778ad5746a796fe31020dd9433fa" title="Node::getPoint" alt="" coords="431,461,537,489"/>
-<area shape="rect" id="node28" href="$classPoint.html#a3eef47b1c4849b3395a8f9c658ca7c4a" title="Point::x" alt="" coords="452,511,516,539"/>
-<area shape="rect" id="node30" href="$classPoint.html#a96e90df6b3c18e64c31abdf196e49ae9" title="Point::y" alt="" coords="452,562,516,590"/>
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$classPatch.html#a8fbd47f2199a320adb74d0e37af6395d" title="Patch::computeFieldFlag" alt="" coords="192,138,363,169"/>
+<area shape="rect" id="node15" href="$classPatch.html#a9ee1159faa8e53096b9994e6413e3333" title="Patch::computeMesh" alt="" coords="204,378,351,409"/>
+<area shape="rect" id="node32" href="$classPatch.html#addb6551c7f29124d07bbcec84edbf9c8" title="Patch::getPosCellX" alt="" coords="208,431,347,462"/>
+<area shape="rect" id="node34" href="$classPatch.html#a86668fc1231256419fad1772e7274dda" title="Patch::getPosCellY" alt="" coords="208,485,347,515"/>
+<area shape="rect" id="node5" href="$classField.html#a67ecd3bf4d1b3b0b91a77b5cf2a0cdbd" title="Field::getField" alt="" coords="443,5,552,35"/>
+<area shape="rect" id="node7" href="$classField.html#afa8a4673479bf43d241418ddb0f28ff7" title="Field::getMesh" alt="" coords="441,58,553,89"/>
+<area shape="rect" id="node9" href="$classMesh.html#a726e2e9bcc9de22e1cf88f7333e225a8" title="Mesh::getNx" alt="" coords="448,218,547,249"/>
+<area shape="rect" id="node11" href="$classField.html#a068c3ae1a8badbdb3db377aea560ae4e" title="Field::getTypeOfField" alt="" coords="420,111,575,142"/>
+<area shape="rect" id="node13" href="$classIntTab.html#ac86c764f9d49e1f4a25078ff37011823" title="IntTab::getValues" alt="" coords="435,165,560,195"/>
+<area shape="rect" id="node17" href="$classMesh.html#aa45800286a862e71d0b592b8a12086ba" title="Mesh::getCell" alt="" coords="444,271,551,302"/>
+<area shape="rect" id="node19" href="$classMesh.html#ad4163e0c1ceedee815b05d79ff66a506" title="Mesh::getNode" alt="" coords="440,325,555,355"/>
+<area shape="rect" id="node21" href="$classCell.html#acaedb18d64da8b00a58416e5f4e0ec0d" title="Cell::getNodesId" alt="" coords="436,378,559,409"/>
+<area shape="rect" id="node23" href="$classCell.html#a7d490715adcb1958bf69c471d6ffde58" title="Cell::getNumberOfNodes" alt="" coords="412,431,583,462"/>
+<area shape="rect" id="node26" href="$classNode.html#aaf54778ad5746a796fe31020dd9433fa" title="Node::getPoint" alt="" coords="443,485,552,515"/>
+<area shape="rect" id="node28" href="$classPoint.html#a3eef47b1c4849b3395a8f9c658ca7c4a" title="Point::x" alt="" coords="464,538,531,569"/>
+<area shape="rect" id="node30" href="$classPoint.html#a96e90df6b3c18e64c31abdf196e49ae9" title="Point::y" alt="" coords="464,591,531,622"/>
 </map>

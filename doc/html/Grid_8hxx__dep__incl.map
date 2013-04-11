@@ -1,7 +1,7 @@
-<map id="amr/inc/Grid.hxx" name="amr/inc/Grid.hxx">
-<area shape="rect" id="node3" href="$AlgoAMR_8hxx.html" title="amr/inc/AlgoAMR.hxx" alt="" coords="119,83,265,111"/>
-<area shape="rect" id="node11" href="$Grid_8cxx.html" title="amr/src/Grid.cxx" alt="" coords="289,83,404,111"/>
-<area shape="rect" id="node5" href="$BergerAlgoAMR_8hxx.html" title="amr/inc/BergerAlgoAMR.hxx" alt="" coords="5,161,189,189"/>
-<area shape="rect" id="node9" href="$AlgoAMR_8cxx.html" title="amr/src/AlgoAMR.cxx" alt="" coords="213,161,360,189"/>
-<area shape="rect" id="node7" href="$BergerAlgoAMR_8cxx.html" title="amr/src/BergerAlgoAMR.cxx" alt="" coords="5,238,189,266"/>
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$AlgoAMR_8hxx.html" title="amr/inc/AlgoAMR.hxx" alt="" coords="124,86,273,117"/>
+<area shape="rect" id="node11" href="$Grid_8cxx.html" title="amr/src/Grid.cxx" alt="" coords="297,86,417,117"/>
+<area shape="rect" id="node5" href="$BergerAlgoAMR_8hxx.html" title="amr/inc/BergerAlgoAMR.hxx" alt="" coords="5,166,197,197"/>
+<area shape="rect" id="node9" href="$AlgoAMR_8cxx.html" title="amr/src/AlgoAMR.cxx" alt="" coords="221,166,373,197"/>
+<area shape="rect" id="node7" href="$BergerAlgoAMR_8cxx.html" title="amr/src/BergerAlgoAMR.cxx" alt="" coords="5,246,197,277"/>
 </map>

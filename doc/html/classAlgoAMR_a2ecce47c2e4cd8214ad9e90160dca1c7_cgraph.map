@@ -1,12 +1,12 @@
-<map id="AlgoAMR::operator=" name="AlgoAMR::operator=">
-<area shape="rect" id="node3" href="$classAlgoAMR.html#ae534b77a1e2b6d43c7933f9cd5ae17d0" title="AlgoAMR::getCoefRefinementX" alt="" coords="192,5,395,33"/>
-<area shape="rect" id="node5" href="$classAlgoAMR.html#a19b92e12113e7e43b8c968db28a2dd9a" title="AlgoAMR::getCoefRefinementY" alt="" coords="192,55,395,83"/>
-<area shape="rect" id="node7" href="$classAlgoAMR.html#a91818e339c2fe6d852c74ac6fe06336f" title="AlgoAMR::getEfficiency" alt="" coords="216,106,371,134"/>
-<area shape="rect" id="node9" href="$classAlgoAMR.html#a1dd7e3095616b9785baf82daa0c93c13" title="AlgoAMR::getEfficiencySnd" alt="" coords="205,157,381,185"/>
-<area shape="rect" id="node11" href="$classAlgoAMR.html#a3a426eed63883bec0d052cf657f10ed3" title="AlgoAMR::getGrid" alt="" coords="231,207,356,235"/>
-<area shape="rect" id="node13" href="$classAlgoAMR.html#a1ff64ab3a3b54fe07dc17ab23e473e79" title="AlgoAMR::getMaxCells" alt="" coords="217,258,369,286"/>
-<area shape="rect" id="node15" href="$classAlgoAMR.html#af00c7a6d2ba604328244dfe74f252434" title="AlgoAMR::getMaxLevel" alt="" coords="216,309,371,337"/>
-<area shape="rect" id="node17" href="$classAlgoAMR.html#a73b52600791c8e1eb52e01e401da13fe" title="AlgoAMR::getMinCellDirection" alt="" coords="196,359,391,387"/>
-<area shape="rect" id="node19" href="$classAlgoAMR.html#a593254305f3057a1b1edce866e05f9b1" title="AlgoAMR::getNumberOfGrids" alt="" coords="199,410,388,438"/>
-<area shape="rect" id="node21" href="$classAlgoAMR.html#a0e2fad48e50a03cce2ec3c61345d85a4" title="AlgoAMR::isVerbose" alt="" coords="224,461,363,489"/>
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$classAlgoAMR.html#ae534b77a1e2b6d43c7933f9cd5ae17d0" title="AlgoAMR::getCoefRefinementX" alt="" coords="200,5,411,35"/>
+<area shape="rect" id="node5" href="$classAlgoAMR.html#a19b92e12113e7e43b8c968db28a2dd9a" title="AlgoAMR::getCoefRefinementY" alt="" coords="200,58,411,89"/>
+<area shape="rect" id="node7" href="$classAlgoAMR.html#a91818e339c2fe6d852c74ac6fe06336f" title="AlgoAMR::getEfficiency" alt="" coords="224,111,387,142"/>
+<area shape="rect" id="node9" href="$classAlgoAMR.html#a1dd7e3095616b9785baf82daa0c93c13" title="AlgoAMR::getEfficiencySnd" alt="" coords="212,165,399,195"/>
+<area shape="rect" id="node11" href="$classAlgoAMR.html#a3a426eed63883bec0d052cf657f10ed3" title="AlgoAMR::getGrid" alt="" coords="240,218,371,249"/>
+<area shape="rect" id="node13" href="$classAlgoAMR.html#a1ff64ab3a3b54fe07dc17ab23e473e79" title="AlgoAMR::getMaxCells" alt="" coords="224,271,387,302"/>
+<area shape="rect" id="node15" href="$classAlgoAMR.html#af00c7a6d2ba604328244dfe74f252434" title="AlgoAMR::getMaxLevel" alt="" coords="223,325,388,355"/>
+<area shape="rect" id="node17" href="$classAlgoAMR.html#a73b52600791c8e1eb52e01e401da13fe" title="AlgoAMR::getMinCellDirection" alt="" coords="204,378,407,409"/>
+<area shape="rect" id="node19" href="$classAlgoAMR.html#a593254305f3057a1b1edce866e05f9b1" title="AlgoAMR::getNumberOfGrids" alt="" coords="207,431,404,462"/>
+<area shape="rect" id="node21" href="$classAlgoAMR.html#a0e2fad48e50a03cce2ec3c61345d85a4" title="AlgoAMR::isVerbose" alt="" coords="232,485,379,515"/>
 </map>

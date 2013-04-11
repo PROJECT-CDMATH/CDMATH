@@ -1,7 +1,7 @@
-<map id="Node::Node" name="Node::Node">
-<area shape="rect" id="node3" href="$classNode.html#a0897024145d0d045d5c8cc129ca3ff77" title="Node::getCellsId" alt="" coords="169,5,284,33"/>
-<area shape="rect" id="node5" href="$classNode.html#a924de5c78faef0a53dc3dd06a4378d08" title="Node::getFacesId" alt="" coords="165,55,288,83"/>
-<area shape="rect" id="node7" href="$classNode.html#ae0cad6412483e434f774a56dfb127d05" title="Node::getNumberOfCells" alt="" coords="145,106,308,134"/>
-<area shape="rect" id="node9" href="$classNode.html#aea7799c5c03759f2342923c0938c7e92" title="Node::getNumberOfFaces" alt="" coords="141,157,312,185"/>
-<area shape="rect" id="node11" href="$classNode.html#aaf54778ad5746a796fe31020dd9433fa" title="Node::getPoint" alt="" coords="173,207,280,235"/>
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$classNode.html#a0897024145d0d045d5c8cc129ca3ff77" title="Node::getCellsId" alt="" coords="177,5,300,35"/>
+<area shape="rect" id="node5" href="$classNode.html#a924de5c78faef0a53dc3dd06a4378d08" title="Node::getFacesId" alt="" coords="173,58,304,89"/>
+<area shape="rect" id="node7" href="$classNode.html#ae0cad6412483e434f774a56dfb127d05" title="Node::getNumberOfCells" alt="" coords="153,111,324,142"/>
+<area shape="rect" id="node9" href="$classNode.html#aea7799c5c03759f2342923c0938c7e92" title="Node::getNumberOfFaces" alt="" coords="149,165,328,195"/>
+<area shape="rect" id="node11" href="$classNode.html#aaf54778ad5746a796fe31020dd9433fa" title="Node::getPoint" alt="" coords="184,218,293,249"/>
 </map>

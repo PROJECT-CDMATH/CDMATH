@@ -4,34 +4,43 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <title>CDMATH:  Fichier source de mesh/inc/Field.hxx</title>
+
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="dynsections.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
   $(document).ready(function() { searchBox.OnSelectItem(0); });
 </script>
-<link href="doxygen.css" rel="stylesheet" type="text/css" />
+
 </head>
 <body>
-<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="top"><!-- do not remove this div! -->
+
+
 <div id="titlearea">
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr style="height: 56px;">
+  
+  
   <td style="padding-left: 0.5em;">
    <div id="projectname">CDMATH
    &#160;<span id="projectnumber">0.1</span>
    </div>
    <div id="projectbrief">MECANIQUE DES FLUIDES</div>
   </td>
+  
+  
+  
  </tr>
  </tbody>
 </table>
 </div>
-<!-- end header part -->
-<!-- Généré par Doxygen 1.8.1.2 -->
+
+<!-- Généré par Doxygen 1.7.6.1 -->
 <script type="text/javascript">
 var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
 </script>
@@ -65,6 +74,125 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
       <li><a href="globals.html"><span>Membres&#160;de&#160;fichier</span></a></li>
     </ul>
   </div>
+</div>
+<div class="header">
+  <div class="headertitle">
+<div class="title">mesh/inc/Field.hxx</div>  </div>
+</div><!--header-->
+<div class="contents">
+<a href="Field_8hxx.html">Aller à la documentation de ce fichier.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
+<a name="l00002"></a>00002 <span class="comment"> * field.hxx</span>
+<a name="l00003"></a>00003 <span class="comment"> *</span>
+<a name="l00004"></a>00004 <span class="comment"> *  Created on: 07 fevrier. 2012</span>
+<a name="l00005"></a>00005 <span class="comment"> *      Authors: CDMAT groups</span>
+<a name="l00006"></a>00006 <span class="comment"> */</span>
+<a name="l00007"></a>00007 
+<a name="l00008"></a>00008 <span class="preprocessor">#ifndef FIELD_HXX_</span>
+<a name="l00009"></a>00009 <span class="preprocessor"></span><span class="preprocessor">#define FIELD_HXX_</span>
+<a name="l00010"></a>00010 <span class="preprocessor"></span>
+<a name="l00011"></a><a class="code" href="namespaceParaMEDMEM.html">00011</a> <span class="keyword">namespace </span>ParaMEDMEM
+<a name="l00012"></a>00012 {
+<a name="l00013"></a>00013   <span class="keyword">class </span>MEDCouplingFieldDouble;
+<a name="l00014"></a>00014 }
+<a name="l00015"></a>00015 
+<a name="l00016"></a><a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">00016</a> <span class="keyword">typedef</span> <span class="keyword">enum</span>
+<a name="l00017"></a>00017   {
+<a name="l00018"></a><a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1a8653d5a76f09db2c3ee8cc2abbe37565">00018</a>     <a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1a8653d5a76f09db2c3ee8cc2abbe37565">CELLS</a> = 0,
+<a name="l00019"></a><a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1a0fe4c6464fdc5e7d04f0efd11d4ded8d">00019</a>     <a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1a0fe4c6464fdc5e7d04f0efd11d4ded8d">NODES</a> = 1,
+<a name="l00020"></a>00020   } <a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a>;
+<a name="l00021"></a>00021 
+<a name="l00022"></a>00022 <span class="preprocessor">#include &quot;<a class="code" href="Mesh_8hxx.html">Mesh.hxx</a>&quot;</span>
+<a name="l00023"></a>00023 
+<a name="l00024"></a>00024 
+<a name="l00030"></a><a class="code" href="classField.html">00030</a> <span class="keyword">class </span><a class="code" href="classField.html">Field</a>
+<a name="l00031"></a>00031 {
+<a name="l00032"></a>00032     <span class="keyword">public</span>: <span class="comment">//----------------------------------------------------------------</span>
+<a name="l00036"></a>00036 <span class="comment"></span>        <a class="code" href="classField.html#ac0c6485e9e4605cbe5c067c0e8daa123">Field</a> ( <span class="keywordtype">void</span> ) ;
+<a name="l00037"></a>00037 
+<a name="l00045"></a>00045         <a class="code" href="classField.html#ac0c6485e9e4605cbe5c067c0e8daa123">Field</a>( <span class="keyword">const</span> std::string fieldName, <a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a> type, <span class="keyword">const</span> <a class="code" href="classMesh.html">Mesh</a>&amp; mesh , <span class="keywordtype">int</span> numberOfComponents, <span class="keywordtype">double</span> time) ;
+<a name="l00046"></a>00046 
+<a name="l00053"></a>00053         <a class="code" href="classField.html#ac0c6485e9e4605cbe5c067c0e8daa123">Field</a>( <span class="keyword">const</span> std::string fieldName, <a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a> type, <span class="keyword">const</span> <a class="code" href="classMesh.html">Mesh</a>&amp; mesh , <span class="keywordtype">int</span> numberOfComponents) ;
+<a name="l00054"></a>00054 
+<a name="l00060"></a>00060         <a class="code" href="classField.html#ac0c6485e9e4605cbe5c067c0e8daa123">Field</a>( <span class="keyword">const</span> std::string fieldName, <a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a> type, <span class="keyword">const</span> <a class="code" href="classMesh.html">Mesh</a>&amp; mesh) ;
+<a name="l00061"></a>00061 
+<a name="l00065"></a>00065         <a class="code" href="classField.html#a519b9f5552a65902bf851de529111e16">~Field</a> ( <span class="keywordtype">void</span> ) ;
+<a name="l00066"></a>00066 
+<a name="l00071"></a>00071         <a class="code" href="classField.html#ac0c6485e9e4605cbe5c067c0e8daa123">Field</a> ( <span class="keyword">const</span> <a class="code" href="classField.html">Field</a> &amp; field ) ;
+<a name="l00072"></a>00072 
+<a name="l00073"></a>00073         <span class="keywordtype">double</span>&amp; <a class="code" href="classField.html#a07eab81f490b0d479fc319e8e6c64200">operator[] </a>( <span class="keywordtype">int</span> i ) ;
+<a name="l00074"></a>00074 
+<a name="l00075"></a>00075         <span class="keywordtype">double</span> <a class="code" href="classField.html#a07eab81f490b0d479fc319e8e6c64200">operator[] </a>( <span class="keywordtype">int</span> i ) <span class="keyword">const</span>;
+<a name="l00076"></a>00076 
+<a name="l00077"></a>00077         <span class="keywordtype">double</span>&amp; <a class="code" href="classField.html#a9fab2cd82fa419ccf3489fd1c06adb1c">operator() </a>( <span class="keywordtype">int</span> i ) ;
+<a name="l00078"></a>00078 
+<a name="l00079"></a>00079         <span class="keywordtype">double</span> <a class="code" href="classField.html#a9fab2cd82fa419ccf3489fd1c06adb1c">operator() </a>( <span class="keywordtype">int</span> i ) <span class="keyword">const</span>;
+<a name="l00080"></a>00080 
+<a name="l00081"></a>00081         <span class="keywordtype">double</span>&amp; <a class="code" href="classField.html#a9fab2cd82fa419ccf3489fd1c06adb1c">operator() </a>( <span class="keywordtype">int</span> i, <span class="keywordtype">int</span> j ) ;
+<a name="l00082"></a>00082 
+<a name="l00083"></a>00083         <span class="keywordtype">double</span> <a class="code" href="classField.html#a9fab2cd82fa419ccf3489fd1c06adb1c">operator() </a>( <span class="keywordtype">int</span> i, <span class="keywordtype">int</span> j ) <span class="keyword">const</span> ;
+<a name="l00084"></a>00084 
+<a name="l00085"></a>00085         <span class="keywordtype">int</span> <a class="code" href="classField.html#a4cb4a46e4815174ac3d467454c560019">getNumberOfComponents</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;
+<a name="l00086"></a>00086 
+<a name="l00087"></a>00087         <span class="keyword">const</span> <span class="keywordtype">double</span>* <a class="code" href="classField.html#a5c73d725c7dfce47b21dcd8fc99b7bc9">getValues</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;
+<a name="l00088"></a>00088 
+<a name="l00089"></a>00089         <span class="keyword">const</span> std::string <a class="code" href="classField.html#ab68a79e2edd627dfc5da2ed0bbd3fea3">getName</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span>;
+<a name="l00090"></a>00090 
+<a name="l00091"></a>00091         <a class="code" href="classMesh.html">Mesh</a> <a class="code" href="classField.html#afa8a4673479bf43d241418ddb0f28ff7">getMesh</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;
+<a name="l00092"></a>00092 
+<a name="l00093"></a>00093         <span class="keywordtype">int</span> <a class="code" href="classField.html#a728bf6ec6c642d139be75c28314ddfc8">getNumberOfElements</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;
+<a name="l00094"></a>00094 
+<a name="l00095"></a>00095         <a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a> <a class="code" href="classField.html#a068c3ae1a8badbdb3db377aea560ae4e">getTypeOfField</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;
+<a name="l00096"></a>00096 
+<a name="l00101"></a>00101         ParaMEDMEM::MEDCouplingFieldDouble* <a class="code" href="classField.html#a67ecd3bf4d1b3b0b91a77b5cf2a0cdbd">getField</a> ( <span class="keywordtype">void</span> )  <span class="keyword">const</span> ;
+<a name="l00102"></a>00102 
+<a name="l00103"></a>00103         <span class="keywordtype">void</span> <a class="code" href="classField.html#a66b630bd687b376196bb9ec5bc6893e2">setField</a> ( ParaMEDMEM::MEDCouplingFieldDouble* field );
+<a name="l00104"></a>00104 
+<a name="l00105"></a>00105         <span class="keywordtype">void</span> <a class="code" href="classField.html#a10c33c461a7ddf68dd14cf665a19d9a1">setTime</a> ( <span class="keywordtype">double</span> time, <span class="keywordtype">int</span> iter );
+<a name="l00106"></a>00106 
+<a name="l00107"></a>00107         <span class="keywordtype">double</span> <a class="code" href="classField.html#a6ef0ca0448dff2c272fa8e4f8109782b">getTime</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span>;
+<a name="l00108"></a>00108 
+<a name="l00109"></a>00109         <span class="keywordtype">void</span> <a class="code" href="classField.html#ad20a3e49b7c7dc8aaaf00a48e0e2aba6">setName</a> ( <span class="keyword">const</span> std::string fieldName ) ;
+<a name="l00110"></a>00110 
+<a name="l00111"></a>00111         <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; <a class="code" href="classField.html#a626461f56faffdf5ba9ea0b5049e0ff7">operator= </a>( <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; f ) ;
+<a name="l00112"></a>00112 
+<a name="l00113"></a>00113         <a class="code" href="classField.html">Field</a> <a class="code" href="classField.html#ab25cce615f9022ebf80c846fb17cb664">operator+ </a>( <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; f ) <span class="keyword">const</span> ;
+<a name="l00114"></a>00114 
+<a name="l00115"></a>00115         <a class="code" href="classField.html">Field</a> <a class="code" href="classField.html#ac58b395f4226f6eac155e591b7ec30e9">operator- </a>( <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; f ) <span class="keyword">const</span> ;
+<a name="l00116"></a>00116 
+<a name="l00117"></a>00117         <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; <a class="code" href="classField.html#a6271f446ffa2c8d9be792d1d2803ae99">operator+= </a>( <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; f ) ;
+<a name="l00118"></a>00118 
+<a name="l00119"></a>00119         <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; <a class="code" href="classField.html#a51c07d81688e1f292784f19541ea2b73">operator-= </a>( <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; f ) ;
+<a name="l00120"></a>00120 
+<a name="l00121"></a>00121         <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; <a class="code" href="classField.html#a2c75a8d07bf59ed7f1b082a18eeb9785">operator*= </a>( <span class="keywordtype">double</span> s ) ;
+<a name="l00122"></a>00122 
+<a name="l00123"></a>00123         <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; <a class="code" href="classField.html#a11677899fb466765671245342150a74b">operator/= </a>( <span class="keywordtype">double</span> s ) ;
+<a name="l00124"></a>00124 
+<a name="l00125"></a>00125         <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; <a class="code" href="classField.html#a51c07d81688e1f292784f19541ea2b73">operator-= </a>( <span class="keywordtype">double</span> s ) ;
+<a name="l00126"></a>00126 
+<a name="l00127"></a>00127         <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; <a class="code" href="classField.html#a6271f446ffa2c8d9be792d1d2803ae99">operator+= </a>( <span class="keywordtype">double</span> s ) ;
+<a name="l00128"></a>00128 
+<a name="l00129"></a>00129         <span class="keywordtype">void</span> <a class="code" href="classField.html#a844166875917b1076c7dc7c0f29bb960">writeVTK</a> ( <span class="keyword">const</span> std::string fileName ) <span class="keyword">const</span> ;
+<a name="l00130"></a>00130 
+<a name="l00131"></a>00131         <span class="keywordtype">void</span> <a class="code" href="classField.html#a844166875917b1076c7dc7c0f29bb960">writeVTK</a> ( <span class="keyword">const</span> std::string fileName, <span class="keywordtype">bool</span> fromScratch ) <span class="keyword">const</span> ;
+<a name="l00132"></a>00132 
+<a name="l00133"></a>00133         <span class="keywordtype">void</span> <a class="code" href="classField.html#a75d1f81f8da5391922edc4ddcef946d8">writeMED</a> ( <span class="keyword">const</span> std::string fileName ) <span class="keyword">const</span> ;
+<a name="l00134"></a>00134 
+<a name="l00135"></a>00135         <span class="keywordtype">void</span> <a class="code" href="classField.html#a75d1f81f8da5391922edc4ddcef946d8">writeMED</a> ( <span class="keyword">const</span> std::string fileName, <span class="keywordtype">bool</span> fromScratch ) <span class="keyword">const</span> ;
+<a name="l00136"></a>00136 
+<a name="l00137"></a>00137         <span class="keywordtype">void</span> <a class="code" href="classField.html#ac5864bab0e77b140a4b0173d18971e78">writeASCII</a> ( <span class="keyword">const</span> std::string fileName ) <span class="keyword">const</span> ;
+<a name="l00138"></a>00138 
+<a name="l00139"></a>00139     <span class="keyword">protected</span>: <span class="comment">//----------------------------------------------------------------</span>
+<a name="l00140"></a>00140 
+<a name="l00141"></a><a class="code" href="classField.html#aa05273830f8a24d378b804674f32aa52">00141</a>         ParaMEDMEM::MEDCouplingFieldDouble* <a class="code" href="classField.html#aa05273830f8a24d378b804674f32aa52">_field</a>;
+<a name="l00142"></a><a class="code" href="classField.html#a22537091b24a333501d6030d07e72522">00142</a>         <a class="code" href="classMesh.html">Mesh</a> <a class="code" href="classField.html#a22537091b24a333501d6030d07e72522">_mesh</a> ;
+<a name="l00143"></a><a class="code" href="classField.html#a3a53549911dcb4977a288c8e0ad1d54b">00143</a>         <a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a> <a class="code" href="classField.html#a3a53549911dcb4977a288c8e0ad1d54b">_typeField</a>;
+<a name="l00144"></a>00144 
+<a name="l00145"></a>00145     <span class="keyword">private</span>:
+<a name="l00146"></a>00146         <span class="keywordtype">void</span> <a class="code" href="classField.html#aa4ae9674634171f21a0bce2251388ae9">writeDataASCII</a> ( <span class="keyword">const</span> std::string fileName ) <span class="keyword">const</span> ;
+<a name="l00147"></a>00147 };
+<a name="l00148"></a>00148 
+<a name="l00149"></a>00149 <span class="preprocessor">#endif </span><span class="comment">/* Field_HXX_ */</span>
+</pre></div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -79,126 +207,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Recherche');
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_71786b7bc69a081a150e1a2372e4c3f1.html">mesh</a></li><li class="navelem"><a class="el" href="dir_264b85ca918a91c2c0f567162aa925ed.html">inc</a></li>  </ul>
-</div>
-</div><!-- top -->
-<div class="header">
-  <div class="headertitle">
-<div class="title">Field.hxx</div>  </div>
-</div><!--header-->
-<div class="contents">
-<a href="Field_8hxx.html">Aller à la documentation de ce fichier.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/*</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * field.hxx</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *  Created on: 07 fevrier. 2012</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment"> *      Authors: CDMAT groups</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#ifndef FIELD_HXX_</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define FIELD_HXX_</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="code" href="namespaceParaMEDMEM.html">   11</a></span>&#160;<span class="keyword">namespace </span>ParaMEDMEM</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;{</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;  <span class="keyword">class </span>MEDCouplingFieldDouble;</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;}</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div>
-<div class="line"><a name="l00016"></a><span class="lineno"><a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">   16</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;  {</div>
-<div class="line"><a name="l00018"></a><span class="lineno"><a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1a8653d5a76f09db2c3ee8cc2abbe37565">   18</a></span>&#160;    <a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1a8653d5a76f09db2c3ee8cc2abbe37565">CELLS</a> = 0,</div>
-<div class="line"><a name="l00019"></a><span class="lineno"><a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1a0fe4c6464fdc5e7d04f0efd11d4ded8d">   19</a></span>&#160;    <a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1a0fe4c6464fdc5e7d04f0efd11d4ded8d">NODES</a> = 1,</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;  } <a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a>;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="Mesh_8hxx.html">Mesh.hxx</a>&quot;</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno"><a class="code" href="classField.html">   30</a></span>&#160;<span class="keyword">class </span><a class="code" href="classField.html">Field</a></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;{</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keyword">public</span>: <span class="comment">//----------------------------------------------------------------</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment"></span>        <a class="code" href="classField.html#ac0c6485e9e4605cbe5c067c0e8daa123">Field</a> ( <span class="keywordtype">void</span> ) ;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <a class="code" href="classField.html#ac0c6485e9e4605cbe5c067c0e8daa123">Field</a>( <span class="keyword">const</span> std::string fieldName, <a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a> type, <span class="keyword">const</span> <a class="code" href="classMesh.html">Mesh</a>&amp; mesh , <span class="keywordtype">int</span> numberOfComponents, <span class="keywordtype">double</span> time) ;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <a class="code" href="classField.html#ac0c6485e9e4605cbe5c067c0e8daa123">Field</a>( <span class="keyword">const</span> std::string fieldName, <a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a> type, <span class="keyword">const</span> <a class="code" href="classMesh.html">Mesh</a>&amp; mesh , <span class="keywordtype">int</span> numberOfComponents) ;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <a class="code" href="classField.html#ac0c6485e9e4605cbe5c067c0e8daa123">Field</a>( <span class="keyword">const</span> std::string fieldName, <a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a> type, <span class="keyword">const</span> <a class="code" href="classMesh.html">Mesh</a>&amp; mesh) ;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <a class="code" href="classField.html#a519b9f5552a65902bf851de529111e16">~Field</a> ( <span class="keywordtype">void</span> ) ;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <a class="code" href="classField.html#ac0c6485e9e4605cbe5c067c0e8daa123">Field</a> ( <span class="keyword">const</span> <a class="code" href="classField.html">Field</a> &amp; field ) ;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="keywordtype">double</span>&amp; <a class="code" href="classField.html#a07eab81f490b0d479fc319e8e6c64200">operator[] </a>( <span class="keywordtype">int</span> i ) ;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classField.html#a07eab81f490b0d479fc319e8e6c64200">operator[] </a>( <span class="keywordtype">int</span> i ) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keywordtype">double</span>&amp; <a class="code" href="classField.html#a9fab2cd82fa419ccf3489fd1c06adb1c">operator() </a>( <span class="keywordtype">int</span> i ) ;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classField.html#a9fab2cd82fa419ccf3489fd1c06adb1c">operator() </a>( <span class="keywordtype">int</span> i ) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordtype">double</span>&amp; <a class="code" href="classField.html#a9fab2cd82fa419ccf3489fd1c06adb1c">operator() </a>( <span class="keywordtype">int</span> i, <span class="keywordtype">int</span> j ) ;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classField.html#a9fab2cd82fa419ccf3489fd1c06adb1c">operator() </a>( <span class="keywordtype">int</span> i, <span class="keywordtype">int</span> j ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="keywordtype">int</span> <a class="code" href="classField.html#a4cb4a46e4815174ac3d467454c560019">getNumberOfComponents</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">double</span>* <a class="code" href="classField.html#a5c73d725c7dfce47b21dcd8fc99b7bc9">getValues</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="keyword">const</span> std::string <a class="code" href="classField.html#ab68a79e2edd627dfc5da2ed0bbd3fea3">getName</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <a class="code" href="classMesh.html">Mesh</a> <a class="code" href="classField.html#afa8a4673479bf43d241418ddb0f28ff7">getMesh</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="keywordtype">int</span> <a class="code" href="classField.html#a728bf6ec6c642d139be75c28314ddfc8">getNumberOfElements</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <a class="code" href="Field_8hxx.html#a451d758bd24249a95b64c2affda0e7e1">TypeField</a> <a class="code" href="classField.html#a068c3ae1a8badbdb3db377aea560ae4e">getTypeOfField</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        ParaMEDMEM::MEDCouplingFieldDouble* <a class="code" href="classField.html#a67ecd3bf4d1b3b0b91a77b5cf2a0cdbd">getField</a> ( <span class="keywordtype">void</span> )  <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classField.html#a66b630bd687b376196bb9ec5bc6893e2">setField</a> ( ParaMEDMEM::MEDCouplingFieldDouble* field );</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classField.html#a10c33c461a7ddf68dd14cf665a19d9a1">setTime</a> ( <span class="keywordtype">double</span> time, <span class="keywordtype">int</span> iter );</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="keywordtype">double</span> <a class="code" href="classField.html#a6ef0ca0448dff2c272fa8e4f8109782b">getTime</a> ( <span class="keywordtype">void</span> ) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classField.html#ad20a3e49b7c7dc8aaaf00a48e0e2aba6">setName</a> ( <span class="keyword">const</span> std::string fieldName ) ;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; <a class="code" href="classField.html#a626461f56faffdf5ba9ea0b5049e0ff7">operator= </a>( <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; f ) ;</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <a class="code" href="classField.html">Field</a> <a class="code" href="classField.html#ab25cce615f9022ebf80c846fb17cb664">operator+ </a>( <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; f ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        <a class="code" href="classField.html">Field</a> <a class="code" href="classField.html#ac58b395f4226f6eac155e591b7ec30e9">operator- </a>( <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; f ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; <a class="code" href="classField.html#a6271f446ffa2c8d9be792d1d2803ae99">operator+= </a>( <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; f ) ;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; <a class="code" href="classField.html#a51c07d81688e1f292784f19541ea2b73">operator-= </a>( <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; f ) ;</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; <a class="code" href="classField.html#a2c75a8d07bf59ed7f1b082a18eeb9785">operator*= </a>( <span class="keywordtype">double</span> s ) ;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; <a class="code" href="classField.html#a11677899fb466765671245342150a74b">operator/= </a>( <span class="keywordtype">double</span> s ) ;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; <a class="code" href="classField.html#a51c07d81688e1f292784f19541ea2b73">operator-= </a>( <span class="keywordtype">double</span> s ) ;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        <span class="keyword">const</span> <a class="code" href="classField.html">Field</a>&amp; <a class="code" href="classField.html#a6271f446ffa2c8d9be792d1d2803ae99">operator+= </a>( <span class="keywordtype">double</span> s ) ;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classField.html#a844166875917b1076c7dc7c0f29bb960">writeVTK</a> ( <span class="keyword">const</span> std::string fileName ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classField.html#a75d1f81f8da5391922edc4ddcef946d8">writeMED</a> ( <span class="keyword">const</span> std::string fileName ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classField.html#a75d1f81f8da5391922edc4ddcef946d8">writeMED</a> ( <span class="keyword">const</span> std::string fileName, <span class="keywordtype">bool</span> fromScratch ) <span class="keyword">const</span> ;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keyword">protected</span>: <span class="comment">//----------------------------------------------------------------</span></div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;</div>
-<div class="line"><a name="l00137"></a><span class="lineno"><a class="code" href="classField.html#aa05273830f8a24d378b804674f32aa52">  137</a></span>&#160;        ParaMEDMEM::MEDCouplingFieldDouble* <a class="code" href="classField.html#aa05273830f8a24d378b804674f32aa52">_field</a>;</div>
-<div class="line"><a name="l00138"></a><span class="lineno"><a class="code" href="classField.html#a22537091b24a333501d6030d07e72522">  138</a></span>&#160;        <a class="code" href="classMesh.html">Mesh</a> <a class="code" href="classField.html#a22537091b24a333501d6030d07e72522">_mesh</a> ;</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;};</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* Field_HXX_ */</span><span class="preprocessor"></span></div>
-</div><!-- fragment --></div><!-- contents -->
-<!-- start footer part -->
+
+
 <hr class="footer"/><address class="footer"><small>
-Généré le Mercredi Mars 27 2013 00:45:52 pour CDMATH par &#160;<a href="http://www.doxygen.org/index.html">
+Généré le Jeudi Avril 11 2013 18:40:13 pour CDMATH par &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
-</a> 1.8.1.2
+</a> 1.7.6.1
 </small></address>
+
 </body>
 </html>

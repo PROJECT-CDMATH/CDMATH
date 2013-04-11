@@ -44,6 +44,7 @@ var searchData=
   ['_5fregion',['_region',['../classFace.html#a14d88a7bb58af829b8f3b6d9ff91efb9',1,'Face']]],
   ['_5fsignaturex',['_signatureX',['../classPatch.html#a759d38648e9d788c7f000b8348a42742',1,'Patch']]],
   ['_5fsignaturey',['_signatureY',['../classPatch.html#aca027e74a1df587119515b1e3d570748',1,'Patch']]],
+  ['_5ftypefield',['_typeField',['../classField.html#a3a53549911dcb4977a288c8e0ad1d54b',1,'Field']]],
   ['_5fvalues',['_values',['../classDoubleTab.html#a98765cddba48f083e54f62a52b10ba2f',1,'DoubleTab::_values()'],['../classIntTab.html#a0c09b5ec6097be9814fd763463f69b4f',1,'IntTab::_values()']]],
   ['_5fverbose',['_verbose',['../classAlgoAMR.html#abd99dfd38c3db7cda835a91f920350bb',1,'AlgoAMR::_verbose()'],['../classPatch.html#a84ecde54089d900366542b10ff68d54e',1,'Patch::_verbose()']]],
   ['_5fx',['_x',['../classPoint.html#a2a232561b594cadd76609069ddbd477c',1,'Point']]]
