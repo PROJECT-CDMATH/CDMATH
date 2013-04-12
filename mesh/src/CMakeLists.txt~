@@ -11,6 +11,8 @@ ${INTERP_KERNEL_DIR}/GaussPoints
 ${MED_LOADER_DIR}
 )
 
+SET(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage --coverage")
+
 FILE(GLOB src_mesh_CXX . *.cxx)
 ADD_LIBRARY(mesh SHARED ${src_mesh_CXX})
 TARGET_LINK_LIBRARIES(mesh medcoupling ${HDF5_LIBS} ${MED3_LIBS} medloader)
