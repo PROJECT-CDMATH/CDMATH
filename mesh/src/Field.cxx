@@ -417,7 +417,7 @@ Field::writeVTK ( const string fileName, bool fromScratch ) const
 
 //----------------------------------------------------------------------
 void
-Field::writeASCII ( const string fileName ) const
+Field::writeCSV ( const string fileName ) const
 //----------------------------------------------------------------------
 {
     int iter,order;

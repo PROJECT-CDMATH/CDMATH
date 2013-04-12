@@ -47,7 +47,7 @@ int main( void )
   conc.setTime(time,iter);
   conc.writeMED(fileOutPut);
   conc.writeVTK(fileOutPut);
-  conc.writeASCII(fileOutPut);
+  conc.writeCSV(fileOutPut);
   int freqSortie=10;
   // boucle en temps
   while (iter<ntmax && time <= tmax )
@@ -65,7 +65,7 @@ int main( void )
 	   conc.setTime(time,iter);
 	   conc.writeMED(fileOutPut,false);
 	   conc.writeVTK(fileOutPut,false);
-	   conc.writeASCII(fileOutPut);
+	   conc.writeCSV(fileOutPut);
    }
   }
   return 0;

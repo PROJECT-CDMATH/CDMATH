@@ -118,7 +118,7 @@ def EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,file):
     YY.setTime(time,it);
     YY.writeMED(file);
     YY.writeVTK(file);
-    YY.writeASCII(file);
+    YY.writeCSV(file);
 
     # boucle de temps #
     print " Resolution de l'equation de transport par un schema UPWIND ..."
@@ -138,7 +138,7 @@ def EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,file):
             YY.setTime(time,iter);
             YY.writeMED(file,False);
             YY.writeVTK(file,False);
-            YY.writeASCII(file);
+            YY.writeCSV(file);
             pass
         pass
     return

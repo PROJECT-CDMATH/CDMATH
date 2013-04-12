@@ -136,7 +136,7 @@ void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double c
 	YY.setTime(time,iter);
 	YY.writeMED(file);
 	YY.writeVTK(file);
-	YY.writeASCII(file);
+	YY.writeCSV(file);
 	/* --------------------------------------------- */
 
 	/* boucle de temps */
@@ -161,7 +161,7 @@ void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double c
 			YY.setTime(time,iter);
 			YY.writeMED(file,false);
 			YY.writeVTK(file,false);
-			YY.writeASCII(file);
+			YY.writeCSV(file);
 		}
 	}
 }

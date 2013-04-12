@@ -95,10 +95,10 @@ class MeshTest(unittest.TestCase):
             conc1n[0,i]=i*1.0;
             pass
 
-        fileNameVTK="champc.vtu";
+        fileNameVTK="champc";
         conc1.writeVTK(fileNameVTK);
 
-        fileNameMED="champc.med";
+        fileNameMED="champc";
         conc1.writeMED(fileNameMED);
         conc1.setTime(2.3,1);
         conc1.writeMED(fileNameMED,False);
@@ -110,10 +110,10 @@ class MeshTest(unittest.TestCase):
         self.assertTrue( 50==conc1.getNumberOfElements() );
         self.assertTrue( 2.3==conc1.getTime() );
 
-        fileNameVTK="champn.vtu";
+        fileNameVTK="champn";
         conc1n.writeVTK(fileNameVTK);
 
-        fileNameMED="champn.med";
+        fileNameMED="champn";
         conc1n.writeMED(fileNameMED);
         conc1n.setTime(2.3,1);
         conc1n.writeMED(fileNameMED,False);
@@ -506,6 +506,8 @@ class MeshTest(unittest.TestCase):
         return
 
     def testClassMesh(self):
+        import os
+        print os.getcwd()
         M1=Mesh(0.0,1.0,4);
         self.assertTrue( 1==M1.getDim() );
         self.assertTrue( 5==M1.getNumberOfNodes() );
@@ -561,7 +563,7 @@ class MeshTest(unittest.TestCase):
             pass
     
     
-        M2.writeMED("TestMesh.med");
+        M2.writeMED("TestMesh");
         M22=Mesh("TestMesh.med");
         self.assertTrue( 2==M22.getDim() );
         self.assertTrue( 25==M22.getNumberOfNodes() );
@@ -594,11 +596,11 @@ class MeshTest(unittest.TestCase):
     
         M5=Mesh(0.0,1.0,4,0.0,1.0,4,0.0,1.0,4);
         self.assertTrue( 3==M5.getDim() );
-        fileNameVTK="TestMesh.vtu";
+        fileNameVTK="TestMesh";
         M4.writeVTK(fileNameVTK) ;
-        fileNameMED="TestMesh.med";
+        fileNameMED="TestMesh";
         M4.writeMED(fileNameMED) ;
-        M6=Mesh(fileNameMED);
+        M6=Mesh(fileNameMED+".med");
         self.assertTrue( 2==M6.getDim() );
         self.assertTrue( 25==M6.getNumberOfNodes() );
         self.assertTrue( 16==M6.getNumberOfCells() );

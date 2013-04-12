@@ -35,7 +35,7 @@ def main():
     conc.setTime(time,it);
     conc.writeMED(fileOutPut);
     conc.writeVTK(fileOutPut);
-    conc.writeASCII(fileOutPut);
+    conc.writeCSV(fileOutPut);
     freqSortie=10;
     #boucle en temps
     while (it<ntmax and time <= tmax ):
@@ -50,7 +50,7 @@ def main():
             conc.setTime(time,it);
             conc.writeMED(fileOutPut,False);
             conc.writeVTK(fileOutPut,False);
-            conc.writeASCII(fileOutPut);
+            conc.writeCSV(fileOutPut);
             pass
         pass
     return

@@ -10,8 +10,6 @@ INCLUDE_DIRECTORIES(
   ${MED_COUPLING_DIR}
   )
 
-#SET(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage --coverage")
-
 SET(TestMesh_SOURCES
   NodeTests.cxx
   PointTests.cxx

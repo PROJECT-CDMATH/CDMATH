@@ -134,7 +134,7 @@ class Field
 
 	void writeMED ( const std::string fileName, bool fromScratch ) const ;
 
-	void writeASCII ( const std::string fileName ) const ;
+	void writeCSV ( const std::string fileName ) const ;
 
     protected: //----------------------------------------------------------------
 
@@ -143,7 +143,6 @@ class Field
 	TypeField _typeField;
 
     private:
-	void writeDataASCII ( const std::string fileName ) const ;
 };
 
 #endif /* Field_HXX_ */

@@ -22,10 +22,10 @@ FieldTests::testClassField( void )
 	CPPUNIT_ASSERT_EQUAL( 1.2, conc1.getTime() );
     for (int i=0;i<conc1.getNumberOfElements();i++)
     	conc1(0,i)=i*1.0;
-    string fileNameVTK="champ.vtu";
+    string fileNameVTK="champ";
     conc1.writeVTK(fileNameVTK);
 
-    string fileNameMED="champ.med";
+    string fileNameMED="champ";
     conc1.writeMED(fileNameMED);
     conc1.setTime(2.3,1);
     conc1.writeMED(fileNameMED,false);
@@ -40,10 +40,10 @@ FieldTests::testClassField( void )
 	CPPUNIT_ASSERT_EQUAL( 1.2, conc1n.getTime() );
     for (int i=0;i<conc1n.getNumberOfElements();i++)
     	conc1n(0,i)=i*1.0;
-    string fileNameVTKn="champn.vtu";
+    string fileNameVTKn="champn";
     conc1n.writeVTK(fileNameVTKn);
 
-    string fileNameMEDn="champn.med";
+    string fileNameMEDn="champn";
     conc1n.writeMED(fileNameMEDn);
     conc1n.setTime(2.3,1);
     conc1n.writeMED(fileNameMEDn,false);

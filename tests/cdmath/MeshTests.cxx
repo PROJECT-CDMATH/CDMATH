@@ -74,8 +74,7 @@ MeshTests::testClassMesh( void )
 			CPPUNIT_ASSERT_EQUAL( -1, M2.getIndexFacePeriodic(i) );
 
 	}
-
-	M2.writeMED("TestMesh.med");
+	M2.writeMED("TestMesh");
 	Mesh M22("TestMesh.med");
 	CPPUNIT_ASSERT_EQUAL( 2, M22.getDim() );
 	CPPUNIT_ASSERT_EQUAL( 25, M22.getNumberOfNodes() );
@@ -110,11 +109,11 @@ MeshTests::testClassMesh( void )
 	Mesh M5(0.0,1.0,4,0.0,1.0,4,0.0,1.0,4);
     CPPUNIT_ASSERT_EQUAL( 3, M5.getDim() );
 
-    string fileNameVTK="TestMesh.vtu";
+    string fileNameVTK="TestMesh";
     M4.writeVTK(fileNameVTK) ;
-    string fileNameMED="TestMesh.med";
+    string fileNameMED="TestMesh";
     M4.writeMED(fileNameMED) ;
-    Mesh M6(fileNameMED);
+    Mesh M6(fileNameMED+".med");
 	CPPUNIT_ASSERT_EQUAL( 2, M6.getDim() );
 	CPPUNIT_ASSERT_EQUAL( 25, M6.getNumberOfNodes() );
 	CPPUNIT_ASSERT_EQUAL( 16, M6.getNumberOfCells() );
