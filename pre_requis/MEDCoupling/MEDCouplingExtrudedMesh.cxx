@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -250,6 +250,41 @@ std::set<INTERP_KERNEL::NormalizedCellType> MEDCouplingExtrudedMesh::getAllGeoTy
   for(std::set<INTERP_KERNEL::NormalizedCellType>::const_iterator it=ret2D.begin();it!=ret2D.end();it++)
     ret.insert(INTERP_KERNEL::CellModel::GetCellModel(*it).getExtrudedType());
   return ret;
+}
+
+DataArrayInt *MEDCouplingExtrudedMesh::giveCellsWithType(INTERP_KERNEL::NormalizedCellType type) const throw(INTERP_KERNEL::Exception)
+{
+  const INTERP_KERNEL::CellModel& cm=INTERP_KERNEL::CellModel::GetCellModel(type);
+  INTERP_KERNEL::NormalizedCellType revExtTyp=cm.getReverseExtrudedType();
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=DataArrayInt::New();
+  if(revExtTyp==INTERP_KERNEL::NORM_ERROR)
+    {
+      ret->alloc(0,1);
+      return ret.retn();
+    }
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> tmp=_mesh2D->giveCellsWithType(revExtTyp);
+  int nbOfLevs=_mesh1D->getNumberOfCells();
+  int nbOfCells2D=_mesh2D->getNumberOfCells();
+  int nbOfTuples=tmp->getNumberOfTuples();
+  ret->alloc(nbOfLevs*nbOfTuples,1);
+  int *pt=ret->getPointer();
+  for(int i=0;i<nbOfLevs;i++,pt+=nbOfTuples)
+    std::transform(tmp->begin(),tmp->end(),pt,std::bind2nd(std::plus<double>(),i*nbOfCells2D));
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret2=ret->renumberR(_mesh3D_ids->begin());
+  ret2->sort();
+  return ret2.retn();
+}
+
+DataArrayInt *MEDCouplingExtrudedMesh::computeNbOfNodesPerCell() const throw(INTERP_KERNEL::Exception)
+{
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret2D=_mesh2D->computeNbOfNodesPerCell();
+  int nbOfLevs=_mesh1D->getNumberOfCells();
+  int nbOfCells2D=_mesh2D->getNumberOfCells();
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret3D=DataArrayInt::New(); ret3D->alloc(nbOfLevs*nbOfCells2D,1);
+  int *pt=ret3D->getPointer();
+  for(int i=0;i<nbOfLevs;i++,pt+=nbOfCells2D)
+     std::copy(ret2D->begin(),ret2D->end(),pt);
+  return ret3D->renumberR(_mesh3D_ids->begin());
 }
 
 int MEDCouplingExtrudedMesh::getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType type) const
@@ -699,8 +734,12 @@ DataArrayDouble *MEDCouplingExtrudedMesh::getCoordinatesAndOwner() const
 
 DataArrayDouble *MEDCouplingExtrudedMesh::getBarycenterAndOwner() const
 {
-  //not yet implemented
-  return 0;
+  throw INTERP_KERNEL::Exception("MEDCouplingExtrudedMesh::getBarycenterAndOwner : not yet implemented !");
+}
+
+DataArrayDouble *MEDCouplingExtrudedMesh::computeIsoBarycenterOfNodesPerCell() const throw(INTERP_KERNEL::Exception)
+{
+  throw INTERP_KERNEL::Exception("MEDCouplingExtrudedMesh::computeIsoBarycenterOfNodesPerCell: not yet implemented !");
 }
 
 void MEDCouplingExtrudedMesh::computeExtrusionAlg(const MEDCouplingUMesh *mesh3D) throw(INTERP_KERNEL::Exception)
@@ -878,6 +917,11 @@ void MEDCouplingExtrudedMesh::writeVTKLL(std::ostream& ofs, const std::string& c
 {
   MEDCouplingAutoRefCountObjectPtr<MEDCouplingUMesh> m=buildUnstructured();
   m->writeVTKLL(ofs,cellData,pointData);
+}
+
+void MEDCouplingExtrudedMesh::reprQuickOverview(std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+{
+  stream << "MEDCouplingExtrudedMesh C++ instance at " << this << ". Name : \"" << getName() << "\".";
 }
 
 std::string MEDCouplingExtrudedMesh::getVTKDataSetType() const throw(INTERP_KERNEL::Exception)

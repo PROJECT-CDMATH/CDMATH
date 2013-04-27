@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -55,7 +55,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT void checkCoherency1(double eps=1e-12) const throw(INTERP_KERNEL::Exception);
     MEDCOUPLING_EXPORT void checkCoherency2(double eps=1e-12) const throw(INTERP_KERNEL::Exception);
     MEDCOUPLING_EXPORT void setMeshDimension(int meshDim);
-    MEDCOUPLING_EXPORT void allocateCells(int nbOfCells);
+    MEDCOUPLING_EXPORT void allocateCells(int nbOfCells=0);
     MEDCOUPLING_EXPORT void insertNextCell(INTERP_KERNEL::NormalizedCellType type, int size, const int *nodalConnOfCell) throw(INTERP_KERNEL::Exception);
     MEDCOUPLING_EXPORT void finishInsertingCells();
     MEDCOUPLING_EXPORT MEDCouplingUMeshCellIterator *cellIterator();
@@ -91,6 +91,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT void unserialization(const std::vector<double>& tinyInfoD, const std::vector<int>& tinyInfo, const DataArrayInt *a1, DataArrayDouble *a2, const std::vector<std::string>& littleStrings);
     MEDCOUPLING_EXPORT std::string getVTKDataSetType() const throw(INTERP_KERNEL::Exception);
     MEDCOUPLING_EXPORT void writeVTKLL(std::ostream& ofs, const std::string& cellData, const std::string& pointData) const throw(INTERP_KERNEL::Exception);
+    MEDCOUPLING_EXPORT void reprQuickOverview(std::ostream& stream) const throw(INTERP_KERNEL::Exception);
     //tools
     MEDCOUPLING_EXPORT static int AreCellsEqual(const int *conn, const int *connI, int cell1, int cell2, int compType);
     MEDCOUPLING_EXPORT static int AreCellsEqual0(const int *conn, const int *connI, int cell1, int cell2);
@@ -116,6 +117,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT bool areCellsIncludedIn(const MEDCouplingUMesh *other, int compType, DataArrayInt *& arr) const throw(INTERP_KERNEL::Exception);
     MEDCOUPLING_EXPORT bool areCellsIncludedIn2(const MEDCouplingUMesh *other, DataArrayInt *& arr) const throw(INTERP_KERNEL::Exception);
     MEDCOUPLING_EXPORT void getReverseNodalConnectivity(DataArrayInt *revNodal, DataArrayInt *revNodalIndx) const throw(INTERP_KERNEL::Exception);
+    MEDCOUPLING_EXPORT MEDCouplingUMesh *explode3DMeshTo1D(DataArrayInt *desc, DataArrayInt *descIndx, DataArrayInt *revDesc, DataArrayInt *revDescIndx) const throw(INTERP_KERNEL::Exception);
     MEDCOUPLING_EXPORT MEDCouplingUMesh *buildDescendingConnectivity(DataArrayInt *desc, DataArrayInt *descIndx, DataArrayInt *revDesc, DataArrayInt *revDescIndx) const throw(INTERP_KERNEL::Exception);
     MEDCOUPLING_EXPORT MEDCouplingUMesh *buildDescendingConnectivity2(DataArrayInt *desc, DataArrayInt *descIndx, DataArrayInt *revDesc, DataArrayInt *revDescIndx) const throw(INTERP_KERNEL::Exception);
     MEDCOUPLING_EXPORT void computeNeighborsOfCells(DataArrayInt *&neighbors, DataArrayInt *&neighborsIdx) const throw(INTERP_KERNEL::Exception);
@@ -172,6 +174,7 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT bool isFullyQuadratic() const;
     MEDCOUPLING_EXPORT bool isPresenceOfQuadratic() const;
     MEDCOUPLING_EXPORT void convertQuadraticCellsToLinear() throw(INTERP_KERNEL::Exception);
+    MEDCOUPLING_EXPORT DataArrayInt *convertLinearCellsToQuadratic(int conversionType=0) throw(INTERP_KERNEL::Exception);
     MEDCOUPLING_EXPORT void tessellate2D(double eps) throw(INTERP_KERNEL::Exception);
     MEDCOUPLING_EXPORT void tessellate2DCurve(double eps) throw(INTERP_KERNEL::Exception);
     MEDCOUPLING_EXPORT DataArrayInt *simplexize(int policy) throw(INTERP_KERNEL::Exception);
@@ -210,6 +213,7 @@ namespace ParaMEDMEM
     //
     MEDCOUPLING_EXPORT MEDCouplingMesh *mergeMyselfWith(const MEDCouplingMesh *other) const;
     MEDCOUPLING_EXPORT DataArrayDouble *getBarycenterAndOwner() const;
+    MEDCOUPLING_EXPORT DataArrayDouble *computeIsoBarycenterOfNodesPerCell() const throw(INTERP_KERNEL::Exception);
     MEDCOUPLING_EXPORT DataArrayDouble *getPartBarycenterAndOwner(const int *begin, const int *end) const;
     MEDCOUPLING_EXPORT static MEDCouplingUMesh *Build0DMeshFromCoords(DataArrayDouble *da) throw(INTERP_KERNEL::Exception);
     MEDCOUPLING_EXPORT static MEDCouplingUMesh *MergeUMeshes(const MEDCouplingUMesh *mesh1, const MEDCouplingUMesh *mesh2) throw(INTERP_KERNEL::Exception);
@@ -270,12 +274,19 @@ namespace ParaMEDMEM
     static bool AreCellsEqualInPool(const std::vector<int>& candidates, int compType, const int *conn, const int *connI, DataArrayInt *result) ;
     MEDCouplingUMesh *buildPartOfMySelfKeepCoords(const int *begin, const int *end) const;
     MEDCouplingUMesh *buildPartOfMySelfKeepCoords2(int start, int end, int step) const;
+    DataArrayInt *convertLinearCellsToQuadratic1D0(DataArrayInt *&conn, DataArrayInt *&connI, DataArrayDouble *& coords, std::set<INTERP_KERNEL::NormalizedCellType>& types) const throw(INTERP_KERNEL::Exception);
+    DataArrayInt *convertLinearCellsToQuadratic2DAnd3D0(const MEDCouplingUMesh *m1D, const DataArrayInt *desc, const DataArrayInt *descI, DataArrayInt *&conn, DataArrayInt *&connI, DataArrayDouble *& coords, std::set<INTERP_KERNEL::NormalizedCellType>& types) const throw(INTERP_KERNEL::Exception);
+    DataArrayInt *convertLinearCellsToQuadratic2D0(DataArrayInt *&conn, DataArrayInt *&connI, DataArrayDouble *& coords, std::set<INTERP_KERNEL::NormalizedCellType>& types) const throw(INTERP_KERNEL::Exception);
+    DataArrayInt *convertLinearCellsToQuadratic2D1(DataArrayInt *&conn, DataArrayInt *&connI, DataArrayDouble *& coords, std::set<INTERP_KERNEL::NormalizedCellType>& types) const throw(INTERP_KERNEL::Exception);
+    DataArrayInt *convertLinearCellsToQuadratic3D0(DataArrayInt *&conn, DataArrayInt *&connI, DataArrayDouble *& coords, std::set<INTERP_KERNEL::NormalizedCellType>& types) const throw(INTERP_KERNEL::Exception);
+    DataArrayInt *convertLinearCellsToQuadratic3D1(DataArrayInt *&conn, DataArrayInt *&connI, DataArrayDouble *& coords, std::set<INTERP_KERNEL::NormalizedCellType>& types) const throw(INTERP_KERNEL::Exception);
     template<int SPACEDIM>
     void getCellsContainingPointsAlg(const double *coords, const double *pos, int nbOfPoints,
                                      double eps, std::vector<int>& elts, std::vector<int>& eltsIndex) const;
 /// @cond INTERNAL
     static MEDCouplingUMesh *MergeUMeshesLL(std::vector<const MEDCouplingUMesh *>& a) throw(INTERP_KERNEL::Exception);
     typedef int (*DimM1DescNbrer)(int id, unsigned nb, const INTERP_KERNEL::CellModel& cm, bool compute, const int *conn1, const int *conn2);
+    template<class SonsGenerator>
     MEDCouplingUMesh *buildDescendingConnectivityGen(DataArrayInt *desc, DataArrayInt *descIndx, DataArrayInt *revDesc, DataArrayInt *revDescIndx, DimM1DescNbrer nbrer) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *buildUnionOf2DMesh() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *buildUnionOf3DMesh() const throw(INTERP_KERNEL::Exception);

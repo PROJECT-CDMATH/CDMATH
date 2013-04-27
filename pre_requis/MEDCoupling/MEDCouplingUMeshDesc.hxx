@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -51,6 +51,8 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT int getMeshDimension() const { return _mesh_dim; }
     MEDCOUPLING_EXPORT INTERP_KERNEL::NormalizedCellType getTypeOfCell(int cellId) const;
     MEDCOUPLING_EXPORT std::set<INTERP_KERNEL::NormalizedCellType> getAllGeoTypes() const;
+    MEDCOUPLING_EXPORT DataArrayInt *giveCellsWithType(INTERP_KERNEL::NormalizedCellType type) const throw(INTERP_KERNEL::Exception);
+    MEDCOUPLING_EXPORT DataArrayInt *computeNbOfNodesPerCell() const throw(INTERP_KERNEL::Exception);
     MEDCOUPLING_EXPORT int getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType type) const;
     MEDCOUPLING_EXPORT void getNodeIdsOfCell(int cellId, std::vector<int>& conn) const;
     MEDCOUPLING_EXPORT std::string simpleRepr() const;
@@ -88,12 +90,14 @@ namespace ParaMEDMEM
     MEDCOUPLING_EXPORT DataArrayInt *zipCoordsTraducer();
     MEDCOUPLING_EXPORT MEDCouplingMesh *mergeMyselfWith(const MEDCouplingMesh *other) const;
     MEDCOUPLING_EXPORT DataArrayDouble *getBarycenterAndOwner() const;
+    MEDCOUPLING_EXPORT DataArrayDouble *computeIsoBarycenterOfNodesPerCell() const throw(INTERP_KERNEL::Exception);
   private:
     MEDCouplingUMeshDesc();
     ~MEDCouplingUMeshDesc();
     void computeTypes();
     void checkFullyDefined() const throw(INTERP_KERNEL::Exception);
     void writeVTKLL(std::ostream& ofs, const std::string& cellData, const std::string& pointData) const throw(INTERP_KERNEL::Exception);
+    void reprQuickOverview(std::ostream& stream) const throw(INTERP_KERNEL::Exception);
     std::string getVTKDataSetType() const throw(INTERP_KERNEL::Exception);
   private:
     int _mesh_dim;

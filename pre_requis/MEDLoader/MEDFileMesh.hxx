@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -43,8 +43,9 @@ namespace ParaMEDMEM
     void setName(const char *name) { _name=name; }
     bool changeNames(const std::vector< std::pair<std::string,std::string> >& modifTab) throw(INTERP_KERNEL::Exception);
     const char *getName() const { return _name.c_str(); }
-    void setUnivName(const char *name) { _univ_name=name; }
     const char *getUnivName() const { return _univ_name.c_str(); }
+    bool getUnivNameWrStatus() const { return _univ_wr_status; }
+    void setUnivNameWrStatus(bool newStatus) { _univ_wr_status=newStatus; }
     void setDescription(const char *name) { _desc_name=name; }
     const char *getDescription() const { return _desc_name.c_str(); }
     void setOrder(int order) { _order=order; }
@@ -118,9 +119,11 @@ namespace ParaMEDMEM
     virtual void setGroupsAtLevel(int meshDimRelToMaxExt, const std::vector<const DataArrayInt *>& grps, bool renum=false) throw(INTERP_KERNEL::Exception);
     virtual void setFamilyFieldArr(int meshDimRelToMaxExt, DataArrayInt *famArr) throw(INTERP_KERNEL::Exception) = 0;
     virtual void setRenumFieldArr(int meshDimRelToMaxExt, DataArrayInt *renumArr) throw(INTERP_KERNEL::Exception) = 0;
+    virtual void setNameFieldAtLevel(int meshDimRelToMaxExt, DataArrayAsciiChar *nameArr) throw(INTERP_KERNEL::Exception) = 0;
     virtual const DataArrayInt *getFamilyFieldAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception) = 0;
     virtual const DataArrayInt *getNumberFieldAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception) = 0;
     virtual const DataArrayInt *getRevNumberFieldAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception) = 0;
+    virtual const DataArrayAsciiChar *getNameFieldAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception) = 0;
     virtual DataArrayInt *getFamiliesArr(int meshDimRelToMaxExt, const std::vector<std::string>& fams, bool renum=false) const throw(INTERP_KERNEL::Exception) = 0;
     virtual DataArrayInt *getGroupsArr(int meshDimRelToMaxExt, const std::vector<std::string>& grps, bool renum=false) const throw(INTERP_KERNEL::Exception);
     virtual DataArrayInt *getGroupArr(int meshDimRelToMaxExt, const char *grp, bool renum=false) const throw(INTERP_KERNEL::Exception);
@@ -133,12 +136,14 @@ namespace ParaMEDMEM
     virtual bool unPolyze(std::vector<int>& oldCode, std::vector<int>& newCode, DataArrayInt *& o2nRenumCell) throw(INTERP_KERNEL::Exception) = 0;
   protected:
     MEDFileMesh();
+    //! protected because no way in MED file API to specify this name
+    void setUnivName(const char *name) { _univ_name=name; }
     void addFamilyOnAllGroupsHaving(const char *famName, const char *otherFamName) throw(INTERP_KERNEL::Exception);
     virtual void writeLL(med_idt fid) const throw(INTERP_KERNEL::Exception) = 0;
     void dealWithTinyInfo(const MEDCouplingMesh *m) throw(INTERP_KERNEL::Exception);
     virtual void synchronizeTinyInfoOnLeaves() const = 0;
     void getFamilyRepr(std::ostream& oss) const;
-    virtual void appendFamilyEntries(const std::set<int>& famIds, const std::vector< std::vector<int> >& fidsOfGrps, const std::vector<std::string>& grpNames);
+    virtual void appendFamilyEntries(const DataArrayInt *famIds, const std::vector< std::vector<int> >& fidsOfGrps, const std::vector<std::string>& grpNames);
     virtual void changeFamilyIdArr(int oldId, int newId) throw(INTERP_KERNEL::Exception) = 0;
     static void TranslateFamilyIds(int offset, DataArrayInt *famArr, std::vector< std::vector<int> >& famIdsPerGrp);
     static void ChangeAllGroupsContainingFamily(std::map<std::string, std::vector<std::string> >& groups, const char *familyNameToChange, const std::vector<std::string>& newFamiliesNames) throw(INTERP_KERNEL::Exception);
@@ -151,7 +156,9 @@ namespace ParaMEDMEM
     double _time;
     std::string _dt_unit;
     std::string _name;
-    std::string _univ_name;
+    //! this attribute do not impact the state of instance -> mutable
+    mutable std::string _univ_name;
+    bool _univ_wr_status;
     std::string _desc_name;
   protected:
     std::map<std::string, std::vector<std::string> > _groups;
@@ -184,6 +191,7 @@ namespace ParaMEDMEM
     const DataArrayInt *getFamilyFieldAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception);
     const DataArrayInt *getNumberFieldAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception);
     const DataArrayInt *getRevNumberFieldAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception);
+    const DataArrayAsciiChar *getNameFieldAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception);
     int getNumberOfNodes() const throw(INTERP_KERNEL::Exception);
     std::vector<int> getNonEmptyLevels() const;
     std::vector<int> getNonEmptyLevelsExt() const;
@@ -214,11 +222,11 @@ namespace ParaMEDMEM
     void eraseGroupsAtLevel(int meshDimRelToMaxExt) throw(INTERP_KERNEL::Exception);
     void setFamilyFieldArr(int meshDimRelToMaxExt, DataArrayInt *famArr) throw(INTERP_KERNEL::Exception);
     void setRenumFieldArr(int meshDimRelToMaxExt, DataArrayInt *renumArr) throw(INTERP_KERNEL::Exception);
+    void setNameFieldAtLevel(int meshDimRelToMaxExt, DataArrayAsciiChar *nameArr) throw(INTERP_KERNEL::Exception);
     void addNodeGroup(const DataArrayInt *ids) throw(INTERP_KERNEL::Exception);
     void addGroup(int meshDimRelToMaxExt, const DataArrayInt *ids) throw(INTERP_KERNEL::Exception);
     void removeMeshAtLevel(int meshDimRelToMax) throw(INTERP_KERNEL::Exception);
     void setMeshAtLevel(int meshDimRelToMax, MEDCouplingUMesh *m, bool newOrOld=false) throw(INTERP_KERNEL::Exception);
-    void setMeshAtLevelGen(int meshDimRelToMax, MEDCouplingUMesh *m, bool newOrOld) throw(INTERP_KERNEL::Exception);
     void setGroupsFromScratch(int meshDimRelToMax, const std::vector<const MEDCouplingUMesh *>& ms) throw(INTERP_KERNEL::Exception);
     void setGroupsOnSetMesh(int meshDimRelToMax, const std::vector<const MEDCouplingUMesh *>& ms, bool renum) throw(INTERP_KERNEL::Exception);
     void optimizeFamilies() throw(INTERP_KERNEL::Exception);
@@ -245,6 +253,7 @@ namespace ParaMEDMEM
     MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> _coords;
     MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _fam_coords;
     MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _num_coords;
+    MEDCouplingAutoRefCountObjectPtr<DataArrayAsciiChar> _name_coords;
     mutable MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _rev_num_coords;
   };
 
@@ -261,8 +270,10 @@ namespace ParaMEDMEM
     const DataArrayInt *getFamilyFieldAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception);
     void setFamilyFieldArr(int meshDimRelToMaxExt, DataArrayInt *famArr) throw(INTERP_KERNEL::Exception);
     void setRenumFieldArr(int meshDimRelToMaxExt, DataArrayInt *renumArr) throw(INTERP_KERNEL::Exception);
+    void setNameFieldAtLevel(int meshDimRelToMaxExt, DataArrayAsciiChar *nameArr) throw(INTERP_KERNEL::Exception);
     const DataArrayInt *getNumberFieldAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception);
     const DataArrayInt *getRevNumberFieldAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception);
+    const DataArrayAsciiChar *getNameFieldAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception);
     std::vector<int> getNonEmptyLevels() const;
     std::vector<int> getNonEmptyLevelsExt() const;
     MEDCouplingMesh *getGenMeshAtLevel(int meshDimRelToMax, bool renum=false) const throw(INTERP_KERNEL::Exception);
@@ -280,8 +291,10 @@ namespace ParaMEDMEM
   private:
     MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _fam_nodes;
     MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _num_nodes;
+    MEDCouplingAutoRefCountObjectPtr<DataArrayAsciiChar> _names_nodes;
     MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _fam_cells;
     MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _num_cells;
+    MEDCouplingAutoRefCountObjectPtr<DataArrayAsciiChar> _names_cells;
     mutable MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _rev_num_nodes;
     mutable MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _rev_num_cells;
   };

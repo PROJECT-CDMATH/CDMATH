@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -199,9 +199,9 @@ public:
          return ret;
        }
 
-       static PyObject *GetAllFieldIterations(const char *fileName, const char *meshName, const char *fieldName) throw(INTERP_KERNEL::Exception)
+       static PyObject *GetAllFieldIterations(const char *fileName, const char *fieldName) throw(INTERP_KERNEL::Exception)
        {
-         std::vector< std::pair< std::pair<int,int>, double> > res=MEDLoader::GetAllFieldIterations(fileName,meshName,fieldName);
+         std::vector< std::pair< std::pair<int,int>, double> > res=MEDLoader::GetAllFieldIterations(fileName,fieldName);
          PyObject *ret=PyList_New(res.size());
          int rk=0;
          for(std::vector< std::pair< std::pair<int,int>, double> >::const_iterator iter=res.begin();iter!=res.end();iter++,rk++)
@@ -368,8 +368,9 @@ namespace ParaMEDMEM
     virtual void clearNonDiscrAttributes() const;
     void setName(const char *name);
     const char *getName();
-    void setUnivName(const char *name);
     const char *getUnivName() const;
+    bool getUnivNameWrStatus() const;
+    void setUnivNameWrStatus(bool newStatus);
     void setDescription(const char *name);
     const char *getDescription() const;
     void setOrder(int order);
@@ -437,6 +438,7 @@ namespace ParaMEDMEM
     virtual MEDCouplingMesh *getGenMeshAtLevel(int meshDimRelToMax, bool renum=false) const throw(INTERP_KERNEL::Exception);
     virtual void setFamilyFieldArr(int meshDimRelToMaxExt, DataArrayInt *famArr) throw(INTERP_KERNEL::Exception);
     virtual void setRenumFieldArr(int meshDimRelToMaxExt, DataArrayInt *renumArr) throw(INTERP_KERNEL::Exception);
+    virtual void setNameFieldAtLevel(int meshDimRelToMaxExt, DataArrayAsciiChar *nameArr) throw(INTERP_KERNEL::Exception);
     virtual DataArrayInt *getFamiliesArr(int meshDimRelToMaxExt, const std::vector<std::string>& fams, bool renum=false) const throw(INTERP_KERNEL::Exception);
     virtual DataArrayInt *getGroupsArr(int meshDimRelToMaxExt, const std::vector<std::string>& grps, bool renum=false) const throw(INTERP_KERNEL::Exception);
     virtual DataArrayInt *getGroupArr(int meshDimRelToMaxExt, const char *grp, bool renum=false) const throw(INTERP_KERNEL::Exception);
@@ -523,6 +525,14 @@ namespace ParaMEDMEM
            if(tmp)
              tmp->incrRef();
            return SWIG_NewPointerObj(SWIG_as_voidptr(tmp),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 );
+         }
+         
+         PyObject *getNameFieldAtLevel(int meshDimRelToMaxExt) const throw(INTERP_KERNEL::Exception)
+         {
+           const DataArrayAsciiChar *tmp=self->getNameFieldAtLevel(meshDimRelToMaxExt);
+           if(tmp)
+             tmp->incrRef();
+           return SWIG_NewPointerObj(SWIG_as_voidptr(tmp),SWIGTYPE_p_ParaMEDMEM__DataArrayAsciiChar, SWIG_POINTER_OWN | 0 );
          }
 
          PyObject *findOrCreateAndGiveFamilyWithId(int id, bool& created) throw(INTERP_KERNEL::Exception)
@@ -614,7 +624,6 @@ namespace ParaMEDMEM
     void addGroup(int meshDimRelToMaxExt, const DataArrayInt *ids) throw(INTERP_KERNEL::Exception);
     void removeMeshAtLevel(int meshDimRelToMax) throw(INTERP_KERNEL::Exception);
     void setMeshAtLevel(int meshDimRelToMax, MEDCouplingUMesh *m, bool newOrOld=false) throw(INTERP_KERNEL::Exception);
-    void setMeshAtLevelGen(int meshDimRelToMax, MEDCouplingUMesh *m, bool newOrOld) throw(INTERP_KERNEL::Exception);
     void setGroupsFromScratch(int meshDimRelToMax, const std::vector<const MEDCouplingUMesh *>& ms) throw(INTERP_KERNEL::Exception);
     void setGroupsOnSetMesh(int meshDimRelToMax, const std::vector<const MEDCouplingUMesh *>& ms, bool renum) throw(INTERP_KERNEL::Exception);
     void optimizeFamilies() throw(INTERP_KERNEL::Exception);
@@ -829,7 +838,7 @@ namespace ParaMEDMEM
            return MEDFileMeshes::New(fileName);
          }
 
-         std::string __str__() const
+         std::string __str__() const throw(INTERP_KERNEL::Exception)
            {
              return self->simpleRepr();
            }
@@ -946,14 +955,16 @@ namespace ParaMEDMEM
        PyObject *getLocalizationFromId(int locId) const throw(INTERP_KERNEL::Exception)
        {
          const MEDFileFieldLoc *loc=&self->getLocalizationFromId(locId);
-         loc->incrRef();
+         if(loc)
+           loc->incrRef();
          return SWIG_NewPointerObj(SWIG_as_voidptr(loc),SWIGTYPE_p_ParaMEDMEM__MEDFileFieldLoc, SWIG_POINTER_OWN | 0 );
        }
        
        PyObject *getLocalization(const char *locName) const throw(INTERP_KERNEL::Exception)
        {
          const MEDFileFieldLoc *loc=&self->getLocalization(locName);
-         loc->incrRef();
+         if(loc)
+           loc->incrRef();
          return SWIG_NewPointerObj(SWIG_as_voidptr(loc),SWIGTYPE_p_ParaMEDMEM__MEDFileFieldLoc, SWIG_POINTER_OWN | 0 );
        }
        
@@ -1011,6 +1022,8 @@ namespace ParaMEDMEM
   {
   public:
     static MEDFileField1TS *New(const char *fileName, const char *fieldName, int iteration, int order) throw(INTERP_KERNEL::Exception);
+    static MEDFileField1TS *New(const char *fileName, const char *fieldName) throw(INTERP_KERNEL::Exception);
+    static MEDFileField1TS *New(const char *fileName) throw(INTERP_KERNEL::Exception);
     static MEDFileField1TS *New();
     void write(const char *fileName, int mode) const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *getFieldAtLevel(TypeOfField type, int meshDimRelToMax, int renumPol=0) const throw(INTERP_KERNEL::Exception);
@@ -1039,6 +1052,16 @@ namespace ParaMEDMEM
     void setTime(int iteration, int order, double val) throw(INTERP_KERNEL::Exception);
     %extend
        {
+         MEDFileField1TS(const char *fileName) throw(INTERP_KERNEL::Exception)
+         {
+           return MEDFileField1TS::New(fileName);
+         }
+         
+         MEDFileField1TS(const char *fileName, const char *fieldName) throw(INTERP_KERNEL::Exception)
+         {
+           return MEDFileField1TS::New(fileName,fieldName);
+         }
+
          MEDFileField1TS(const char *fileName, const char *fieldName, int iteration, int order) throw(INTERP_KERNEL::Exception)
          {
            return MEDFileField1TS::New(fileName,fieldName,iteration,order);
@@ -1716,7 +1739,7 @@ namespace ParaMEDMEM
   public:
     void setValue(double val) throw(INTERP_KERNEL::Exception);
     double getValue() const throw(INTERP_KERNEL::Exception);
-    std::string simpleRepr() const;
+    std::string simpleRepr() const throw(INTERP_KERNEL::Exception);
     %extend
     {
       std::string __str__() const throw(INTERP_KERNEL::Exception)
@@ -1743,7 +1766,7 @@ namespace ParaMEDMEM
     static MEDFileParameterDouble1TS *New(const char *fileName, const char *paramName) throw(INTERP_KERNEL::Exception);
     static MEDFileParameterDouble1TS *New(const char *fileName, const char *paramName, int dt, int it) throw(INTERP_KERNEL::Exception);
     virtual MEDFileParameter1TS *deepCpy() const throw(INTERP_KERNEL::Exception);
-    virtual std::string simpleRepr() const;
+    virtual std::string simpleRepr() const throw(INTERP_KERNEL::Exception);
     void setName(const char *name) throw(INTERP_KERNEL::Exception);
     const char *getName() const throw(INTERP_KERNEL::Exception);
     void write(const char *fileName, int mode) const throw(INTERP_KERNEL::Exception);
@@ -1798,7 +1821,7 @@ namespace ParaMEDMEM
     void setName(const char *name);
     MEDFileParameterMultiTS *deepCpy() const throw(INTERP_KERNEL::Exception);
     void write(const char *fileName, int mode) const throw(INTERP_KERNEL::Exception);
-    std::string simpleRepr() const;
+    std::string simpleRepr() const throw(INTERP_KERNEL::Exception);
     void appendValue(int dt, int it, double time, double val) throw(INTERP_KERNEL::Exception);
     double getDoubleValue(int iteration, int order) const throw(INTERP_KERNEL::Exception);
     int getPosOfTimeStep(int iteration, int order) const throw(INTERP_KERNEL::Exception);
@@ -1989,7 +2012,7 @@ namespace ParaMEDMEM
     MEDFileParameters *deepCpy() const throw(INTERP_KERNEL::Exception);
     void write(const char *fileName, int mode) const throw(INTERP_KERNEL::Exception);
     std::vector<std::string> getParamsNames() const throw(INTERP_KERNEL::Exception);
-    std::string simpleRepr() const;
+    std::string simpleRepr() const throw(INTERP_KERNEL::Exception);
     void resize(int newSize) throw(INTERP_KERNEL::Exception);
     void pushParam(MEDFileParameterMultiTS *param) throw(INTERP_KERNEL::Exception);
     void setParamAtPos(int i, MEDFileParameterMultiTS *param) throw(INTERP_KERNEL::Exception);

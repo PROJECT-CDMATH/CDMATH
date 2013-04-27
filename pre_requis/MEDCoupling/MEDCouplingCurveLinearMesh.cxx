@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -323,8 +323,17 @@ void MEDCouplingCurveLinearMesh::setCoords(const DataArrayDouble *coords) throw(
 
 void MEDCouplingCurveLinearMesh::setNodeGridStructure(const int *gridStructBg, const int *gridStructEnd) throw(INTERP_KERNEL::Exception)
 {
-  _structure.resize(0);
-  _structure.insert(_structure.end(),gridStructBg,gridStructEnd);
+  std::size_t sz=std::distance(gridStructBg,gridStructEnd);
+  if(sz>=1 && sz<=3)
+    {
+      _structure.resize(0);
+      _structure.insert(_structure.end(),gridStructBg,gridStructEnd);
+    }
+  else
+    {
+      std::ostringstream oss; oss << "MEDCouplingCurveLinearMesh::setNodeGridStructure : size of input nodal grid structure (" << sz << ") should be in 1, 2 or 3 !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
 }
 
 std::vector<int> MEDCouplingCurveLinearMesh::getNodeGridStructure() const throw(INTERP_KERNEL::Exception)
@@ -638,6 +647,8 @@ void MEDCouplingCurveLinearMesh::rotate(const double *center, const double *vect
 
 void MEDCouplingCurveLinearMesh::translate(const double *vector)
 {
+  if(!vector)
+    throw INTERP_KERNEL::Exception("MEDCouplingCurveLinearMesh::translate : NULL input point !");
   if(!((DataArrayDouble *)_coords))
     throw INTERP_KERNEL::Exception("MEDCouplingCurveLinearMesh::translate : no coordinates set !");
   double *coords=_coords->getPointer();
@@ -652,6 +663,8 @@ void MEDCouplingCurveLinearMesh::translate(const double *vector)
 
 void MEDCouplingCurveLinearMesh::scale(const double *point, double factor)
 {
+  if(!point)
+    throw INTERP_KERNEL::Exception("MEDCouplingCurveLinearMesh::scale : NULL input point !");
   if(!((DataArrayDouble *)_coords))
     throw INTERP_KERNEL::Exception("MEDCouplingCurveLinearMesh::scale : no coordinates set !");
   double *coords=_coords->getPointer();
@@ -700,6 +713,11 @@ DataArrayDouble *MEDCouplingCurveLinearMesh::getBarycenterAndOwner() const
     default:
       throw INTERP_KERNEL::Exception("MEDCouplingCurveLinearMesh::getBarycenterAndOwner : mesh dimension must be in [1,2,3] !");
     }
+}
+
+DataArrayDouble *MEDCouplingCurveLinearMesh::computeIsoBarycenterOfNodesPerCell() const throw(INTERP_KERNEL::Exception)
+{
+  return MEDCouplingCurveLinearMesh::getBarycenterAndOwner();
 }
 
 /*!
@@ -867,6 +885,30 @@ void MEDCouplingCurveLinearMesh::writeVTKLL(std::ostream& ofs, const std::string
   ofs << "      </Points>\n";
   ofs << "    </Piece>\n";
   ofs << "  </" << getVTKDataSetType() << ">\n";
+}
+
+void MEDCouplingCurveLinearMesh::reprQuickOverview(std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+{
+  stream << "MEDCouplingCurveLinearMesh C++ instance at " << this << ". Name : \"" << getName() << "\".";
+  stream << "Nodal structure : [";
+  for(std::size_t i=0;i<_structure.size();i++)
+    {
+      char tmp='X'+i;
+      stream << " " << tmp << "=" << _structure[i];
+      if(i!=_structure.size()-1)
+        stream << ", ";
+    }
+  stream << " ].";
+  const DataArrayDouble *coo(_coords);
+  if(!coo)
+    { stream << std::endl << "No coordinates set !"; return ; }
+  if(!coo->isAllocated())
+    { stream << std::endl << "Coordinates set but not allocated !"; return ; }
+  int nbOfCompo=coo->getNumberOfComponents();
+  if(nbOfCompo!=(int)_structure.size())
+    { stream << std::endl << "Coordinates set and allocated but mismatch number of components !"; return ; }
+  stream << std::endl << "Coordinates ( number of tuples = " << coo->getNumberOfTuples() << " ) : ";
+  coo->reprQuickOverviewData(stream,200);
 }
 
 std::string MEDCouplingCurveLinearMesh::getVTKDataSetType() const throw(INTERP_KERNEL::Exception)

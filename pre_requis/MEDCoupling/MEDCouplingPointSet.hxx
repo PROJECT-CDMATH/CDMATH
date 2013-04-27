@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -56,9 +56,7 @@ namespace ParaMEDMEM
     int getNumberOfNodes() const;
     int getSpaceDimension() const;
     void setCoords(const DataArrayDouble *coords);
-    //! This method returns directly the array in 'this' \b without incrementing ref counter. The pointer is dealed by the mesh. The caller should not deal (decrRef) with this pointer
     const DataArrayDouble *getCoords() const { return _coords; }
-    //! This method returns directly the array in 'this' \b without incrementing ref counter. The pointer is dealed by the mesh. The caller should not deal (decrRef) with this pointer
     DataArrayDouble *getCoords() { return _coords; }
     DataArrayDouble *getCoordinatesAndOwner() const;
     void copyTinyStringsFrom(const MEDCouplingMesh *other) throw(INTERP_KERNEL::Exception);
@@ -72,7 +70,7 @@ namespace ParaMEDMEM
     void getCoordinatesOfNode(int nodeId, std::vector<double>& coo) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *buildPermArrayForMergeNode(double precision, int limitNodeId, bool& areNodesMerged, int& newNbOfNodes) const;
     DataArrayInt *getNodeIdsNearPoint(const double *pos, double eps) const throw(INTERP_KERNEL::Exception);
-    void getNodeIdsNearPoints(const double *pos, int nbOfNodes, double eps, DataArrayInt *& c, DataArrayInt *& cI) const throw(INTERP_KERNEL::Exception);
+    void getNodeIdsNearPoints(const double *pos, int nbOfPoints, double eps, DataArrayInt *& c, DataArrayInt *& cI) const throw(INTERP_KERNEL::Exception);
     void findCommonNodes(double prec, int limitNodeId, DataArrayInt *&comm, DataArrayInt *&commIndex) const;
     DataArrayInt *buildNewNumberingFromCommonNodesFormat(const DataArrayInt *comm, const DataArrayInt *commIndex,
                                                          int& newNbOfNodes) const;
@@ -96,6 +94,8 @@ namespace ParaMEDMEM
     static void Rotate3DAlg(const double *center, const double *vect, double angle, int nbNodes, double *coords);
     MEDCouplingMesh *buildPart(const int *start, const int *end) const;
     MEDCouplingMesh *buildPartAndReduceNodes(const int *start, const int *end, DataArrayInt*& arr) const;
+    MEDCouplingMesh *buildPartRange(int beginCellIds, int endCellIds, int stepCellIds) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingMesh *buildPartRangeAndReduceNodes(int beginCellIds, int endCellIds, int stepCellIds, int& beginOut, int& endOut, int& stepOut, DataArrayInt*& arr) const throw(INTERP_KERNEL::Exception);
     virtual MEDCouplingPointSet *buildPartOfMySelf(const int *start, const int *end, bool keepCoords=true) const = 0;
     virtual MEDCouplingPointSet *buildPartOfMySelf2(int start, int end, int step, bool keepCoords=true) const throw(INTERP_KERNEL::Exception) = 0;
     virtual MEDCouplingPointSet *buildPartOfMySelfNode(const int *start, const int *end, bool fullyIn) const = 0;
@@ -105,7 +105,6 @@ namespace ParaMEDMEM
     virtual void renumberNodes(const int *newNodeNumbers, int newNbOfNodes);
     virtual void renumberNodes2(const int *newNodeNumbers, int newNbOfNodes);
     virtual bool isEmptyMesh(const std::vector<int>& tinyInfo) const = 0;
-    //! size of returned tinyInfo must be always the same.
     void getTinySerializationInformation(std::vector<double>& tinyInfoD, std::vector<int>& tinyInfo, std::vector<std::string>& littleStrings) const;
     void resizeForUnserialization(const std::vector<int>& tinyInfo, DataArrayInt *a1, DataArrayDouble *a2, std::vector<std::string>& littleStrings) const;
     void serialize(DataArrayInt *&a1, DataArrayDouble *&a2) const;

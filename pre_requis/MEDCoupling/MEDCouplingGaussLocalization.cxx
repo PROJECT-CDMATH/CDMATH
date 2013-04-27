@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,23 @@ catch(INTERP_KERNEL::Exception& e)
     _weight.clear();
     throw e;
   }
+
+ParaMEDMEM::MEDCouplingGaussLocalization::MEDCouplingGaussLocalization(INTERP_KERNEL::NormalizedCellType typ) throw(INTERP_KERNEL::Exception)
+try:_type(typ)
+{
+  INTERP_KERNEL::CellModel::GetCellModel(_type);
+}
+catch(INTERP_KERNEL::Exception& e)
+  {
+    _type=INTERP_KERNEL::NORM_ERROR;
+    throw e;
+  }
+
+void ParaMEDMEM::MEDCouplingGaussLocalization::setType(INTERP_KERNEL::NormalizedCellType typ) throw(INTERP_KERNEL::Exception)
+{
+  INTERP_KERNEL::CellModel::GetCellModel(typ);//throws if not found. This is a check
+  _type=typ;
+}
 
 void ParaMEDMEM::MEDCouplingGaussLocalization::checkCoherency() const throw(INTERP_KERNEL::Exception)
 {
@@ -201,6 +218,21 @@ void ParaMEDMEM::MEDCouplingGaussLocalization::setWeight(int gaussPtIdInCell, do
 {
   checkCoherencyOfRequest(gaussPtIdInCell,0);
   _weight[gaussPtIdInCell]=newVal;
+}
+
+void ParaMEDMEM::MEDCouplingGaussLocalization::setRefCoords(const std::vector<double>& refCoo) throw(INTERP_KERNEL::Exception)
+{
+  _ref_coord=refCoo;
+}
+
+void ParaMEDMEM::MEDCouplingGaussLocalization::setGaussCoords(const std::vector<double>& gsCoo) throw(INTERP_KERNEL::Exception)
+{
+  _gauss_coord=gsCoo;
+}
+
+void ParaMEDMEM::MEDCouplingGaussLocalization::setWeights(const std::vector<double>& w) throw(INTERP_KERNEL::Exception)
+{
+  _weight=w;
 }
 
 /*!

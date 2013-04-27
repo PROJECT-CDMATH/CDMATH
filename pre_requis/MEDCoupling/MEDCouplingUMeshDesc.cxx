@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -156,6 +156,16 @@ INTERP_KERNEL::NormalizedCellType MEDCouplingUMeshDesc::getTypeOfCell(int cellId
 std::set<INTERP_KERNEL::NormalizedCellType> MEDCouplingUMeshDesc::getAllGeoTypes() const
 {
   return _types;
+}
+
+DataArrayInt *MEDCouplingUMeshDesc::giveCellsWithType(INTERP_KERNEL::NormalizedCellType type) const throw(INTERP_KERNEL::Exception)
+{
+  throw INTERP_KERNEL::Exception("MEDCouplingUMeshDesc::giveCellsWithType : not implemented yet !");
+}
+
+DataArrayInt *MEDCouplingUMeshDesc::computeNbOfNodesPerCell() const throw(INTERP_KERNEL::Exception)
+{
+  throw INTERP_KERNEL::Exception("MEDCouplingUMeshDesc::computeNbOfNodesPerCell : not implemented yet !");
 }
 
 int MEDCouplingUMeshDesc::getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType type) const
@@ -519,3 +529,12 @@ std::string MEDCouplingUMeshDesc::getVTKDataSetType() const throw(INTERP_KERNEL:
   throw INTERP_KERNEL::Exception("MEDCouplingUMeshDesc::getVTKDataSetType : not implemented yet !");
 }
 
+DataArrayDouble *MEDCouplingUMeshDesc::computeIsoBarycenterOfNodesPerCell() const throw(INTERP_KERNEL::Exception)
+{
+  throw INTERP_KERNEL::Exception("MEDCouplingUMeshDesc::computeIsoBarycenterOfNodesPerCell : not implemented yet !");
+}
+
+void MEDCouplingUMeshDesc::reprQuickOverview(std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+{
+  stream << "MEDCouplingUMeshDesc C++ instance at " << this << ". Name : \"" << getName() << "\".";
+}

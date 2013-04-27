@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -71,45 +71,42 @@ INTERP_KERNEL::NormalizedCellType MEDCouplingStructuredMesh::getTypeOfCell(int c
 
 std::set<INTERP_KERNEL::NormalizedCellType> MEDCouplingStructuredMesh::getAllGeoTypes() const
 {
-  INTERP_KERNEL::NormalizedCellType ret;
-  switch(getMeshDimension())
-    {
-    case 3:
-      ret=INTERP_KERNEL::NORM_HEXA8;
-      break;
-    case 2:
-      ret=INTERP_KERNEL::NORM_QUAD4;
-      break;
-    case 1:
-      ret=INTERP_KERNEL::NORM_SEG2;
-      break;
-    default:
-      throw INTERP_KERNEL::Exception("Unexpected dimension for MEDCouplingStructuredMesh::getAllGeoTypes !");
-    }
   std::set<INTERP_KERNEL::NormalizedCellType> ret2;
-  ret2.insert(ret);
+  ret2.insert(getTypeOfCell(0));
   return ret2;
 }
 
 int MEDCouplingStructuredMesh::getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType type) const
 {
   int ret=getNumberOfCells();
-  int dim=getMeshDimension();
-  switch(type)
+  if(type==getTypeOfCell(0))
+    return ret;
+  const INTERP_KERNEL::CellModel& cm=INTERP_KERNEL::CellModel::GetCellModel(getTypeOfCell(0));
+  std::ostringstream oss; oss << "MEDCouplingStructuredMesh::getNumberOfCellsWithType : no specified type ! Type available is " << cm.getRepr() << " !";
+  throw INTERP_KERNEL::Exception(oss.str().c_str());
+}
+
+DataArrayInt *MEDCouplingStructuredMesh::giveCellsWithType(INTERP_KERNEL::NormalizedCellType type) const throw(INTERP_KERNEL::Exception)
+{
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=DataArrayInt::New();
+  if(getTypeOfCell(0)==type)
     {
-    case INTERP_KERNEL::NORM_HEXA8:
-      if(dim==3)
-        return ret;
-    case INTERP_KERNEL::NORM_QUAD4:
-      if(dim==2)
-        return ret;
-    case INTERP_KERNEL::NORM_SEG2:
-      if(dim==1)
-        return ret;
-    default:
-      throw INTERP_KERNEL::Exception("Unexpected dimension for MEDCouplingStructuredMesh::getTypeOfCell !");
+      ret->alloc(getNumberOfCells(),1);
+      ret->iota(0);
     }
-  return 0;
+  else
+    ret->alloc(0,1);
+  return ret.retn();
+}
+
+DataArrayInt *MEDCouplingStructuredMesh::computeNbOfNodesPerCell() const throw(INTERP_KERNEL::Exception)
+{
+  int nbCells=getNumberOfCells();
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=DataArrayInt::New();
+  ret->alloc(nbCells,1);
+  const INTERP_KERNEL::CellModel& cm=INTERP_KERNEL::CellModel::GetCellModel(getTypeOfCell(0));
+  ret->fillWithValue((int)cm.getNumberOfNodes());
+  return ret.retn();
 }
 
 void MEDCouplingStructuredMesh::getNodeIdsOfCell(int cellId, std::vector<int>& conn) const
@@ -196,6 +193,12 @@ void MEDCouplingStructuredMesh::splitProfilePerType(const DataArrayInt *profile,
   idsPerType.push_back(profile->deepCpy());
 }
 
+/*!
+ * Creates a new unstructured mesh (MEDCouplingUMesh) from \a this structured one.
+ *  \return MEDCouplingUMesh * - a new instance of MEDCouplingUMesh. The caller is to
+ * delete this array using decrRef() as it is no more needed. 
+ *  \throw If \a this->getMeshDimension() is not among [1,2,3].
+ */
 MEDCouplingUMesh *MEDCouplingStructuredMesh::buildUnstructured() const throw(INTERP_KERNEL::Exception)
 {
   int meshDim=getMeshDimension();
@@ -220,6 +223,16 @@ MEDCouplingUMesh *MEDCouplingStructuredMesh::buildUnstructured() const throw(INT
   return ret;
 }
 
+/*!
+ * Creates a new MEDCouplingUMesh containing a part of cells of \a this mesh.
+ * The cells to include to the
+ * result mesh are specified by an array of cell ids.
+ *  \param [in] start - an array of cell ids to include to the result mesh.
+ *  \param [in] end - specifies the end of the array \a start, so that
+ *              the last value of \a start is \a end[ -1 ].
+ *  \return MEDCouplingMesh * - a new instance of MEDCouplingUMesh. The caller is to
+ *         delete this mesh using decrRef() as it is no more needed. 
+ */
 MEDCouplingMesh *MEDCouplingStructuredMesh::buildPart(const int *start, const int *end) const
 {
   MEDCouplingUMesh *um=buildUnstructured();
@@ -241,6 +254,14 @@ DataArrayInt *MEDCouplingStructuredMesh::simplexize(int policy) throw(INTERP_KER
   throw INTERP_KERNEL::Exception("MEDCouplingStructuredMesh::simplexize : not available for Cartesian mesh !");
 }
 
+/*!
+ * Returns a new MEDCouplingFieldDouble holding normal vectors to cells of \a this
+ * 2D mesh. The computed vectors have 3 components and are normalized.
+ *  \return MEDCouplingFieldDouble * - a new instance of MEDCouplingFieldDouble on
+ *          cells and one time. The caller is to delete this field using decrRef() as
+ *          it is no more needed.
+ *  \throw If \a this->getMeshDimension() != 2.
+ */
 MEDCouplingFieldDouble *MEDCouplingStructuredMesh::buildOrthogonalField() const
 {
   if(getMeshDimension()!=2)
@@ -347,6 +368,14 @@ void MEDCouplingStructuredMesh::fill3DUnstructuredMesh(MEDCouplingUMesh *m) cons
   connI->decrRef();
 }
 
+/*!
+ * Returns a cell id by its (i,j,k) index. The cell is located between the i-th and
+ * ( i + 1 )-th nodes along X axis etc.
+ *  \param [in] i - a index of node coordinates array along X axis.
+ *  \param [in] j - a index of node coordinates array along Y axis.
+ *  \param [in] k - a index of node coordinates array along Z axis.
+ *  \return int - a cell id in \a this mesh.
+ */
 int MEDCouplingStructuredMesh::getCellIdFromPos(int i, int j, int k) const
 {
   int tmp[3]={i,j,k};
@@ -357,6 +386,13 @@ int MEDCouplingStructuredMesh::getCellIdFromPos(int i, int j, int k) const
   return std::accumulate(tmp,tmp+meshDim,0);
 }
 
+/*!
+ * Returns a node id by its (i,j,k) index.
+ *  \param [in] i - a index of node coordinates array along X axis.
+ *  \param [in] j - a index of node coordinates array along Y axis.
+ *  \param [in] k - a index of node coordinates array along Z axis.
+ *  \return int - a node id in \a this mesh.
+ */
 int MEDCouplingStructuredMesh::getNodeIdFromPos(int i, int j, int k) const
 {
   int tmp[3]={i,j,k};

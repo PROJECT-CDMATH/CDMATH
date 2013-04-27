@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -63,10 +63,11 @@ namespace ParaMEDMEM
     DataArrayDouble *getLocalizationOfDiscr() const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *buildMeasureField(bool isAbs) const throw(INTERP_KERNEL::Exception);
     MEDCouplingMesh *buildSubMeshData(const int *start, const int *end, DataArrayInt *&di) const;
+    MEDCouplingMesh *buildSubMeshDataRange(int begin, int end, int step, int& beginOut, int& endOut, int& stepOut, DataArrayInt *&di) const;
     DataArrayInt *computeTupleIdsToSelectFromCellIds(const int *startCellIds, const int *endCellIds) const;
     const MEDCouplingFieldDiscretization *getDiscretization() const { return _type; }
     MEDCouplingFieldDiscretization *getDiscretization() { return _type; }
-    void setDiscretization(MEDCouplingFieldDiscretization *newDisc) { _type=newDisc; }
+    void setDiscretization(MEDCouplingFieldDiscretization *newDisc);
     int getNumberOfTuplesExpected() const throw(INTERP_KERNEL::Exception);
     int getNumberOfMeshPlacesExpected() const throw(INTERP_KERNEL::Exception);
     // Gauss point specific methods
@@ -84,9 +85,10 @@ namespace ParaMEDMEM
     const MEDCouplingGaussLocalization& getGaussLocalization(int locId) const throw(INTERP_KERNEL::Exception);
     void updateTime() const;
     std::size_t getHeapMemorySize() const;
+    virtual void reprQuickOverview(std::ostream& stream) const throw(INTERP_KERNEL::Exception) = 0;
   protected:
     MEDCouplingField(TypeOfField type);
-    MEDCouplingField(const MEDCouplingField& other);
+    MEDCouplingField(const MEDCouplingField& other, bool deepCopy=true);
     MEDCouplingField(MEDCouplingFieldDiscretization *type, NatureOfField nature=NoNature);
     virtual ~MEDCouplingField();
   protected:
