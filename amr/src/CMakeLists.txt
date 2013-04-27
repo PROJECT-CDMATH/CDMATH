@@ -1,6 +1,7 @@
 INCLUDE_DIRECTORIES(
 ${HDF5_INCLUDE_DIRS}
 ${MED3_INCLUDE_DIRS}
+${BASE_DIR}/inc 
 ${MESH_DIR}/inc 
 ${AMR_DIR}/inc 
 ${MED_COUPLING_DIR}
@@ -14,6 +15,6 @@ ${MED_LOADER_DIR}
 
 FILE(GLOB src_amr_CXX . *.cxx)
 ADD_LIBRARY(amr SHARED ${src_amr_CXX})
-TARGET_LINK_LIBRARIES(amr mesh medcoupling ${HDF5_LIBS} ${MED3_LIBS} medloader)
+TARGET_LINK_LIBRARIES(amr base mesh medcoupling ${HDF5_LIBS} ${MED3_LIBS} medloader)
 
 INSTALL(TARGETS amr DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

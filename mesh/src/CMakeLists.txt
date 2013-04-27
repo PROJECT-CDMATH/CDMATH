@@ -2,6 +2,7 @@ INCLUDE_DIRECTORIES(
 ${HDF5_INCLUDE_DIRS}
 ${MED3_INCLUDE_DIRS}
 ${MESH_DIR}/inc 
+${BASE_DIR}/inc 
 ${MED_COUPLING_DIR}
 ${INTERP_KERNEL_DIR}
 ${INTERP_KERNEL_DIR}/Bases
@@ -13,7 +14,7 @@ ${MED_LOADER_DIR}
 
 FILE(GLOB src_mesh_CXX . *.cxx)
 ADD_LIBRARY(mesh SHARED ${src_mesh_CXX})
-TARGET_LINK_LIBRARIES(mesh medcoupling ${HDF5_LIBS} ${MED3_LIBS} medloader)
+TARGET_LINK_LIBRARIES(mesh base medcoupling ${HDF5_LIBS} ${MED3_LIBS} medloader)
 #ADD_LIBRARY(meshStatic STATIC ${src_mesh_CXX})
 #TARGET_LINK_LIBRARIES(meshStatic medcoupling ${HDF5_LIBS} ${MED3_LIBS} medloader)
 

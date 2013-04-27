@@ -21,13 +21,14 @@ DoubleTab::DoubleTab()
 	_numberOfElements=0;
 	_values=NULL;
 }
-DoubleTab::DoubleTab(const int size)
+
+DoubleTab::DoubleTab(int size)
 {
 	_numberOfElements=size;
 	_values = new double [size];
 }
 
-DoubleTab::DoubleTab(const int size, const double initialValue)
+DoubleTab::DoubleTab(const int size, double initialValue)
 {
 	_values = new double [size];
 	_numberOfElements=size;
@@ -52,7 +53,7 @@ DoubleTab::operator=(const DoubleTab & dt)
 }
 
 DoubleTab&
-DoubleTab::operator=(const double value)
+DoubleTab::operator=(double value)
 {
 	for (int i=0;i<size();i++)
 		_values[i] = value ;
@@ -60,15 +61,16 @@ DoubleTab::operator=(const double value)
 }
 
 double&
-DoubleTab::operator[](const int i)
+DoubleTab::operator[](int i)
 {
 	return _values[i];
 }
 const double&
-DoubleTab::operator[](const int i) const
+DoubleTab::operator[](int i) const
 {
 	return _values[i];
 }
+
 int
 DoubleTab::size() const
 {
@@ -96,7 +98,7 @@ DoubleTab::operator+=(const DoubleTab& dt)
 }
 
 DoubleTab&
-DoubleTab::operator+=(const double value)
+DoubleTab::operator+=(double value)
 {
 	for (int i=0;i<size();i++)
 		_values[i] += value ;
@@ -104,7 +106,7 @@ DoubleTab::operator+=(const double value)
 }
 
 DoubleTab&
-DoubleTab::operator*=(const double value)
+DoubleTab::operator*=(double value)
 {
 	for (int i=0;i<size();i++)
 		_values[i] *= value ;
@@ -112,7 +114,7 @@ DoubleTab::operator*=(const double value)
 }
 
 DoubleTab&
-DoubleTab::operator/=(const double value)
+DoubleTab::operator/=(double value)
 {
 	for (int i=0;i<size();i++)
 		_values[i] /= value ;
@@ -128,9 +130,73 @@ DoubleTab::operator-=(const DoubleTab& dt)
 }
 
 DoubleTab&
-DoubleTab::operator-=(const double value)
+DoubleTab::operator-=(double value)
 {
 	for (int i=0;i<size();i++)
 		_values[i] -= value ;
 	return *this;
+}
+
+DoubleTab
+operator+(const DoubleTab& U,const DoubleTab& V)
+{
+	int size = U.size();
+	DoubleTab res(size);
+	for (int i=0; i<size; i++)
+         res[i] = U[i] + V[i];
+	return res;
+}
+
+DoubleTab
+operator-(const DoubleTab& U,const DoubleTab& V)
+{
+	int size = U.size();
+	DoubleTab res(size);
+	for (int i=0; i<size; i++)
+         res[i] = U[i] - V[i];
+	return res;
+}
+
+double
+operator*(const DoubleTab& U,const DoubleTab& V)
+{
+
+	int size = U.size();
+	double res = 0.0;
+	for(int i=0; i<size; i++)
+		res += U[i] * V[i];
+   return res;
+}
+
+DoubleTab
+operator*(double value, const DoubleTab& U)
+{
+
+	int size = U.size();
+	DoubleTab res(size);
+	for(int i=0; i<size; i++)
+		res = U[i] * value;
+   return res;
+}
+
+DoubleTab
+operator*(const DoubleTab& U, double value)
+{
+
+	int size = U.size();
+	DoubleTab res(size);
+	for(int i=0; i<size; i++)
+		res = U[i] * value;
+   return res;
+}
+
+DoubleTab
+operator/(const DoubleTab& U, double value)
+{
+
+	int size = U.size();
+	DoubleTab res(size);
+	for(int i=0; i<size; i++)
+		res = U[i] / value;
+   return res;
 }

@@ -42,6 +42,8 @@ def DoubleTabIdiv(self,*args):
 %}
 
 %{
+#include "Matrix.hxx"
+#include "Vector.hxx"
 #include "IntTab.hxx"
 #include "DoubleTab.hxx"
 #include "Point.hxx"
@@ -69,6 +71,8 @@ def DoubleTabIdiv(self,*args):
 
 %include "IntTab.hxx"
 %include "DoubleTab.hxx"
+%include "Matrix.hxx"
+%include "Vector.hxx"
 %include "Point.hxx"
 %include "Node.hxx"
 %include "Cell.hxx"
