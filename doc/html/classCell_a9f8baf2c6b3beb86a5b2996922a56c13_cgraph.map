@@ -1,6 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$classCell.html#af84905a83f74f4de4a066ef278cfc563" title="Cell::x" alt="" coords="213,5,275,35"/>
-<area shape="rect" id="node7" href="$classCell.html#a6b37a6b94d467d55e04faeb0d977d6c5" title="Cell::y" alt="" coords="213,58,275,89"/>
-<area shape="rect" id="node5" href="$classPoint.html#a3eef47b1c4849b3395a8f9c658ca7c4a" title="Point::x" alt="" coords="323,5,389,35"/>
-<area shape="rect" id="node9" href="$classPoint.html#a96e90df6b3c18e64c31abdf196e49ae9" title="Point::y" alt="" coords="323,58,389,89"/>
-</map>
