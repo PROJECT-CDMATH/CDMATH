@@ -1,9 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$classGrid.html#a984074ca7181d66827ba6f4061bd4815" title="Grid::addPatch" alt="" coords="299,5,411,35"/>
-<area shape="rect" id="node5" href="$classGrid.html#ad8b6e93df74d9aeb02e69adff0061874" title="Grid::correctPatchsIndex" alt="" coords="269,58,440,89"/>
-<area shape="rect" id="node7" href="$classGrid.html#ae9833eb17840c7d6555a22d00075ba84" title="Grid::getNumberOfPatchs" alt="" coords="268,111,441,142"/>
-<area shape="rect" id="node9" href="$classGrid.html#a5d216f8dcf2e81f32d58f49409e35c9c" title="Grid::getPatch" alt="" coords="301,165,408,195"/>
-<area shape="rect" id="node11" href="$classGrid.html#adfa30a392ba531c5554946b6af45f30a" title="Grid::getPatchs" alt="" coords="297,218,412,249"/>
-<area shape="rect" id="node13" href="$classGrid.html#ace2bbae274f918c34e22a4db4e0ab26b" title="Grid::infoGrid" alt="" coords="304,271,405,302"/>
-<area shape="rect" id="node15" href="$classGrid.html#a19383e36a19fd7e8886a4faa7c63dce7" title="Grid::statistic" alt="" coords="305,325,404,355"/>
-</map>
