@@ -30,7 +30,7 @@ file(COPY ${MAILLAGE_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests)
 
 FILE(GLOB TestMesh_SOURCES . *.cxx)
 ADD_LIBRARY(TestMesh SHARED ${TestMesh_SOURCES})
-TARGET_LINK_LIBRARIES(TestMesh mesh medcoupling ${HDF5_LIBS} ${MED3_LIBS} medloader)
+TARGET_LINK_LIBRARIES(TestMesh base mesh medcoupling ${HDF5_LIBS} ${MED3_LIBS} medloader)
 
 INSTALL(TARGETS TestMesh DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
