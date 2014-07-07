@@ -6,6 +6,7 @@ ADD_SUBDIRECTORY(cdmath)
 ADD_SUBDIRECTORY(cdmath_swig)
 
 INCLUDE_DIRECTORIES(
+  ${BASE_DIR}/inc 
   ${MESH_DIR}/inc 
   ${MED_COUPLING_DIR}
   cdmath 
