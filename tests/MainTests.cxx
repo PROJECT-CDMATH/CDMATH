@@ -24,6 +24,7 @@
 #include "MeshTests.hxx"
 #include "DoubleTabTests.hxx"
 #include "IntTabTests.hxx"
+#include "LinearSolverTests.hxx"
 
 #include <iostream>
 
@@ -52,8 +53,9 @@ int main( int argc, char* argv[] )
    runner.addTest( FaceTests::suite() );
    runner.addTest( FieldTests::suite() );
    runner.addTest( MeshTests::suite() );
-   runner.addTest( DoubleTabTests::suite() );
    runner.addTest( IntTabTests::suite() );
+   runner.addTest( DoubleTabTests::suite() );
+   runner.addTest( LinearSolverTests::suite() );
    runner.run( controller );
    CppUnit::CompilerOutputter outputter( &result, CppUnit::stdCOut() );
    outputter.write();
