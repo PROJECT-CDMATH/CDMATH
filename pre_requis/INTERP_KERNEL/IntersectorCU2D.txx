@@ -1,9 +1,9 @@
-// Copyright (C) 2009-2013  OPEN CASCADE
+// Copyright (C) 2009-2014  OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -37,7 +37,7 @@ namespace INTERP_KERNEL
   INTERSECTOR_CU2D::IntersectorCU2D(const MyCMeshType& meshS,
                                     const MyUMeshType& meshT):
     IntersectorCU<MyCMeshType, MyUMeshType, MyMatrix, IntersectorCU2D<MyCMeshType,MyUMeshType,MyMatrix> >( meshS, meshT ),
-    _intersector(meshT, meshT, 0,0,0,0,0,0 )
+    _intersector(meshT, meshT, 0,0,0,0,0,0,0 )
   {
     if ( MyCMeshType::MY_SPACEDIM != 2 || MyCMeshType::MY_MESHDIM != 2 ||
          MyUMeshType::MY_SPACEDIM != 2 || MyUMeshType::MY_MESHDIM != 2 )

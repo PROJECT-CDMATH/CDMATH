@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -25,12 +25,12 @@
 
 using namespace ParaMEDMEM;
 
-MEDCouplingFieldOverTime *MEDCouplingFieldOverTime::New(const std::vector<MEDCouplingFieldDouble *>& fs) throw(INTERP_KERNEL::Exception)
+MEDCouplingFieldOverTime *MEDCouplingFieldOverTime::New(const std::vector<MEDCouplingFieldDouble *>& fs)
 {
   return new MEDCouplingFieldOverTime(fs);
 }
 
-double MEDCouplingFieldOverTime::getTimeTolerance() const throw(INTERP_KERNEL::Exception)
+double MEDCouplingFieldOverTime::getTimeTolerance() const
 {
   std::vector< MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> >::const_iterator it=_fs.begin();
   if(_fs.empty())
@@ -41,7 +41,7 @@ double MEDCouplingFieldOverTime::getTimeTolerance() const throw(INTERP_KERNEL::E
   throw INTERP_KERNEL::Exception("MEDCouplingFieldOverTime::getTimeTolerance : only empty fields in this !");
 }
 
-void MEDCouplingFieldOverTime::checkCoherency() const throw(INTERP_KERNEL::Exception)
+void MEDCouplingFieldOverTime::checkCoherency() const
 {
   MEDCouplingMultiFields::checkCoherency();
   std::vector< MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> >::const_iterator it=_fs.begin();
@@ -83,19 +83,19 @@ std::string MEDCouplingFieldOverTime::simpleRepr() const
   std::vector<MEDCouplingMesh *> ms;
   std::vector<int> refms;
   try
-    {
+  {
       ms=getDifferentMeshes(refms);
       ret << ms.size() << "\n";
-    }
-  catch(INTERP_KERNEL::Exception& e)
-    { ret << "Current instance is INVALID !\n"; }
+  }
+  catch(INTERP_KERNEL::Exception& /*e*/)
+  { ret << "Current instance is INVALID !\n"; }
   try
-    {
+  {
       MEDCouplingDefinitionTime dt=getDefinitionTimeZone();
       dt.appendRepr(ret);
-    }
-  catch(INTERP_KERNEL::Exception& e)
-    { ret << "Definition zone is INVALID !\n"; }
+  }
+  catch(INTERP_KERNEL::Exception& /*e*/)
+  { ret << "Definition zone is INVALID !\n"; }
   return ret.str();
 }
 
@@ -121,25 +121,25 @@ bool MEDCouplingFieldOverTime::isEqualWithoutConsideringStr(const MEDCouplingMul
   return true;
 }
 
-std::vector<MEDCouplingMesh *> MEDCouplingFieldOverTime::getMeshes() const throw(INTERP_KERNEL::Exception)
+std::vector<MEDCouplingMesh *> MEDCouplingFieldOverTime::getMeshes() const
 {
   checkCoherency();
   return MEDCouplingMultiFields::getMeshes();
 }
 
-std::vector<MEDCouplingMesh *> MEDCouplingFieldOverTime::getDifferentMeshes(std::vector<int>& refs) const throw(INTERP_KERNEL::Exception)
+std::vector<MEDCouplingMesh *> MEDCouplingFieldOverTime::getDifferentMeshes(std::vector<int>& refs) const
 {
   checkCoherency();
   return MEDCouplingMultiFields::getDifferentMeshes(refs);
 }
 
-std::vector<DataArrayDouble *> MEDCouplingFieldOverTime::getArrays() const throw(INTERP_KERNEL::Exception)
+std::vector<DataArrayDouble *> MEDCouplingFieldOverTime::getArrays() const
 {
   checkCoherency();
   return MEDCouplingMultiFields::getArrays();
 }
 
-std::vector<DataArrayDouble *> MEDCouplingFieldOverTime::getDifferentArrays(std::vector< std::vector<int> >& refs) const throw(INTERP_KERNEL::Exception)
+std::vector<DataArrayDouble *> MEDCouplingFieldOverTime::getDifferentArrays(std::vector< std::vector<int> >& refs) const
 {
   checkCoherency();
   return MEDCouplingMultiFields::getDifferentArrays(refs);
@@ -155,7 +155,7 @@ MEDCouplingDefinitionTime MEDCouplingFieldOverTime::getDefinitionTimeZone() cons
   return MEDCouplingDefinitionTime(tmp2,tmp3,tmp);
 }
 
-MEDCouplingFieldOverTime::MEDCouplingFieldOverTime(const std::vector<MEDCouplingFieldDouble *>& fs) throw(INTERP_KERNEL::Exception):MEDCouplingMultiFields(fs)
+MEDCouplingFieldOverTime::MEDCouplingFieldOverTime(const std::vector<MEDCouplingFieldDouble *>& fs):MEDCouplingMultiFields(fs)
 {
   checkCoherency();
 }

@@ -14,7 +14,10 @@
 #include "MEDFileMesh.hxx"
 #include "MEDLoader.hxx"
 #include "MEDCouplingUMesh.hxx"
+#include "MEDCouplingIMesh.hxx"
 #include "MEDCouplingFieldDouble.hxx"
+
+#include "CdmathException.hxx"
 
 #include <iostream>
 #include <cassert>
@@ -34,29 +37,89 @@ Mesh::Mesh( void )
     _numberOfNodes = 0;
     _numberOfFaces = 0;
     _numberOfCells = 0;
-    _nX=0;
-    _nY=0;
-    _nZ=0;
+    _xMin=0.;
+    _xSup=0.;
+    _yMin=0.;
+    _ySup=0.;
+    _zMin=0.;
+    _zSup=0.;
+    _groups.resize(0);
 }
 
 //----------------------------------------------------------------------
 Mesh::~Mesh( void )
 //----------------------------------------------------------------------
 {
-	_mesh->decrRef();
-	delete []  _cells;
-	delete []  _nodes;
-	delete []  _faces;
+	delete [] _cells;
+	delete [] _nodes;
+	delete [] _faces;
+}
+
+Mesh::Mesh( const ParaMEDMEM::MEDCouplingIMesh* mesh )
+{
+	_dim=mesh->getSpaceDimension();
+	vector<double> dxyz=mesh->getDXYZ();
+    vector<int> nxyz=mesh->getCellGridStructure();
+    double* Box0=new double[2*_dim];
+    mesh->getBoundingBox(Box0);
+    _nxyz = nxyz ;
+
+    _xMin=Box0[0];
+    _xSup=Box0[1];
+    if (_dim==2)
+    {
+        _yMin=Box0[2];
+        _ySup=Box0[3];
+    }
+    if (_dim==3)
+    {
+		_zMin=Box0[4];
+		_zSup=Box0[5];
+    }
+    _dxyz=mesh->getDXYZ();
+
+	double *originPtr = new double[_dim];
+    double *dxyzPtr = new double[_dim];
+    int *nodeStrctPtr = new int[_dim];
+
+    for(int i=0;i<_dim;i++)
+    {
+		originPtr[i]=Box0[2*i];
+		nodeStrctPtr[i]=nxyz[i]+1;
+		dxyzPtr[i]=dxyz[i];
+    }
+
+    _mesh=MEDCouplingIMesh::New("MESH2D",
+    						    _dim,
+    							nodeStrctPtr,
+    							nodeStrctPtr+_dim,
+    							originPtr,
+    							originPtr+_dim,
+    							dxyzPtr,
+    							dxyzPtr+_dim);
+    delete [] originPtr;
+    delete [] dxyzPtr;
+    delete [] nodeStrctPtr;
+    delete [] Box0 ;
+    _groups.resize(0);
+    setMesh();
 }
 
 //----------------------------------------------------------------------
 Mesh::Mesh( const Mesh& m )
 //----------------------------------------------------------------------
 {
-    _dim = m.getDim() ;
-    _nX = m.getNx() ;
-    _nY = m.getNy() ;
-    _nZ = m.getNz() ;
+    _dim = m.getSpaceDimension() ;
+    _nxyz = m.getCellGridStructure() ;
+    _xMin=m.getXMin();
+    _xSup=m.getXSup();
+    _yMin=m.getYMin();
+    _ySup=m.getYSup();
+    _zMin=m.getZMin();
+    _zSup=m.getZSup();
+
+    _dxyz=m.getDXYZ();
+
     _numberOfNodes = m.getNumberOfNodes();
     _numberOfFaces = m.getNumberOfFaces();
     _numberOfCells = m.getNumberOfCells();
@@ -74,7 +137,8 @@ Mesh::Mesh( const Mesh& m )
     for (int i=0;i<_numberOfCells;i++)
     	_cells[i]=m.getCell(i);
 
-    _mesh=static_cast<MEDCouplingUMesh *>(m.getMeshU()->deepCpy());
+    MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh> m1=m.getMEDCouplingMesh()->deepCpy();
+    _mesh=m1;
 }
 
 //----------------------------------------------------------------------
@@ -122,7 +186,7 @@ Mesh::getIndexFacePeriodic( void ) const
     int nbFace=getNumberOfFaces();
     IntTab indexesFacesPerio(nbFace);
     for (int iface=0;iface<nbFace;iface++)
-    	indexesFacesPerio[iface]=getIndexFacePeriodic(iface);
+    	indexesFacesPerio(iface)=getIndexFacePeriodic(iface);
     return indexesFacesPerio;
 }
 
@@ -132,7 +196,7 @@ Mesh::getIndexFacePeriodic(int indexFace) const
 	if (!_faces[indexFace].isBorder())
 			return -1;
 	double minmax[4];
-    _mesh->getCoords()->getMinMaxPerComponent(minmax);
+    _mesh->buildUnstructured()->getCoords()->getMinMaxPerComponent(minmax);
     double xmin=minmax[0];
     double xmax=minmax[1];
     double ymin=minmax[2];
@@ -223,6 +287,7 @@ Mesh::setGroups( const MEDFileUMesh* medmesh)
 	    m->decrRef();
     }
 }
+
 //----------------------------------------------------------------------
 void
 Mesh::setMesh( void )
@@ -232,23 +297,24 @@ Mesh::setMesh( void )
     DataArrayInt *descI=DataArrayInt::New();
     DataArrayInt *revDesc=DataArrayInt::New();
     DataArrayInt *revDescI=DataArrayInt::New();
-    MEDCouplingUMesh *m2=_mesh->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
-    m2->setName(_mesh->getName());
+    MEDCouplingUMesh* mu=_mesh->buildUnstructured();
+    MEDCouplingUMesh *m2=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
+    m2->setName(mu->getName());
 
     DataArrayInt *desc2=DataArrayInt::New();
     DataArrayInt *descI2=DataArrayInt::New();
     DataArrayInt *revDesc2=DataArrayInt::New();
     DataArrayInt *revDescI2=DataArrayInt::New();
-    MEDCouplingUMesh *m3=_mesh->buildDescendingConnectivity2(desc2,descI2,revDesc2,revDescI2);
-    m3->setName(_mesh->getName());
+    MEDCouplingUMesh *m3=mu->buildDescendingConnectivity2(desc2,descI2,revDesc2,revDescI2);
+    m3->setName(mu->getName());
 
-    MEDCouplingFieldDouble* fields=_mesh->getMeasureField(true);
+    MEDCouplingFieldDouble* fields=mu->getMeasureField(true);
     DataArrayDouble *surface = fields->getArray();
     const double *surf=surface->getConstPointer();
 
     const int *tmp=desc->getConstPointer();
     const int *tmpI=descI->getConstPointer();
-    DataArrayDouble *baryCell = _mesh->getBarycenterAndOwner() ;
+    DataArrayDouble *baryCell = mu->getBarycenterAndOwner() ;
     const double *coorBary=baryCell->getConstPointer();
 
     const int *tmp2=desc2->getConstPointer();
@@ -260,7 +326,7 @@ Mesh::setMesh( void )
     DataArrayDouble *normal = fieldn->getArray();
     const double *tmpNormal=normal->getConstPointer();
 
-    _numberOfCells = _mesh->getNumberOfCells() ;
+    _numberOfCells = mu->getNumberOfCells() ;
     _cells    = new Cell[_numberOfCells] ;
 
     int k=0;
@@ -269,37 +335,53 @@ Mesh::setMesh( void )
         const int *work=tmp+tmpI[id];
         const int *work2=tmp2+tmpI2[id];
         int nbFaces=tmpI[id+1]-tmpI[id];
-        int nbVertices=_mesh->getNumberOfNodesInCell(id) ;
+        int nbVertices=mu->getNumberOfNodesInCell(id) ;
 
-        Point p(coorBary[k],coorBary[k+1],0.0) ;
+        double coorBaryY=0.;
+        double coorBaryZ=0.;
+        double coef=0;
+        double coorBaryX=coorBary[k];
+        if (_dim==2)
+        	coorBaryY = coorBary[k+1];
+        if (_dim==3)
+        	coorBaryZ = coorBary[k+2];
+
+		Point p(coorBaryX,coorBaryY,coorBaryZ) ;
         Cell ci( nbVertices, nbFaces, surf[id], p ) ;
         for( int el=0;el<nbFaces;el++ )
         {
-            double xn;
-            double yn;
+            double xn=0.;
+            double yn=0.;
+            double zn=0.;
             if (work2[el]<0)
             {
-                xn=-tmpNormal[2*work[el]];
-                yn=-tmpNormal[2*work[el]+1];
+                xn=-tmpNormal[_dim*work[el]];
+                if (_dim==2)
+					yn=-tmpNormal[_dim*work[el]+1];
+                if (_dim==3)
+                	zn=-tmpNormal[_dim*work[el]+2];
             }else
             {
-                xn=tmpNormal[2*work[el]];
-                yn=tmpNormal[2*work[el]+1];
+                xn=tmpNormal[_dim*work[el]];
+                if (_dim==2)
+                	yn=tmpNormal[_dim*work[el]+1];
+                if (_dim==3)
+                	zn=tmpNormal[_dim*work[el]+2];
             }
-            ci.addNormalVector(el,xn,yn,0.0) ;
+            ci.addNormalVector(el,xn,yn,zn) ;
             ci.addFaceId(el,work[el]) ;
         }
         std::vector<int> nodeIdsOfCell ;
-        _mesh->getNodeIdsOfCell(id,nodeIdsOfCell) ;
+        mu->getNodeIdsOfCell(id,nodeIdsOfCell) ;
         for( int el=0;el<nbVertices;el++ )
             ci.addNodeId(el,nodeIdsOfCell[el]) ;
         _cells[id] = ci ;
-        k+=2;
+		k+=_dim;
     }
 
     DataArrayInt *revNode=DataArrayInt::New();
     DataArrayInt *revNodeI=DataArrayInt::New();
-    _mesh->getReverseNodalConnectivity(revNode,revNodeI) ;
+    mu->getReverseNodalConnectivity(revNode,revNodeI) ;
     const int *tmpN=revNode->getConstPointer();
     const int *tmpNI=revNodeI->getConstPointer();
 
@@ -309,14 +391,18 @@ Mesh::setMesh( void )
     const int *tmpC=revCell->getConstPointer();
     const int *tmpCI=revCellI->getConstPointer();
 
-    _numberOfNodes = _mesh->getNumberOfNodes() ;
+    _numberOfNodes = mu->getNumberOfNodes() ;
     _nodes    = new Node[_numberOfNodes] ;
 
-    for( int id=0;id<_numberOfNodes;id++ )
+    DataArrayDouble *coo = mu->getCoords() ;
+    const double *cood=coo->getConstPointer();
+    k=0;
+    for( int id=0;id<_numberOfNodes;id++,k+=_dim)
     {
-        std::vector<double> coo ;
-        _mesh->getCoordinatesOfNode(id,coo);
-        Point p(coo[0],coo[1],0.0) ;
+        double zc=0.;
+        if (_dim==3)
+        	zc=cood[k+2];
+		Point p(cood[k],cood[k+1],zc) ;
         const int *workc=tmpN+tmpNI[id];
         int nbCells=tmpNI[id+1]-tmpNI[id];
         const int *workf=tmpC+tmpCI[id];
@@ -330,7 +416,8 @@ Mesh::setMesh( void )
         _nodes[id] = vi ;
     }
 
-    const DataArrayInt *nodal = m2->getNodalConnectivity() ;
+    coo->decrRef();
+	const DataArrayInt *nodal = m2->getNodalConnectivity() ;
     const DataArrayInt *nodalI = m2->getNodalConnectivityIndex() ;
     const int *tmpNE=nodal->getConstPointer();
     const int *tmpNEI=nodalI->getConstPointer();
@@ -348,40 +435,39 @@ Mesh::setMesh( void )
 
     DataArrayDouble *barySeg = m2->getBarycenterAndOwner() ;
     const double *coorBarySeg=barySeg->getConstPointer();
+    DataArrayDouble *normalFaces1 = m2->buildOrthogonalField()->getArray() ;
+    const double *normalFaces2=normalFaces1->getConstPointer();
 
     k=0;
     for(int id=0;id<_numberOfFaces;id++)
     {
-        Point p(coorBarySeg[k],coorBarySeg[k+1],0.0) ;
+    	double coorBarySegX=coorBarySeg[k];
+    	double coorBarySegY=0.;
+    	double coorBarySegZ=0.;
+        if (_dim==2)
+        {
+        	coorBarySegY = coorBarySeg[k+1];
+        }
+        if (_dim==3)
+        {
+        	coorBarySegZ = coorBarySeg[k+2];
+        }
+        Point p(coorBarySegX,coorBarySegY,coorBarySegZ) ;
         const int *workc=tmpA+tmpAI[id];
         int nbCells=tmpAI[id+1]-tmpAI[id];
 
         const int *workv=tmpNE+tmpNEI[id]+1;
-        Face fi( 2, nbCells, lon[id], p ) ;
+        Face fi( 2, nbCells, lon[id], p, normalFaces2[k], normalFaces2[k+1], 0.0) ;
         fi.addNodeId(0,workv[0]) ;
         fi.addNodeId(1,workv[1]) ;
 
         fi.addCellId(0,workc[0]) ;
         if (nbCells==2)
-                fi.addCellId(1,workc[1]) ;
+			fi.addCellId(1,workc[1]) ;
 
         _faces[id] = fi ;
-        k+=2;
+        k+=_dim;
     }
-
-    /*
-    double minmax[4];
-    _mesh->getCoords()->getMinMaxPerComponent(minmax);
-    double xmin=minmax[0];
-    double xmax=minmax[1];
-    double ymin=minmax[2];
-    double ymax=minmax[3];
-    double eps=1.E-10;
-    setGroupAtPlan(xmax,0,eps,"RightEdge");
-    setGroupAtPlan(xmin,0,eps,"LeftEdge");
-    setGroupAtPlan(ymin,1,eps,"BottomEdge");
-    setGroupAtPlan(ymax,1,eps,"TopEdge");
-*/
     fieldl->decrRef();
     fields->decrRef();
     fieldn->decrRef();
@@ -402,6 +488,7 @@ Mesh::setMesh( void )
     revDescI2->decrRef();
     m2->decrRef();
     m3->decrRef();
+    mu->decrRef();
 }
 
 //----------------------------------------------------------------------
@@ -409,54 +496,69 @@ Mesh::Mesh( double xinf, double xsup, int nx )
 //----------------------------------------------------------------------
 {
     // il manque test xsup siinf
-    double lx = xsup - xinf ;
-    double dx = lx/nx ;
+    double dx = (xsup - xinf)/nx ;
 
     _dim = 1 ;
-    _nX=nx ;
-    _nY=0 ;
-    _nZ=0 ;
+    _xMin=xinf;
+    _xSup=xsup;
+    _yMin=0.;
+    _ySup=0.;
+    _zMin=0.;
+    _zSup=0.;
 
-    double *arrX = new double[nx+1] ;
-    for ( int i=0; i < nx+1 ; i++ )
-            arrX[i] = xinf + i*dx ;
+    _dxyz.resize(_dim);
+	_dxyz[0]=dx;
+	_nxyz.resize(_dim);
+	_nxyz[0]=nx+1;
 
-    MEDCouplingCMesh *m1c=MEDCouplingCMesh::New();
-    DataArrayDouble *coordsX=DataArrayDouble::New();
-    coordsX->alloc(nx+1,1);
-    std::copy(arrX,arrX+nx+1,coordsX->getPointer());
-    m1c->setCoordsAt(0,coordsX);
-    coordsX->decrRef();
-    delete [] arrX ;
-    _mesh=m1c->buildUnstructured();
-    _mesh->setName("MeshCart1D");
+    double *originPtr = new double[_dim];
+    double *dxyzPtr = new double[_dim];
+    int *nodeStrctPtr = new int[_dim];
+
+	originPtr[0]=xinf;
+	nodeStrctPtr[0]=nx+1;
+	dxyzPtr[0]=dx;
+
+
+    _mesh=MEDCouplingIMesh::New("MESH1D",
+    						    _dim,
+    							nodeStrctPtr,
+    							nodeStrctPtr+_dim,
+    							originPtr,
+    							originPtr+_dim,
+    							dxyzPtr,
+    							dxyzPtr+_dim);
+    delete [] originPtr;
+    delete [] dxyzPtr;
+    delete [] nodeStrctPtr;
 
     DataArrayInt *desc=DataArrayInt::New();
     DataArrayInt *descI=DataArrayInt::New();
     DataArrayInt *revDesc=DataArrayInt::New();
     DataArrayInt *revDescI=DataArrayInt::New();
-    MEDCouplingUMesh *m2=_mesh->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
-    m2->setName(_mesh->getName());
+    MEDCouplingUMesh* mu=_mesh->buildUnstructured();
+    MEDCouplingUMesh *m2=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
+    m2->setName(mu->getName());
 
-    DataArrayDouble *baryCell = _mesh->getBarycenterAndOwner() ;
+    DataArrayDouble *baryCell = mu->getBarycenterAndOwner() ;
     const double *coorBary=baryCell->getConstPointer();
 
     _numberOfCells = _mesh->getNumberOfCells() ;
     _cells    = new Cell[_numberOfCells] ;
 
-    MEDCouplingFieldDouble* fieldl=_mesh->getMeasureField(true);
+    MEDCouplingFieldDouble* fieldl=mu->getMeasureField(true);
     DataArrayDouble *longueur = fieldl->getArray();
     const double *lon=longueur->getConstPointer();
 
     int comp=0;
     for( int id=0;id<_numberOfCells;id++ )
     {
-        int nbVertices=_mesh->getNumberOfNodesInCell(id) ;
+        int nbVertices=mu->getNumberOfNodesInCell(id) ;
         Point p(coorBary[id],0.0,0.0) ;
         Cell ci( nbVertices, nbVertices, lon[id], p ) ;
 
         std::vector<int> nodeIdsOfCell ;
-        _mesh->getNodeIdsOfCell(id,nodeIdsOfCell) ;
+        mu->getNodeIdsOfCell(id,nodeIdsOfCell) ;
         for( int el=0;el<nbVertices;el++ )
         {
             ci.addNodeId(el,nodeIdsOfCell[el]) ;
@@ -469,11 +571,11 @@ Mesh::Mesh( double xinf, double xsup, int nx )
 
     DataArrayInt *revNode=DataArrayInt::New();
     DataArrayInt *revNodeI=DataArrayInt::New();
-    _mesh->getReverseNodalConnectivity(revNode,revNodeI) ;
+    mu->getReverseNodalConnectivity(revNode,revNodeI) ;
     const int *tmpN=revNode->getConstPointer();
     const int *tmpNI=revNodeI->getConstPointer();
 
-    _numberOfNodes = _mesh->getNumberOfNodes() ;
+    _numberOfNodes = mu->getNumberOfNodes() ;
     _nodes    = new Node[_numberOfNodes] ;
     _numberOfFaces = _numberOfNodes;
     _faces    = new Face[_numberOfFaces] ;
@@ -481,7 +583,7 @@ Mesh::Mesh( double xinf, double xsup, int nx )
     for( int id=0;id<_numberOfNodes;id++ )
     {
         std::vector<double> coo ;
-        _mesh->getCoordinatesOfNode(id,coo);
+        mu->getCoordinatesOfNode(id,coo);
         Point p(coo[0],0.0,0.0) ;
         const int *workc=tmpN+tmpNI[id];
         int nbCells=tmpNI[id+1]-tmpNI[id];
@@ -490,7 +592,7 @@ Mesh::Mesh( double xinf, double xsup, int nx )
         int nbVertices=1;
         /* provisoire !!!!!!!!!!!!*/
         Point pf(0.0,0.0,0.0) ;
-        Face fi( nbVertices, nbCells, 0.0, pf ) ;
+        Face fi( nbVertices, nbCells, 0.0, pf, 0., 0., 0. ) ;
 
         for( int el=0;el<nbCells;el++ )
             vi.addCellId(el,workc[el]) ;
@@ -513,8 +615,8 @@ Mesh::Mesh( double xinf, double xsup, int nx )
     revDescI->decrRef();
     revNode->decrRef();
     revNodeI->decrRef();
-    m1c->decrRef();
     m2->decrRef();
+    mu->decrRef();
 }
 
 //----------------------------------------------------------------------
@@ -525,40 +627,50 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny)
 // Anouar a faire
 //  if ( xinf >= xsup and yinf >= ysup )
 // exit probleme
-    double lx = xsup - xinf ;
-    double ly = ysup - yinf ;
-    _nX=nx ;
-    _nY=ny ;
-    _nZ=0 ;
+    _xMin=xinf;
+    _xSup=xsup;
+    _yMin=yinf;
+    _ySup=ysup;
+    _zMin=0.;
+    _zSup=0.;
 
-    double dx = lx/nx ;
-    double dy = ly/ny ;
 
-    double *arrX = new double[nx+1] ;
-    for ( int i=0; i < nx+1 ; i++ )
-            arrX[i] = xinf + i*dx ;
-    double *arrY = new double[ny+1] ;
-    for ( int i=0; i < ny+1 ; i++ )
-            arrY[i] = yinf + i*dy ;
+    double dx = (xsup - xinf)/nx ;
+    double dy = (ysup - yinf)/ny ;
 
     _dim = 2 ;
+	_nxyz.resize(_dim);
+	_nxyz[0]=nx+1;
+	_nxyz[1]=ny+1;
 
-    MEDCouplingCMesh *m1=MEDCouplingCMesh::New();
-    DataArrayDouble *coordsX=DataArrayDouble::New();
-    coordsX->alloc(nx+1,1);
-    std::copy(arrX,arrX+nx+1,coordsX->getPointer());
-    m1->setCoordsAt(0,coordsX);
-    coordsX->decrRef();
-    delete [] arrX ;
-    DataArrayDouble *coordsY=DataArrayDouble::New();
-    coordsY->alloc(ny+1,1);
-    std::copy(arrY,arrY+ny+1,coordsY->getPointer());
-    m1->setCoordsAt(1,coordsY);
-    coordsY->decrRef();
-    delete [] arrY ;
-    _mesh=m1->buildUnstructured();
-    _mesh->setName("MeshCart2D");
-    m1->decrRef();
+    _dxyz.resize(_dim);
+	_dxyz[0]=dx;
+	_dxyz[1]=dy;
+
+	double *originPtr = new double[_dim];
+    double *dxyzPtr = new double[_dim];
+    int *nodeStrctPtr = new int[_dim];
+
+	originPtr[0]=xinf;
+	originPtr[1]=yinf;
+	nodeStrctPtr[0]=nx+1;
+	nodeStrctPtr[1]=ny+1;
+	dxyzPtr[0]=dx;
+	dxyzPtr[1]=dy;
+
+
+    _mesh=MEDCouplingIMesh::New("MESH2D",
+    						    _dim,
+    							nodeStrctPtr,
+    							nodeStrctPtr+_dim,
+    							originPtr,
+    							originPtr+_dim,
+    							dxyzPtr,
+    							dxyzPtr+_dim);
+    delete [] originPtr;
+    delete [] dxyzPtr;
+    delete [] nodeStrctPtr;
+    _groups.resize(0);
     setMesh();
 }
 
@@ -569,61 +681,77 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, 
     // Anouar a faire
     //  if ( xinf >= xsup and yinf >= ysup )
     // exit probleme
-    double lx = xsup - xinf ;
-    double ly = ysup - yinf ;
-    double lz = zsup - zinf ;
 
-    _nX=nx ;
-    _nY=ny ;
-    _nZ=nz ;
+	_dim=3;
+    _xMin=xinf;
+    _xSup=xsup;
+    _yMin=yinf;
+    _ySup=ysup;
+    _zMin=zinf;
+    _zSup=zsup;
 
-    double dx = lx/nx ;
-    double dy = ly/ny ;
-    double dz = lz/nz ;
+    double dx = (xsup - xinf)/nx ;
+    double dy = (ysup - yinf)/ny ;
+    double dz = (zsup - zinf)/nz ;
 
-    double *arrX = new double[nx+1] ;
-    for ( int i=0; i < nx+1 ; i++ )
-            arrX[i] = xinf + i*dx ;
-    double *arrY = new double[ny+1] ;
-    for ( int i=0; i < ny+1 ; i++ )
-            arrY[i] = yinf + i*dy ;
-    double *arrZ = new double[nz+1] ;
-    for ( int i=0; i < nz+1 ; i++ )
-            arrZ[i] = zinf + i*dz ;
+    _dxyz.resize(_dim);
+	_dxyz[0]=dx;
+	_dxyz[1]=dy;
+	_dxyz[2]=dz;
 
-    _dim = 3 ;
+	_nxyz.resize(_dim);
+	_nxyz[0]=nx+1;
+	_nxyz[1]=ny+1;
+	_nxyz[2]=nz+1;
 
-    MEDCouplingCMesh *m1c=MEDCouplingCMesh::New();
-    DataArrayDouble *coordsX=DataArrayDouble::New();
-    coordsX->alloc(nx+1,1);
-    std::copy(arrX,arrX+nx+1,coordsX->getPointer());
-    m1c->setCoordsAt(0,coordsX);
-    coordsX->decrRef();
-    delete [] arrX ;
-    DataArrayDouble *coordsY=DataArrayDouble::New();
-    coordsY->alloc(ny+1,1);
-    std::copy(arrY,arrY+ny+1,coordsY->getPointer());
-    m1c->setCoordsAt(1,coordsY);
-    coordsY->decrRef();
-    delete [] arrY ;
-    DataArrayDouble *coordsZ=DataArrayDouble::New();
-    coordsZ->alloc(nz+1,1);
-    std::copy(arrZ,arrZ+nz+1,coordsZ->getPointer());
-    m1c->setCoordsAt(0,coordsZ);
-    coordsZ->decrRef();
-    delete [] arrZ ;
-    _mesh=m1c->buildUnstructured();
-    _mesh->setName("MeshCart3D");
-    m1c->decrRef();
+	double *originPtr = new double[_dim];
+    double *dxyzPtr = new double[_dim];
+    int *nodeStrctPtr = new int[_dim];
+
+	originPtr[0]=xinf;
+	originPtr[1]=yinf;
+	originPtr[2]=zinf;
+	nodeStrctPtr[0]=nx+1;
+	nodeStrctPtr[1]=ny+1;
+	nodeStrctPtr[2]=nz+1;
+	dxyzPtr[0]=dx;
+	dxyzPtr[1]=dy;
+	dxyzPtr[2]=dz;
+
+
+    _mesh=MEDCouplingIMesh::New("MESH3D",
+    						    _dim,
+    							nodeStrctPtr,
+    							nodeStrctPtr+_dim,
+    							originPtr,
+    							originPtr+_dim,
+    							dxyzPtr,
+    							dxyzPtr+_dim);
+    delete [] originPtr;
+    delete [] dxyzPtr;
+    delete [] nodeStrctPtr;
+    _groups.resize(0);
     setMesh();
 }
 
 //----------------------------------------------------------------------
 int
-Mesh::getDim( void )  const 
+Mesh::getSpaceDimension( void )  const
 //----------------------------------------------------------------------
 {
     return _dim ;
+}
+
+std::vector<double>
+Mesh::getDXYZ() const
+{
+	return _dxyz;
+}
+
+std::vector<int>
+Mesh::getCellGridStructure() const
+{
+	return _nxyz;
 }
 
 //----------------------------------------------------------------------
@@ -631,7 +759,7 @@ int
 Mesh::getNx( void )  const
 //----------------------------------------------------------------------
 {
-    return _nX ;
+    return _nxyz[0]-1 ;
 }
 
 //----------------------------------------------------------------------
@@ -639,7 +767,9 @@ int
 Mesh::getNy( void )  const
 //----------------------------------------------------------------------
 {
-    return _nY ;
+ 	if(_dim < 2)
+	    throw CdmathException("int double& Field::operator[ielem] : Ny is not defined in dimension < 2!");
+    return _nxyz[1]-1 ;
 }
 
 //----------------------------------------------------------------------
@@ -647,12 +777,62 @@ int
 Mesh::getNz( void )  const
 //----------------------------------------------------------------------
 {
-    return _nZ ;
+ 	if(_dim < 3)
+	    throw CdmathException("int double& Field::operator[ielem] : Nz is not defined in dimension < 3!");
+    return _nxyz[2]-1 ;
 }
 
 //----------------------------------------------------------------------
-MEDCouplingUMesh*
-Mesh::getMeshU ( void )  const 
+double
+Mesh::getXMin( void )  const
+//----------------------------------------------------------------------
+{
+    return _xMin ;
+}
+
+//----------------------------------------------------------------------
+double
+Mesh::getXSup( void )  const
+//----------------------------------------------------------------------
+{
+    return _xSup ;
+}
+
+//----------------------------------------------------------------------
+double
+Mesh::getYMin( void )  const
+//----------------------------------------------------------------------
+{
+    return _yMin ;
+}
+
+//----------------------------------------------------------------------
+double
+Mesh::getYSup( void )  const
+//----------------------------------------------------------------------
+{
+    return _ySup ;
+}
+
+//----------------------------------------------------------------------
+double
+Mesh::getZMin( void )  const
+//----------------------------------------------------------------------
+{
+    return _zMin ;
+}
+
+//----------------------------------------------------------------------
+double
+Mesh::getZSup( void )  const
+//----------------------------------------------------------------------
+{
+    return _zSup ;
+}
+
+//----------------------------------------------------------------------
+MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh>
+Mesh::getMEDCouplingMesh( void )  const
 //----------------------------------------------------------------------
 {
     return _mesh ;
@@ -741,14 +921,18 @@ const Mesh&
 Mesh::operator= ( const Mesh& mesh )
 //----------------------------------------------------------------------
 {
-    _dim = mesh.getDim() ;
+    _dim = mesh.getSpaceDimension() ;
     _numberOfNodes = mesh.getNumberOfNodes();
     _numberOfFaces = mesh.getNumberOfFaces();
     _numberOfCells = mesh.getNumberOfCells();
+    _xMin=mesh.getXMin();
+    _xSup=mesh.getXSup();
+    _yMin=mesh.getYMin();
+    _ySup=mesh.getYSup();
+    _zMin=mesh.getZMin();
+    _zSup=mesh.getZSup();
     _groups = mesh.getNamesOfGroups() ;
-    _nX = mesh.getNx() ;
-    _nY = mesh.getNy() ;
-    _nZ = mesh.getNz() ;
+    _nxyz = mesh.getCellGridStructure() ;
 
     if (_nodes)
     {
@@ -779,9 +963,8 @@ Mesh::operator= ( const Mesh& mesh )
     for (int i=0;i<_numberOfCells;i++)
     	_cells[i]=mesh.getCell(i);
 
-    if (_mesh)
-    	_mesh->decrRef();
-    _mesh=static_cast<MEDCouplingUMesh *>(mesh.getMeshU()->deepCpy());
+    MEDCouplingAutoRefCountObjectPtr<MEDCouplingMesh> m1=mesh.getMEDCouplingMesh()->deepCpy();
+    _mesh=m1;
     return *this;
 }
 
@@ -800,5 +983,7 @@ Mesh::writeMED ( const string fileName ) const
 //----------------------------------------------------------------------
 {
 	string fname=fileName+".med";
-	MEDLoader::WriteUMesh(fname.c_str(),_mesh,true);
+	MEDCouplingUMesh* mu=_mesh->buildUnstructured();
+	MEDLoader::WriteUMesh(fname.c_str(),mu,true);
+	mu->decrRef();
 }

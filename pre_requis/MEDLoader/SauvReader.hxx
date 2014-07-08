@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -35,24 +35,24 @@
 namespace SauvUtilities
 {
   class FileReader;
-  class IntermediateMED;
-  class Group;
-  class DoubleField;
+  struct IntermediateMED;
+  struct Group;
+  struct DoubleField;
 }
 namespace ParaMEDMEM
 {
   class MEDFileData;
 
-class MEDLOADER_EXPORT SauvReader : public ParaMEDMEM::RefCountObject
+class SauvReader : public ParaMEDMEM::RefCountObject
 {
  public:
-  static SauvReader* New(const char *fileName) throw(INTERP_KERNEL::Exception);
-  ParaMEDMEM::MEDFileData * loadInMEDFileDS() throw(INTERP_KERNEL::Exception);
-  ~SauvReader();
+  MEDLOADER_EXPORT static SauvReader* New(const std::string& fileName);
+  MEDLOADER_EXPORT ParaMEDMEM::MEDFileData * loadInMEDFileDS(bool fix2DOri=false);
+  MEDLOADER_EXPORT ~SauvReader();
 
  private:
-  std::size_t getHeapMemorySize() const { return 0; }
-
+  std::size_t getHeapMemorySizeWithoutChildren() const;
+  std::vector<const BigMemoryObject *> getDirectChildren() const;
   void readRecord2();
   void readRecord4();
   void readRecord7();
@@ -72,7 +72,8 @@ class MEDLOADER_EXPORT SauvReader : public ParaMEDMEM::RefCountObject
   void read_PILE_MODL         (const int nbObjects, std::vector<std::string>& objectNames, std::vector<int>& nameIndices);
   void read_PILE_FIELD        (const int nbObjects, std::vector<std::string>& objectNames, std::vector<int>& nameIndices);
 
-  SauvUtilities::Group* getFieldSupport(const std::vector<SauvUtilities::Group*>& fieldSupports);
+  void setFieldSupport(const std::vector<SauvUtilities::Group*>& supports,
+                       SauvUtilities::DoubleField*               field);
   void setFieldNames(const std::vector<SauvUtilities::DoubleField*>& fields,
                      const std::vector<std::string>& objectNames,
                      const std::vector<int>& nameIndices);

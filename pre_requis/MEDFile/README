@@ -59,10 +59,22 @@ Dans le repertoire des sources :
 ./configure --prefix=<repertoire cible> 
 make
 make check 
+make installcheck
 make install ou make install-strip
 
 Remarques :
 
+- Une interface python est disponible depuis la version 3.0.7.
+  Elle peut être desactivée par l'option --disable-python.
+  Elle ne peut être activée en mode static --disable-shared.
+  La bibliothèque medfichier embarque les interfaces .cc et .py générées par swig 
+  pour les options med_int=int et med_int=long.
+  L'outil swig n'est donc pas requis à moins de compiler med avec une version // d'hdf.
+  Il faut alors regénérer les interfaces swig en précisant l'option --with-swig. 
+  Une fois construite en version //, si vous utiliser la même arborescence pour construire une version 
+  de medfichier avec une version séquentielle d'HDF il faut de nouveau activer l'option --with-swig pour
+  regénérer les interfaces swig sans MPI (à l'identique des versions initialements embarquées).
+  
 - la bibliothèque MED utilise le C++ depuis sa version 2.3.2.
 
 - Il est possible de compiler uniquement la bibliotheque MED en
@@ -188,7 +200,27 @@ F90=f90
 
 ./configure --prefix=/home02/salome/ERIC/med-3.0.0_64.bin --with-f90=ifort FFLAGS="-i8" FCFLAGS="-i8"
 
-- Sous BlueGene P (new)
+- Sous BlueGene Q (new)
+
+export ZLIB_PREFIX=/home/projets-bgq/systel/LIBRARY/zlib-1.2.7/arch/zumbrota
+export HDF5_PREFIX=/home/projets-bgq/systel/LIBRARY/hdf5-1.8.8/arch/zumbrota
+export PATH=$PATH:$HDF5_PREFIX/bin/tools/
+export MED_SRC=$HOME/med-3.0.7
+
+
+$MED_SRC/./configure --prefix=$MED_PREFIX --disable-shared --disable-python \
+CC=/bgsys/drivers/ppcfloor/comm/xl/bin/mpicc \
+F77=/bgsys/drivers/ppcfloor/comm/xl/bin/mpif77 \
+FC=/bgsys/drivers/ppcfloor/comm/xl/bin/mpif90 \
+CXX=/bgsys/drivers/ppcfloor/comm/xl/bin/mpic++ \
+CXXFLAGS="-qlanglvl=redefmac" \
+--with-hdf5=$HDF5_PREFIX --with-med-int=int \
+LDFLAGS="-L$ZLIB_PREFIX/lib" FTLIBS="-L/bgsys/linux/RHEL6.3_V1R2M0-36/opt/ibmcmp/vacpp/bg/12.1/lib64/ -libmc++ -L/bgsys/linux/RHEL6.3_V1R2M0-36/usr/lib/gcc/ppc64-redhat-linux/4.4.4/lib64 " \
+--build=ppc64 --host=powerpc
+
+Remarque importante : Il peut être necessaire de modifier la variable prefer_static_libs à yes dans la fonction func_mode_link du fichier libtool généré au ./configure. 
+
+- Sous BlueGene P 
 
 MED_SRC=$HOME/med-3.0.5
 MED_PREFIX=/gpfs/home/med/med-3.0.5.bin/arch/bgp
@@ -231,13 +263,13 @@ pas de wrapper 	mpif90
 
 Trois utilitaires sont compiles et installes dans <repertoire cible>/bin.
 Ce sont :
-- mdump (xmdump) : outil de dump d'un fichier MED aux formats V2.3 à V3.0. -> 3.0.3
+- mdump (xmdump) : outil de dump d'un fichier MED aux formats V2.3 à V3.0. -> 3.0.7
 - medimport : traducteur de fichier à partir des versions V2.x vers V3.0.
 - mdeconforme : vérificateur de conformité de fichier.
 
 4.	Documentation
 
-Toute la documentation est presente dans le répertoire
+Toute la documentation est presente dans le répertoire d'installation
 <repertoire cible>/share/doc/html. Il s'agit d'une documentation au format HTML.
 
 
@@ -245,4 +277,4 @@ Toute la documentation est presente dans le répertoire
 
 Par e-mail :
 eric.fayolle@edf.fr
-vincent.lefebvre@edf.fr
+

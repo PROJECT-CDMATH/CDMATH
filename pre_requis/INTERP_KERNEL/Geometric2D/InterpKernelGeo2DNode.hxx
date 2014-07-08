@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -32,19 +32,20 @@
 namespace INTERP_KERNEL
 {
   typedef enum
-    {
-      IN_1      =  7,
-      ON_1      =  8,
-      ON_LIM_1  = 12,
-      ON_TANG_1 =  9,
-      OUT_1     = 10,
-      UNKNOWN   = 11
-    } TypeOfLocInPolygon;
+  {
+    IN_1      =  7,
+    ON_1      =  8,
+    ON_LIM_1  = 12,
+    ON_TANG_1 =  9,
+    OUT_1     = 10,
+    UNKNOWN   = 11
+  } TypeOfLocInPolygon;
 
   class Bounds;
-  
+
   /*!
-   * As nodes can be shared between edges it is dealed with ref counting.
+   * Representation of a 2D point, and potentially its location relative to a polygon.
+   * As nodes can be shared between edges it is handled with ref counting.
    */
   class INTERPKERNEL_EXPORT Node
   {
@@ -54,6 +55,12 @@ namespace INTERP_KERNEL
     Node(std::istream& stream);
     void incrRef() const { _cnt++; }
     bool decrRef();
+    void initHitStatus() const { _hit=0; }
+    char getHitStatus() const { return _hit; }
+    void hitMeAlone(double xBary, double yBary, double dimChar) { if(_hit==0) { _hit=1; applySimilarity(xBary,yBary,dimChar); } }
+    void unHitMeAlone(double xBary, double yBary, double dimChar) { if(_hit==0) { _hit=1; unApplySimilarity(xBary,yBary,dimChar); } }
+    void hitMeAfter(double xBary, double yBary, double dimChar) { if(_hit==0) { hitMeAlone(xBary,yBary,dimChar); _hit=2; } else if(_hit==1) declareOn(); }
+    void unHitMeAfter(double xBary, double yBary, double dimChar) { if(_hit==0) { unHitMeAlone(xBary,yBary,dimChar); _hit=2; } }
     void initLocs() const { _loc=UNKNOWN; }
     void setLoc(TypeOfLocInPolygon loc) const { _loc=loc; }
     TypeOfLocInPolygon getLoc() const { return _loc; }
@@ -94,6 +101,7 @@ namespace INTERP_KERNEL
   protected:
     ~Node();
   protected:
+    mutable char _hit;
     mutable unsigned char _cnt;
     mutable TypeOfLocInPolygon _loc;
     double _coords[2];

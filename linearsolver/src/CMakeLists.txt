@@ -1,0 +1,14 @@
+INCLUDE_DIRECTORIES(
+${BASE_DIR}/inc 
+${LINEARSOLVER_DIR}/inc 
+${PETSC_INCLUDES}
+)
+
+IF (CMAKE_CDMATH_TESTS)
+SET(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
+ENDIF (CMAKE_CDMATH_TESTS)
+
+FILE(GLOB src_linearsolver_CXX . *.cxx)
+ADD_LIBRARY(linearsolver SHARED ${src_linearsolver_CXX} ${PETSC_LIBRARIES})
+
+INSTALL(TARGETS linearsolver DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

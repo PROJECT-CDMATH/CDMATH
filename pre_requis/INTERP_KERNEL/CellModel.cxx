@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -397,7 +397,7 @@ namespace INTERP_KERNEL
         break;
       case NORM_POLYGON:
         {
-          _nb_of_pts=0; _nb_of_sons=0; _dim=2; _dyn=true; _extruded_type=NORM_POLYHED; _is_simplex=false;
+          _nb_of_pts=0; _nb_of_sons=0; _dim=2; _dyn=true; _extruded_type=NORM_POLYHED; _is_simplex=false; _quadratic_type=NORM_QPOLYG;
         }
         break;
       case NORM_POLYHED:
@@ -407,13 +407,14 @@ namespace INTERP_KERNEL
         break;
       case NORM_QPOLYG:
         {
-          _nb_of_pts=0; _nb_of_sons=0; _dim=2; _dyn=true; _is_simplex=false; _quadratic=true;
+          _nb_of_pts=0; _nb_of_sons=0; _dim=2; _dyn=true; _is_simplex=false; _quadratic=true; _linear_type=NORM_POLYGON;
         }
         break;
       case NORM_POLYL:
         {
           _nb_of_pts=0; _nb_of_sons=0; _dim=1; _dyn=true; _extruded_type=NORM_POLYGON; _is_simplex=false;
         }
+        break;
       case NORM_ERROR:
         {
           _nb_of_pts=std::numeric_limits<unsigned>::max(); _nb_of_sons=std::numeric_limits<unsigned>::max(); _dim=std::numeric_limits<unsigned>::max();
@@ -448,6 +449,36 @@ namespace INTERP_KERNEL
       return _nb_of_little_sons;
     else//polyhedron
       return (lgth-std::count(conn,conn+lgth,-1))/2;
+  }
+  
+  NormalizedCellType CellModel::getCorrespondingPolyType() const
+  {
+    switch(getDimension())
+      {
+      case 0:
+        return NORM_POINT1;
+      case 1:
+        {
+          if(!isQuadratic())
+            return NORM_POLYL;
+          throw INTERP_KERNEL::Exception("CellModel::getPolyType : no poly type for quadratic 1D !");
+        }
+      case 2:
+        {
+          if(!isQuadratic())
+            return NORM_POLYGON;
+          else
+            return NORM_QPOLYG;
+        }
+      case 3:
+        {
+          if(!isQuadratic())
+            return NORM_POLYHED;
+          throw INTERP_KERNEL::Exception("CellModel::getPolyType : no poly type for quadratic 3D !");
+        }
+      default:
+        throw INTERP_KERNEL::Exception("CellModel::getPolyType : only dimension 0, 1, 2, 3 are supported !");
+      }
   }
 
   /*!

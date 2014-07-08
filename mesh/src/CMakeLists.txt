@@ -14,9 +14,7 @@ ${MED_LOADER_DIR}
 
 FILE(GLOB src_mesh_CXX . *.cxx)
 ADD_LIBRARY(mesh SHARED ${src_mesh_CXX})
-TARGET_LINK_LIBRARIES(mesh base medcoupling ${HDF5_LIBS} ${MED3_LIBS} medloader)
-#ADD_LIBRARY(meshStatic STATIC ${src_mesh_CXX})
-#TARGET_LINK_LIBRARIES(meshStatic medcoupling ${HDF5_LIBS} ${MED3_LIBS} medloader)
+TARGET_LINK_LIBRARIES(mesh base medcoupling medloader ${MED3_LIBS} )
 
 INSTALL(TARGETS mesh DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 #INSTALL(TARGETS meshStatic DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

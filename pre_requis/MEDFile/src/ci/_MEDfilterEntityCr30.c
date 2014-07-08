@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -39,7 +39,7 @@ void _MEDfilterEntityCr30(int dummy, ...)
   MED_VARGS_DECL(const, med_storage_mode  , , storagemode             );
   MED_VARGS_DECL(const, char * , const      , profilename             );
   MED_VARGS_DECL(const, med_int           , , filterarraysize         );
-  MED_VARGS_DECL(const, med_int *         , , filterarray             );
+  MED_VARGS_DECL(const, med_int * , const   , filterarray             );
   MED_VARGS_DECL(, med_filter*, const       , filter                  );
   MED_VARGS_DECL(, med_err *               ,, fret                    );
 
@@ -55,7 +55,7 @@ void _MEDfilterEntityCr30(int dummy, ...)
   MED_VARGS_DEF(const, med_storage_mode  , , storagemode             );
   MED_VARGS_DEF(const, char * , const      , profilename             );
   MED_VARGS_DEF(const, med_int           , , filterarraysize         );
-  MED_VARGS_DEF(const, med_int *         , , filterarray             );
+  MED_VARGS_DEF(const, med_int * , const  , filterarray             );
   MED_VARGS_DEF(, med_filter*, const       , filter                  );
   MED_VARGS_DEF(, med_err *               ,, fret                    );
 

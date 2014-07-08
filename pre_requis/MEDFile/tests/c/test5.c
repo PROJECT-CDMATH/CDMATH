@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -55,7 +55,7 @@ int main (int argc, char **argv)
   char nomcoo[2*MED_SNAME_SIZE+1];
   char unicoo[2*MED_SNAME_SIZE+1];
   /* tables des noms, numeros, numeros de familles des noeuds
-     autant d'elements que de noeuds - les noms ont pout longueur
+     autant d'elements que de noeuds - les noms ont pour longueur
      MED_SNAME_SIZE */
   char *nomnoe=NULL;
   med_int *numnoe=NULL, *nufano=NULL;
@@ -101,13 +101,13 @@ int main (int argc, char **argv)
     printf("\t -Nombre d'étape de calcul : "IFORMAT"\n",nstep);
     printf("\t -Unité des dates : |%s|\n",dtunit);
   }
-  /* Ecriture des attributs des noeuds du maillage  */
+  /* Lecture des attributs des noeuds du maillage  */
   if (MEDmeshAttributeRd( fid, maa, &isolatednodes, &verticesnodes, &cellmaxnodes) < 0 ) {
     MESSAGE("Aucune définition des attributs des noeuds du maillage");
   } else {
     printf("\t -Nombre de noeuds isolés             : "IFORMAT"\n",isolatednodes);
     printf("\t -Nombre de noeuds sommets            : "IFORMAT"\n",verticesnodes);
-    printf("\t -Nombre maximun de noeuds par maille : "IFORMAT"\n",cellmaxnodes);
+    printf("\t -Nombre maximum de noeuds par maille : "IFORMAT"\n",cellmaxnodes);
   }
 
 

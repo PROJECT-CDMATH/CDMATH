@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,8 +16,18 @@
  */
 
 /*
- *  Use case 13 : a 2D unstructured mesh with 12 nodes and 2 polygons
- */
+ *  Use case 13 : a 2D unstructured mesh with 10 nodes and 2 polygons
+ * poly1 : 1,4,7,9,6,3
+ * poly2 : 2,5,8,10,7,4
+ *      9   10
+ *
+ *   6    7    8
+ *
+ *   3    4    5
+ *
+ *      1     2
+ *
+*/
 
 #include <med.h>
 #define MESGERR 1
@@ -33,8 +43,9 @@ int main (int argc, char **argv) {
   /*                                         12345678901234561234567890123456 */
   const char axisname[2*MED_SNAME_SIZE+1] = "x               y               ";
   const char unitname[2*MED_SNAME_SIZE+1] = "cm              cm              ";
-  const med_float coordinates[2*12] = { 0.5,   0.,  
-					1.5,   0.,  
+  /* Dix noeuds dont deux communs aux deux polygones */
+  const med_float coordinates[2*10] = { 0.5,   0.,
+					1.5,   0.,
 					0.,    0.5,
 					1.,    0.5,
 					2.,    0.5,
@@ -43,14 +54,14 @@ int main (int argc, char **argv) {
 					2.,    1.,
 					0.5,   2.,
 					1.5,   2. };
-  const med_int nnodes = 12;
+  const med_int nnodes = 10;
   const med_int indexsize = 3;
   const med_int index[3] = {1,7,13};
   /* connectivity : 2 hexagons */
   const med_int connectivity[12] = {1,4,7,9,6,3,
 				    2,5,8,10,7,4};
   int ret=-1;
-  
+
   /* open MED file */
   fid = MEDfileOpen("UsesCase_MEDmesh_13.med",
 		    MED_ACC_CREAT);

@@ -1,10 +1,10 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+# Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
-# version 2.1 of the License.
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -683,6 +683,24 @@ class MEDCouplingDataForTest:
         fff.setGaussLocalizationOnCells([6,7],[-1.,-1.,-1.,-1.,1.,-1.,1.,1.,-1.,1.,-1.,-1.,-1.,-1.,1.,-1.,1.,1.,1.,1.,1.,1.,-1.,1.],[-0.577350269189626,-0.577350269189626,-0.577350269189626,-0.577350269189626,-0.577350269189626,0.577350269189626,-0.577350269189626,0.577350269189626,-0.577350269189626,-0.577350269189626,0.577350269189626,0.577350269189626,0.577350269189626,-0.577350269189626,-0.577350269189626,0.577350269189626,-0.577350269189626,0.577350269189626,0.577350269189626,0.577350269189626,-0.577350269189626,0.577350269189626,0.577350269189626,0.577350269189626],[1.,1.,1.,1.,1.,1.,1.,1.])
         return MEDCouplingFieldTemplate(fff)
 
+    def buildCircle(self, center_X, center_Y, radius):  
+      from cmath import rect
+      from math import pi  
+  
+      c = [rect(radius, i*pi/4.0) for i in range(8)]
+      coords = [c[-1].real,c[-1].imag,  c[3].real,c[3].imag,
+                 c[5].real,c[5].imag,  c[1].real,c[1].imag]
+      connec = range(4) 
+      baseMesh = MEDCouplingUMesh.New("circle", 2)  
+      baseMesh.allocateCells(1)
+      meshCoords = DataArrayDouble.New(coords, len(coords)/2, 2)
+      meshCoords += (center_X, center_Y)
+      baseMesh.setCoords(meshCoords)
+  
+      baseMesh.insertNextCell(NORM_QPOLYG, connec)  
+      baseMesh.finishInsertingCells()  
+      return baseMesh
+
     build2DTargetMesh_1=classmethod(build2DTargetMesh_1)
     build2DSourceMesh_1=classmethod(build2DSourceMesh_1)
     build3DTargetMesh_1=classmethod(build3DTargetMesh_1)
@@ -711,4 +729,8 @@ class MEDCouplingDataForTest:
     buildFieldOnGauss_2=classmethod(buildFieldOnGauss_2)
     buildFieldOnGauss_3=classmethod(buildFieldOnGauss_3)
     buildFieldOnGauss_4=classmethod(buildFieldOnGauss_4)
+    buildCircle=classmethod(buildCircle)
     pass
+
+
+

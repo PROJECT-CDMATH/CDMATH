@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -35,14 +35,17 @@
 med_err
 MEDmeshAttributeRd(const med_idt fid,
 		   const char * const meshname,
-		   med_int *isolatednodes,
-		   med_int *verticesnodes,
-		   med_int *cellmaxnodes)
+		   med_int    * const isolatednodes,
+		   med_int    * const verticesnodes,
+		   med_int    * const cellmaxnodes)
 {
   med_err _ret=-1;
   med_idt _meshid;
   char    _path [MED_TAILLE_MAA+MED_NAME_SIZE+1]=MED_MAA;
 
+  *isolatednodes=0;
+  *verticesnodes=0;
+  *cellmaxnodes =0;
 
   /*
    * On inhibe le gestionnaire d'erreur
@@ -61,27 +64,32 @@ MEDmeshAttributeRd(const med_idt fid,
 
 
   /*
-   * Creation de l'attribut "Nombre de Noeuds Isoles"
+   * Lecture de l'attribut "Nombre de Noeuds Isoles"
    */
   if ( _MEDattrEntierLire(_meshid,MED_NOM_NNI,isolatednodes) < 0 ) {
-    _ret = MED_ERR_READ+MED_ERR_ATTRIBUTE;goto ERROR;
+    _ret = MED_ERR_READ+MED_ERR_ATTRIBUTE;
+  } else {
+    _ret =0;
   }
 
   /*
-   * Creation de l'attribut "Nombre de Noeuds Sommets"
+   * Lecture de l'attribut "Nombre de Noeuds Sommets"
    */
   if ( _MEDattrEntierLire(_meshid,MED_NOM_NNS,verticesnodes) < 0 ) {
-    _ret=MED_ERR_READ+MED_ERR_ATTRIBUTE;goto ERROR;
+    if (_ret >= 0 ) goto ERROR;
+  } else {
+    if (_ret < 0 ) goto ERROR;
   }
 
 
   /*
-   * Creation de l'attribut "Nombre de Noeuds Max par maille"
+   * Lecture de l'attribut "Nombre de Noeuds Max par maille"
    */
   if ( _MEDattrEntierLire(_meshid,MED_NOM_NNM,cellmaxnodes) < 0 ) {
-    _ret=MED_ERR_READ+MED_ERR_ATTRIBUTE;goto ERROR;
+    if (_ret >= 0 ) goto ERROR;
+  } else {
+    if (_ret < 0 ) goto ERROR;
   }
-
 
   _ret = 0;
  ERROR:

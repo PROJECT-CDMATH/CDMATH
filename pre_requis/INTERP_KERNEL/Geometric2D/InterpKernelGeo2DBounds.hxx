@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -31,19 +31,23 @@ namespace INTERP_KERNEL
    * Relative LOC
    */
   typedef enum
-    {
-      IN              = 0,
-      OUT             = 1,
-      ON_BOUNDARY_POS = 2,
-      ON_BOUNDARY_NEG = 3
-    } Position;
-  
+  {
+    IN              = 0,
+    OUT             = 1,
+    ON_BOUNDARY_POS = 2,
+    ON_BOUNDARY_NEG = 3
+  } Position;
+
   class INTERPKERNEL_EXPORT Bounds
   {
   public:
     Bounds():_x_min(0.),_x_max(0.),_y_min(0.),_y_max(0.) { }
     double &operator[](int i);
     const double& operator[](int i) const;
+    double getXMin() const { return _x_min; }
+    double getXMax() const { return _x_max; }
+    double getYMin() const { return _y_min; }
+    double getYMax() const { return _y_max; }
     double getDiagonal() const;
     void getBarycenter(double& xBary, double& yBary) const;
     void applySimilarity(double xBary, double yBary, double dimChar);

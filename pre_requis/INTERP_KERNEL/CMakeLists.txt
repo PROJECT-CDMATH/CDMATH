@@ -1,9 +1,9 @@
-# Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+# Copyright (C) 2012-2014  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
-# version 2.1 of the License.
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -28,6 +28,7 @@ SET(interpkernel_SOURCES
   CellModel.cxx
   UnitTetraIntersectionBary.cxx
   InterpolationOptions.cxx
+  BoxSplittingOptions.cxx
   DirectedBoundingBox.cxx
   Interpolation2DCurve.cxx
   Interpolation3DSurf.cxx
@@ -38,6 +39,7 @@ SET(interpkernel_SOURCES
   InterpKernelCellSimplify.cxx
   InterpKernelMatrixTools.cxx
   VolSurfUser.cxx
+  SplitterTetra.cxx
   Bases/InterpKernelException.cxx
   Geometric2D/InterpKernelGeo2DAbstractEdge.cxx
   Geometric2D/InterpKernelGeo2DBounds.cxx
@@ -67,13 +69,19 @@ INCLUDE_DIRECTORIES(
   )
 
 SET(PLATFORM_MMAP)
-IF(NOT WINDOWS)
+IF(NOT WIN32)
   SET(PLATFORM_MMAP "-D_POSIX_MAPPED_FILES")
-ENDIF(NOT WINDOWS)
+ENDIF(NOT WIN32)
 
 ADD_LIBRARY(interpkernel SHARED ${interpkernel_SOURCES})
-INSTALL(TARGETS interpkernel DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+SET_TARGET_PROPERTIES(interpkernel PROPERTIES COMPILE_FLAGS "${PLATFORM_MMAP}")
+TARGET_LINK_LIBRARIES(interpkernel ${PLATFORM_LIBS})
+INSTALL(TARGETS interpkernel EXPORT ${PROJECT_NAME}TargetGroup DESTINATION ${SALOME_INSTALL_LIBS})
 
 FILE(GLOB_RECURSE interpkernel_HEADERS_HXX "${CMAKE_CURRENT_SOURCE_DIR}/*.hxx")
 FILE(GLOB_RECURSE interpkernel_HEADERS_TXX "${CMAKE_CURRENT_SOURCE_DIR}/*.txx")
-INSTALL(FILES ${interpkernel_HEADERS_HXX} ${interpkernel_HEADERS_TXX} DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+INSTALL(FILES ${interpkernel_HEADERS_HXX} ${interpkernel_HEADERS_TXX} Bases/NormalizedGeometricTypes DESTINATION ${SALOME_INSTALL_HEADERS})
+
+# Will be used for SWIG dependencies:
+SET (interpkernel_HEADERS_HXX PARENT_SCOPE)
+SET (interpkernel_HEADERS_TXX PARENT_SCOPE)

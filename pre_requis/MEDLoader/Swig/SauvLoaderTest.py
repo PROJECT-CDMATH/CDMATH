@@ -1,10 +1,10 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+# Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
-# version 2.1 of the License.
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -34,7 +34,7 @@ class SauvLoaderTest(unittest.TestCase):
 
         # read SAUV and write MED
         medFile = "SauvLoaderTest.med"
-        sr=SauvReader.New(sauvFile);
+        sr=SauvReader(sauvFile);
         d2=sr.loadInMEDFileDS();
         d2.write(medFile,0);
 
@@ -95,7 +95,7 @@ class SauvLoaderTest(unittest.TestCase):
 
         # write pointeMed to SAUV
         sauvFile = "SauvLoaderTest.sauv"
-        sw=SauvWriter.New();
+        sw=SauvWriter();
         sw.setMEDFileDS(pointeMed);
         sw.write(sauvFile);
 
@@ -156,9 +156,9 @@ class SauvLoaderTest(unittest.TestCase):
             io1 = fieldOnFaces.getIterations()
             fof = fieldOnFaces.getFieldOnMeshAtLevel(f1.getTypeOfField(),io1[i][0],io1[i][1],um1)
             self.assertTrue( d.isEqual( fof.getArray(), 1e-12 ))
-
-            os.remove( sauvFile )
             pass
+        del sr
+        os.remove( sauvFile )
         pass
 
     def testSauv2MedWONodeFamilyNum(self):
@@ -234,9 +234,11 @@ class SauvLoaderTest(unittest.TestCase):
         mesh = mfMesh.getMeshAtLevel(0)
         self.assertTrue(mesh.getNodalConnectivity().isEqual(m.getNodalConnectivity()))
         #
+        del sr
         os.remove(sauvFile)
         pass
 
+    @unittest.skipUnless(MEDLoader.HasXDR(),"requires XDR")
     def testMissingGroups(self):
         """test for issue 0021749: [CEA 601] Some missing groups in mesh after reading a SAUV file with SauvReader."""
         self.assertTrue( os.getenv("MED_ROOT_DIR") )
@@ -258,6 +260,130 @@ class SauvLoaderTest(unittest.TestCase):
         ids1.setName("")
         ids2.setName("")
         self.assertTrue(ids1.isEqual(ids2))
+        pass
+
+    def testGaussPt(self):
+        """issue 22321: [CEA 933] Bug when reading a sauve file containing field on Gauss Pt.
+        The problem was that a field ON_GAUSS_PT was created but no Gauss Localization
+        was defined"""
+
+        # create a MEDFileData with a field ON_GAUSS_PT: 9 Gauss points, on 4 QUAD8 elements
+        f=MEDCouplingFieldDouble(ON_GAUSS_PT)
+        m=MEDCouplingUMesh("mesh",2) ; m.allocateCells()
+        m.insertNextCell(NORM_QUAD8,[0,2,4,6,1,3,5,7])
+        m.insertNextCell(NORM_QUAD8,[2,9,11,4,8,10,12,3])
+        m.insertNextCell(NORM_QUAD8,[6,4,14,16,5,13,15,17])
+        m.insertNextCell(NORM_QUAD8,[4,11,19,14,12,18,20,13])
+        m.setCoords(DataArrayDouble([(0,0),(0,0.25),(0,0.5),(0.25,0.5),(0.5,0.5),(0.5,0.25),(0.5,0),(0.25,0),(0,0.75),(0,1),(0.25,1),(0.5,1),(0.5,0.75),(0.75,0.5),(1,0.5),(1,0.25),(1,0),(0.75,0),(0.75,1),(1,1),(1,0.75)],21,2))
+        f.setMesh(m)
+        arr=DataArrayDouble(4*9*2) ; arr.iota() ; arr.rearrange(2) ; arr.setInfoOnComponents(["YOUN []","NU []"])
+        f.setArray(arr)
+        refCoo=[-1,-1,1,-1,1,1,-1,1,0,-1,1,0,0,1,-1,0]
+        gpCoo=[-0.7,-0.7,0.7,-0.7,0.7,0.7,-0.7,0.7,0,-0.7,0.7,0,0,0.7,-0.7,0,0,0]
+        wgt=[0.3,0.3,0.3,0.3,0.4,0.4,0.4,0.4,0.7]
+        f.setGaussLocalizationOnType(NORM_QUAD8,refCoo,gpCoo,wgt)
+        f.setName("SIGT")
+        f.checkCoherency()
+        #
+        mm=MEDFileUMesh()
+        mm.setMeshAtLevel(0,m)
+        mfm = MEDFileMeshes()
+        mfm.pushMesh( mm )
+        ff=MEDFileField1TS()
+        ff.setFieldNoProfileSBT(f)
+        mfmts = MEDFileFieldMultiTS()
+        mfmts.pushBackTimeStep(ff)
+        mff = MEDFileFields()
+        mff.pushField( mfmts )
+        mfd = MEDFileData.New()
+        mfd.setFields( mff )
+        mfd.setMeshes( mfm )
+
+        # convert the MED file to a SAUV file
+        sauvFile = "SauvLoaderTest_testGaussPt.sauv"
+        sw=SauvWriter.New();
+        sw.setMEDFileDS(mfd);
+        sw.write(sauvFile);
+
+        # convert the SAUV file back to MED
+        sr=SauvReader.New(sauvFile);
+        d2=sr.loadInMEDFileDS();
+
+        self.assertEqual( 1, d2.getNumberOfFields() )
+        self.assertEqual( 1, d2.getNumberOfMeshes() )
+        mfm2 = d2.getMeshes()[0]
+        mff2 = d2.getFields()[0]
+        m2 = mfm2.getMeshAtLevel(0)
+        f2 = mff2.getTimeStepAtPos(0).getFieldOnMeshAtLevel(f.getTypeOfField(),0,mfm2)
+        f2.setGaussLocalizationOnType(NORM_QUAD8,refCoo,gpCoo,wgt) # not stored in SAUV
+        #f2.setOrder( f.getTime()[2] ) # not stored in SAUV
+        self.assertTrue( m2.isEqual( m, 1e-12 ))
+        self.assertTrue( f2.isEqual( f, 1e-12, 1e-12 ))
+        del sr
+        os.remove( sauvFile )
+        pass
+
+    def testSauvWriterGroupWithOneFamily(self):
+        """
+        This test checks an option for sauv writing. It is requested here to copy a group from a family if a group is lying on a single family.
+        """
+        import re
+        mfd=MEDLoaderDataForTest.buildAMEDFileDataWithGroupOnOneFamilyForSauv()
+        sauvFile = "mesh.sauv"
+        sw=SauvWriter.New()
+        sw.setMEDFileDS(mfd)
+        self.assertTrue(not sw.getCpyGrpIfOnASingleFamilyStatus())
+        sw.setCpyGrpIfOnASingleFamilyStatus(True)
+        self.assertTrue(sw.getCpyGrpIfOnASingleFamilyStatus())
+        sw.write(sauvFile)
+        
+        f = open(sauvFile)
+        # String pattern for the header of the sub meshes record ("PILE" number, number of named objects, number of objects)
+        pattern_pile= re.compile(r'\sPILE\sNUMERO\s+(?P<number>[0-9]+)NBRE\sOBJETS\sNOMMES\s+(?P<nbnamed>[0-9]+)NBRE\sOBJETS\s+(?P<nbobjects>[0-9]+)')
+        # String pattern for a sub mesh header (cell type, number of components and three numbers)
+        pattern_header=re.compile(r'\s+(?P<type>[0-9]+)\s+(?P<nbsubs>[0-9]+)\s+[0-9]+\s+[0-9]+\s+[0-9]+')
+        
+        nbobjects=0
+        line = f.readline()
+        while(line):
+            match_pile = pattern_pile.match(line)
+            if match_pile:
+                number=int(match_pile.group("number"))
+                if number == 1:
+                    nbnamed=int(match_pile.group("nbnamed"))
+                    nbobjects=int(match_pile.group("nbobjects"))
+                    break
+                pass
+            line=f.readline()
+            pass
+        
+        # Skipping the objects names
+        f.readline()
+        # Skipping the objects ids
+        f.readline()
+
+        # Looking for each sub-mesh header 
+        line = f.readline()
+        cur_object=0
+        while(line and cur_object < nbobjects):
+            match_header=pattern_header.match(line)
+            if match_header:
+                cell_type=int(match_header.group("type"))
+                nb_subs=int(match_header.group("nbsubs"))
+                # Looking for a compound object
+                if cell_type == 0:
+                    # Testing if there is only one component
+                    self.assertTrue(nb_subs > 1)
+                else:
+                    f.readline()
+                    f.readline()
+                    cur_object = cur_object + 1
+                    pass
+                pass
+            line=f.readline()
+            pass
+        f.close()
+        os.remove(sauvFile)
         pass
 
     pass

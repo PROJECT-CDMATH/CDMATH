@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -212,15 +212,33 @@ namespace
   }
 }
 
-//================================================================================
-/*!
- * \brief Creates SauvWriter
- */
-//================================================================================
+SauvWriter::SauvWriter():_cpy_grp_if_on_single_family(false)
+{
+}
 
 SauvWriter* SauvWriter::New()
 {
   return new SauvWriter;
+}
+
+std::size_t SauvWriter::getHeapMemorySizeWithoutChildren() const
+{
+  return 0;
+}
+
+std::vector<const BigMemoryObject *> SauvWriter::getDirectChildren() const
+{
+  return std::vector<const BigMemoryObject *>();
+}
+
+void SauvWriter::setCpyGrpIfOnASingleFamilyStatus(bool status)
+{
+  _cpy_grp_if_on_single_family=status;
+}
+
+bool SauvWriter::getCpyGrpIfOnASingleFamilyStatus() const
+{
+  return _cpy_grp_if_on_single_family;
 }
 
 //================================================================================
@@ -244,7 +262,10 @@ void SauvWriter::setMEDFileDS(const MEDFileData* medData,
   if ( fields )
     for ( int i = 0; i < fields->getNumberOfFields(); ++i )
       {
-        MEDFileFieldMultiTS * f = fields->getFieldAtPos(i);
+        MEDFileAnyTypeFieldMultiTS * fB = fields->getFieldAtPos(i);
+        MEDFileFieldMultiTS * f = dynamic_cast<MEDFileFieldMultiTS *>(fB);
+        if(!f)
+          continue;// fields on int32 not managed
         if ( f->getMeshName() == _fileMesh->getName() )
           {
             vector< vector<TypeOfField> > fTypes = f->getTypesOfFieldAvailable();
@@ -434,7 +455,23 @@ void SauvWriter::fillGroupSubMeshes()
       if (k != famNames.size())
           famSubMeshes.resize(k);
       SubMesh* grpSubMesh = addSubMesh( groupName, famSubMeshes[0]->_dimRelExt );
-      grpSubMesh->_subs.swap( famSubMeshes );
+      if(!_cpy_grp_if_on_single_family)
+        grpSubMesh->_subs.swap( famSubMeshes );
+      else
+        {
+          /* If a group sub mesh consists of only one family, the group is written as 
+           * a copy of this family. 
+           * A mesh composed of only one submesh may cause an issue with some Gibi operators.*/
+          if (famSubMeshes.size() == 1)
+            {
+              for(int i = 0; i < famSubMeshes[0]->cellIDsByTypeSize() ; i++)
+                {
+                  grpSubMesh->_cellIDsByType[i] = famSubMeshes[0]->_cellIDsByType[i];
+                }
+            }
+          else
+            grpSubMesh->_subs.swap( famSubMeshes );
+        }
     }
 }
 
@@ -461,7 +498,7 @@ void SauvWriter::fillProfileSubMeshes()
           vector< vector<TypeOfField> > typesF;
           vector< vector<string> > pfls, locs;
           fields[i]->getFieldSplitedByType( iters[0].first, iters[0].second,
-                                            _fileMesh->getName(), types, typesF, pfls, locs);
+                                            _fileMesh->getName().c_str(), types, typesF, pfls, locs);
           int dimRelExt;
           for ( size_t iType = 0; iType < types.size(); ++iType )
             {
@@ -509,7 +546,7 @@ int SauvWriter::evaluateNbProfileSubMeshes() const
       vector< vector<TypeOfField> > typesF;
       vector< vector<string> > pfls, locs;
       _cellFields[i]->getFieldSplitedByType( iters[0].first, iters[0].second,
-                                             _fileMesh->getName(), types, typesF, pfls, locs);
+                                             _fileMesh->getName().c_str(), types, typesF, pfls, locs);
       nb += 2 * types.size(); // x 2 - a type can be on nodes and on cells at the same time
     }
 
@@ -565,7 +602,16 @@ void SauvWriter::makeProfileIDs( SubMesh*                          sm,
       vector<const DataArrayInt *> idsPerType( 1, profile );
       MEDCouplingAutoRefCountObjectPtr<DataArrayInt>
         resIDs = uMesh->checkTypeConsistencyAndContig( code, idsPerType );
-      ids.assign( resIDs->begin(), resIDs->end() );
+      if (( const DataArrayInt *) resIDs )
+      {
+        ids.assign( resIDs->begin(), resIDs->end() );
+      }
+      else // mesh includes only one type
+      {
+        int nbE = code[1];
+        for ( ids.resize( nbE ); nbE; --nbE )
+          ids[ nbE-1 ] = nbE-1;
+      }
     }
 }
 
@@ -575,10 +621,10 @@ void SauvWriter::makeProfileIDs( SubMesh*                          sm,
  */
 //================================================================================
 
-void SauvWriter::write(const char* fileName)
+void SauvWriter::write(const std::string& fileName)
 {
   std::fstream fileStream;
-  fileStream.open( fileName, ios::out);
+  fileStream.open( fileName.c_str(), ios::out);
   if
 #ifdef WIN32
     ( !fileStream || !fileStream.is_open() )
@@ -1059,7 +1105,7 @@ void SauvWriter::writeNodalFields(map<string,int>& fldNamePrefixMap)
           vector< vector<TypeOfField> > typesF;
           vector< vector<string> > pfls, locs;
           vector< vector< std::pair<int,int> > > valsVec;
-          valsVec=_nodeFields[iF]->getFieldSplitedByType( it.first, it.second, _fileMesh->getName(),
+          valsVec=_nodeFields[iF]->getFieldSplitedByType( it.first, it.second, _fileMesh->getName().c_str(),
                                                           types, typesF, pfls, locs);
           // believe that there can be only one type in a nodal field,
           // so do not use a loop on types
@@ -1108,7 +1154,7 @@ void SauvWriter::writeNodalFields(map<string,int>& fldNamePrefixMap)
           vector< vector<TypeOfField> > typesF;
           vector< vector<string> > pfls, locs;
           vector< vector< std::pair<int,int> > > valsVec;
-          valsVec = _nodeFields[iF]->getFieldSplitedByType( it.first, it.second, _fileMesh->getName(),
+          valsVec = _nodeFields[iF]->getFieldSplitedByType( it.first, it.second, _fileMesh->getName().c_str(),
                                                             types, typesF, pfls, locs);
           // believe that there can be only one type in a nodal field,
           // so do not perform a loop on types
@@ -1169,7 +1215,7 @@ void SauvWriter::writeElemFields(map<string,int>& fldNamePrefixMap)
           vector< vector<TypeOfField> > typesF;
           vector< vector<string> > pfls, locs;
           vector< vector< std::pair<int,int> > > valsVec;
-          valsVec = _cellFields[iF]->getFieldSplitedByType( it.first, it.second, _fileMesh->getName(),
+          valsVec = _cellFields[iF]->getFieldSplitedByType( it.first, it.second, _fileMesh->getName().c_str(),
                                                             types, typesF, pfls, locs);
           for ( size_t i = 0; i < valsVec.size(); ++i )
             nbSub += valsVec[i].size();
@@ -1196,7 +1242,7 @@ void SauvWriter::writeElemFields(map<string,int>& fldNamePrefixMap)
           vector<INTERP_KERNEL::NormalizedCellType> types;
           vector< vector<TypeOfField> > typesF;
           vector< vector<string> > pfls, locs;
-          _cellFields[iF]->getFieldSplitedByType( it.first, it.second, _fileMesh->getName(),
+          _cellFields[iF]->getFieldSplitedByType( it.first, it.second, _fileMesh->getName().c_str(),
                                                   types, typesF, pfls, locs);
           for ( size_t iType = 0; iType < pfls.size(); ++iType )
             for ( size_t iP = 0; iP < pfls[iType].size(); ++iP )
@@ -1262,7 +1308,7 @@ void SauvWriter::writeElemTimeStamp(int iF, int iter, int order)
   vector< vector<TypeOfField> > typesF;
   vector< vector<string> > pfls, locs;
   vector< vector< std::pair<int,int> > > valsVec;
-  valsVec = _cellFields[iF]->getFieldSplitedByType( iter, order, _fileMesh->getName(),
+  valsVec = _cellFields[iF]->getFieldSplitedByType( iter, order, _fileMesh->getName().c_str(),
                                                     types, typesF, pfls, locs);
   for ( size_t iType = 0; iType < pfls.size(); ++iType )
     for ( size_t iP = 0; iP < pfls[iType].size(); ++iP )

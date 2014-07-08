@@ -1,9 +1,9 @@
-# Copyright (C) 2007-2012  CEA/DEN, EDF R&D
+# Copyright (C) 2012-2014  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
-# version 2.1 of the License.
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,7 +21,7 @@
 INCLUDE_DIRECTORIES(
   ${CPPUNIT_INCLUDE_DIRS}
   ${HDF5_INCLUDE_DIRS}
-  ${MED3_INCLUDE_DIRS}
+  ${MEDFILE_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}/..
   ${CMAKE_CURRENT_SOURCE_DIR}/../../MEDCoupling
   ${CMAKE_CURRENT_SOURCE_DIR}/../../INTERP_KERNEL
@@ -39,15 +39,17 @@ SET(TestSauvLoader_SOURCES
   SauvLoaderTest.cxx
   )
 
+SALOME_GENERATE_TESTS_ENVIRONMENT(tests_env)
+
 ADD_EXECUTABLE(TestMEDLoader ${TestMEDLoader_SOURCES})
-SET_TARGET_PROPERTIES(TestMEDLoader PROPERTIES COMPILE_FLAGS "${HDF5_DEFINITIONS} ${MED3_DEFINITIONS} ${CPPUNIT_DEFINITIONS} ${PLATFORM_DEFINITIONS}")
-TARGET_LINK_LIBRARIES(TestMEDLoader medloader ${CPPUNIT_LIBS} ${PLATFORM_LIBS})
+TARGET_LINK_LIBRARIES(TestMEDLoader medloader ${CPPUNIT_LIBRARIES} ${PLATFORM_LIBS})
 ADD_TEST(TestMEDLoader TestMEDLoader)
+SET_TESTS_PROPERTIES(TestMEDLoader PROPERTIES ENVIRONMENT "${tests_env}")
 
 ADD_EXECUTABLE(TestSauvLoader ${TestSauvLoader_SOURCES})
-SET_TARGET_PROPERTIES(TestSauvLoader PROPERTIES COMPILE_FLAGS "${HDF5_DEFINITIONS} ${MED3_DEFINITIONS} ${CPPUNIT_DEFINITIONS} ${PLATFORM_DEFINITIONS}")
 
-TARGET_LINK_LIBRARIES(TestSauvLoader medloader ${CPPUNIT_LIBS} ${PLATFORM_LIBS})
+TARGET_LINK_LIBRARIES(TestSauvLoader medloader ${CPPUNIT_LIBRARIES} ${PLATFORM_LIBS})
 ADD_TEST(TestSauvLoader TestSauvLoader)
+SET_TESTS_PROPERTIES(TestSauvLoader PROPERTIES ENVIRONMENT "${tests_env}")
 
-INSTALL(TARGETS TestMEDLoader TestSauvLoader DESTINATION ${MED_salomebin_BINS})
+INSTALL(TARGETS TestMEDLoader TestSauvLoader DESTINATION ${SALOME_INSTALL_BINS})

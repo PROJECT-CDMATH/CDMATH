@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,25 +27,25 @@ namespace ParaMEDMEM
 {
   class MEDCouplingFieldDouble;
 
-  class MEDCOUPLING_EXPORT MEDCouplingFieldTemplate : public MEDCouplingField
+  class MEDCouplingFieldTemplate : public MEDCouplingField
   {
   public:
-    static MEDCouplingFieldTemplate *New(const MEDCouplingFieldDouble& f) throw(INTERP_KERNEL::Exception);
-    static MEDCouplingFieldTemplate *New(TypeOfField type);
-    std::string simpleRepr() const;
-    std::string advancedRepr() const;
-    void checkCoherency() const throw(INTERP_KERNEL::Exception);
+    MEDCOUPLING_EXPORT static MEDCouplingFieldTemplate *New(const MEDCouplingFieldDouble& f);
+    MEDCOUPLING_EXPORT static MEDCouplingFieldTemplate *New(TypeOfField type);
+    MEDCOUPLING_EXPORT std::string simpleRepr() const;
+    MEDCOUPLING_EXPORT std::string advancedRepr() const;
+    MEDCOUPLING_EXPORT void checkCoherency() const;
     //
-    void getTinySerializationIntInformation(std::vector<int>& tinyInfo) const;
-    void getTinySerializationDbleInformation(std::vector<double>& tinyInfo) const;
-    void getTinySerializationStrInformation(std::vector<std::string>& tinyInfo) const;
-    void resizeForUnserialization(const std::vector<int>& tinyInfoI, DataArrayInt *&dataInt);
-    void finishUnserialization(const std::vector<int>& tinyInfoI, const std::vector<double>& tinyInfoD, const std::vector<std::string>& tinyInfoS);
-    void serialize(DataArrayInt *&dataInt) const;
+    MEDCOUPLING_EXPORT void getTinySerializationIntInformation(std::vector<int>& tinyInfo) const;
+    MEDCOUPLING_EXPORT void getTinySerializationDbleInformation(std::vector<double>& tinyInfo) const;
+    MEDCOUPLING_EXPORT void getTinySerializationStrInformation(std::vector<std::string>& tinyInfo) const;
+    MEDCOUPLING_EXPORT void resizeForUnserialization(const std::vector<int>& tinyInfoI, DataArrayInt *&dataInt);
+    MEDCOUPLING_EXPORT void finishUnserialization(const std::vector<int>& tinyInfoI, const std::vector<double>& tinyInfoD, const std::vector<std::string>& tinyInfoS);
+    MEDCOUPLING_EXPORT void serialize(DataArrayInt *&dataInt) const;
     //
-    void reprQuickOverview(std::ostream& stream) const throw(INTERP_KERNEL::Exception);
+    MEDCOUPLING_EXPORT void reprQuickOverview(std::ostream& stream) const;
   private:
-    MEDCouplingFieldTemplate(const MEDCouplingFieldDouble& f) throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldTemplate(const MEDCouplingFieldDouble& f);
     MEDCouplingFieldTemplate(TypeOfField type);
   };
 }

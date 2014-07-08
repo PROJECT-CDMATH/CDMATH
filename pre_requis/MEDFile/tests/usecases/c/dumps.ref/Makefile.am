@@ -62,4 +62,6 @@ EXTRA_DIST = \
 ./UsesCase_MEDfield_15.med \
 ./UsesCase_MEDfield_17.med \
 ./UsesCase_MEDstructElement_1.med \
-./UsesCase_MEDinterp_1.med
+./UsesCase_MEDinterp_1.med \
+./UsesCase_MEDstructElement_1_byid.med
+

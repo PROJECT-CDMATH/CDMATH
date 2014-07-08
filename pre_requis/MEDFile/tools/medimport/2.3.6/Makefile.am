@@ -37,3 +37,4 @@ noinst_LTLIBRARIES += libMaj236To300cxx.la
 libMaj236To300cxx_la_SOURCES   = $(buildCxxFile)
 
 CLEANFILES = $(buildCxxFile)
+EXTRA_DIST = CMakeLists.txt

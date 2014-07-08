@@ -6,7 +6,7 @@ INCLUDE(CheckFunctionExists)
 INCLUDE(CheckTypeSize)
 
 ###############################################################################
-##Define contants
+##Define constants
 ###############################################################################
 
 SET(PACKAGE_NAME "\"MED Fichier\"")
@@ -32,20 +32,43 @@ IF(NOT WINDOWS)
 ENDIF(NOT WINDOWS)
 SET(HAVE__BOOL 1)
 
+MACRO(MED_CREATE_CONFIG_FILES)
+    SET(f_content_new "")
+    FILE(READ ${PROJECT_SOURCE_DIR}/include/med_config.h.in f_content)
+    STRING(REPLACE "\n" ";" list_f_content ${f_content})
+    FOREACH(ln ${list_f_content})
+        STRING(REGEX MATCH "#undef.*" flag_name "${ln}")
+        STRING(REPLACE "#undef" "" flag_name "${flag_name}")
+        STRING(STRIP "${flag_name}" flag_name)
+        STRING(LENGTH "${flag_name}" len)
+        IF(${len} GREATER 0)
+            STRING(STRIP "${flag_name}" flag_name)
+            IF("${flag_name}" MATCHES "^F77_FUNC.*")
+               SET(ln "#cmakedefine ${flag_name}@${flag_name}@")
+            ELSE("${flag_name}" MATCHES "^F77_FUNC.*")
+               SET(ln "#cmakedefine ${flag_name} @${flag_name}@")
+            ENDIF("${flag_name}" MATCHES "^F77_FUNC.*")
+        ENDIF(${len} GREATER 0)
+        SET(f_content_new "${f_content_new}${ln}\n")
+    ENDFOREACH(ln ${list_f_content})
+
+    FILE(WRITE ${PROJECT_BINARY_DIR}/include/med_config.h.cmake "${f_content_new}")
+    FILE(WRITE ${PROJECT_BINARY_DIR}/include/2.3.6/med_config.h.cmake "${f_content_new}")
+ENDMACRO(MED_CREATE_CONFIG_FILES)
+
 ###############################################################################
 ## Macro to set compilation flag for target
 ###############################################################################
-MACRO(MED_SET_COMPILE_FLAGS lib)
+MACRO(MED_SET_DEFINITIONS lib)
    STRING(LENGTH "${ARGN}" len)
    IF(${len})
-     SET(libflags "${ARGN}")
-     FOREACH(f ${libflags})
-     SET(flags "${flags} ${f}")
-     ENDFOREACH(f ${libflags})
-     SET_TARGET_PROPERTIES(${lib} PROPERTIES COMPILE_FLAGS ${flags})
+     # Doc says:
+     # COMPILE_DEFINITIONS property may be set to a semicolon-separated list 
+     # of preprocessor definitions using the syntax VAR or VAR=value.
+     SET_TARGET_PROPERTIES(${lib} PROPERTIES COMPILE_DEFINITIONS "${ARGN}")
+     #MESSAGE("bli ${ARGN}")
    ENDIF(${len})
-   SET(flags "")
-ENDMACRO(MED_SET_COMPILE_FLAGS)
+ENDMACRO(MED_SET_DEFINITIONS)
 
 ###############################################################################
 ## Macro to check header files
@@ -94,7 +117,7 @@ SET(SIZEOF_FORTRAN_INTEGER 4 CACHE INTERNAL "Size of the default INTEGER type" F
 
 IF(CMAKE_Fortran_COMPILER_SUPPORTS_F90)
     FOREACH(_TEST_SIZE 1 2 4 8 16 32)
-       SET(_TEST_FILE ${CMAKE_CURRENT_BINARY_DIR}/testFortranIntegerSize${_TEST_SIZE}.f90)
+       SET(_TEST_FILE ${PROJECT_BINARY_DIR}/testFortranIntegerSize${_TEST_SIZE}.f90)
        FILE( WRITE ${_TEST_FILE}
        "
        PROGRAM check_size
@@ -103,7 +126,7 @@ IF(CMAKE_Fortran_COMPILER_SUPPORTS_F90)
        pa => a
        END PROGRAM
        ")
-       TRY_COMPILE( SIZEOF_INTEGER ${CMAKE_CURRENT_BINARY_DIR} ${_TEST_FILE} )
+       TRY_COMPILE( SIZEOF_INTEGER ${PROJECT_BINARY_DIR} ${_TEST_FILE} )
        IF(SIZEOF_INTEGER)
           MESSAGE(STATUS "Testing default INTEGER*${_TEST_SIZE} - found")
           SET(SIZEOF_FORTRAN_INTEGER ${_TEST_SIZE})
@@ -148,9 +171,8 @@ ENDMACRO(MED_CHECK_SIZE)
 ###############################################################################
 MACRO(MED_C_FORTRAN_INTERFACE)
 IF(CMAKE_Fortran_COMPILER_WORKS)
-
-  FortranCInterface_HEADER(${CMAKE_CURRENT_BINARY_DIR}/include/FC.h)
-  FILE(READ ${CMAKE_CURRENT_BINARY_DIR}/include/FC.h f_content)
+  FortranCInterface_HEADER(${PROJECT_BINARY_DIR}/include/FC.h)
+  FILE(READ ${PROJECT_BINARY_DIR}/include/FC.h f_content)
   STRING(REPLACE "\n" ";" list_f_content ${f_content})
   
   FOREACH(ln ${list_f_content})
@@ -165,9 +187,7 @@ IF(CMAKE_Fortran_COMPILER_WORKS)
 
 ELSE(CMAKE_Fortran_COMPILER_WORKS)
 
-  IF(WIN32)
     SET(F77_FUNC "(name,NAME) NAME")
-  ENDIF(WIN32)
 
 ENDIF(CMAKE_Fortran_COMPILER_WORKS)
 
@@ -178,7 +198,7 @@ ENDMACRO(MED_C_FORTRAN_INTERFACE)
 ###############################################################################
 MACRO(MED_TIME_SYS_TIME)
 
-SET(_TEST_FILE ${CMAKE_CURRENT_BINARY_DIR}/testTimeSysTime.c)
+SET(_TEST_FILE ${PROJECT_BINARY_DIR}/testTimeSysTime.c)
 FILE( WRITE ${_TEST_FILE}
 "
 #include <sys/types.h>
@@ -200,7 +220,7 @@ return 0;
 "
 )
 
-TRY_COMPILE( TIME_WITH_SYS_TIME ${CMAKE_CURRENT_BINARY_DIR} ${_TEST_FILE} )
+TRY_COMPILE( TIME_WITH_SYS_TIME ${PROJECT_BINARY_DIR} ${_TEST_FILE} )
 IF(${TIME_WITH_SYS_TIME})
   SET(TIME_WITH_SYS_TIME 1)
 ELSE(${TIME_WITH_SYS_TIME})
@@ -208,3 +228,169 @@ ELSE(${TIME_WITH_SYS_TIME})
 ENDIF(${TIME_WITH_SYS_TIME})
 
 ENDMACRO(MED_TIME_SYS_TIME)
+
+###########################
+# SALOME_CHECK_EQUAL_PATHS(result path1 path2)
+#  Check if two paths are identical, resolving links. If the paths do not exist a simple
+#  text comparison is performed.
+#  result is a boolean.
+###########################
+MACRO(SALOME_CHECK_EQUAL_PATHS varRes path1 path2)  
+  SET("${varRes}" OFF)
+  IF(EXISTS "${path1}")
+    GET_FILENAME_COMPONENT(_tmp1 "${path1}" REALPATH)
+  ELSE()
+    SET(_tmp1 "${path1}")
+  ENDIF() 
+
+  IF(EXISTS "${path2}")
+    GET_FILENAME_COMPONENT(_tmp2 "${path2}" REALPATH)
+  ELSE()
+    SET(_tmp2 "${path2}")
+  ENDIF() 
+
+  IF("${_tmp1}" STREQUAL "${_tmp2}")
+    SET("${varRes}" ON)
+  ENDIF()
+#  MESSAGE(${${varRes}})
+ENDMACRO()
+
+########################################################################
+# SALOME_FIND_PACKAGE(englobingPackageName standardPackageName modus)
+# Encapsulate the call to the standard FIND_PACKAGE(standardPackageName) passing all the options
+# given when calling the command FIND_PACKAGE(customPackageName)
+# Modus is either MODULE or CONFIG (cf standard FIND_PACKAGE() documentation).
+# This macro is to be called from within the FindCustomPackage.cmake file.
+########################################################################
+MACRO(SALOME_FIND_PACKAGE englobPkg stdPkg mode)
+  # Only bother if the package was not already found:
+  # Some old packages use the lower case version - standard should be to always use
+  # upper case:
+  STRING(TOUPPER ${stdPkg} stdPkgUC)
+  IF(NOT (${stdPkg}_FOUND OR ${stdPkgUC}_FOUND))
+    IF(${englobPkg}_FIND_QUIETLY)
+      SET(_tmp_quiet "QUIET")
+    ELSE()
+      SET(_tmp_quiet)
+    ENDIF()  
+    IF(${englobPkg}_FIND_REQUIRED)
+      SET(_tmp_req "REQUIRED")
+    ELSE()
+      SET(_tmp_req)
+    ENDIF()  
+    IF(${englobPkg}_FIND_VERSION_EXACT)
+      SET(_tmp_exact "EXACT")
+    ELSE()
+      SET(_tmp_exact)
+    ENDIF()
+    IF(${englobPkg}_FIND_COMPONENTS)
+      STRING(REPLACE ";" " " _tmp_compo ${${englobPkg}_FIND_COMPONENTS})
+    ELSE()
+      SET(_tmp_compo)
+    ENDIF()
+
+    # Call the root FIND_PACKAGE():
+    IF(_tmp_compo)
+      FIND_PACKAGE(${stdPkg} ${${englobPkg}_FIND_VERSION} ${_tmp_exact} ${mode} ${_tmp_quiet} ${_tmp_req} COMPONENTS ${_tmp_compo})
+    ELSE()
+      FIND_PACKAGE(${stdPkg} ${${englobPkg}_FIND_VERSION} ${_tmp_exact} ${mode} ${_tmp_quiet} ${_tmp_req})
+    ENDIF()
+  ENDIF()
+ENDMACRO()
+
+###############################################################################
+## Macro to find MPI and most of all set all relevant flags
+###############################################################################
+MACRO(MED_FIND_MPI)
+  SET (MEDFILE_USE_MPI OFF CACHE BOOL "Use MPI to compile MED-file")  
+  IF (MEDFILE_USE_MPI)
+    MESSAGE(STATUS "Check for MPI ...")
+  
+    FIND_PACKAGE(MedfileMPI REQUIRED)
+
+    # Library configuration:
+    IF(WIN32)
+      # Win specific stuff
+      FIND_LIBRARY(MPI_LIB_THREAD libboost_thread-vc90-mt-gd-1_35 ${MPI_ROOT_DIR_EXP}/lib)
+      FIND_LIBRARY(MPI_LIB_DATE_TIME libboost_date_time-vc90-mt-gd-1_35 ${MPI_ROOT_DIR_EXP}/lib)
+    ELSE(WIN32)
+      # set flags for both OpenMPI or MPICH:
+      ADD_DEFINITIONS(-DOMPI_IGNORE_CXX_SEEK -DMPICH_IGNORE_CXX_SEEK)
+    ENDIF(WIN32)
+    # Gather all MPI libs in one place:
+    SET(MPI_LIBS ${MPI_CXX_LIBRARIES})
+    LIST(APPEND MPI_LIBS ${MPI_C_LIBRARIES})
+    IF(CMAKE_Fortran_COMPILER_WORKS)
+       LIST(APPEND MPI_LIBS ${MPI_Fortran_LIBRARIES})
+    ENDIF()
+    MESSAGE(STATUS "MPI libs: ${MPI_LIBS}")
+  ELSE(MEDFILE_USE_MPI)
+    MESSAGE(STATUS "Configuring without MPI (set MEDFILE_USE_MPI to True to change this)")
+  ENDIF(MEDFILE_USE_MPI)
+ENDMACRO(MED_FIND_MPI)
+
+###############################################################################
+## Macro to find HDF5 and most of all set all relevant flags
+###############################################################################
+MACRO(MED_FIND_HDF5)
+    MESSAGE(STATUS "Check for HDF5 ...")
+    
+    FIND_PACKAGE(MedfileHDF5 REQUIRED)
+
+    ADD_DEFINITIONS(-DH5_USE_16_API)  
+    IF(WIN32 AND MEDFILE_BUILD_SHARED_LIBS)
+      ADD_DEFINITIONS(-D_HDF5USEDLL_)  
+    ENDIF()
+    
+    # Take what is exposed by the standard FIND_PACKAGE()
+    SET(HDF5_LIBS ${HDF5_LIBRARIES})
+
+    IF(HDF5_IS_PARALLEL OR HDF5_ENABLE_PARALLEL)
+      MESSAGE(STATUS "HDF5 is parallel")
+    ENDIF()
+    
+    # Extract some stuff from headers
+    FIND_FILE(_H5PUB_ABS_PATH H5public.h PATHS ${HDF5_INCLUDE_DIRS} NO_DEFAULT_PATH)
+    FIND_FILE(_H5_I_PUB_ABS_PATH H5Ipublic.h PATHS ${HDF5_INCLUDE_DIRS} NO_DEFAULT_PATH)
+    IF(NOT _H5PUB_ABS_PATH OR NOT _H5_I_PUB_ABS_PATH)
+       MESSAGE(FATAL_ERROR "Could not find H5public.h or H5Ipublic.h!")
+    ELSE()
+      FILE(STRINGS "${_H5PUB_ABS_PATH}" _h5pub_contents)
+      FOREACH(_line IN LISTS _h5pub_contents)
+        SET(_match)
+        STRING(REGEX MATCH "^[ \t]*typedef .*herr_t.*" _match "${_line}")
+        IF(_match)
+          SET(HDF5_TYPEDEF_HERR_T "${_match}")    
+        ENDIF() 
+        STRING(REGEX MATCH "^[ \t]*typedef .*hsize_t.*" _match "${_line}")
+        IF(_match)
+          SET(HDF5_TYPEDEF_HSIZE_T "${_match}")    
+        ENDIF()  
+      ENDFOREACH()
+      
+      FILE(STRINGS "${_H5_I_PUB_ABS_PATH}" _h5_i_pub_contents)
+      FOREACH(_line IN LISTS _h5_i_pub_contents)
+        SET(_match)
+        STRING(REGEX MATCH "^[ \t]*typedef .*hid_t.*" _match "${_line}")
+        IF(_match)
+          SET(HDF5_TYPEDEF_HID_T "${_match}")
+          BREAK()    
+        ENDIF() 
+      ENDFOREACH()
+    ENDIF()
+ENDMACRO(MED_FIND_HDF5)
+
+#
+# Install and compile a Python file - needs Python!
+#
+MACRO(INSTALL_AND_COMPILE_PYTHON_FILE PYFILE2COMPINST PYFILELOC)
+  INSTALL(CODE "SET(PYTHON_FILE ${f})")
+  FOREACH(input ${PYFILE2COMPINST})
+    GET_FILENAME_COMPONENT(inputname ${input} NAME)
+    INSTALL(FILES ${input} DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYFILELOC})
+    INSTALL(CODE "MESSAGE(STATUS \"py compiling ${CMAKE_INSTALL_PREFIX}/${PYFILELOC}/${inputname}\")")
+    INSTALL(CODE "SET(CMD \"import py_compile ; py_compile.compile('${CMAKE_INSTALL_PREFIX}/${PYFILELOC}/${inputname}')\")")
+    INSTALL(CODE "EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c \"\${CMD}\")")
+    INSTALL(CODE "EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -O -c \"\${CMD}\")")
+  ENDFOREACH(input ${PYFILE2COMPINST})
+ENDMACRO(INSTALL_AND_COMPILE_PYTHON_FILE PYFILE2COMPINST PYFILELOC)

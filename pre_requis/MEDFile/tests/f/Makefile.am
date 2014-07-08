@@ -22,9 +22,12 @@ testfdir = $(bindir)/testf
 
 if WITHF90
 
-mycheckPROGRAMS = test5 test7 test9 test11 test11b test13 test15 test17 test30
+mycheckPROGRAMS = test5 test7 test9 test11 test11b test13 test15 test17 test30 
+#test4b
 
 myTESTS_LEC = test5.sh test7.sh test9.sh test11.sh test11b.sh test13.sh test15.sh test17.sh test30.sh
+
+#test4b_SOURCES = test4b.f90
 
 test5_SOURCES = test5.f90
 ##test5_LINK = $(LIBTOOL) --mode=link $(F90) $(AM_FFLAGS) \

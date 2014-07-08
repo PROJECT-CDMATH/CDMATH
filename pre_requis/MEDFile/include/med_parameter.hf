@@ -51,7 +51,8 @@
       integer MED_QUAD4,MED_TRIA6,MED_TRIA7,MED_QUAD8,MED_QUAD9
       integer MED_TETRA4,MED_PYRA5,MED_PENTA6,MED_HEXA8,MED_TETRA10
       integer MED_OCTA12,MED_PYRA13,MED_PENTA15,MED_HEXA20,MED_HEXA27 
-      integer MED_POLYGON,MED_POLYHEDRON, MED_STRUCT_GEO_INTERNAL
+      integer MED_POLYGON,MED_POLYGON2
+      integer MED_POLYHEDRON, MED_STRUCT_GEO_INTERNAL
       integer MED_STRUCT_GEO_SUP_INTERNAL,MED_NONE 
       integer MED_GEO_ALL,MED_ALL_GEOTYPE
       integer MED_NO_GEOTYPE,MED_UNDEF_GEOTYPE
@@ -76,6 +77,7 @@
       parameter(MED_HEXA20=320)
       parameter(MED_HEXA27=327)
       parameter(MED_POLYGON=400)
+      parameter(MED_POLYGON2=420)
       parameter(MED_POLYHEDRON=500)
       parameter(MED_STRUCT_GEO_INTERNAL=600)
       parameter(MED_STRUCT_GEO_SUP_INTERNAL=700)
@@ -93,11 +95,11 @@
       integer  MED_N_EDGE_GEO_FIXED_CON
       integer  MED_N_NODE_GEO,MED_N_NODE_FIXED_GEO
       integer  MED_N_NODE_GEO_FIXED_CON   
-      parameter(MED_N_CELL_GEO=23)
-      parameter(MED_N_CELL_FIXED_GEO=22)
+      parameter(MED_N_CELL_GEO=24)
+      parameter(MED_N_CELL_FIXED_GEO=23)
       parameter(MED_N_CELL_GEO_FIXED_CON=20)
-      parameter(MED_N_FACE_GEO=7)
-      parameter(MED_N_FACE_FIXED_GEO=7)
+      parameter(MED_N_FACE_GEO=8)
+      parameter(MED_N_FACE_FIXED_GEO=8)
       parameter(MED_N_FACE_GEO_FIXED_CON=6)
       parameter(MED_N_EDGE_TYPES=3)
       parameter(MED_N_EDGE_FIXED_GEO=3)

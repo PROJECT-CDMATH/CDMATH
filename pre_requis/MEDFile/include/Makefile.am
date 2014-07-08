@@ -1,5 +1,9 @@
 ## For having included files in DISTribution & INSTallation (public headers)
 include_HEADERS =  med.hf med.hf77 med.hf90 med_parameter.hf med_proto.h \
+		 medlibrary.h medfile.h medmesh.h medfield.h \
+                 medfamily.h medequivalence.h medprofile.h \
+		 medlocalization.h medlink.h medparameter.h \
+	         medfilter.h medsubdomain.h medinterp.h \
 		 medC_win_dll.h MEDerreur.hxx med_exit_if.h med_err.h
 
 ## For having included files in  INSTallation (public headers)
@@ -15,9 +19,19 @@ noinst_HEADERS = med_outils.h  med_misc.h  \
 # Ce fichier ne doit pas être dans la distribution, il doit être généré
 #nobase_include_HEADERS = med/med_config.h
 
+#swig python : Il est plus facile de générer lesifichiers  _exception.i ds le répertoire i
+# où sont les .h correspondants (pour ne pas utiliser les VPATH)
+SUFFIXES = _exception.i
+
+BUILT_SOURCES = medlibrary_exception.i medfile_exception.i medmesh_exception.i medfield_exception.i medfamily_exception.i medequivalence_exception.i medprofile_exception.i medlocalization_exception.i medlink_exception.i medparameter_exception.i medfilter_exception.i medsubdomain_exception.i medinterp_exception.i
+
+.h_exception.i:
+	sed  -n 's/^.*\(MED[^(]*\)(.*$$/%MedException(\1)/p' $(top_srcdir)/include/$*.h > $@
+
 SUBDIRS = 2.3.6 . 
 
-CLEANFILES = med_config.h med.h med_utils.h 
-MAINTAINERCLEANFILES = med_config.h.in Makefile.in
-EXTRA_DIST = CMakeLists.txt
-
+CLEANFILES = med_config.h med.h med_utils.h
+MAINTAINERCLEANFILES= medlibrary_exception.i medfile_exception.i medmesh_exception.i medfield_exception.i medfamily_exception.i medequivalence_exception.i medprofile_exception.i medlocalization_exception.i medlink_exception.i medparameter_exception.i medfilter_exception.i medsubdomain_exception.i medinterp_exception.i
+MAINTAINERCLEANFILES += med_config.h.in Makefile.in
+EXTRA_DIST = medlibrary_exception.i medfile_exception.i medmesh_exception.i medfield_exception.i medfamily_exception.i medequivalence_exception.i medprofile_exception.i medlocalization_exception.i medlink_exception.i medparameter_exception.i medfilter_exception.i medsubdomain_exception.i medinterp_exception.i
+EXTRA_DIST += CMakeLists.txt

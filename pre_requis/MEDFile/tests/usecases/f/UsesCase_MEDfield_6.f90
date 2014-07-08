@@ -1,6 +1,6 @@
 !*  This file is part of MED.
 !*
-!*  COPYRIGHT (C) 1999 - 2011  EDF R&D, CEA/DEN
+!*  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
 !*  MED is free software: you can redistribute it and/or modify
 !*  it under the terms of the GNU Lesser General Public License as published by
 !*  the Free Software Foundation, either version 3 of the License, or
@@ -36,7 +36,7 @@ program UsesCase_MEDfield_6
   integer ncompo
   !geotype
   integer geotp
-  integer, dimension(22) :: geotps
+  integer, dimension(MED_N_CELL_FIXED_GEO) :: geotps
   ! mesh num dt, mesh num it
   integer mnumdt, mnumit
   integer csit, numit, numdt, it

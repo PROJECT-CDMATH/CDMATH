@@ -8,6 +8,8 @@
 #include "FieldTests.hxx"
 #include <string>
 
+#include <MEDCouplingFieldDouble.hxx>
+
 using namespace std;
 using namespace ParaMEDMEM;
 
@@ -20,8 +22,9 @@ FieldTests::testClassField( void )
 
 	Field conc1("CONCENTRATION",CELLS,M,2,1.2) ;
 	CPPUNIT_ASSERT_EQUAL( 1.2, conc1.getTime() );
-    for (int i=0;i<conc1.getNumberOfElements();i++)
-    	conc1(0,i)=i*1.0;
+    for (int j=0;j<conc1.getNumberOfComponents();j++)
+    	for (int i=0;i<conc1.getNumberOfElements();i++)
+    			conc1(i,j)=i+j;
     string fileNameVTK="champ";
     conc1.writeVTK(fileNameVTK);
 
@@ -29,17 +32,18 @@ FieldTests::testClassField( void )
     conc1.writeMED(fileNameMED);
     conc1.setTime(2.3,1);
     conc1.writeMED(fileNameMED,false);
-
-    for (int i=0;i<conc1.getNumberOfElements();i++)
-    	CPPUNIT_ASSERT_EQUAL( 1.0*i, conc1(0,i) );
+    for (int j=0;j<conc1.getNumberOfComponents();j++)
+    	for (int i=0;i<conc1.getNumberOfElements();i++)
+    		CPPUNIT_ASSERT_EQUAL( double(i+j), conc1(i,j) );
 	CPPUNIT_ASSERT_EQUAL( 2, conc1.getNumberOfComponents() );
 	CPPUNIT_ASSERT_EQUAL( 50, conc1.getNumberOfElements() );
 	CPPUNIT_ASSERT_EQUAL( 2.3, conc1.getTime() );
 
 	Field conc1n("CONCENTRATION",NODES,M,2,1.2) ;
 	CPPUNIT_ASSERT_EQUAL( 1.2, conc1n.getTime() );
-    for (int i=0;i<conc1n.getNumberOfElements();i++)
-    	conc1n(0,i)=i*1.0;
+    for (int j=0;j<conc1n.getNumberOfComponents();j++)
+    	for (int i=0;i<conc1n.getNumberOfElements();i++)
+    		conc1n(i,j)=i*1.0;
     string fileNameVTKn="champn";
     conc1n.writeVTK(fileNameVTKn);
 
@@ -48,8 +52,9 @@ FieldTests::testClassField( void )
     conc1n.setTime(2.3,1);
     conc1n.writeMED(fileNameMEDn,false);
 
-    for (int i=0;i<conc1n.getNumberOfElements();i++)
-    	CPPUNIT_ASSERT_EQUAL( 1.0*i, conc1n(0,i) );
+    for (int j=0;j<conc1n.getNumberOfComponents();j++)
+    	for (int i=0;i<conc1n.getNumberOfElements();i++)
+    		CPPUNIT_ASSERT_EQUAL( 1.0*i, conc1n(i,j) );
 	CPPUNIT_ASSERT_EQUAL( 2, conc1n.getNumberOfComponents() );
 	CPPUNIT_ASSERT_EQUAL( 66, conc1n.getNumberOfElements() );
 	CPPUNIT_ASSERT_EQUAL( 2.3, conc1n.getTime() );
@@ -57,7 +62,7 @@ FieldTests::testClassField( void )
 	Field conc6("CONCENTRATION",CELLS,M,2);
     for (int i=0;i<conc6.getNumberOfComponents();i++)
     	for (int j=0;j<conc6.getNumberOfElements();j++)
-    		conc6(i,j)=i*1.0+2.*j;
+    		conc6(j,i)=i*1.0+2.*j;
 
     for (int i=0;i<conc6.getNumberOfComponents();i++)
         for (int j=0;j<conc6.getNumberOfElements();j++)
@@ -69,7 +74,7 @@ FieldTests::testClassField( void )
 	Field conc6n("CONCENTRATION",NODES,M,2);
     for (int i=0;i<conc6n.getNumberOfComponents();i++)
     	for (int j=0;j<conc6n.getNumberOfElements();j++)
-    		conc6n(i,j)=i*1.0+2.*j;
+    		conc6n(j,i)=i*1.0+2.*j;
 
     for (int i=0;i<conc6n.getNumberOfComponents();i++)
         for (int j=0;j<conc6n.getNumberOfElements();j++)
@@ -79,45 +84,49 @@ FieldTests::testClassField( void )
 	CPPUNIT_ASSERT_EQUAL( 66, conc6n.getNumberOfElements() );
 
 	Field conc3(conc1) ;
-    for (int i=0;i<conc3.getNumberOfElements();i++)
-    	conc3(0,i)=i*1.0;
+    for (int j=0;j<conc6.getNumberOfComponents();j++)
+    	for (int i=0;i<conc3.getNumberOfElements();i++)
+    		conc3(i,j)=-(i+j);
 
-    double x=conc3(2);
-	CPPUNIT_ASSERT_EQUAL( x, 2.0 );
+    double x=conc3(2,0);
+	CPPUNIT_ASSERT_EQUAL( x, -2.0 );
 
-    for (int i=0;i<conc3.getNumberOfElements();i++)
-    	CPPUNIT_ASSERT_EQUAL( 1.0*i, conc3(i) );
+	for (int i=0;i<conc3.getNumberOfElements();i++)
+		CPPUNIT_ASSERT_EQUAL( double(-i), conc3(i) );
 	CPPUNIT_ASSERT_EQUAL( 2, conc3.getNumberOfComponents() );
 	CPPUNIT_ASSERT_EQUAL( 50, conc3.getNumberOfElements() );
 
 	conc6=conc3+conc1;
     for (int i=0;i<conc6.getNumberOfElements();i++)
-    	CPPUNIT_ASSERT_EQUAL( 2.0*i, conc6[i] );
+    	CPPUNIT_ASSERT_EQUAL( 0., conc6[i] );
 	CPPUNIT_ASSERT_EQUAL( 2, conc6.getNumberOfComponents() );
 	CPPUNIT_ASSERT_EQUAL( 50, conc6.getNumberOfElements() );
 
 	conc6=conc3-conc1;
     for (int i=0;i<conc6.getNumberOfElements();i++)
-    	CPPUNIT_ASSERT_EQUAL( 0.0, conc6(i) );
+    	CPPUNIT_ASSERT_EQUAL( -2.*(i), conc6(i) );
 	CPPUNIT_ASSERT_EQUAL( 2, conc6.getNumberOfComponents() );
 	CPPUNIT_ASSERT_EQUAL( 50, conc6.getNumberOfElements() );
 
 	conc6=conc1;
 	conc6+=conc1;
-    for (int i=0;i<conc6.getNumberOfElements();i++)
-    	CPPUNIT_ASSERT_EQUAL( 2.0*i, conc6(0,i) );
+    for (int j=0;j<conc6.getNumberOfComponents();j++)
+    	for (int i=0;i<conc6.getNumberOfElements();i++)
+    		CPPUNIT_ASSERT_EQUAL( 2.0*(i+j), conc6(i,j) );
 	CPPUNIT_ASSERT_EQUAL( 2, conc6.getNumberOfComponents() );
 	CPPUNIT_ASSERT_EQUAL( 50, conc6.getNumberOfElements() );
 
 	conc6=conc1;
 	conc6*=2.0;
-    for (int i=0;i<conc6.getNumberOfElements();i++)
-    	CPPUNIT_ASSERT_EQUAL( 2.0*i, conc6[i] );
+    for (int j=0;j<conc6.getNumberOfComponents();j++)
+    	for (int i=0;i<conc6.getNumberOfElements();i++)
+    		CPPUNIT_ASSERT_EQUAL( 2.0*(i+j), conc6(i,j) );
 	CPPUNIT_ASSERT_EQUAL( 2, conc6.getNumberOfComponents() );
 	CPPUNIT_ASSERT_EQUAL( 50, conc6.getNumberOfElements() );
 
 	Field conc7("CONCENTRATION",CELLS,M,2) ;
-	conc7.setField(conc1.getField());
+	MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> f1=conc1.getField();
+	conc7.setFieldByMEDCouplingFieldDouble(f1);
     conc7.setName("CONC");
     for (int i=0;i<conc7.getNumberOfElements();i++)
     {
@@ -127,6 +136,19 @@ FieldTests::testClassField( void )
 	CPPUNIT_ASSERT_EQUAL( 2, conc7.getNumberOfComponents() );
 	CPPUNIT_ASSERT_EQUAL( 50, conc7.getNumberOfElements() );
 	CPPUNIT_ASSERT( conc7.getName().compare("CONC")==0 );
+
+	Field conc77("CONCENTRATION",CELLS,M,2) ;
+	MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> f2=conc1.getField();
+	conc77.setFieldByDataArrayDouble(f2->getArray());
+    conc77.setName("CONC");
+    for (int i=0;i<conc77.getNumberOfElements();i++)
+    {
+    	CPPUNIT_ASSERT_EQUAL( 1.0*i, conc77(i) );
+    	CPPUNIT_ASSERT_EQUAL( 1.0*i, conc77[i] );
+    }
+	CPPUNIT_ASSERT_EQUAL( 2, conc77.getNumberOfComponents() );
+	CPPUNIT_ASSERT_EQUAL( 50, conc77.getNumberOfElements() );
+	CPPUNIT_ASSERT( conc77.getName().compare("CONC")==0 );
 
 	Field conc8("CONCENTRATION",CELLS,M) ;
     for (int i=0;i<conc8.getNumberOfElements();i++)

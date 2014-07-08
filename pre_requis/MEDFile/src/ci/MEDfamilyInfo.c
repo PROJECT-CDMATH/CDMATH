@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -36,12 +36,12 @@
  */
 
 med_err
-MEDfamilyInfo(const med_idt  fid,
-	      const char *   meshname,
-	      const int      famit,
-	      char * const   familyname,
-	      med_int *const familynumber,
-	      char *const    groupname)
+MEDfamilyInfo(const med_idt        fid,
+	      const char *   const meshname,
+	      const int            famit,
+	      char * const         familyname,
+	      med_int *const       familynumber,
+	      char *const          groupname)
 {
   med_err    _ret=-1,_err=-1;
   med_idt    _datagroup=0,_famid=0;
@@ -89,13 +89,16 @@ if (_MEDcheckVersion30(fid) < 0) goto ERROR;
 /*   ISCRUTE(_nfammai); */
 
   /* Pour la famille 0 */
+  /* (0<=_num<_nfammai) : famille éléments */
+  /* (_num == _nfammai) : famille 0 */
+  /* (_num > _nfammai ) : famille de noeuds */
   if (_num == _nfammai) {
     strcpy(familyname,FAMILLE_ZERO);
     groupname[0]='\0';
     *familynumber=0;
     return 0;
   }
-  
+
 
   /* C'est une _family de noeuds */
   if (_num > _nfammai) {

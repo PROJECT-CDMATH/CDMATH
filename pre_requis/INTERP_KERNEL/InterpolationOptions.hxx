@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -28,7 +28,7 @@
 
 namespace INTERP_KERNEL
 {
-  typedef enum { Triangulation, Convex, Geometric2D, PointLocator } IntersectionType;
+  typedef enum { Triangulation, Convex, Geometric2D, PointLocator, Barycentric, BarycentricGeo2D } IntersectionType;
   
   /*!
    * \class InterpolationOptions
@@ -50,11 +50,10 @@ namespace INTERP_KERNEL
     //! this measure is absolute \b not relative to the cell size
     double _bounding_box_adjustment_abs ;
     double _max_distance_for_3Dsurf_intersect;
+    double _min_dot_btw_3Dsurf_intersect;
     int _orientation ;
     bool _measure_abs;
     SplittingPolicy _splitting_policy ;
-    bool _P1P0_bary_method; // issue 0020440
-
   public:
     InterpolationOptions() { init(); }
     int getPrintLevel() const { return _print_level; }
@@ -66,6 +65,9 @@ namespace INTERP_KERNEL
 
     double getPrecision() const { return _precision; }
     void setPrecision(double p) { _precision=p; }
+
+    double getArcDetectionPrecision() const;
+    void setArcDetectionPrecision(double p);
 
     double getMedianPlane() const { return _median_plane; }
     void setMedianPlane(double mp) { _median_plane=mp; }
@@ -82,6 +84,9 @@ namespace INTERP_KERNEL
     double getMaxDistance3DSurfIntersect() const { return _max_distance_for_3Dsurf_intersect; }
     void setMaxDistance3DSurfIntersect(double bba) { _max_distance_for_3Dsurf_intersect=bba; }
 
+    double getMinDotBtwPlane3DSurfIntersect() const { return _min_dot_btw_3Dsurf_intersect; }
+    void setMinDotBtwPlane3DSurfIntersect(double v) { _min_dot_btw_3Dsurf_intersect=v; }
+
     int getOrientation() const { return _orientation; }
     void setOrientation(int o) { _orientation=o; }
 
@@ -91,9 +96,6 @@ namespace INTERP_KERNEL
     SplittingPolicy getSplittingPolicy() const { return _splitting_policy; }
     void setSplittingPolicy(SplittingPolicy sp) { _splitting_policy=sp; }
     std::string getSplittingPolicyRepr() const;
-
-    void setP1P0BaryMethod(bool isP1P0) { _P1P0_bary_method=isP1P0; }
-    bool getP1P0BaryMethod() const { return _P1P0_bary_method; }
 
     std::string filterInterpolationMethod(const std::string& meth) const;
 
@@ -109,23 +111,27 @@ namespace INTERP_KERNEL
                                  double max_distance_for_3Dsurf_intersect,
                                  long orientation,
                                  bool measure_abs,
-                                 std::string splitting_policy,
-                                 bool P1P0_bary_method );
+                                 std::string splitting_policy);
     void copyOptions(const InterpolationOptions & other) { *this = other; }
     bool setOptionDouble(const std::string& key, double value);
     bool setOptionInt(const std::string& key, int value);
     bool setOptionString(const std::string& key, const std::string& value);
     std::string printOptions() const;
+  public:
+    static void CheckAndSplitInterpolationMethod(const std::string& method, std::string& srcMeth, std::string& trgMeth);
   private:
     static const double DFT_MEDIAN_PLANE;
     static const double DFT_SURF3D_ADJ_EPS;
     static const double DFT_MAX_DIST_3DSURF_INTERSECT;
+    static const double DFT_MIN_DOT_BTW_3DSURF_INTERSECT;
   public:
     static const char PRECISION_STR[];
+    static const char ARC_DETECTION_PRECISION_STR[];
     static const char MEDIANE_PLANE_STR[];
     static const char BOUNDING_BOX_ADJ_STR[];
     static const char BOUNDING_BOX_ADJ_ABS_STR[];
     static const char MAX_DISTANCE_3DSURF_INSECT_STR[];
+    static const char MIN_DOT_BTW_3DSURF_INSECT_STR[];
     static const char PRINT_LEV_STR[];
     static const char DO_ROTATE_STR[];
     static const char ORIENTATION_STR[];
@@ -136,6 +142,8 @@ namespace INTERP_KERNEL
     static const char CONVEX_INTERSECT2D_STR[];
     static const char GEOMETRIC_INTERSECT2D_STR[];
     static const char POINTLOCATOR_INTERSECT_STR[];
+    static const char BARYCENTRIC_INTERSECT_STR[];
+    static const char BARYCENTRICGEO2D_INTERSECT_STR[];
     static const char PLANAR_SPLIT_FACE_5_STR[];
     static const char PLANAR_SPLIT_FACE_6_STR[];
     static const char GENERAL_SPLIT_24_STR[];

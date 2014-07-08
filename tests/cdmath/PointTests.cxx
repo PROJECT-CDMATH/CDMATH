@@ -24,7 +24,8 @@ PointTests::testClassPoint( void )
    Point P2(1., 2., 3.);
    CPPUNIT_ASSERT_EQUAL( 14., P1.dot(P2) );
 
-   Point P3=P1+P2;
+   Point P3;
+   P3=P1+P2;
    CPPUNIT_ASSERT_EQUAL( 2., P3.x());
    CPPUNIT_ASSERT_EQUAL( 4., P3.y());
    CPPUNIT_ASSERT_EQUAL( 6., P3.z());

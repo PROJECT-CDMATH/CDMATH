@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -47,7 +47,7 @@ QuadraticPolygon::QuadraticPolygon(const char *file)
   std::ifstream stream(file);
   stream.exceptions(std::ios_base::eofbit);
   try
-    {
+  {
       do
         stream.getline(currentLine,MAX_SIZE_OF_LINE_XFIG_FILE);
       while(strcmp(currentLine,"1200 2")!=0);
@@ -59,10 +59,10 @@ QuadraticPolygon::QuadraticPolygon(const char *file)
           pushBack(newEdge);
         }
       while(1);
-    }
+  }
   catch(std::ifstream::failure&)
-    {
-    }
+  {
+  }
   front()->changeStartNodeWith(back()->getEndNode());
 }
 
@@ -72,7 +72,7 @@ QuadraticPolygon::~QuadraticPolygon()
 
 QuadraticPolygon *QuadraticPolygon::BuildLinearPolygon(std::vector<Node *>& nodes)
 {
-  QuadraticPolygon *ret=new QuadraticPolygon;
+  QuadraticPolygon *ret(new QuadraticPolygon);
   std::size_t size=nodes.size();
   for(std::size_t i=0;i<size;i++)
     {
@@ -84,9 +84,10 @@ QuadraticPolygon *QuadraticPolygon::BuildLinearPolygon(std::vector<Node *>& node
 
 QuadraticPolygon *QuadraticPolygon::BuildArcCirclePolygon(std::vector<Node *>& nodes)
 {
-  QuadraticPolygon *ret=new QuadraticPolygon;
+  QuadraticPolygon *ret(new QuadraticPolygon);
   std::size_t size=nodes.size();
   for(std::size_t i=0;i<size/2;i++)
+
     {
       EdgeLin *e1,*e2;
       e1=new EdgeLin(nodes[i],nodes[i+size/2]);
@@ -100,6 +101,32 @@ QuadraticPolygon *QuadraticPolygon::BuildArcCirclePolygon(std::vector<Node *>& n
         ret->pushBack(new EdgeArcCircle(nodes[i],nodes[i+size/2],nodes[(i+1)%(size/2)]));
       nodes[i]->decrRef(); nodes[i+size/2]->decrRef();
     }
+  return ret;
+}
+
+Edge *QuadraticPolygon::BuildLinearEdge(std::vector<Node *>& nodes)
+{
+  if(nodes.size()!=2)
+    throw INTERP_KERNEL::Exception("QuadraticPolygon::BuildLinearEdge : input vector is expected to be of size 2 !");
+  Edge *ret(new EdgeLin(nodes[0],nodes[1]));
+  nodes[0]->decrRef(); nodes[1]->decrRef();
+  return ret;
+}
+
+Edge *QuadraticPolygon::BuildArcCircleEdge(std::vector<Node *>& nodes)
+{
+  if(nodes.size()!=3)
+    throw INTERP_KERNEL::Exception("QuadraticPolygon::BuildArcCircleEdge : input vector is expected to be of size 3 !");
+  EdgeLin *e1(new EdgeLin(nodes[0],nodes[2])),*e2(new EdgeLin(nodes[2],nodes[1]));
+  SegSegIntersector inters(*e1,*e2);
+  bool colinearity=inters.areColinears();
+  delete e1; delete e2;
+  Edge *ret(0);
+  if(colinearity)
+    ret=new EdgeLin(nodes[0],nodes[1]);
+  else
+    ret=new EdgeArcCircle(nodes[0],nodes[2],nodes[1]);
+  nodes[0]->decrRef(); nodes[1]->decrRef(); nodes[2]->decrRef();
   return ret;
 }
 
@@ -225,18 +252,29 @@ double QuadraticPolygon::intersectWithAbs(QuadraticPolygon& other)
 }
 
 /*!
- * This method splits 'this' with 'other' into smaller pieces localizable. 'mapThis' is a map that gives the correspondance between nodes contained in 'this' and node ids in a global mesh.
- * In the same way, 'mapOther' gives the correspondance between nodes contained in 'other' and node ids in a global mesh from wich 'other' is extracted.
- * This method has 1 out paramater : 'edgesThis', After the call of this method contains nodal connectivity (including type) of 'this' into globlal "this mesh".
- * This method has 2 in/out parameters : 'subDivOther' and 'addCoo'.'otherEdgeIds' is useful to put values in 'edgesThis', 'subDivOther' and 'addCoo'.
+ * This method splits 'this' with 'other' into smaller pieces localizable. 'mapThis' is a map that gives the correspondance
+ * between nodes contained in 'this' and node ids in a global mesh.
+ * In the same way, 'mapOther' gives the correspondance between nodes contained in 'other' and node ids in a
+ * global mesh from wich 'other' is extracted.
+ * This method has 1 out paramater : 'edgesThis', After the call of this method, it contains the nodal connectivity (including type)
+ * of 'this' into globlal "this mesh".
+ * This method has 2 in/out parameters : 'subDivOther' and 'addCoo'.'otherEdgeIds' is useful to put values in
+ * 'edgesThis', 'subDivOther' and 'addCoo'.
  * Size of 'otherEdgeIds' has to be equal to number of ElementaryEdges in 'other'. No check of that will be done.
+ * The term 'abs' in the name recalls that we normalize the mesh (spatially) so that node coordinates fit into [0;1].
  * @param offset1 is the number of nodes contained in global mesh from which 'this' is extracted.
  * @param offset2 is the sum of nodes contained in global mesh from which 'this' is extracted and 'other' is extracted.
  * @param edgesInOtherColinearWithThis will be appended at the end of the vector with colinear edge ids of other (if any)
- * @otherEdgeIds is a vector with the same size than other before calling this method. It gives in the same order the cell id in global other mesh.
+ * @param otherEdgeIds is a vector with the same size than other before calling this method. It gives in the same order
+ * the cell id in global other mesh.
  */
-void QuadraticPolygon::splitAbs(QuadraticPolygon& other, const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2 , const std::vector<int>& otherEdgeIds,
-                                std::vector<int>& edgesThis, int cellIdThis, std::vector< std::vector<int> >& edgesInOtherColinearWithThis, std::vector< std::vector<int> >& subDivOther, std::vector<double>& addCoo)
+void QuadraticPolygon::splitAbs(QuadraticPolygon& other,
+                                const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther,
+                                int offset1, int offset2 ,
+                                const std::vector<int>& otherEdgeIds,
+                                std::vector<int>& edgesThis, int cellIdThis,
+                                std::vector< std::vector<int> >& edgesInOtherColinearWithThis, std::vector< std::vector<int> >& subDivOther,
+                                std::vector<double>& addCoo, std::map<int,int>& mergedNodes)
 {
   double xBaryBB, yBaryBB;
   double fact=normalizeExt(&other, xBaryBB, yBaryBB);
@@ -264,6 +302,10 @@ void QuadraticPolygon::splitAbs(QuadraticPolygon& other, const std::map<INTERP_K
             {
               ElementaryEdge* curE1=it1.current();
               merge.clear();
+              //
+              std::map<INTERP_KERNEL::Node *,int>::const_iterator thisStart(mapThis.find(curE1->getStartNode())),thisEnd(mapThis.find(curE1->getEndNode())),otherStart(mapOther.find(curE2->getStartNode())),otherEnd(mapOther.find(curE2->getEndNode()));
+              int thisStart2(thisStart==mapThis.end()?-1:(*thisStart).second),thisEnd2(thisEnd==mapThis.end()?-1:(*thisEnd).second),otherStart2(otherStart==mapOther.end()?-1:(*otherStart).second+offset1),otherEnd2(otherEnd==mapOther.end()?-1:(*otherEnd).second+offset1);
+              //
               if(curE1->getPtr()->intersectWith(curE2->getPtr(),merge,*c1,*c2))
                 {
                   if(!curE1->getDirection()) c1->reverse();
@@ -287,6 +329,7 @@ void QuadraticPolygon::splitAbs(QuadraticPolygon& other, const std::map<INTERP_K
                   UpdateNeighbours(merge,it1,it2,curE1,curE2);
                   it1.next();
                 }
+              merge.updateMergedNodes(thisStart2,thisEnd2,otherStart2,otherEnd2,mergedNodes);
             }
         }
       if(otherTmp.presenceOfOn())
@@ -306,8 +349,10 @@ void QuadraticPolygon::splitAbs(QuadraticPolygon& other, const std::map<INTERP_K
 }
 
 /*!
- * This method builds from descending conn of a quadratic polygon stored in crude mode (MEDCoupling). Descending conn is in FORTRAN relative mode in order to give the
- * orientation of edge.
+ * This method builds 'this' from its descending conn stored in crude mode (MEDCoupling).
+ * Descending conn is in FORTRAN relative mode in order to give the
+ * orientation of edge (see buildDescendingConnectivity2() method).
+ * See appendEdgeFromCrudeDataArray() for params description.
  */
 void QuadraticPolygon::buildFromCrudeDataArray(const std::map<int,INTERP_KERNEL::Node *>& mapp, bool isQuad, const int *nodalBg, const double *coords,
                                                const int *descBg, const int *descEnd, const std::vector<std::vector<int> >& intersectEdges)
@@ -319,13 +364,14 @@ void QuadraticPolygon::buildFromCrudeDataArray(const std::map<int,INTERP_KERNEL:
     }
 }
 
-void QuadraticPolygon::appendEdgeFromCrudeDataArray(std::size_t edgePos, const std::map<int,INTERP_KERNEL::Node *>& mapp, bool isQuad, const int *nodalBg, const double *coords,
+void QuadraticPolygon::appendEdgeFromCrudeDataArray(std::size_t edgePos, const std::map<int,INTERP_KERNEL::Node *>& mapp, bool isQuad,
+                                                    const int *nodalBg, const double *coords,
                                                     const int *descBg, const int *descEnd, const std::vector<std::vector<int> >& intersectEdges)
 {
   if(!isQuad)
     {
       bool direct=descBg[edgePos]>0;
-      int edgeId=abs(descBg[edgePos])-1;
+      int edgeId=abs(descBg[edgePos])-1; // back to C indexing mode
       const std::vector<int>& subEdge=intersectEdges[edgeId];
       std::size_t nbOfSubEdges=subEdge.size()/2;
       for(std::size_t j=0;j<nbOfSubEdges;j++)
@@ -374,7 +420,7 @@ void QuadraticPolygon::appendSubEdgeFromCrudeDataArray(Edge *baseEdge, std::size
     {//it is not a quadratic subedge
       Node *start=(*mapp.find(direct?subEdge[2*j]:subEdge[2*nbOfSubEdges-2*j-1])).second;
       Node *end=(*mapp.find(direct?subEdge[2*j+1]:subEdge[2*nbOfSubEdges-2*j-2])).second;
-      ElementaryEdge *e=ElementaryEdge::BuildEdgeFromCrudeDataArray(true,start,end);
+      ElementaryEdge *e=ElementaryEdge::BuildEdgeFromStartEndDir(true,start,end);
       pushBack(e);
     }
   else
@@ -489,7 +535,7 @@ void QuadraticPolygon::buildFromCrudeDataArray2(const std::map<int,INTERP_KERNEL
                   //appendEdgeFromCrudeDataArray(j,mapp,isQuad,nodalBg,coords,descBg,descEnd,intersectEdges);
                   Node *start=(*mapp.find(idBg)).second;
                   Node *end=(*mapp.find(idEnd)).second;
-                  ElementaryEdge *e=ElementaryEdge::BuildEdgeFromCrudeDataArray(true,start,end);
+                  ElementaryEdge *e=ElementaryEdge::BuildEdgeFromStartEndDir(true,start,end);
                   pushBack(e);
                   alreadyExistingIn2[descBg[i]].push_back(e);
                 }
@@ -509,8 +555,11 @@ void QuadraticPolygon::buildFromCrudeDataArray2(const std::map<int,INTERP_KERNEL
 
 /*!
  * Method expected to be called on pol2. Every params not suffixed by numbered are supposed to refer to pol2 (this).
+ * Method to find edges that are ON.
  */
-void QuadraticPolygon::updateLocOfEdgeFromCrudeDataArray2(const int *descBg, const int *descEnd, const std::vector<std::vector<int> >& intersectEdges, const INTERP_KERNEL::QuadraticPolygon& pol1, const int *descBg1, const int *descEnd1, const std::vector<std::vector<int> >& intersectEdges1, const std::vector< std::vector<int> >& colinear1) const
+void QuadraticPolygon::updateLocOfEdgeFromCrudeDataArray2(const int *descBg, const int *descEnd, const std::vector<std::vector<int> >& intersectEdges,
+                                                          const INTERP_KERNEL::QuadraticPolygon& pol1, const int *descBg1, const int *descEnd1,
+                                                          const std::vector<std::vector<int> >& intersectEdges1, const std::vector< std::vector<int> >& colinear1) const
 {
   std::size_t nbOfSeg=std::distance(descBg,descEnd);
   for(std::size_t i=0;i<nbOfSeg;i++)//loop over all edges of pol2
@@ -589,17 +638,17 @@ void QuadraticPolygon::appendCrudeData(const std::map<INTERP_KERNEL::Node *,int>
 }
 
 /*!
- * This method make the hypothesis that 'this' and 'other' are splited at the minimum into edges that are fully IN, OUT or ON.
- * This method returns newly created polygons in 'conn' and 'connI' and the corresponding ids ('idThis','idOther') are stored respectively into 'nbThis' and 'nbOther'.
- * @param [in,out] edgesThis, parameter that keep informed the caller abount the edges in this not shared by the result of intersection of \a this with \a other
- * @param [in,out] edgesBoundaryOther, parameter that strores all edges in result of intersection that are not 
+ * This method make the hypothesis that \a this and \a other are split at the minimum into edges that are fully IN, OUT or ON.
+ * This method returns newly created polygons in \a conn and \a connI and the corresponding ids ( \a idThis, \a idOther) are stored respectively into \a nbThis and \a nbOther.
+ * @param [in,out] edgesThis, parameter that keep informed the caller about the edges in this not shared by the result of intersection of \a this with \a other
+ * @param [in,out] edgesBoundaryOther, parameter that stores all edges in result of intersection that are not
  */
 void QuadraticPolygon::buildPartitionsAbs(QuadraticPolygon& other, std::set<INTERP_KERNEL::Edge *>& edgesThis, std::set<INTERP_KERNEL::Edge *>& edgesBoundaryOther, const std::map<INTERP_KERNEL::Node *,int>& mapp, int idThis, int idOther, int offset, std::vector<double>& addCoordsQuadratic, std::vector<int>& conn, std::vector<int>& connI, std::vector<int>& nbThis, std::vector<int>& nbOther)
 {
   double xBaryBB, yBaryBB;
   double fact=normalizeExt(&other, xBaryBB, yBaryBB);
-  //Locate 'this' relative to 'other'
-  other.performLocatingOperationSlow(*this);
+  //Locate \a this relative to \a other (edges of \a this, aka \a pol1 are marked as IN or OUT)
+  other.performLocatingOperationSlow(*this);  // without any assumption
   std::vector<QuadraticPolygon *> res=buildIntersectionPolygons(other,*this);
   for(std::vector<QuadraticPolygon *>::iterator it=res.begin();it!=res.end();it++)
     {
@@ -644,7 +693,7 @@ double QuadraticPolygon::intersectWithAbs1D(QuadraticPolygon& other, bool& isCol
   for(std::list<ElementaryEdge *>::const_iterator it=cpyOfOther._sub_edges.begin();it!=cpyOfOther._sub_edges.end();it++)
     {
       switch((*it)->getLoc())
-        {
+      {
         case FULL_IN_1:
           {
             ret += fabs((*it)->getPtr()->getCurveLength());
@@ -659,7 +708,7 @@ double QuadraticPolygon::intersectWithAbs1D(QuadraticPolygon& other, bool& isCol
         default:
           {
           }
-        }
+      }
     }
   return ret * fact;
 }
@@ -686,7 +735,7 @@ double QuadraticPolygon::intersectWithAbs(QuadraticPolygon& other, double* baryc
     {
       barycenter[0]=barycenter[0]/ret*fact+xBaryBB;
       barycenter[1]=barycenter[1]/ret*fact+yBaryBB;
-      
+
     }
   return ret*fact*fact;
 }
@@ -855,7 +904,7 @@ void QuadraticPolygon::SplitPolygonsEachOther(QuadraticPolygon& pol1, QuadraticP
         it1=curE2->getIterator();
       for(;!it1.finished();)
         {
-          
+
           ElementaryEdge* curE1=it1.current();
           merge.clear(); nbOfSplits++;
           if(curE1->getPtr()->intersectWith(curE2->getPtr(),merge,*c1,*c2))
@@ -887,14 +936,14 @@ void QuadraticPolygon::SplitPolygonsEachOther(QuadraticPolygon& pol1, QuadraticP
   Delete(c2);
 }
 
-void QuadraticPolygon::performLocatingOperation(QuadraticPolygon& pol2) const
+void QuadraticPolygon::performLocatingOperation(QuadraticPolygon& pol1) const
 {
-  IteratorOnComposedEdge it(&pol2);
+  IteratorOnComposedEdge it(&pol1);
   TypeOfEdgeLocInPolygon loc=FULL_ON_1;
   for(it.first();!it.finished();it.next())
     {
       ElementaryEdge *cur=it.current();
-      loc=cur->locateFullyMySelf(*this,loc);
+      loc=cur->locateFullyMySelf(*this,loc);//*this=pol2=other
     }
 }
 
@@ -909,18 +958,18 @@ void QuadraticPolygon::performLocatingOperationSlow(QuadraticPolygon& pol2) cons
 }
 
 /*!
- * Given 2 polygons 'pol1' and 'pol2' (localized) the resulting polygons are returned.
+ * Given 2 polygons \a pol1 and \a pol2 (localized) the resulting polygons are returned.
  *
  * this : pol2 simplified.
- * @param pol1 pol1 split.
- * @param pol2 pol2 split.
+ * @param [in] pol1 pol1 split.
+ * @param [in] pol2 pol2 split.
  */
 std::vector<QuadraticPolygon *> QuadraticPolygon::buildIntersectionPolygons(const QuadraticPolygon& pol1, const QuadraticPolygon& pol2) const
 {
   std::vector<QuadraticPolygon *> ret;
   std::list<QuadraticPolygon *> pol2Zip=pol2.zipConsecutiveInSegments();
   if(!pol2Zip.empty())
-    closePolygons(pol2Zip,pol1,ret);
+    ClosePolygons(pol2Zip,pol1,*this,ret);
   else
     {//borders of pol2 do not cross pol1,and pol2 borders are outside of pol1. That is to say, either pol2 and pol1
       //do not overlap or  pol1 is fully inside pol2. So in the first case no intersection, in the other case
@@ -971,13 +1020,13 @@ std::list<QuadraticPolygon *> QuadraticPolygon::zipConsecutiveInSegments() const
 }
 
 /*!
- * 'this' should be considered as pol2Simplified.
- * @param pol2zip is a list of set of edges (openned polygon) coming from split polygon 2.
- * @param pol1 is split pol1.
- * @param results the resulting \b CLOSED polygons.
+ * @param [in] pol2zip is a list of set of edges (=an opened polygon) coming from split polygon 2.
+ * @param [in] pol1 is split pol1.
+ * @param [in] pol2 should be considered as pol2Simplified.
+ * @param [out] results the resulting \b CLOSED polygons.
  */
-void QuadraticPolygon::closePolygons(std::list<QuadraticPolygon *>& pol2Zip, const QuadraticPolygon& pol1,
-                                     std::vector<QuadraticPolygon *>& results) const
+void QuadraticPolygon::ClosePolygons(std::list<QuadraticPolygon *>& pol2Zip, const QuadraticPolygon& pol1, const QuadraticPolygon& pol2,
+                                     std::vector<QuadraticPolygon *>& results)
 {
   bool directionKnownInPol1=false;
   bool directionInPol1;
@@ -992,7 +1041,7 @@ void QuadraticPolygon::closePolygons(std::list<QuadraticPolygon *>& pol2Zip, con
         }
       if(!directionKnownInPol1)
         {
-          if(!(*iter)->amIAChanceToBeCompletedBy(pol1,*this,directionInPol1))
+          if(!(*iter)->haveIAChanceToBeCompletedBy(pol1,pol2,directionInPol1))
             { delete *iter; iter=pol2Zip.erase(iter); continue; }
           else
             directionKnownInPol1=true;
@@ -1011,7 +1060,7 @@ void QuadraticPolygon::closePolygons(std::list<QuadraticPolygon *>& pol2Zip, con
 /*!
  * 'this' is expected to be set of edges (not closed) of pol2 split.
  */
-bool QuadraticPolygon::amIAChanceToBeCompletedBy(const QuadraticPolygon& pol1Splitted,const QuadraticPolygon& pol2NotSplitted, bool& direction)
+bool QuadraticPolygon::haveIAChanceToBeCompletedBy(const QuadraticPolygon& pol1Splitted,const QuadraticPolygon& pol2NotSplitted, bool& direction)
 {
   IteratorOnComposedEdge it(const_cast<QuadraticPolygon *>(&pol1Splitted));
   bool found=false;
@@ -1025,7 +1074,7 @@ bool QuadraticPolygon::amIAChanceToBeCompletedBy(const QuadraticPolygon& pol1Spl
         it.next();
     }
   if(!found)
-    throw Exception("Internal error : polygons uncompatible each others. Should never happend");
+    throw Exception("Internal error: polygons incompatible with each others. Should never happen!");
   //Ok we found correspondance between this and pol1. Searching for right direction to close polygon.
   ElementaryEdge *e=_sub_edges.back();
   if(e->getLoc()==FULL_ON_1)
@@ -1055,7 +1104,7 @@ bool QuadraticPolygon::amIAChanceToBeCompletedBy(const QuadraticPolygon& pol1Spl
 }
 
 /*!
- * This method fills as much as possible 'this' (part of pol2 split) with edges of 'pol1Splitted'.
+ * This method fills as much as possible \a this (a sub-part of pol2 split) with edges of \a pol1Splitted.
  */
 std::list<QuadraticPolygon *>::iterator QuadraticPolygon::fillAsMuchAsPossibleWith(const QuadraticPolygon& pol1Splitted,
                                                                                    std::list<QuadraticPolygon *>::iterator iStart,
@@ -1076,6 +1125,7 @@ std::list<QuadraticPolygon *>::iterator QuadraticPolygon::fillAsMuchAsPossibleWi
   if(!direction)
     it.previousLoop();
   Node *nodeToTest;
+  int szMax(pol1Splitted.size()+1),ii(0);// here a protection against agressive users of IntersectMeshes of invalid input meshes
   std::list<QuadraticPolygon *>::iterator ret;
   do
     {
@@ -1089,8 +1139,11 @@ std::list<QuadraticPolygon *>::iterator QuadraticPolygon::fillAsMuchAsPossibleWi
       ret=CheckInList(nodeToTest,iStart,iEnd);
       if(completed())
         return iEnd;
+      ii++;
     }
-  while(ret==iEnd);
+  while(ret==iEnd && ii<szMax);
+  if(ii==szMax)// here a protection against agressive users of IntersectMeshes of invalid input meshes
+    throw INTERP_KERNEL::Exception("QuadraticPolygon::fillAsMuchAsPossibleWith : Something is invalid with input polygons !");
   return ret;
 }
 
@@ -1107,10 +1160,10 @@ void QuadraticPolygon::ComputeResidual(const QuadraticPolygon& pol1, const std::
                                        std::vector<double>& addCoordsQuadratic, std::vector<int>& conn, std::vector<int>& connI, std::vector<int>& nb1, std::vector<int>& nb2)
 {
   pol1.initLocations();
-  for(std::set<Edge *>::const_iterator it=notUsedInPol1.begin();it!=notUsedInPol1.end();it++)
-    { (*it)->initLocs(); (*it)->declareOn(); }
-  for(std::set<Edge *>::const_iterator it=edgesInPol2OnBoundary.begin();it!=edgesInPol2OnBoundary.end();it++)
-    { (*it)->initLocs(); (*it)->declareIn(); }
+  for(std::set<Edge *>::const_iterator it9=notUsedInPol1.begin();it9!=notUsedInPol1.end();it9++)
+    { (*it9)->initLocs(); (*it9)->declareOn(); }
+  for(std::set<Edge *>::const_iterator itA=edgesInPol2OnBoundary.begin();itA!=edgesInPol2OnBoundary.end();itA++)
+    { (*itA)->initLocs(); (*itA)->declareIn(); }
   ////
   std::set<Edge *> notUsedInPol1L(notUsedInPol1);
   IteratorOnComposedEdge it(const_cast<QuadraticPolygon *>(&pol1));

@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -35,10 +35,10 @@
 med_err
 MEDfieldComputingStepMeshWr(const med_idt fid,
 			    const char * const fieldname,
-			    med_int numdt,
-			    med_int numit,
-			    med_int meshnumdt,
-			    med_int meshnumit) {
+			    const med_int numdt,
+			    const med_int numit,
+			    const med_int meshnumdt,
+			    const med_int meshnumit) {
 
   med_access_mode  _MED_ACCESS_MODE;
   med_err          _ret=-1;

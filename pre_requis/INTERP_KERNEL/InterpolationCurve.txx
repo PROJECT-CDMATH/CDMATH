@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -72,10 +72,10 @@ namespace INTERP_KERNEL
       */
   template<class RealCurve>
   template<class MyMeshType, class MatrixType>
-  int InterpolationCurve<RealCurve>::interpolateMeshes (const MyMeshType& myMeshS,
-                                                        const MyMeshType& myMeshT,
-                                                        MatrixType&       result,
-                                                        const char *      method)
+  int InterpolationCurve<RealCurve>::interpolateMeshes (const MyMeshType&  myMeshS,
+                                                        const MyMeshType&  myMeshT,
+                                                        MatrixType&        result,
+                                                        const std::string& method)
   {
     static const int SPACEDIM=MyMeshType::MY_SPACEDIM;
     typedef typename MyMeshType::MyConnType ConnType;
@@ -88,8 +88,7 @@ namespace INTERP_KERNEL
     long nbMailleT = myMeshT.getNumberOfElements();
     
     CurveIntersector<MyMeshType,MatrixType>* intersector=0;
-    std::string meth(method);
-    if(meth=="P0P0")
+    if(method=="P0P0")
       {
         intersector = new CurveIntersectorP0P0<MyMeshType,MatrixType>
           (myMeshT, myMeshS,
@@ -98,7 +97,7 @@ namespace INTERP_KERNEL
            InterpolationOptions::getMedianPlane(),
            InterpolationOptions::getPrintLevel());
       }
-    else if(meth=="P0P1")
+    else if(method=="P0P1")
       {
         intersector = new CurveIntersectorP0P1<MyMeshType,MatrixType>
           (myMeshT, myMeshS,
@@ -107,7 +106,7 @@ namespace INTERP_KERNEL
            InterpolationOptions::getMedianPlane(),
            InterpolationOptions::getPrintLevel());
       }
-    else if(meth=="P1P0")
+    else if(method=="P1P0")
       {
         intersector = new CurveIntersectorP1P0<MyMeshType,MatrixType>
           (myMeshT, myMeshS,
@@ -116,7 +115,7 @@ namespace INTERP_KERNEL
            InterpolationOptions::getMedianPlane(),
            InterpolationOptions::getPrintLevel());
       }
-    else if(meth=="P1P1")
+    else if(method=="P1P1")
       {
         intersector = new CurveIntersectorP1P1<MyMeshType,MatrixType>
           (myMeshT, myMeshS,

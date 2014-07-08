@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -207,6 +207,7 @@ _MEDmeshnEntity236(int dummy, ...)
 
     case MED_COORDINATE: /*Par extension au CONNECTIVITY mais ne devrait pas être utilisé.*/
     case MED_CONNECTIVITY:
+      if ( geotype == MED_POLYGON2 ) {_n=0; break;}
       if ( geotype == MED_POLYGON ) {
 	  if ( MEDpolygoneInfo( fid,(char *)meshname, (med_entite_maillage) entitytype, (med_connectivite) _cmode[0],
 				&_n) < 0) {
@@ -259,7 +260,7 @@ _MEDmeshnEntity236(int dummy, ...)
 	_n=_nfaces;
 	break;
       } else
-	if ( geotype == MED_POLYGON) {
+	if ( (geotype == MED_POLYGON) || (geotype == MED_POLYGON2) ) {
 	  _meddatatype = MED_CONNECTIVITY;
 	  _n = 1;
 	} else {

@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -29,19 +29,19 @@
 class MEDLOADER_EXPORT MEDLoaderBase
 {
 public:
-  static int getStatusOfFile(const char *fileName);
+  static int getStatusOfFile(const std::string& fileName);
   static char *buildEmptyString(int lgth);
-  static void getDirAndBaseName(const std::string& fullName, std::string& dirName, std::string& baseName) throw(INTERP_KERNEL::Exception);
-  static std::string getPathSep() throw(INTERP_KERNEL::Exception);
-  static std::string joinPath(const std::string& dirName, const std::string& baseName) throw(INTERP_KERNEL::Exception);
+  static void getDirAndBaseName(const std::string& fullName, std::string& dirName, std::string& baseName);
+  static std::string getPathSep();
+  static std::string joinPath(const std::string& dirName, const std::string& baseName);
   static std::string buildUnionUnit(const char *name, int nameLgth, const char *unit, int unitLgth);
   static void splitIntoNameAndUnit(const std::string& s, std::string& name, std::string& unit);
   static void strip(std::string& s);
-  static void safeStrCpy(const char *src, int maxLgth, char *dest, int behaviour) throw(INTERP_KERNEL::Exception);
-  static void safeStrCpy2(const char *src, int maxLgth, char *dest, int behaviour) throw(INTERP_KERNEL::Exception);
+  static void safeStrCpy(const char *src, int maxLgth, char *dest, int behaviour);
+  static void safeStrCpy2(const char *src, int maxLgth, char *dest, int behaviour);
   static std::string buildStringFromFortran(const char *expr, int lgth);
   static void zipEqualConsChar(std::string& s, int minConsSmChar);
-  static std::string zipString(const char *src, int sizeToRespect);
+  static std::string zipString(const std::string& src, int sizeToRespect);
 public:
   static const int EXIST_RW=0;
   static const int NOT_EXIST=1;

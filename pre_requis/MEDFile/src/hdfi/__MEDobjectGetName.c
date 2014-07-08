@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -32,14 +32,19 @@ __MEDobjectGetName(const med_idt fid, const char * const path, const med_size in
 
   med_err _ret=-1;
   med_size _n;
+  med_idt  _gid1=0;
+  hsize_t  _ind=0;
+ /*
+   * On inhibe le gestionnaire d'erreur HDF 5
+   */
+  _MEDmodeErreurVerrouiller();
 
   /* old fashion */
 /*   if ((idx = H5Giterate(fid,path,&ind,_MEDindiceInfo, */
 /* 			nom)) < 0) */
 /*     return -1; */
 
-  med_idt  _gid1=0;
-  hsize_t  _ind=0;
+  
 
 /*   if ( (_gid1 = H5Gopen(fid,path)) < 0 ) { */
 /*     MED_ERR_(_ret,MED_ERR_OPEN,MED_ERR_DATAGROUP,path); */
@@ -54,7 +59,7 @@ __MEDobjectGetName(const med_idt fid, const char * const path, const med_size in
 
   if ( H5Literate_by_name(fid,path, index_type, order, (hsize_t *) &ind, _MEDcopyName, name,H5P_DEFAULT ) < 0 ) {
     MED_ERR_(_ret,MED_ERR_VISIT,MED_ERR_DATAGROUP,path);
-    H5Eprint1(stderr);
+    /* H5Eprint1(stderr); */
     goto ERROR;
   }
 

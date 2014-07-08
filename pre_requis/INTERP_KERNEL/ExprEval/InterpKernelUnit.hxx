@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -29,14 +29,13 @@
 
 namespace INTERP_KERNEL
 {
-  class INTERPKERNEL_EXPORT UnitDataBase
+  class UnitDataBase
   {
   public:
-    UnitDataBase();
-    const short *getInfoForUnit(const std::string& unit,
-                                double& addFact, double& mFact) const throw(INTERP_KERNEL::Exception);
-    static UnitDataBase _uniqueMapForExpr;
-    static const int SIZE_OF_UNIT_BASE=5;
+    INTERPKERNEL_EXPORT UnitDataBase();
+    INTERPKERNEL_EXPORT const short *getInfoForUnit(const std::string& unit, double& addFact, double& mFact) const;
+    INTERPKERNEL_EXPORT static UnitDataBase _uniqueMapForExpr;
+    INTERPKERNEL_EXPORT static const int SIZE_OF_UNIT_BASE=5;
   private:
     std::map<std::string,double> _prefix_pow_10;
     std::map<std::string,const short *> _units_semantic;
@@ -53,27 +52,27 @@ namespace INTERP_KERNEL
     static const double ADD_COEFF[NB_OF_UNITS_RECOGN];
   };
 
-  class INTERPKERNEL_EXPORT DecompositionInUnitBase
+  class DecompositionInUnitBase
   {
   public:
-    DecompositionInUnitBase();
-    void setInfo(const short *vals, double addFact, double mFact);
-    short operator[](int i) const { return _value[i]; }
-    bool operator==(const DecompositionInUnitBase& other) const;
-    void getTranslationParams(const DecompositionInUnitBase& other, double& mul, double& add) const;
-    bool isEqual(short mass, short lgth, short time, short intensity, short temp,
-                 double add, double mult);
-    bool isUnitary() const;
+    INTERPKERNEL_EXPORT DecompositionInUnitBase();
+    INTERPKERNEL_EXPORT void setInfo(const short *vals, double addFact, double mFact);
+    INTERPKERNEL_EXPORT short operator[](int i) const { return _value[i]; }
+    INTERPKERNEL_EXPORT bool operator==(const DecompositionInUnitBase& other) const;
+    INTERPKERNEL_EXPORT void getTranslationParams(const DecompositionInUnitBase& other, double& mul, double& add) const;
+    INTERPKERNEL_EXPORT bool isEqual(short mass, short lgth, short time, short intensity, short temp,
+                                     double add, double mult);
+    INTERPKERNEL_EXPORT bool isUnitary() const;
     //! \b WARNING no test is done on the fact that unit is adimensionnal.
-    void negate();
-    bool isAdimensional() const;
-    void tryToConvertInUnit(double val) throw(INTERP_KERNEL::Exception);
-    DecompositionInUnitBase &operator*(const DecompositionInUnitBase& other);
-    DecompositionInUnitBase &operator/(const DecompositionInUnitBase& other);
-    DecompositionInUnitBase &operator^(const DecompositionInUnitBase& other) throw(INTERP_KERNEL::Exception);
+    INTERPKERNEL_EXPORT void negate();
+    INTERPKERNEL_EXPORT bool isAdimensional() const;
+    INTERPKERNEL_EXPORT void tryToConvertInUnit(double val);
+    INTERPKERNEL_EXPORT DecompositionInUnitBase &operator*(const DecompositionInUnitBase& other);
+    INTERPKERNEL_EXPORT DecompositionInUnitBase &operator/(const DecompositionInUnitBase& other);
+    INTERPKERNEL_EXPORT DecompositionInUnitBase &operator^(const DecompositionInUnitBase& other);
   private:
     void dealWithAddFactor(const DecompositionInUnitBase& other);
-    static int couldItBeConsideredAsInt(double val) throw(INTERP_KERNEL::Exception);
+    static int couldItBeConsideredAsInt(double val);
     static bool areDoubleEquals(double a, double b);
     static double powInt(double val, int exp);
   private:
@@ -97,16 +96,16 @@ namespace INTERP_KERNEL
    * dimension 3 stands for elec intensity A.
    * dimension 4 stands for temperature in K.
    */
-  class INTERPKERNEL_EXPORT Unit
+  class Unit
   {
   public:
-    Unit(const char *reprC, bool tryToInterp=true);
-    Unit(const char *reprFortran, int sizeOfRepr, bool tryToInterp=true);
-    void tryToInterprate() const;
-    bool isInterpretationOK() const;
-    bool isCompatibleWith(const Unit& other) const;
-    double convert(const Unit& target, double sourceVal) const;
-    std::string getCoarseRepr() const;
+    INTERPKERNEL_EXPORT Unit(const char *reprC, bool tryToInterp=true);
+    INTERPKERNEL_EXPORT Unit(const char *reprFortran, int sizeOfRepr, bool tryToInterp=true);
+    INTERPKERNEL_EXPORT void tryToInterprate() const;
+    INTERPKERNEL_EXPORT bool isInterpretationOK() const;
+    INTERPKERNEL_EXPORT bool isCompatibleWith(const Unit& other) const;
+    INTERPKERNEL_EXPORT double convert(const Unit& target, double sourceVal) const;
+    INTERPKERNEL_EXPORT std::string getCoarseRepr() const;
   private:
     std::string _coarse_repr;
     mutable bool _is_interpreted;

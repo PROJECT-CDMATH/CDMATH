@@ -15,7 +15,12 @@
  * - number of columns
  */
 
-#include "DoubleTab.hxx"
+namespace ParaMEDMEM
+{
+  class DenseMatrix;
+}
+
+
 #include <iostream>
 
 class Vector ;
@@ -52,6 +57,8 @@ class Matrix
 	 */
 	~Matrix ( void ) ;
 
+	ParaMEDMEM::DenseMatrix* getDenseMatrix ( void )  const ;
+
 	/**
 	 * return number of rows in this matrix
 	 * @return _numberOfRows
@@ -64,13 +71,6 @@ class Matrix
 	 */
 	int getNumberOfColumns ( void ) const ;
 
-	DoubleTab& operator [] ( int i ) ;
-
-	const DoubleTab& operator [] ( int i ) const ;
-
-	DoubleTab& operator () ( int i ) ;
-
-	const DoubleTab& operator () ( int i ) const ;
 
 	double& operator () ( int i, int j ) ;
 
@@ -83,6 +83,8 @@ class Matrix
 	Matrix& operator-= (const Matrix& matrix) ;
 
 	Matrix& operator*= (double value) ;
+
+	Matrix& operator*= (const Matrix& matrix) ;
 
 	Matrix& operator/= (double value) ;
 
@@ -99,10 +101,6 @@ class Matrix
 	int coefficient(int index) const ;
 
 	double determinant() const ;
-
-	Matrix getMatrixL(void) const ;
-
-	Matrix getMatrixU(void) const ;
 
 	void view() const ;
 
@@ -122,10 +120,7 @@ class Matrix
 
     private: //----------------------------------------------------------------
 
-	/*
-	 * The values in this cell.
-	 */
-	DoubleTab *_values ;
+	void setDensiteMatrix (const ParaMEDMEM::DenseMatrix* mat) ;
 
 	/*
 	 * The number of rows in this cell.
@@ -137,49 +132,8 @@ class Matrix
 	 */
 	int _numberOfColumns ;
 
+	ParaMEDMEM::DenseMatrix* _mat;
+
 };
-
-/*
-	matrice & operator = (matrice &);	// et l'opperateur d'affectation
-
-	void saisie();						// permet de saisir les éléments d'une matrice
-	void afficher() ;					// Permet d'afficher les éléments d'une matrice
-
-	bool estCarre() const;
-	bool estSymetrique() const;			// Verifie si la matrice est symétirque (si elle est carré)
-
-	vecteur & operator [] (int);		// Permet l'accès aux vecteurs lignes
-
-	void echagerDeuxLignes(int , int);
-	void echangerLinges();				//Echange tous les lignes d'une matrice
-
-	matrice transposee();				// Renvoit la matrice transposée de la matrice
-	matrice sousMatrice(int , int ) ;	// Renvoit une sous-matrice en éléminant une ligne et une colonne
-
-
-	double trace() const;
-	double determinant() ;
-
-	matrice coMatrice();
-	matrice inverse();
-
-	friend matrice operator+(matrice , matrice ) ;
-    friend matrice operator-(matrice , matrice ) ;
-    friend matrice operator*(matrice , matrice ) ;
-	friend matrice operator*(double  , matrice  ) ;
-	friend matrice operator*(matrice , double  ) ;
-	friend matrice operator/(matrice , double  ) ;
-	friend vecteur operator*(matrice , vecteur);
-
-	matrice & operator+=(matrice );
-    matrice & operator-=(matrice );
-	matrice & operator*=(matrice );
-    matrice & operator*=(double );
-
-
-	friend ostream & operator<<(ostream&, matrice );
-	friend istream & operator>>(istream&, matrice &);
-
-*/
 
 #endif /* MATRIX_HXX_ */

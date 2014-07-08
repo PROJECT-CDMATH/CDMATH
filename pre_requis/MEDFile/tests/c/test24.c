@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -117,7 +117,7 @@ int main (int argc, char **argv)
 
     /* Allocation memoire :
      *  - tableau d'index : npoly + 1
-     *  - tableau des connectivites : taille
+     *  - tableau des connectivites : nnoe
      *  - tableaux numeros et numeros de familles : npoly
      *  - tableau des noms : MED_SNAME_SIZE*npoly + 1
 	 */
@@ -170,7 +170,7 @@ int main (int argc, char **argv)
 	printf(" ] \n");
 	strncpy(tmp,nom+j*MED_SNAME_SIZE,MED_SNAME_SIZE);
 	tmp[MED_SNAME_SIZE] = '\0';
-	if (inoele) printf("---- Nom                ----- : %s \n",tmp);
+	if (inoele) printf("---- Nom                ----- : |%s| \n",tmp);
 	if (inuele) printf("---- Numero             ----- : "IFORMAT" \n",*(num+j));
 	printf("---- Numero de famille  ----- : "IFORMAT" \n",*(fam+j));
       }

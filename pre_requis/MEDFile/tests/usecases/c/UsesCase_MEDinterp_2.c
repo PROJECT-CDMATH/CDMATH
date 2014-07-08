@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -15,9 +15,9 @@
  *  along with MED.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* 
+/*
  * Interp use case 2 : read an interpolation family with a direct access by name
- * In this example, the interpolation family can be used with 
+ * In this example, the interpolation family can be used with
  * the TEMPERATURE field of UsesCase_MEDfield_10 use case
  */
 

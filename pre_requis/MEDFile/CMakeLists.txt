@@ -1,69 +1,194 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8 FATAL_ERROR)
-PROJECT(med CXX C)
-ENABLE_LANGUAGE(Fortran OPTIONAL)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.10 FATAL_ERROR)
+PROJECT(MEDFile CXX C)
 
+## The following signature is still buggy as of CMake 2.8.11 - 
+## the OPTIONAL is not considered.
+## See http://www.cmake.org/Bug/view.php?id=10227
+#ENABLE_LANGUAGE(Fortran OPTIONAL)
+
+INCLUDE(CheckLanguage)
+CHECK_LANGUAGE(Fortran)
+IF(CMAKE_Fortran_COMPILER)
+  ENABLE_LANGUAGE(Fortran)
+ELSE()
+  MESSAGE(STATUS "No Fortran support")
+ENDIF()
+
+## Version number 
 SET(MED_NUM_MAJEUR 3)
 SET(MED_NUM_MINEUR 0)
-SET(MED_NUM_RELEASE 5)
+SET(MED_NUM_RELEASE 7)
 
-SET(MED_NUM_MAJEUR ${MED_NUM_MAJEUR})
-SET(MED_NUM_MINEUR ${MED_NUM_MINEUR})
-SET(MED_NUM_RELEASE ${MED_NUM_RELEASE})
 SET(MED_STR_VERSION "${MED_NUM_MAJEUR}.${MED_NUM_MINEUR}.${MED_NUM_RELEASE}")
+
 SET(LONG_OR_INT int)
 
-#ENABLE_TESTING()
+## User options:
+OPTION (MEDFILE_BUILD_TESTS "Build MED-file tests" ON)
+#IF (MEDFILE_BUILD_TESTS)
+#  ENABLE_TESTING()
+#ENDIF()
+OPTION (MEDFILE_BUILD_SHARED_LIBS "Build MED-file shared libraries" ON)
+OPTION (MEDFILE_BUILD_STATIC_LIBS "Build MED-file static libraries" OFF)
+OPTION (MEDFILE_INSTALL_DOC "Install pre-built documentation" ON)
+OPTION (MEDFILE_BUILD_PYTHON "Build Python bindings (needs SWIG)" OFF)
 
-SET(PLATFORM_CFLAGS)
+# Option checking.
+IF(WIN32 AND MEDFILE_BUILD_SHARED_LIBS AND MEDFILE_BUILD_STATIC_LIBS)
+  MESSAGE(WARNING "On Windows you can not build shared and static libraries at the same time! "
+  "Disabling STATIC build.")
+  SET(MEDFILE_BUILD_STATIC_LIBS OFF)
+ENDIF()
+IF(NOT (MEDFILE_BUILD_SHARED_LIBS OR MEDFILE_BUILD_STATIC_LIBS))
+  MESSAGE(WARNING "You must select to build either STATIC or SHARED libs. Setting "
+  "MEDFILE_BUILD_SHARED_LIBS to ON.")
+  SET(MEDFILE_BUILD_SHARED_LIBS ON)
+ENDIF()
+IF(MEDFILE_BUILD_SHARED_LIBS AND MEDFILE_BUILD_STATIC_LIBS)
+  MESSAGE(WARNING "You are building both static and shared libs. This might create conflicts when " 
+  "linking projects to med-file. You have been warned.")
+ENDIF()
+
+## Useful macros
+LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/config/cmake_files")
+INCLUDE(medMacros)
+
+## Platform specific flags (windows)
 IF(WIN32)
-  SET(PLATFORM_CFLAGS ${PLATFORM_CFLAGS} /W0)
-  SET(PLATFORM_CFLAGS ${PLATFORM_CFLAGS} -D_CRT_SECURE_NO_WARNINGS)  # To disable windows warnings for strcpy, fopen, ...
-  SET(PLATFORM_CFLAGS ${PLATFORM_CFLAGS} -D_SCL_SECURE_NO_WARNINGS)  # To disable windows warnings std::copy, std::transform, ...
-  SET(PLATFORM_CFLAGS ${PLATFORM_CFLAGS} -DWNT)
-  SET(PLATFORM_CFLAGS ${PLATFORM_CFLAGS} -DWIN32)
-  SET(PLATFORM_CFLAGS ${PLATFORM_CFLAGS} -D_WIN32_WINNT=0x0500) # Windows 2000 or later API is required
-  SET(PLATFORM_CFLAGS ${PLATFORM_CFLAGS} -DPPRO_NT) # For medfile
-  set(FORTRAN_STR_ARGS_ORDER /iface:mixed_str_len_arg)
+  ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)  # To disable windows warnings for strcpy, fopen, ...
+  ADD_DEFINITIONS(-D_SCL_SECURE_NO_WARNINGS)  # To disable windows warnings std::copy, std::transform, ...
+  ADD_DEFINITIONS(-DWNT -DWIN32)
+  ADD_DEFINITIONS(-D_WIN32_WINNT=0x0500) # Windows 2000 or later API is required
+  ADD_DEFINITIONS(-DPPRO_NT) # For medfile
+  
+  # Needed to avoid a seg fault at runtime!
+  # The variable is not very well documented but seems to exist
+  SET(CMAKE_Fortran_FLAGS  "/iface:mixed_str_len_arg ${CMAKE_Fortran_FLAGS}")
+ELSE()
+  # Ensure intermediate OBJECT libraries and static libs are built with -fPIC:
+  SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
 ENDIF(WIN32)
-INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/config/cmake_files/FindMPI.cmake)
-#INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/config/cmake_files/FindHDF5.cmake)
-INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/config/cmake_files/medMacros.cmake)
 
-#Creation med_config.h.cmake
-SET(f_content_new "")
-FILE(READ ${CMAKE_CURRENT_SOURCE_DIR}/include/med_config.h.in f_content)
-STRING(REPLACE "\n" ";" list_f_content ${f_content})
-FOREACH(ln ${list_f_content})
-    STRING(REGEX MATCH "#undef.*" flag_name "${ln}")
-    STRING(REPLACE "#undef" "" flag_name "${flag_name}")
-    STRING(STRIP "${flag_name}" flag_name)
-    STRING(LENGTH "${flag_name}" len)
-    IF(${len} GREATER 0)
-        STRING(STRIP "${flag_name}" flag_name)
-        IF("${flag_name}" MATCHES "^F77_FUNC.*")
-           SET(ln "#cmakedefine ${flag_name}@${flag_name}@")
-        ELSE("${flag_name}" MATCHES "^F77_FUNC.*")
-           SET(ln "#cmakedefine ${flag_name} @${flag_name}@")
-        ENDIF("${flag_name}" MATCHES "^F77_FUNC.*")
-    ENDIF(${len} GREATER 0)
-    SET(f_content_new "${f_content_new}${ln}\n")
-ENDFOREACH(ln ${list_f_content})
+## Directories
+IF(WIN32 AND NOT CYGWIN)
+   SET(INSTALL_CMAKE_CONFIG_DIR cmake)
+ELSE()
+   SET(INSTALL_CMAKE_CONFIG_DIR share/cmake/${PROJECT_NAME})
+ENDIF()
+SET(INSTALL_INCLUDE_DIR include)
 
-FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/include/med_config.h.cmake "${f_content_new}")
-FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/include/2.3.6/med_config.h.cmake "${f_content_new}")
+## Pre-requisites detection
+# Detect HDF5 first to potentially retrieve MPI automatically:
+MED_FIND_HDF5()
+MED_FIND_MPI()
 
+IF(MEDFILE_BUILD_PYTHON)
+  FIND_PACKAGE(SWIG REQUIRED)
+  INCLUDE(${SWIG_USE_FILE})
+  FIND_PACKAGE(PythonLibs REQUIRED)
+  FIND_PACKAGE(PythonInterp REQUIRED)  # to get version string ...
+ENDIF()
+
+## Creation of files med_config.h.cmake
+MED_CREATE_CONFIG_FILES()
+
+## Check for various functions
 MED_CHECK_HEADERS()
 MED_CHECK_FUNCTIONS()
 MED_CHECK_SIZE()
 MED_C_FORTRAN_INTERFACE()
 MED_TIME_SYS_TIME()
 
-CONFIGURE_FILE(${CMAKE_CURRENT_BINARY_DIR}/include/med_config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/include/med_config.h)
-CONFIGURE_FILE(${CMAKE_CURRENT_BINARY_DIR}/include/2.3.6/med_config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/include/2.3.6/med_config.h)
+## Configure the files created above
+CONFIGURE_FILE("${PROJECT_BINARY_DIR}/include/med_config.h.cmake" "${PROJECT_BINARY_DIR}/include/med_config.h")
+CONFIGURE_FILE("${PROJECT_BINARY_DIR}/include/2.3.6/med_config.h.cmake" "${PROJECT_BINARY_DIR}/include/2.3.6/med_config.h")
 
+## Sources 
 ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(src)
-#ADD_SUBDIRECTORY(tools)
-#ADD_SUBDIRECTORY(tests)
+#	ADD_SUBDIRECTORY(tools)
+#IF(MEDFILE_BUILD_TESTS)
+#  ADD_SUBDIRECTORY(tests)
+#ENDIF()
+#IF(MEDFILE_BUILD_PYTHON)
+#  ADD_SUBDIRECTORY(python)
+#ENDIF()
 
-#INSTALL(DIRECTORY doc DESTINATION ${CMAKE_INSTALL_PREFIX})
+## Installation of the doc
+#IF(MEDFILE_INSTALL_DOC)
+#  INSTALL(DIRECTORY doc DESTINATION ${CMAKE_INSTALL_PREFIX}/share)
+#ENDIF()
+
+#######################
+## Configuration export
+#######################
+INCLUDE(CMakePackageConfigHelpers)
+
+# Project name, upper case
+STRING(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UC)
+
+# Detect if we are built as a sub-project in a bigger source tree:
+IF("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}")
+  SET(_BUILT_AS_SUB FALSE)
+  MESSAGE(STATUS "Configuring ${PROJECT_NAME} standalone.")
+ELSE()
+  MESSAGE(STATUS "Configuring ${PROJECT_NAME} as a sub-project. No conf files will be installed.")
+  SET(_BUILT_AS_SUB TRUE)
+ENDIF()
+
+# Add all targets to the build-tree export set if we are *not*  
+# built as a sub-folder of a bigger project.
+IF(NOT _BUILT_AS_SUB)
+  IF(CMAKE_Fortran_COMPILER_WORKS)
+    SET(_fortLib med medfwrap)
+    SET(_fortLibS med_static medfwrap_static)
+  ELSE()
+    SET(_fortLib "")
+    SET(_fortLibS "")
+  ENDIF()
+  
+  IF(MEDFILE_BUILD_STATIC_LIBS)
+    EXPORT(TARGETS medC_static ${_fortLibS}
+      FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
+  ENDIF()
+  IF(MEDFILE_BUILD_SHARED_LIBS) 
+    EXPORT(TARGETS medC ${_fortLib}
+      APPEND FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
+  ENDIF()
+  
+ENDIF()
+
+# Create the configuration files:
+#   - in the build tree:
+SET(HDF5_ROOT_DIR "${HDF5_ROOT_DIR}")  # ensure the var exists, even if blank
+SET(MPI_ROOT_DIR "${MPI_ROOT_DIR}")    # ensure the var exists, even if blank
+SET(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/include" "${PROJECT_BINARY_DIR}/include")
+CONFIGURE_PACKAGE_CONFIG_FILE(config/cmake_files/${PROJECT_NAME}Config.cmake.in 
+    ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+    INSTALL_DESTINATION "${INSTALL_CMAKE_CONFIG_DIR}"
+    PATH_VARS CONF_INCLUDE_DIRS INSTALL_CMAKE_CONFIG_DIR CMAKE_INSTALL_PREFIX HDF5_ROOT_DIR MPI_ROOT_DIR)
+
+#   - in the install tree:
+#       Get the relative path of the include directory so 
+#       we can register it in the generated configuration files:
+SET(CONF_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/${INSTALL_INCLUDE_DIR}")
+CONFIGURE_PACKAGE_CONFIG_FILE(config/cmake_files/${PROJECT_NAME}Config.cmake.in 
+    ${PROJECT_BINARY_DIR}/to_install/${PROJECT_NAME}Config.cmake
+    INSTALL_DESTINATION "${INSTALL_CMAKE_CONFIG_DIR}"
+    PATH_VARS CONF_INCLUDE_DIRS INSTALL_CMAKE_CONFIG_DIR CMAKE_INSTALL_PREFIX HDF5_ROOT_DIR MPI_ROOT_DIR)
+
+WRITE_BASIC_PACKAGE_VERSION_FILE(${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+    VERSION ${MED_STR_VERSION}
+    COMPATIBILITY AnyNewerVersion)
+  
+# Install the CMake configuration files:
+INSTALL(FILES
+  "${PROJECT_BINARY_DIR}/to_install/${PROJECT_NAME}Config.cmake"
+  "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+  DESTINATION "${INSTALL_CMAKE_CONFIG_DIR}")
+
+# Install the export set for use within the install-tree
+IF(NOT _BUILT_AS_SUB)
+  INSTALL(EXPORT medfileTargets DESTINATION "${INSTALL_CMAKE_CONFIG_DIR}" FILE ${PROJECT_NAME}Targets.cmake)
+ENDIF()
+

@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -41,7 +41,7 @@ med_err
 MEDinterpBaseFunctionRd( const med_idt          fid,
 			 const char*      const interpname,
 			 const int              basisfuncit,
-			       med_int*         ncoef,
+			       med_int*   const ncoef,
 			       med_int*   const power,
 			       med_float* const coefficient)
 {

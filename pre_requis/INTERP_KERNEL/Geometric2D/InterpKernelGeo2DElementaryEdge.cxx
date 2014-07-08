@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,6 +21,7 @@
 #include "InterpKernelGeo2DElementaryEdge.hxx"
 #include "InterpKernelException.hxx"
 #include "InterpKernelGeo2DEdge.hxx"
+#include "InterpKernelGeo2DComposedEdge.hxx"
 
 using namespace INTERP_KERNEL;
 
@@ -137,7 +138,7 @@ TypeOfEdgeLocInPolygon ElementaryEdge::locateFullyMySelf(const ComposedEdge& pol
 
 TypeOfEdgeLocInPolygon ElementaryEdge::locateFullyMySelfAbsolute(const ComposedEdge& pol) const
 {
-  Node *node=_ptr->buildRepresentantOfMySelf();
+  Node *node=_ptr->buildRepresentantOfMySelf(); // build barycenter used to detect if the edge is IN or OUT
   if(pol.isInOrOut(node))
     declareIn(); 
   else
@@ -222,10 +223,9 @@ void ElementaryEdge::fillGlobalInfoAbs2(const std::map<INTERP_KERNEL::Node *,int
 }
 
 /*!
- * This method builds from descending conn of a quadratic polygon stored in crude mode (MEDCoupling). Descending conn is in FORTRAN relative mode in order to give the
- * orientation of edge. Called by QuadraticPolygon::buildFromCrudeDataArray.
+ * This method builds from a \a start node, an \a end node and a direction a new ElementaryEdge.
  */
-ElementaryEdge *ElementaryEdge::BuildEdgeFromCrudeDataArray(bool direction, INTERP_KERNEL::Node *start, INTERP_KERNEL::Node *end)
+ElementaryEdge *ElementaryEdge::BuildEdgeFromStartEndDir(bool direction, INTERP_KERNEL::Node *start, INTERP_KERNEL::Node *end)
 {
   Edge *ptr=Edge::BuildEdgeFrom(start,end);
   return new ElementaryEdge(ptr,direction);

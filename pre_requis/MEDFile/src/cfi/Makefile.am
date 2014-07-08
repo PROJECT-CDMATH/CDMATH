@@ -10,3 +10,6 @@ libcfi_la_SOURCES   += MEDversionedApi3F.cxx
 if WITHPMED
 libcfi_la_SOURCES   +=  parfilecf.c 
 endif
+
+EXTRA_DIST = CMakeLists.txt
+

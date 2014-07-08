@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -87,6 +87,10 @@ pour tester la présence d'un fichier */
 /* H5Fset_mdc_config(_fid, &config); */
 
   _MEDsetModeAcces(_fid,accessmode);
+  /* Si le fichier _fid ne possède pas la structure MED_INFOS;
+     le fichier est considéré en version 0.0.0 mais n'est pas inscrit
+     en cache de version.
+  */
   _MEDfileVersion(_fid);
 
  ERROR:

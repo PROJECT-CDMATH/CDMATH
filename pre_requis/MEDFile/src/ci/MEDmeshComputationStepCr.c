@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -39,9 +39,9 @@
 med_err
 MEDmeshComputationStepCr(const med_idt fid,
 			 const char * const meshname,
-			 const med_int numdt1, 
+			 const med_int numdt1,
 			 const med_int numit1,
-			 const med_int numdt2, 
+			 const med_int numdt2,
 			 const med_int numit2,
 			 const med_float dt2 )
 {

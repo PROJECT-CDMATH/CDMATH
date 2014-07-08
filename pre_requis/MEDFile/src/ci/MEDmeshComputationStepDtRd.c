@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -26,9 +26,9 @@
 med_err
 MEDmeshComputationStepDtRd(const med_idt fid,
 			   const char * const meshname,
-			   const med_int numdt, 
-			   const med_int numit, 
-			   med_float * dt )
+			   const med_int numdt,
+			   const med_int numit,
+			   med_float * const dt )
 {
 
   med_err  _ret=-1;
@@ -42,7 +42,7 @@ MEDmeshComputationStepDtRd(const med_idt fid,
    * On inhibe le gestionnaire d'erreur
    */
   _MEDmodeErreurVerrouiller();
-
+  *dt=0.0;
 
   strcat( _meshpath, meshname);
   if ((_meshid = _MEDdatagroupOuvrir(fid,_meshpath)) < 0) {
@@ -73,7 +73,7 @@ MEDmeshComputationStepDtRd(const med_idt fid,
   }
 
   /*Cree ou ouvre l'attribut MED_NOM_PDT pour lecture */
-  if ( _MEDattrFloatLire(_datagroup1,MED_NOM_PDT,&dt) < 0) {
+  if ( _MEDattrFloatLire(_datagroup1,MED_NOM_PDT,dt) < 0) {
     MED_ERR_(_ret,MED_ERR_READ,MED_ERR_ATTRIBUTE,MED_ERR_MESH_MSG);
     SSCRUTE(meshname);SSCRUTE(_meshpath);SSCRUTE(MED_NOM_PDT);
     RSCRUTE(*dt);goto ERROR;

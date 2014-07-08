@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -42,58 +42,60 @@ namespace ParaMEDMEM
 namespace ParaMEDMEM
 {
   typedef enum
-    {
-      IK_ONLY_PREFERED = 0,
-      NOT_IK_ONLY_PREFERED = 1,
-      IK_ONLY_FORCED = 2,
-      NOT_IK_ONLY_FORCED =3
-    } InterpolationMatrixPolicy;
+  {
+    IK_ONLY_PREFERED = 0,
+    NOT_IK_ONLY_PREFERED = 1,
+    IK_ONLY_FORCED = 2,
+    NOT_IK_ONLY_FORCED =3
+  } InterpolationMatrixPolicy;
 
   class MEDCouplingRemapper : public TimeLabel, public INTERP_KERNEL::InterpolationOptions
   {
   public:
     MEDCOUPLINGREMAPPER_EXPORT MEDCouplingRemapper();
     MEDCOUPLINGREMAPPER_EXPORT ~MEDCouplingRemapper();
-    MEDCOUPLINGREMAPPER_EXPORT int prepare(const MEDCouplingMesh *srcMesh, const MEDCouplingMesh *targetMesh, const char *method) throw(INTERP_KERNEL::Exception);
-    MEDCOUPLINGREMAPPER_EXPORT int prepareEx(const MEDCouplingFieldTemplate *src, const MEDCouplingFieldTemplate *target) throw(INTERP_KERNEL::Exception);
-    MEDCOUPLINGREMAPPER_EXPORT void transfer(const MEDCouplingFieldDouble *srcField, MEDCouplingFieldDouble *targetField, double dftValue) throw(INTERP_KERNEL::Exception);
-    MEDCOUPLINGREMAPPER_EXPORT void partialTransfer(const MEDCouplingFieldDouble *srcField, MEDCouplingFieldDouble *targetField) throw(INTERP_KERNEL::Exception);
-    MEDCOUPLINGREMAPPER_EXPORT void reverseTransfer(MEDCouplingFieldDouble *srcField, const MEDCouplingFieldDouble *targetField, double dftValue) throw(INTERP_KERNEL::Exception);
-    MEDCOUPLINGREMAPPER_EXPORT MEDCouplingFieldDouble *transferField(const MEDCouplingFieldDouble *srcField, double dftValue) throw(INTERP_KERNEL::Exception);
-    MEDCOUPLINGREMAPPER_EXPORT MEDCouplingFieldDouble *reverseTransferField(const MEDCouplingFieldDouble *targetField, double dftValue) throw(INTERP_KERNEL::Exception);
+    MEDCOUPLINGREMAPPER_EXPORT int prepare(const MEDCouplingMesh *srcMesh, const MEDCouplingMesh *targetMesh, const std::string& method);
+    MEDCOUPLINGREMAPPER_EXPORT int prepareEx(const MEDCouplingFieldTemplate *src, const MEDCouplingFieldTemplate *target);
+    MEDCOUPLINGREMAPPER_EXPORT void transfer(const MEDCouplingFieldDouble *srcField, MEDCouplingFieldDouble *targetField, double dftValue);
+    MEDCOUPLINGREMAPPER_EXPORT void partialTransfer(const MEDCouplingFieldDouble *srcField, MEDCouplingFieldDouble *targetField);
+    MEDCOUPLINGREMAPPER_EXPORT void reverseTransfer(MEDCouplingFieldDouble *srcField, const MEDCouplingFieldDouble *targetField, double dftValue);
+    MEDCOUPLINGREMAPPER_EXPORT MEDCouplingFieldDouble *transferField(const MEDCouplingFieldDouble *srcField, double dftValue);
+    MEDCOUPLINGREMAPPER_EXPORT MEDCouplingFieldDouble *reverseTransferField(const MEDCouplingFieldDouble *targetField, double dftValue);
     MEDCOUPLINGREMAPPER_EXPORT bool setOptionInt(const std::string& key, int value);
     MEDCOUPLINGREMAPPER_EXPORT bool setOptionDouble(const std::string& key, double value);
     MEDCOUPLINGREMAPPER_EXPORT bool setOptionString(const std::string& key, const std::string& value);
     MEDCOUPLINGREMAPPER_EXPORT int getInterpolationMatrixPolicy() const;
-    MEDCOUPLINGREMAPPER_EXPORT void setInterpolationMatrixPolicy(int newInterpMatPol) throw(INTERP_KERNEL::Exception);
+    MEDCOUPLINGREMAPPER_EXPORT void setInterpolationMatrixPolicy(int newInterpMatPol);
     //
-    MEDCOUPLINGREMAPPER_EXPORT int nullifiedTinyCoeffInCrudeMatrixAbs(double maxValAbs) throw(INTERP_KERNEL::Exception);
-    MEDCOUPLINGREMAPPER_EXPORT int nullifiedTinyCoeffInCrudeMatrix(double scaleFactor) throw(INTERP_KERNEL::Exception);
-    MEDCOUPLINGREMAPPER_EXPORT double getMaxValueInCrudeMatrix() const throw(INTERP_KERNEL::Exception);
+    MEDCOUPLINGREMAPPER_EXPORT int nullifiedTinyCoeffInCrudeMatrixAbs(double maxValAbs);
+    MEDCOUPLINGREMAPPER_EXPORT int nullifiedTinyCoeffInCrudeMatrix(double scaleFactor);
+    MEDCOUPLINGREMAPPER_EXPORT double getMaxValueInCrudeMatrix() const;
   public:
     MEDCOUPLINGREMAPPER_EXPORT const std::vector<std::map<int,double> >& getCrudeMatrix() const;
+    MEDCOUPLINGREMAPPER_EXPORT int getNumberOfColsOfMatrix() const;
     MEDCOUPLINGREMAPPER_EXPORT static void PrintMatrix(const std::vector<std::map<int,double> >& m);
+    MEDCOUPLINGREMAPPER_EXPORT static std::string BuildMethodFrom(const std::string& meth1, const std::string& meth2);
   private:
-    int prepareInterpKernelOnly() throw(INTERP_KERNEL::Exception);
-    int prepareInterpKernelOnlyUU() throw(INTERP_KERNEL::Exception);
-    int prepareInterpKernelOnlyEE() throw(INTERP_KERNEL::Exception);
-    int prepareInterpKernelOnlyUC() throw(INTERP_KERNEL::Exception);
-    int prepareInterpKernelOnlyCU() throw(INTERP_KERNEL::Exception);
-    int prepareInterpKernelOnlyCC() throw(INTERP_KERNEL::Exception);
+    int prepareInterpKernelOnly();
+    int prepareInterpKernelOnlyUU();
+    int prepareInterpKernelOnlyEE();
+    int prepareInterpKernelOnlyUC();
+    int prepareInterpKernelOnlyCU();
+    int prepareInterpKernelOnlyCC();
     //
-    int prepareNotInterpKernelOnly() throw(INTERP_KERNEL::Exception);
-    int prepareNotInterpKernelOnlyGaussGauss() throw(INTERP_KERNEL::Exception);
+    int prepareNotInterpKernelOnly();
+    int prepareNotInterpKernelOnlyGaussGauss();
     //
-    static int CheckInterpolationMethodManageableByNotOnlyInterpKernel(const std::string& method) throw(INTERP_KERNEL::Exception);
+    static int CheckInterpolationMethodManageableByNotOnlyInterpKernel(const std::string& method);
     //
-    bool isInterpKernelOnlyOrNotOnly() const throw(INTERP_KERNEL::Exception);
+    bool isInterpKernelOnlyOrNotOnly() const;
     void updateTime() const;
-    void checkPrepare() const throw(INTERP_KERNEL::Exception);
-    std::string checkAndGiveInterpolationMethodStr(std::string& srcMeth, std::string& trgMeth) const throw(INTERP_KERNEL::Exception);
+    void checkPrepare() const;
+    std::string checkAndGiveInterpolationMethodStr(std::string& srcMeth, std::string& trgMeth) const;
     void releaseData(bool matrixSuppression);
-    void transferUnderground(const MEDCouplingFieldDouble *srcField, MEDCouplingFieldDouble *targetField, bool isDftVal, double dftValue) throw(INTERP_KERNEL::Exception);
+    void transferUnderground(const MEDCouplingFieldDouble *srcField, MEDCouplingFieldDouble *targetField, bool isDftVal, double dftValue);
     void computeDeno(NatureOfField nat, const MEDCouplingFieldDouble *srcField, const MEDCouplingFieldDouble *trgField);
-    void computeDenoFromScratch(NatureOfField nat, const MEDCouplingFieldDouble *srcField, const MEDCouplingFieldDouble *trgField) throw(INTERP_KERNEL::Exception);
+    void computeDenoFromScratch(NatureOfField nat, const MEDCouplingFieldDouble *srcField, const MEDCouplingFieldDouble *trgField);
     void computeProduct(const double *inputPointer, int inputNbOfCompo, bool isDftVal, double dftValue, double *resPointer);
     void computeReverseProduct(const double *inputPointer, int inputNbOfCompo, double dftValue, double *resPointer);
     void buildFinalInterpolationMatrixByConvolution(const std::vector< std::map<int,double> >& m1D,

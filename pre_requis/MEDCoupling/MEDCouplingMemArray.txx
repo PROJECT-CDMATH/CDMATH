@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,6 +27,7 @@
 #include "InterpolationUtils.hxx"
 
 #include <sstream>
+#include <cstdlib>
 #include <algorithm>
 
 namespace ParaMEDMEM
@@ -51,18 +52,18 @@ namespace ParaMEDMEM
     if(!other._pointer.isNull())
       {
         _nb_of_elem_alloc=other._nb_of_elem;
-        T *pointer=new T[_nb_of_elem_alloc];
+        T *pointer=(T*)malloc(_nb_of_elem_alloc*sizeof(T));
         std::copy(other._pointer.getConstPointer(),other._pointer.getConstPointer()+other._nb_of_elem,pointer);
-        useArray(pointer,true,CPP_DEALLOC,other._nb_of_elem);
+        useArray(pointer,true,C_DEALLOC,other._nb_of_elem);
       }
   }
 
   template<class T>
   void MemArray<T>::useArray(const T *array, bool ownership, DeallocType type, std::size_t nbOfElem)
   {
+    destroy();
     _nb_of_elem=nbOfElem;
     _nb_of_elem_alloc=nbOfElem;
-    destroy();
     if(ownership)
       _pointer.setInternal(const_cast<T *>(array));
     else
@@ -74,14 +75,14 @@ namespace ParaMEDMEM
   template<class T>
   void MemArray<T>::useExternalArrayWithRWAccess(const T *array, std::size_t nbOfElem)
   {
+    destroy();
     _nb_of_elem=nbOfElem;
     _nb_of_elem_alloc=nbOfElem;
-    destroy();
     _pointer.setInternal(const_cast<T *>(array));
     _ownership=false;
     _dealloc=CPPDeallocator;
   }
-  
+
   template<class T>
   void MemArray<T>::writeOnPlace(std::size_t id, T element0, const T *others, std::size_t sizeOfOthers)
   {
@@ -92,7 +93,7 @@ namespace ParaMEDMEM
     std::copy(others,others+sizeOfOthers,pointer+id+1);
     _nb_of_elem=std::max<std::size_t>(_nb_of_elem,id+sizeOfOthers+1);
   }
-  
+
   template<class T>
   template<class InputIterator>
   void MemArray<T>::insertAtTheEnd(InputIterator first, InputIterator last)
@@ -100,7 +101,7 @@ namespace ParaMEDMEM
     T *pointer=_pointer.getPointer();
     while(first!=last)
       {
-        if(_nb_of_elem>=_nb_of_elem_alloc || _nb_of_elem==0)
+        if(_nb_of_elem>=_nb_of_elem_alloc)
           {
             reserve(_nb_of_elem_alloc>0?2*_nb_of_elem_alloc:1);
             pointer=_pointer.getPointer();
@@ -108,18 +109,18 @@ namespace ParaMEDMEM
         pointer[_nb_of_elem++]=*first++;
       }
   }
-  
+
   template<class T>
-  void MemArray<T>::pushBack(T elem) throw(INTERP_KERNEL::Exception)
+  void MemArray<T>::pushBack(T elem)
   {
     if(_nb_of_elem>=_nb_of_elem_alloc)
       reserve(_nb_of_elem_alloc>0?2*_nb_of_elem_alloc:1);
     T *pt=getPointer();
     pt[_nb_of_elem++]=elem;
   }
-  
+
   template<class T>
-  T MemArray<T>::popBack() throw(INTERP_KERNEL::Exception)
+  T MemArray<T>::popBack()
   {
     if(_nb_of_elem>0)
       {
@@ -128,12 +129,11 @@ namespace ParaMEDMEM
       }
     throw INTERP_KERNEL::Exception("MemArray::popBack : nothing to pop in array !");
   }
-  
+
   template<class T>
   void MemArray<T>::pack() const
   {
-    if(_nb_of_elem>=0)
-      (const_cast<MemArray<T> * >(this))->reserve(_nb_of_elem);
+    (const_cast<MemArray<T> * >(this))->reserve(_nb_of_elem);
   }
 
   template<class T>
@@ -180,7 +180,7 @@ namespace ParaMEDMEM
       {
         if(sl!=0)
           stream << _nb_of_elem/sl << std::endl << "Internal memory facts : " << _nb_of_elem << "/" << _nb_of_elem_alloc;
-       else
+        else
           stream << "Empty Data";
       }
     else
@@ -192,7 +192,7 @@ namespace ParaMEDMEM
       stream << "No data !\n";
     return ret;
   }
-  
+
   /*!
    * \param [in] sl is typically the number of components
    */
@@ -217,7 +217,7 @@ namespace ParaMEDMEM
           stream << "Empty Data\n";
       }
   }
-  
+
   /*!
    * \param [in] sl is typically the number of components
    */
@@ -257,14 +257,14 @@ namespace ParaMEDMEM
     else
       stream << "No data !\n";
   }
-  
+
   template<class T>
   void MemArray<T>::fillWithValue(const T& val)
   {
     T *pt=_pointer.getPointer();
     std::fill(pt,pt+_nb_of_elem,val);
   }
-  
+
   template<class T>
   T *MemArray<T>::fromNoInterlace(int nbOfComp) const
   {
@@ -272,14 +272,14 @@ namespace ParaMEDMEM
       throw INTERP_KERNEL::Exception("MemArray<T>::fromNoInterlace : number of components must be > 0 !");
     const T *pt=_pointer.getConstPointer();
     std::size_t nbOfTuples=_nb_of_elem/nbOfComp;
-    T *ret=new T[_nb_of_elem];
+    T *ret=(T*)malloc(_nb_of_elem*sizeof(T));
     T *w=ret;
     for(std::size_t i=0;i<nbOfTuples;i++)
       for(int j=0;j<nbOfComp;j++,w++)
         *w=pt[j*nbOfTuples+i];
     return ret;
   }
-  
+
   template<class T>
   T *MemArray<T>::toNoInterlace(int nbOfComp) const
   {
@@ -287,7 +287,7 @@ namespace ParaMEDMEM
       throw INTERP_KERNEL::Exception("MemArray<T>::toNoInterlace : number of components must be > 0 !");
     const T *pt=_pointer.getConstPointer();
     std::size_t nbOfTuples=_nb_of_elem/nbOfComp;
-    T *ret=new T[_nb_of_elem];
+    T *ret=(T*)malloc(_nb_of_elem*sizeof(T));
     T *w=ret;
     for(int i=0;i<nbOfComp;i++)
       for(std::size_t j=0;j<nbOfTuples;j++,w++)
@@ -333,16 +333,14 @@ namespace ParaMEDMEM
   }
 
   template<class T>
-  void MemArray<T>::alloc(std::size_t nbOfElements) throw(INTERP_KERNEL::Exception)
+  void MemArray<T>::alloc(std::size_t nbOfElements)
   {
     destroy();
-    if(nbOfElements<0)
-      throw INTERP_KERNEL::Exception("MemArray::alloc : request for negative length of data !");
     _nb_of_elem=nbOfElements;
     _nb_of_elem_alloc=nbOfElements;
-    _pointer.setInternal(new T[_nb_of_elem_alloc]);
+    _pointer.setInternal((T*)malloc(_nb_of_elem_alloc*sizeof(T)));
     _ownership=true;
-    _dealloc=CPPDeallocator;
+    _dealloc=CDeallocator;
   }
 
   /*!
@@ -355,21 +353,19 @@ namespace ParaMEDMEM
    * So this method should not be confused with MemArray<T>::reserve that is close to MemArray<T>::reAlloc but not same.
    */
   template<class T>
-  void MemArray<T>::reserve(std::size_t newNbOfElements) throw(INTERP_KERNEL::Exception)
+  void MemArray<T>::reserve(std::size_t newNbOfElements)
   {
-    if(newNbOfElements<0)
-      throw INTERP_KERNEL::Exception("MemArray::reAlloc : request for negative length of data !");
     if(_nb_of_elem_alloc==newNbOfElements)
       return ;
-    T *pointer=new T[newNbOfElements];
+    T *pointer=(T*)malloc(newNbOfElements*sizeof(T));
     std::copy(_pointer.getConstPointer(),_pointer.getConstPointer()+std::min<std::size_t>(_nb_of_elem,newNbOfElements),pointer);
     if(_ownership)
-      destroyPointer(const_cast<T *>(_pointer.getConstPointer()),_dealloc,_param_for_deallocator);//Do not use getPointer because in case of _external
+      DestroyPointer(const_cast<T *>(_pointer.getConstPointer()),_dealloc,_param_for_deallocator);//Do not use getPointer because in case of _external
     _pointer.setInternal(pointer);
     _nb_of_elem=std::min<std::size_t>(_nb_of_elem,newNbOfElements);
     _nb_of_elem_alloc=newNbOfElements;
     _ownership=true;
-    _dealloc=CPPDeallocator;
+    _dealloc=CDeallocator;
     _param_for_deallocator=0;
   }
 
@@ -381,21 +377,19 @@ namespace ParaMEDMEM
    * So this method should not be confused with MemArray<T>::reserve that is close to MemArray<T>::reAlloc but not same.
    */
   template<class T>
-  void MemArray<T>::reAlloc(std::size_t newNbOfElements) throw(INTERP_KERNEL::Exception)
+  void MemArray<T>::reAlloc(std::size_t newNbOfElements)
   {
-    if(newNbOfElements<0)
-      throw INTERP_KERNEL::Exception("MemArray::reAlloc : request for negative length of data !");
     if(_nb_of_elem==newNbOfElements)
       return ;
-    T *pointer=new T[newNbOfElements];
+    T *pointer=(T*)malloc(newNbOfElements*sizeof(T));
     std::copy(_pointer.getConstPointer(),_pointer.getConstPointer()+std::min<std::size_t>(_nb_of_elem,newNbOfElements),pointer);
     if(_ownership)
-      destroyPointer(const_cast<T *>(_pointer.getConstPointer()),_dealloc,_param_for_deallocator);//Do not use getPointer because in case of _external
+      DestroyPointer(const_cast<T *>(_pointer.getConstPointer()),_dealloc,_param_for_deallocator);//Do not use getPointer because in case of _external
     _pointer.setInternal(pointer);
     _nb_of_elem=newNbOfElements;
     _nb_of_elem_alloc=newNbOfElements;
     _ownership=true;
-    _dealloc=CPPDeallocator;
+    _dealloc=CDeallocator;
     _param_for_deallocator=0;
   }
 
@@ -412,21 +406,21 @@ namespace ParaMEDMEM
   }
 
   template<class T>
-  typename MemArray<T>::Deallocator MemArray<T>::BuildFromType(DeallocType type) throw(INTERP_KERNEL::Exception)
+  typename MemArray<T>::Deallocator MemArray<T>::BuildFromType(DeallocType type)
   {
     switch(type)
-      {
+    {
       case CPP_DEALLOC:
         return CPPDeallocator;
       case C_DEALLOC:
         return CDeallocator;
       default:
         throw INTERP_KERNEL::Exception("Invalid deallocation requested ! Unrecognized enum DeallocType !");
-      }
+    }
   }
 
   template<class T>
-  void MemArray<T>::destroyPointer(T *pt, typename MemArray<T>::Deallocator dealloc, void *param)
+  void MemArray<T>::DestroyPointer(T *pt, typename MemArray<T>::Deallocator dealloc, void *param)
   {
     if(dealloc)
       dealloc(pt,param);
@@ -436,13 +430,15 @@ namespace ParaMEDMEM
   void MemArray<T>::destroy()
   {
     if(_ownership)
-      destroyPointer(const_cast<T *>(_pointer.getConstPointer()),_dealloc,_param_for_deallocator);//Do not use getPointer because in case of _external
+      DestroyPointer(const_cast<T *>(_pointer.getConstPointer()),_dealloc,_param_for_deallocator);//Do not use getPointer because in case of _external
     _pointer.null();
     _ownership=false;
     _dealloc=NULL;
     _param_for_deallocator=NULL;
+    _nb_of_elem=0;
+    _nb_of_elem_alloc=0;
   }
-  
+
   template<class T>
   MemArray<T> &MemArray<T>::operator=(const MemArray<T>& other)
   {

@@ -42,7 +42,7 @@ class Face
 	 * @param measure : The measure of this cell
 	 * @param p : The barycenter of this cell
 	 */
-	Face( const int numberOfNodes, const int numberOfCells, const double measure, const Point p ) ;
+	Face( const int numberOfNodes, const int numberOfCells, const double measure, const Point p, double xN, double yN, double zN ) ;
 
 	/**
 	 * destructor
@@ -140,6 +140,18 @@ class Face
 	 * @param face : The face object to be copied
 	 */
 	const Face& operator= ( const Face& face ) ;
+
+	double getXN(void) const ;
+
+	double getYN(void) const ;
+
+	double getZN(void) const ;
+
+	double _xN;
+
+	double _yN;
+
+	double _zN;
 
     private: //----------------------------------------------------------------
 

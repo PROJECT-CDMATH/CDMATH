@@ -8,7 +8,8 @@ INCLUDE_DIRECTORIES(
   ${PRE_REQUIS_DIR}/INTERP_KERNEL/Bases
   ${MESH_DIR}/inc 
   ${BASE_DIR}/inc 
-  ${MED_COUPLING_DIR}
+  ${PETSC_INCLUDES}
+  ${LINEARSOLVER_DIR}/inc
   )
 
 SET(TestMesh_SOURCES
@@ -20,6 +21,7 @@ SET(TestMesh_SOURCES
   MeshTests.cxx
   DoubleTabTests.cxx
   IntTabTests.cxx
+  LinearSolver.cxx
   )
 
 SET(MAILLAGE_MED

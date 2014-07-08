@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -105,8 +105,7 @@ UnitDataBase::UnitDataBase()
     }
 }
 
-const short *UnitDataBase::getInfoForUnit(const std::string& unit,
-                                          double& addFact, double& mFact) const throw(INTERP_KERNEL::Exception)
+const short *UnitDataBase::getInfoForUnit(const std::string& unit, double& addFact, double& mFact) const
 {
   std::size_t lgth=unit.length();
   std::string work,work2;
@@ -213,7 +212,7 @@ bool DecompositionInUnitBase::isUnitary() const
   return areDoubleEquals(_add_to_base,0.) && areDoubleEquals(_mult_fact_to_base,1.);
 }
 
-void DecompositionInUnitBase::tryToConvertInUnit(double val) throw(INTERP_KERNEL::Exception)
+void DecompositionInUnitBase::tryToConvertInUnit(double val)
 {
   int valI=(int)val;
   if((val-(double)valI)!=0.)
@@ -247,7 +246,7 @@ DecompositionInUnitBase &DecompositionInUnitBase::operator/(const DecompositionI
  return *this;
 }
 
-DecompositionInUnitBase &DecompositionInUnitBase::operator^(const DecompositionInUnitBase& other) throw(INTERP_KERNEL::Exception)
+DecompositionInUnitBase &DecompositionInUnitBase::operator^(const DecompositionInUnitBase& other)
 {
   if(!other.isAdimensional())
     throw INTERP_KERNEL::Exception("Trying to execute operator ^ with a second member not adimensionnal");
@@ -296,7 +295,7 @@ bool DecompositionInUnitBase::areDoubleEquals(double a, double b)
   return fabs((a-b)/ref)<1e-7;
 }
 
-int DecompositionInUnitBase::couldItBeConsideredAsInt(double val) throw(INTERP_KERNEL::Exception)
+int DecompositionInUnitBase::couldItBeConsideredAsInt(double val)
 {
   int ret=(int)val;
   double valT=(double) ret;

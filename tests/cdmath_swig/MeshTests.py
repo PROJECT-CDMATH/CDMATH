@@ -85,16 +85,17 @@ class MeshTest(unittest.TestCase):
 
         conc1=Field("CONCENTRATION",CELLS,M,2,1.2) ;
         self.assertTrue( 1.2==conc1.getTime() );
-        for i in range(conc1.getNumberOfElements()):
-            conc1[0,i]=i*1.0;
-            pass
+        for j in range(conc1.getNumberOfComponents()):
+	        for i in range(conc1.getNumberOfElements()):
+	            conc1[i,j]=i+j;
 
         conc1n=Field("CONCENTRATION",NODES,M,2,1.2) ;
         self.assertTrue( 1.2==conc1n.getTime() );
-        for i in range(conc1n.getNumberOfElements()):
-            conc1n[0,i]=i*1.0;
-            pass
+        for j in range(conc1n.getNumberOfComponents()):
+	        for i in range(conc1n.getNumberOfElements()):
+	            conc1n[i,j]=i;
 
+        
         fileNameVTK="champc";
         conc1.writeVTK(fileNameVTK);
 
@@ -120,7 +121,7 @@ class MeshTest(unittest.TestCase):
         for i in range(conc1n.getNumberOfElements()):
             self.assertTrue( 1.0*i==conc1n[i] );
             pass
-            
+
         self.assertTrue( 2==conc1n.getNumberOfComponents() );
         self.assertTrue( 66==conc1n.getNumberOfElements() );
         self.assertTrue( 2.3==conc1n.getTime() );
@@ -128,12 +129,12 @@ class MeshTest(unittest.TestCase):
         conc6=Field("CONCENTRATION",NODES,M,2);
         for i in range(conc6.getNumberOfComponents()):
             for j in range(conc6.getNumberOfElements()):
-                conc6[i,j]=i*1.0+2.*j;
+                conc6[j,i]=i*1.0+2.*j;
                 pass
             pass
         for i in range(conc6.getNumberOfComponents()):
             for j in range(conc6.getNumberOfElements()):
-                self.assertTrue( 1.0*i+2.*j == conc6[i,j] );
+                self.assertTrue( 1.0*i+2.*j == conc6[j,i] );
                 self.assertTrue( 1.0*i+2.*j == conc6.getValues()[i+j*conc6.getNumberOfComponents()] );
                 pass
             pass
@@ -141,12 +142,12 @@ class MeshTest(unittest.TestCase):
         conc6=Field("CONCENTRATION",CELLS,M,2);
         for i in range(conc6.getNumberOfComponents()):
             for j in range(conc6.getNumberOfElements()):
-                conc6[i,j]=i*1.0+2.*j;
+                conc6[j,i]=i*1.0+2.*j;
                 pass
             pass
         for i in range(conc6.getNumberOfComponents()):
             for j in range(conc6.getNumberOfElements()):
-                self.assertTrue( 1.0*i+2.*j == conc6[i,j] );
+                self.assertTrue( 1.0*i+2.*j == conc6[j,i] );
                 self.assertTrue( 1.0*i+2.*j == conc6.getValues()[i+j*conc6.getNumberOfComponents()] );
                 pass
             pass
@@ -156,11 +157,12 @@ class MeshTest(unittest.TestCase):
 
         conc3=conc1 ;
         for i in range(conc3.getNumberOfElements()):
-            conc3[0,i]=i*1.0;
+            conc3[i,0]=i*1.0;
             pass
 
         x=conc3[2];
         self.assertTrue(x==2.0);
+
 
         for i in range(conc3.getNumberOfElements()):
             self.assertTrue( 1.0*i == conc3[i] );
@@ -185,13 +187,13 @@ class MeshTest(unittest.TestCase):
         conc6=conc1;
         conc6+=conc1;
         for i in range(conc6.getNumberOfElements()):
-            self.assertTrue( 2.0*i == conc6[0,i] );
+            self.assertTrue( 2.0*i == conc6[i,0] );
             pass
         self.assertTrue( 2 == conc6.getNumberOfComponents() );
         self.assertTrue( 50 == conc6.getNumberOfElements() );
 
         for i in range(conc6.getNumberOfElements()):
-            conc6[0,i]=i*1.0;
+            conc6[i,0]=i*1.0;
             pass
         conc6*=2.0;
         for i in range(conc6.getNumberOfElements()):
@@ -199,25 +201,25 @@ class MeshTest(unittest.TestCase):
         self.assertTrue( 2 == conc6.getNumberOfComponents() );
         self.assertTrue( 50 == conc6.getNumberOfElements() );
 
-        conc7=Field("CONCENTRATION",NODES,M,2) ;
-        conc7.setField(conc1n.getField());
-        conc7.setName("CONC")
-        self.assertTrue( conc7.getName() == "CONC" );
-        for i in range(conc7.getNumberOfElements()):
-            self.assertTrue( conc1n[i] == conc7[i] );
-            pass
-        self.assertTrue( 2 == conc7.getNumberOfComponents() );
-        self.assertTrue( 66 == conc7.getNumberOfElements() );
+#       conc7=Field("CONCENTRATION",NODES,M,2) ;
+#        conc7.setFieldByMEDCouplingFieldDouble(conc1n.getField());
+#        conc7.setName("CONC")
+#        self.assertTrue( conc7.getName() == "CONC" );
+#        for i in range(conc7.getNumberOfElements()):
+#            self.assertTrue( conc1n[i] == conc7[i] );
+#            pass
+#        self.assertTrue( 2 == conc7.getNumberOfComponents() );
+#        self.assertTrue( 66 == conc7.getNumberOfElements() );
 
-        conc7=Field("CONCENTRATION",CELLS,M,2) ;
-        conc7.setField(conc1.getField());
-        conc7.setName("CONC")
-        self.assertTrue( conc7.getName() == "CONC" );
-        for i in range(conc7.getNumberOfElements()):
-            self.assertTrue( conc1[i] == conc7[i] );
-            pass
-        self.assertTrue( 2 == conc7.getNumberOfComponents() );
-        self.assertTrue( 50 == conc7.getNumberOfElements() );
+#        conc7=Field("CONCENTRATION",CELLS,M,2) ;
+#        conc7.setFieldByMEDCouplingFieldDouble(conc1.getField());
+#        conc7.setName("CONC")
+#        self.assertTrue( conc7.getName() == "CONC" );
+#        for i in range(conc7.getNumberOfElements()):
+#            self.assertTrue( conc1[i] == conc7[i] );
+#            pass
+#        self.assertTrue( 2 == conc7.getNumberOfComponents() );
+#        self.assertTrue( 50 == conc7.getNumberOfElements() );
 
         conc8=Field("CONCENTRATION",CELLS,M) ;
         for i in range(conc8.getNumberOfElements()):
@@ -364,7 +366,7 @@ class MeshTest(unittest.TestCase):
 
     def testClassFace(self):
         p=Point(0,1,2);
-        f1=Face(2,2,1.0,p);
+        f1=Face(2,2,1.0,p,1.,2.,3.);
         f=Face();
         f=f1;
         self.assertTrue( 1.0==f.getMeasure() );
@@ -509,7 +511,7 @@ class MeshTest(unittest.TestCase):
         import os
         print os.getcwd()
         M1=Mesh(0.0,1.0,4);
-        self.assertTrue( 1==M1.getDim() );
+        self.assertTrue( 1==M1.getSpaceDimension() );
         self.assertTrue( 5==M1.getNumberOfNodes() );
         self.assertTrue( 4==M1.getNumberOfCells() );
         self.assertTrue( 5==M1.getNumberOfFaces() );
@@ -519,13 +521,13 @@ class MeshTest(unittest.TestCase):
         yinf=0.0;
         ysup=4.0;
         M2=Mesh(xinf,xsup,4,yinf,ysup,4);
-        self.assertTrue( 4==M2.getNx() );
-        self.assertTrue( 4==M2.getNy() );
-        self.assertTrue( 0==M2.getNz() );
-        self.assertTrue( 2==M2.getDim() );
-        self.assertTrue( 25==M2.getNumberOfNodes() );
-        self.assertTrue( 16==M2.getNumberOfCells() );
-        self.assertTrue( 40==M2.getNumberOfFaces() );
+
+        self.assertEqual( 4, M2.getNy() );
+        self.assertEqual( 4, M2.getNx() );
+        self.assertEqual( 2, M2.getSpaceDimension() );
+        self.assertEqual( 25, M2.getNumberOfNodes() );
+        self.assertEqual( 16, M2.getNumberOfCells() );
+        self.assertEqual( 40, M2.getNumberOfFaces() );
 #        x1=M2.getCells()[4].x();
 #        y1=M2.getCells()[4].y();
 #        self.assertTrue( x1==0.5 );
@@ -565,7 +567,7 @@ class MeshTest(unittest.TestCase):
     
         M2.writeMED("TestMesh");
         M22=Mesh("TestMesh.med");
-        self.assertTrue( 2==M22.getDim() );
+        self.assertTrue( 2==M22.getSpaceDimension() );
         self.assertTrue( 25==M22.getNumberOfNodes() );
         self.assertTrue( 16==M22.getNumberOfCells() );
         self.assertTrue( 40==M22.getNumberOfFaces() );
@@ -577,31 +579,31 @@ class MeshTest(unittest.TestCase):
         self.assertTrue(M23.getNamesOfGroups()[3]=="BORD4");
     
         M3=M1
-        self.assertTrue( 1==M3.getDim() );
+        self.assertTrue( 1==M3.getSpaceDimension() );
         self.assertTrue( 5==M3.getNumberOfNodes() );
         self.assertTrue( 4==M3.getNumberOfCells() );
         self.assertTrue( 5==M3.getNumberOfFaces() );
     
         M3=M2;
-        self.assertTrue( 2==M3.getDim() );
+        self.assertTrue( 2==M3.getSpaceDimension() );
         self.assertTrue( 25==M3.getNumberOfNodes() );
         self.assertTrue( 16==M3.getNumberOfCells() );
         self.assertTrue( 40==M3.getNumberOfFaces() );
     
         M4=M3;
-        self.assertTrue( 2==M4.getDim() );
+        self.assertTrue( 2==M4.getSpaceDimension() );
         self.assertTrue( 25==M4.getNumberOfNodes() );
         self.assertTrue( 16==M4.getNumberOfCells() );
         self.assertTrue( 40==M4.getNumberOfFaces() );
     
         M5=Mesh(0.0,1.0,4,0.0,1.0,4,0.0,1.0,4);
-        self.assertTrue( 3==M5.getDim() );
+        self.assertTrue( 3==M5.getSpaceDimension() );
         fileNameVTK="TestMesh";
         M4.writeVTK(fileNameVTK) ;
         fileNameMED="TestMesh";
         M4.writeMED(fileNameMED) ;
         M6=Mesh(fileNameMED+".med");
-        self.assertTrue( 2==M6.getDim() );
+        self.assertTrue( 2==M6.getSpaceDimension() );
         self.assertTrue( 25==M6.getNumberOfNodes() );
         self.assertTrue( 16==M6.getNumberOfCells() );
         self.assertTrue( 40==M6.getNumberOfFaces() );

@@ -68,6 +68,7 @@ EXTRA_DIST = \
 ./test2.med\
 ./test4.med\
 ./test6.med\
-./test8.med
-
+./test8.med\
+./test10-med.hdf\
+./test2-med.hdf
 

@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,6 +22,7 @@
 #include "CellModel.hxx"
 
 #include <algorithm>
+#include <iterator>
 #include <sstream>
 #include <numeric>
 #include <cstring>
@@ -37,8 +38,7 @@ using namespace INTERP_KERNEL;
  * It retrieves the same cell with a potentially different type (in return) whose connectivity is defined by (retConn,retLgth)
  * \b WARNING for optimization reason the arrays 'retConn' and 'conn' can overlapped !
  */
-INTERP_KERNEL::NormalizedCellType CellSimplify::simplifyDegeneratedCell(INTERP_KERNEL::NormalizedCellType type, const int *conn, int lgth,
-                                                                        int *retConn, int& retLgth) throw(INTERP_KERNEL::Exception)
+INTERP_KERNEL::NormalizedCellType CellSimplify::simplifyDegeneratedCell(INTERP_KERNEL::NormalizedCellType type, const int *conn, int lgth, int *retConn, int& retLgth)
 {
   const INTERP_KERNEL::CellModel& cm=INTERP_KERNEL::CellModel::GetCellModel(type);
   std::set<int> c(conn,conn+lgth);

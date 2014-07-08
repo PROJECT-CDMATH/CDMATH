@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -41,11 +41,14 @@ extern "C" valueType  _MEDfileVersion(const med_idt oid) {
 
   if (it != MedfileVersion.end() ) return (*it).second;
 
-  /* On ouvre le group ou se trouvent les infos */
+  /* On ouvre le group ou se trouvent les infos à la racine du fichier,
+     puis au niveau de l'objet courant */
   if ((gid = _MEDdatagroupOuvrir(oid,MED_INFOS)) < 0) {
-    _fileversion.majeur  = 0;
-    _fileversion.mineur  = 0;
-    _fileversion.release = 0;
+    if ((gid = _MEDdatagroupOuvrir(oid,&MED_INFOS[1])) < 0) {
+      //  Ne stocke pas la clé du fichier dans le cache car la structure MED_INFOS n'a pas été
+      //  trouvée. Elle pourrait l'être par un autre appel avec un autre oid (fichiers HDF contenants une structure MED)
+      return _med_file_version_null;
+    }
   } else {
     if ( _MEDattrEntierLire(gid,MED_NOM_MAJEUR ,&_fileversion.majeur ) < 0) return _med_file_version_null;
     if ( _MEDattrEntierLire(gid,MED_NOM_MINEUR ,&_fileversion.mineur ) < 0) return _med_file_version_null;

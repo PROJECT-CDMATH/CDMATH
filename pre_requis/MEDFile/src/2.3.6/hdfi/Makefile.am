@@ -22,3 +22,5 @@ MEDindiceNum.c \
 MEDnObjets.c \
 MEDobjetIdentifer.c
 
+EXTRA_DIST = CMakeLists.txt
+

@@ -23,6 +23,8 @@ class IntTab
 
 	IntTab & operator=(const IntTab & dt);
 	IntTab & operator=(const int value);
+	int & operator()(const int i);
+	const int & operator()(const int i) const;
 	int & operator[](const int i);
 	const int & operator[](const int i) const;
 	IntTab& operator+=(const IntTab& dt);

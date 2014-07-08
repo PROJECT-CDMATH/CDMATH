@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -44,7 +44,8 @@ MEDfichEntete(med_idt fid, med_fich_info quoi, char str[])
        * On inhibe le gestionnaire d'erreur HDF
        */
       _MEDmodeErreurVerrouiller();
-if (MEDcheckVersion(fid) < 0) return -1;
+/* Ajout de la ligne suivante par un script malencontreux ?*/
+/* if (MEDcheckVersion(fid) < 0) return -1; */
 
       /*
        * On ouvre le Data Group racine

@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -28,7 +28,7 @@ using namespace INTERP_KERNEL;
 const double& Bounds::operator[](int i) const
 {
   switch(i)
-    {
+  {
     case 0:
       return _x_min;
     case 1:
@@ -37,14 +37,14 @@ const double& Bounds::operator[](int i) const
       return _y_min;
     case 3:
       return _y_max;
-    }
+  }
   throw Exception("internal error occurs !");
 }
 
 double &Bounds::operator[](int i)
 {
   switch(i)
-    {
+  {
     case 0:
       return _x_min;
     case 1:
@@ -53,7 +53,7 @@ double &Bounds::operator[](int i)
       return _y_min;
     case 3:
       return _y_max;
-    }
+  }
   throw Exception("internal error occurs !");
 }
 
@@ -103,8 +103,8 @@ void Bounds::prepareForAggregation()
  * If diagonal of 'this' is the same order of 2*radius, intrcptArcAngle0 and intrcptArcDelta remains unchanged.
  * @param center IN parameter.
  * @param radius IN parameter.
- * @param intrcptArcAngle0 OUT parameter.
- * @param intrcptArcDelta IN/OUT parameter.
+ * @param [out] intrcptArcAngle0 OUT parameter.
+ * @param [out] intrcptArcDelta OUT parameter.
  */
 void Bounds::getInterceptedArc(const double *center, double radius, double& intrcptArcAngle0, double& intrcptArcDelta) const
 {
@@ -152,10 +152,12 @@ Bounds *Bounds::nearlyAmIIntersectingWith(const Bounds& other) const
       || (other._y_max < _y_min-QUADRATIC_PLANAR::_precision) )
     return 0;
   if( (other._x_min >= _x_max ) || (other._x_max <= _x_min) || (other._y_min >= _y_max) || (other._y_max <= _y_min) )
-    return new Bounds(std::max(_x_min-QUADRATIC_PLANAR::_precision,other._x_min),
-                      std::min(_x_max+QUADRATIC_PLANAR::_precision,other._x_max),
-                      std::max(_y_min-QUADRATIC_PLANAR::_precision,other._y_min),
-                      std::min(_y_max+QUADRATIC_PLANAR::_precision,other._y_max));//In approx cases.
+    {
+      return new Bounds(std::max(_x_min-QUADRATIC_PLANAR::_precision,other._x_min),
+          std::min(_x_max+QUADRATIC_PLANAR::_precision,other._x_max),
+          std::max(_y_min-QUADRATIC_PLANAR::_precision,other._y_min),
+          std::min(_y_max+QUADRATIC_PLANAR::_precision,other._y_max));//In approx cases.
+    }
   else
     return new Bounds(std::max(_x_min,other._x_min),std::min(_x_max,other._x_max),std::max(_y_min,other._y_min),std::min(_y_max,other._y_max));
 }

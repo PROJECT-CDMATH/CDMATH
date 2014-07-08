@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -18,7 +18,7 @@
 /*
  *  How to create an unstructured mesh with polygons
  *
- *  Use case 15 : a 2D unstructured mesh with 2 polyhedrons
+ *  Use case 15 : a 3D unstructured mesh with 2 polyhedrons
  */
 
 #include <med.h>

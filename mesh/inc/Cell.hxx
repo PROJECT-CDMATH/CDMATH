@@ -2,7 +2,7 @@
  * cell.hxx
  *
  *  Created on: 23 January. 2012
- *      Authors: CDMAT
+ *      Authors: CDMATH
  */
 
 #ifndef CELL_HXX_
@@ -18,7 +18,7 @@
 
 #include "Point.hxx"
 #include "IntTab.hxx"
-#include "DoubleTab.hxx"
+#include "Vector.hxx"
 
 class Cell
 {
@@ -80,7 +80,7 @@ class Cell
 	/**
 	 * return normal vectors in this cell
 	 */
-	DoubleTab getNormalVectors (void) const ;
+	Vector getNormalVectors (void) const ;
 
 	/**
 	 * return the measure of this cell (length in 1D, surface in 2D or
@@ -166,7 +166,7 @@ class Cell
 	/*
 	 * The coordinate of normal vector the cell.
 	 */
-	DoubleTab _normalVectors ;
+	Vector _normalVectors ;
 };
 
 #endif /* CELL_HXX_ */

@@ -11,6 +11,7 @@
 namespace ParaMEDMEM
 {
   class MEDCouplingFieldDouble;
+  class DataArrayDouble;
 }
 
 typedef enum
@@ -19,8 +20,10 @@ typedef enum
     NODES = 1,
   } TypeField;
 
+#include "DoubleTab.hxx"
 #include "Mesh.hxx"
 
+#include <MEDCouplingAutoRefCountObjectPtr.hxx>
 
 /**
  * Field class is defined by
@@ -70,17 +73,17 @@ class Field
 	*/
 	Field ( const Field & field ) ;
 
-	double& operator[] ( int i ) ;
+	double& operator[] ( int ielem ) ;
 
-	double operator[] ( int i ) const;
+	double operator[] ( int ielem ) const;
 
-	double& operator() ( int i ) ;
+	double& operator() ( int ielem ) ;
 
-	double operator() ( int i ) const;
+	double operator() ( int ielem ) const;
 
-	double& operator() ( int i, int j ) ;
+	double& operator() ( int ielem, int jcomp ) ;
 
-	double operator() ( int i, int j ) const ;
+	double operator() ( int ielem, int jcomp ) const ;
 
 	int getNumberOfComponents ( void ) const ;
 
@@ -98,11 +101,17 @@ class Field
   	 * return the mesh MEDCoupling
   	 * return _mesh
   	 */
-	ParaMEDMEM::MEDCouplingFieldDouble* getField ( void )  const ;
+	ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<ParaMEDMEM::MEDCouplingFieldDouble> getField ( void )  const ;
 
-	void setField ( ParaMEDMEM::MEDCouplingFieldDouble* field );
+	void setFieldByMEDCouplingFieldDouble ( const ParaMEDMEM::MEDCouplingFieldDouble* field );
+
+	void setFieldByDataArrayDouble ( const ParaMEDMEM::DataArrayDouble* array );
+
+	DoubleTab getNormEuclidean( void ) const ;
 
 	void setTime ( double time, int iter );
+
+	int getSpaceDimension( void ) const;
 
 	double getTime ( void ) const;
 
@@ -138,11 +147,12 @@ class Field
 
     protected: //----------------------------------------------------------------
 
-	ParaMEDMEM::MEDCouplingFieldDouble* _field;
+	ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<ParaMEDMEM::MEDCouplingFieldDouble> _field;
 	Mesh _mesh ;
 	TypeField _typeField;
 
     private:
+
 };
 
 #endif /* Field_HXX_ */

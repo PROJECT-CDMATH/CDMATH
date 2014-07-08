@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -57,7 +57,7 @@ namespace ParaMEDMEM
     public:
       MEDCouplingRemapper();
       ~MEDCouplingRemapper();
-      int prepare(const MEDCouplingMesh *srcMesh, const MEDCouplingMesh *targetMesh, const char *method) throw(INTERP_KERNEL::Exception);
+      int prepare(const MEDCouplingMesh *srcMesh, const MEDCouplingMesh *targetMesh, const std::string& method) throw(INTERP_KERNEL::Exception);
       int prepareEx(const MEDCouplingFieldTemplate *src, const MEDCouplingFieldTemplate *target) throw(INTERP_KERNEL::Exception);
       void transfer(const MEDCouplingFieldDouble *srcField, MEDCouplingFieldDouble *targetField, double dftValue) throw(INTERP_KERNEL::Exception);
       void partialTransfer(const MEDCouplingFieldDouble *srcField, MEDCouplingFieldDouble *targetField) throw(INTERP_KERNEL::Exception);
@@ -73,6 +73,8 @@ namespace ParaMEDMEM
       int nullifiedTinyCoeffInCrudeMatrixAbs(double maxValAbs) throw(INTERP_KERNEL::Exception);
       int nullifiedTinyCoeffInCrudeMatrix(double scaleFactor) throw(INTERP_KERNEL::Exception);
       double getMaxValueInCrudeMatrix() const throw(INTERP_KERNEL::Exception);
+      int getNumberOfColsOfMatrix() const throw(INTERP_KERNEL::Exception);
+      static std::string BuildMethodFrom(const std::string& meth1, const std::string& meth2) throw(INTERP_KERNEL::Exception);
       %extend
          {
            PyObject *getCrudeMatrix() const throw(INTERP_KERNEL::Exception)
@@ -90,6 +92,12 @@ namespace ParaMEDMEM
                }
              return ret;
            }
+#if defined(WITH_NUMPY) && defined(WITH_SCIPY)
+           PyObject *getCrudeCSRMatrix() const throw(INTERP_KERNEL::Exception)
+           {
+             return ToCSRMatrix(self->getCrudeMatrix(),self->getNumberOfColsOfMatrix());
+           }
+#endif
          }
     };
 }
@@ -170,6 +178,12 @@ def ParaMEDMEMDataArrayIntTupleIdiv(self,*args):
 def ParaMEDMEMDataArrayIntTupleImod(self,*args):
     import _MEDCouplingRemapper
     return _MEDCouplingRemapper.DataArrayIntTuple____imod___(self, self, *args)
+def ParaMEDMEMDenseMatrixIadd(self,*args):
+    import _MEDCouplingRemapper
+    return _MEDCouplingRemapper.DenseMatrix____iadd___(self, self, *args)
+def ParaMEDMEMDenseMatrixIsub(self,*args):
+    import _MEDCouplingRemapper
+    return _MEDCouplingRemapper.DenseMatrix____isub___(self, self, *args)
 %}
 
 %include "MEDCouplingFinalize.i"

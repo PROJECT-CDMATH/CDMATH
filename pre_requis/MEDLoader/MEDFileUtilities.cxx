@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,10 +23,10 @@
 
 #include <sstream>
 
-med_access_mode MEDFileUtilities::TraduceWriteMode(int medloaderwritemode) throw(INTERP_KERNEL::Exception)
+med_access_mode MEDFileUtilities::TraduceWriteMode(int medloaderwritemode)
 {
   switch(medloaderwritemode)
-    {
+  {
     case 2:
       return MED_ACC_CREAT;
     case 1:
@@ -35,25 +35,28 @@ med_access_mode MEDFileUtilities::TraduceWriteMode(int medloaderwritemode) throw
       return MED_ACC_RDWR;
     default:
       throw INTERP_KERNEL::Exception("Invalid write mode specified ! must be 0(write with no question), 1(append) or 2(creation)");
-    }
+  }
 }
 
-int MEDFileUtilities::TraduceFieldType(med_field_type ft) throw(INTERP_KERNEL::Exception)
+const char *MEDFileUtilities::GetReadableMEDFieldType(med_field_type ft)
 {
+  static const char medFloat64[]="MED_FLOAT64";
+  static const char medInt32[]="MED_INT32";
+  static const char medInt64[]="MED_INT64";
   switch(ft)
-    {
+  {
     case MED_FLOAT64:
-      return 0;
+      return medFloat64;
     case MED_INT32:
-      return 1;
+      return medInt32;
     case MED_INT64:
-      return 2;
+      return medInt64;
     default:
       throw INTERP_KERNEL::Exception("Non supported field type ! Should be FLOAT64, INT32 or INT64 !");
-    }
+  }
 }
 
-void MEDFileUtilities::CheckMEDCode(int code, med_idt fid, const char *msg) throw(INTERP_KERNEL::Exception)
+void MEDFileUtilities::CheckMEDCode(int code, med_idt fid, const std::string& msg)
 {
   if(code<0)
     {
@@ -63,13 +66,13 @@ void MEDFileUtilities::CheckMEDCode(int code, med_idt fid, const char *msg) thro
     }
 }
 
-void MEDFileUtilities::CheckFileForRead(const char *fileName) throw(INTERP_KERNEL::Exception)
+void MEDFileUtilities::CheckFileForRead(const std::string& fileName)
 {
   int status=MEDLoaderBase::getStatusOfFile(fileName);
   std::ostringstream oss;
   oss << " File : \"" << fileName << "\"";
   switch(status)
-    {
+  {
     case MEDLoaderBase::DIR_LOCKED:
       {
         oss << " has been detected as unreadable : impossible to read anything !";
@@ -85,8 +88,8 @@ void MEDFileUtilities::CheckFileForRead(const char *fileName) throw(INTERP_KERNE
         oss << " has been detected as WRITE ONLY : impossible to read anything !";
         throw INTERP_KERNEL::Exception(oss.str().c_str());
       }
-    }
-  AutoFid fid=MEDfileOpen(fileName,MED_ACC_RDONLY);
+  }
+  AutoFid fid=MEDfileOpen(fileName.c_str(),MED_ACC_RDONLY);
   if(fid<0)
     {
       oss << " has been detected as unreadable by MED file : impossible to read anything !";
@@ -106,11 +109,6 @@ MEDFileUtilities::AutoFid::AutoFid(med_idt fid):_fid(fid)
 {
 }
 
-MEDFileUtilities::AutoFid::operator med_idt() const
-{
-  return _fid;
-}
-
 MEDFileUtilities::AutoFid::~AutoFid()
 {
   MEDfileClose(_fid);
@@ -126,24 +124,24 @@ void ParaMEDMEM::MEDFileWritable::copyOptionsFrom(const MEDFileWritable& other) 
   _zipconn_pol=other._zipconn_pol;
 }
 
-int ParaMEDMEM::MEDFileWritable::getTooLongStrPolicy() const throw(INTERP_KERNEL::Exception)
+int ParaMEDMEM::MEDFileWritable::getTooLongStrPolicy() const
 {
   return _too_long_str;
 }
 
-void ParaMEDMEM::MEDFileWritable::setTooLongStrPolicy(int newVal) throw(INTERP_KERNEL::Exception)
+void ParaMEDMEM::MEDFileWritable::setTooLongStrPolicy(int newVal)
 {
   if(newVal!=2 && newVal!=1 && newVal!=0)
     throw INTERP_KERNEL::Exception("MEDFileWritable::setTooLongStrPolicy : invalid policy should be in 0,1 or 2 !");
   _too_long_str=newVal;
 }
 
-int ParaMEDMEM::MEDFileWritable::getZipConnPolicy() throw(INTERP_KERNEL::Exception)
+int ParaMEDMEM::MEDFileWritable::getZipConnPolicy()
 {
   return _zipconn_pol;
 }
 
-void ParaMEDMEM::MEDFileWritable::setZipConnPolicy(int newVal) throw(INTERP_KERNEL::Exception)
+void ParaMEDMEM::MEDFileWritable::setZipConnPolicy(int newVal)
 {
   _zipconn_pol=newVal;
 }

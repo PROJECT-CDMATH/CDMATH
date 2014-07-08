@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -38,7 +38,7 @@ int main (int argc, char **argv)
 
 
 {
-  med_idt        fid,mid,mid2;
+  med_idt        fid,fid2,fid3,mid,mid2;
   med_int        ncha, ncomp, nmaa;
   med_field_type type;
   char           comp[3*MED_SNAME_SIZE+1]="",unit[3*MED_SNAME_SIZE+1]="";
@@ -48,6 +48,10 @@ int main (int argc, char **argv)
   med_int        _ncstp=0;
   med_bool       _local;
   int i;
+
+  /*
+   * Phase 1 : Test de montage de champs dans un fichier contenant des maillages
+   */
 
   /* Ouverture du fichier test20-0.med en mode lecture et ajout */
   if ((fid = MEDfileOpen("test20-0.med",MED_ACC_RDEXT)) < 0) {
@@ -122,6 +126,12 @@ int main (int argc, char **argv)
   }
   printf("On ferme le fichier test20-0.med \n");
 
+
+  /*
+   * Phase 2 : Test de montage de champs et de maillages dans un fichier vierge
+   */
+
+
   /* Creation du fichier test20.med */
   if ((fid = MEDfileOpen("test20.med",MODE_ACCES))  < 0) {
     MESSAGE("Erreur a la creation du fichier test20.med");
@@ -180,6 +190,85 @@ int main (int argc, char **argv)
     return -1;
   }
   printf("On ferme le fichier test20.med \n");
-  
+
+  /*
+   * Phase 3 : Test de montage de champs et de maillages dans un fichier vierge à
+   * partir de deux fichiers HDFs contenant une sous arborescence MED avec Champs et Maillages 
+   */
+
+  /* Creation du fichier test20b.med */
+  if ((fid = MEDfileOpen("test20b.med",MODE_ACCES))  < 0) {
+    MESSAGE("Erreur a la creation du fichier test20.med");
+    return -1;
+  }
+  printf("On cree le fichier test20b.med \n");
+
+  /* Ouverture du fichier HDF test2-med.hdf */
+  if ((fid2 = MEDfileOpen("test2-med.hdf",MED_ACC_RDONLY))  < 0) {
+    MESSAGE("Erreur a l'ouverture du fichier test2-med.hdf");
+    return -1;
+  }
+  printf("On ouvre le fichier test2-med.hdf \n");
+
+  /* Montage dans test20b.med de tous les maillages de test20-0.med */
+  mid2 = MEDfileObjectsMountById(fid,fid2,"/byid2",MED_MESH);
+  if (mid2 < 0) {
+    MESSAGE("Echec du montage de test2-med.hdf");
+    return -1;
+  }
+  printf("On monte les maillages du fichier test2-med.hdf dans le fichier test20b.med \n");
+
+  /* Lecture du nombre de maillages */
+  nmaa = MEDnMesh(fid);
+  if (nmaa < 0) {
+    MESSAGE("Erreur lors de la lecture du nombre de maillage");
+    return -1;
+  }
+  printf("Nombre de maillages apres montage de test2-med.hdf : "IFORMAT"\n",nmaa);
+
+  /* Ouverture du fichier HDF test10-med.hdf */
+  if ((fid3 = MEDfileOpen("test10-med.hdf",MED_ACC_RDONLY))  < 0) {
+    MESSAGE("Erreur a l'ouverture du fichier test10-med.hdf");
+    return -1;
+  }
+  printf("On ouvre le fichier test10-med.hdf \n");
+
+  /* Montage dans test20b.med de tous les champs de test10-med.hdf */
+  mid = MEDfileObjectsMountById(fid,fid3,"/byid10/",MED_FIELD);
+  if (mid < 0) {
+    MESSAGE("Echec du montage de test10-med.hdf");
+    return -1;
+  }
+  printf("On monte les champs du fichier test10-med.hdf dans le fichier test20b.med \n");
+
+  /* Combien de champs dans le fichier "test20b.med" apres le montage */
+  if ((ncha = MEDnField(fid)) < 0) {
+    MESSAGE("Erreur lors de la lecture du nombre de champ");
+    return -1;
+  }
+  printf("Nombre de champs dans test20b.med apres montage : "IFORMAT" \n",ncha);
+
+  /* Demontage du fichier test10-med.hdf */
+  if (MEDfileObjectsUnmount(fid,mid,MED_FIELD) < 0) {
+    MESSAGE("Echec du demontage de test10-med.hdf");
+    return -1;
+  }
+  printf("On demonte et on ferme le fichier test10-med.hdf de test20b.med \n");
+
+  /* Demontage du fichier test2-med.hdf */
+  if (MEDfileObjectsUnmount(fid,mid2,MED_MESH) < 0) {
+    MESSAGE("Echec du demontage de test2-med.hdf");
+    return -1;
+  }
+  printf("On demonte et on ferme le fichier test2-med.hdf de test20b.med\n");
+
+  /* Fermeture du fichier test20b.med */
+  if (MEDfileClose(fid) < 0) {
+    MESSAGE("Erreur de la fermeture du fichier");
+    return -1;
+  }
+  printf("On ferme le fichier test20b.med \n");
+
+
   return 0;
 }

@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,6 +22,7 @@
 #define __PARAMEDMEM_MEDCOUPLINGAUTOREFCOUNTOBJECTPTR_HXX__
 
 #include "MEDCouplingRefCountObject.hxx"
+#include "InterpKernelException.hxx"
 
 namespace ParaMEDMEM
 {
@@ -32,7 +33,8 @@ namespace ParaMEDMEM
     MEDCouplingAutoRefCountObjectPtr(const MEDCouplingAutoRefCountObjectPtr& other):_ptr(0) { referPtr(other._ptr); }
     MEDCouplingAutoRefCountObjectPtr(T *ptr=0):_ptr(ptr) { }
     ~MEDCouplingAutoRefCountObjectPtr() { destroyPtr(); }
-    bool operator==(const MEDCouplingAutoRefCountObjectPtr& other) { return _ptr==other._ptr; }
+    bool operator==(const MEDCouplingAutoRefCountObjectPtr& other) const { return _ptr==other._ptr; }
+    bool operator==(const T *other) const { return _ptr==other; }
     MEDCouplingAutoRefCountObjectPtr &operator=(const MEDCouplingAutoRefCountObjectPtr& other) { if(_ptr!=other._ptr) { destroyPtr(); referPtr(other._ptr); } return *this; }
     MEDCouplingAutoRefCountObjectPtr &operator=(T *ptr) { if(_ptr!=ptr) { destroyPtr(); _ptr=ptr; } return *this; }
     T *operator->() { return _ptr ; }
@@ -48,6 +50,30 @@ namespace ParaMEDMEM
   private:
     T *_ptr;
   };
+
+  template<class T, class U>
+  typename ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<U> DynamicCast(typename ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<T>& autoSubPtr) throw()
+  {
+    T *subPtr(autoSubPtr);
+    U *ptr(dynamic_cast<U *>(subPtr));
+    typename ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<U> ret(ptr);
+    if(ptr)
+      ptr->incrRef();
+    return ret;
+  }
+
+  template<class T, class U>
+  typename ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<U> DynamicCastSafe(typename ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<T>& autoSubPtr)
+  {
+    T *subPtr(autoSubPtr);
+    U *ptr(dynamic_cast<U *>(subPtr));
+    if(subPtr && !ptr)
+      throw INTERP_KERNEL::Exception("DynamicCastSafe : U is not a subtype of T !");
+    typename ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<U> ret(ptr);
+    if(ptr)
+      ptr->incrRef();
+    return ret;
+  }
 }
 
 #endif

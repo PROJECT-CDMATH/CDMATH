@@ -8,6 +8,8 @@
 #ifndef DOUBLETAB_HXX_
 #define DOUBLETAB_HXX_
 
+#include <iostream>
+
 class DoubleTab
 {
 	public://----------------------------------------------------------------
@@ -20,6 +22,8 @@ class DoubleTab
 
 	DoubleTab(const DoubleTab& dt);
 
+	DoubleTab(const int size, const double* value) ;
+
 	~DoubleTab();
 
 	int size() const;
@@ -28,6 +32,10 @@ class DoubleTab
 
 	double* getValues(void) const ;
 
+	double max() const ;
+
+	double min() const ;
+
 	DoubleTab & operator=(const DoubleTab & dt);
 
 	DoubleTab & operator=(double value);
@@ -35,6 +43,10 @@ class DoubleTab
 	double & operator[](int i);
 
 	const double & operator[](int i) const;
+
+	double & operator()(int i);
+
+	const double & operator()(int i) const;
 
 	DoubleTab& operator+=(const DoubleTab& dt);
 
@@ -59,6 +71,8 @@ class DoubleTab
 	friend DoubleTab operator/(const DoubleTab& U, double value ) ;
 
 	friend double  operator* (const DoubleTab& U, const DoubleTab& V) ;
+
+	friend std::ostream& operator<<(std::ostream& out, const DoubleTab& U ) ;
 
 	private://----------------------------------------------------------------
 	/*

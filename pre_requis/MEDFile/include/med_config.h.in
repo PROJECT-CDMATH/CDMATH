@@ -1,5 +1,8 @@
 /* include/med_config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define this to an absolute name of <H5Ipublic.h>. */
+#undef ABSOLUTE_H5IPUBLIC_H
+
 /* Define this to an absolute name of <H5public.h>. */
 #undef ABSOLUTE_H5PUBLIC_H
 
@@ -41,6 +44,9 @@
 /* Define to 1 if you have the `gettimeofday' function. */
 #undef HAVE_GETTIMEOFDAY
 
+/* Define to 1 if you have the <H5Ipublic.h> header file. */
+#undef HAVE_H5IPUBLIC_H
+
 /* Define to 1 if you have the <H5public.h> header file. */
 #undef HAVE_H5PUBLIC_H
 
@@ -61,6 +67,9 @@
 
 /* Define to 1 if you have the <pwd.h> header file. */
 #undef HAVE_PWD_H
+
+/* If available, contains the Python version number currently in use. */
+#undef HAVE_PYTHON
 
 /* Define to 1 if stdbool.h conforms to C99. */
 #undef HAVE_STDBOOL_H
@@ -109,8 +118,8 @@
 /* Define if the Fortran part of MED library must be compiled. */
 #undef MED_HAVE_FORTRAN
 
-/* The hdf version from H5public.h is ok for MED. */
-#undef MED_HDF_VERSION_ISOK
+/* Define if the Python part of MED library must be installed. */
+#undef MED_HAVE_PYTHON
 
 /* MED library will not display error messages. */
 #undef MESGERR

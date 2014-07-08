@@ -3,7 +3,7 @@
 ## Initialize Autoconf & defined package name...
 ##Lors de la sortie d'une nouvelle release mettre à jour les champs suivants
 ##Mettre à jour le numéro de package
-AC_INIT([MED Fichier],3.0.6,[eric.fayolle@edf.fr],med)
+AC_INIT([MED Fichier],3.0.7,[eric.fayolle@edf.fr],med)
 
 ##Lors de la sortie d'une nouvelle release mettre à jour les champs suivants
 ##Ne pas oubliez de modifier  -version-info x:y:z dans src/Makefile.am tools/medimport/Makefile.am
@@ -14,7 +14,7 @@ AC_INIT([MED Fichier],3.0.6,[eric.fayolle@edf.fr],med)
 ##Mettre à jour les tests de compatibilité dans MEDfileCompatibility (chgt de majeur/mineur)
 MED_NUM_MAJEUR=3
 MED_NUM_MINEUR=0
-MED_NUM_RELEASE=6
+MED_NUM_RELEASE=7
 AC_SUBST(MED_NUM_MAJEUR)
 AC_SUBST(MED_NUM_MINEUR)
 AC_SUBST(MED_NUM_RELEASE)
@@ -36,7 +36,7 @@ AC_CONFIG_MACRO_DIR([config])
 
 
 ## Initialize Automake
-AM_INIT_AUTOMAKE([dist-bzip2 tar-ustar])
+AM_INIT_AUTOMAKE([dist-bzip2 tar-ustar serial-tests])
 
 ##
 AC_CONFIG_HEADER(include/med_config.h)
@@ -153,6 +153,15 @@ AC_TYPE_SIZE_T
 ##AC_FUNC_MALLOC
 AC_CHECK_FUNCS([ftime gettimeofday])
 
+#Check For Swig (it is not needed for user as long as they don't do make distclean)
+#If enabled check for python devel
+MED_CHECK_SWIG
+
+#Activer l'utilisation de l'API python.
+MED_CHECK_PYTHON
+
+# Initialize Autotest
+AC_CONFIG_TESTDIR([tests/python])
 
 ## Configure Doxygen
 ## TODO : Créer une macro spécifique.
@@ -210,11 +219,13 @@ LT_OUTPUT
 MED_SUMMARY
 
 AC_CONFIG_FILES([Makefile
+	   config/Makefile
 	   include/2.3.6/Makefile
 	   include/2.3.6/med.h
 	   include/2.3.6/med23v30.h
 	   include/2.3.6/med_utils.h
 	   include/Makefile
+	   include/H5public_extract.h
 	   include/med.h
 	   include/med_utils.h
            src/libmed3.settings
@@ -231,6 +242,8 @@ AC_CONFIG_FILES([Makefile
 	   src/2.3.6/misc/Makefile
 	   src/2.3.6/hdfi/Makefile 
 	   tests/Makefile
+           tests/python/Makefile
+           tests/python/atlocal
            tests/c/Makefile
 	   tests/c/dumps.ref/Makefile
            tests/c/2.3.1/Makefile
@@ -278,7 +291,7 @@ AC_CONFIG_FILES([Makefile
 	   tests/unittests/f/dumps.ref/Makefile
            tools/Makefile
 	   tools/mdump/Makefile
-           tools/mdump/xmdump
+           tools/mdump/xmdump2
            tools/mdump/xmdump3
            tools/medconforme/Makefile
            tools/medimport/Makefile
@@ -295,7 +308,8 @@ AC_CONFIG_FILES([Makefile
 	   doc/html/root.html
 	   doc/html.dox/Makefile
 	   doc/jpg/Makefile
-	   doc/png/Makefile])
+	   doc/png/Makefile
+	   python/Makefile])
 
 
 AC_OUTPUT

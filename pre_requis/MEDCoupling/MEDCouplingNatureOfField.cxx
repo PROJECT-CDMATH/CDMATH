@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,15 +26,15 @@
 namespace ParaMEDMEM
 {
   const char *MEDCouplingNatureOfField::REPR_OF_NATUREOFFIELD[NB_OF_POSSIBILITIES]=
-    { "NoNature",
-      "ConservativeVolumic",
-      "Integral",
-      "IntegralGlobConstraint",
-      "RevIntegral"};
-  
+  { "NoNature",
+    "ConservativeVolumic",
+    "Integral",
+    "IntegralGlobConstraint",
+    "RevIntegral"};
+
   const int MEDCouplingNatureOfField::POS_OF_NATUREOFFIELD[NB_OF_POSSIBILITIES]={17,26,32,35,37};
 
-  const char *MEDCouplingNatureOfField::GetRepr(NatureOfField nat) throw(INTERP_KERNEL::Exception)
+  const char *MEDCouplingNatureOfField::GetRepr(NatureOfField nat)
   {
     const int *pos=std::find(POS_OF_NATUREOFFIELD,POS_OF_NATUREOFFIELD+NB_OF_POSSIBILITIES,(int)nat);
     if(pos==POS_OF_NATUREOFFIELD+NB_OF_POSSIBILITIES)

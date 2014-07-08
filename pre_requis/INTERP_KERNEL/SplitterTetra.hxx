@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,9 +20,11 @@
 #ifndef __SPLITTERTETRA_HXX__
 #define __SPLITTERTETRA_HXX__
 
+#include "INTERPKERNELDefines.hxx"
 #include "TransformedTriangle.hxx"
 #include "TetraAffineTransform.hxx"
 #include "InterpolationOptions.hxx"
+#include "InterpKernelException.hxx"
 #include "InterpKernelHashMap.hxx"
 #include "VectorUtils.hxx"
 
@@ -98,6 +100,17 @@ namespace INTERP_KERNEL
       2,3,6,7,// sub-node 13 (face)
       8,9,10,11// sub-node 14 (cell)
     };
+
+  static const int GENERAL_24_SUB_NODES_WO[28] = 
+    {
+      0,4,5,1,// sub-node 8  (face)
+      0,1,2,3,// sub-node 9  (face)
+      0,3,7,4,// sub-node 10 (face)
+      1,5,6,2,// sub-node 11 (face)
+      4,7,6,5,// sub-node 12 (face)
+      2,6,7,3,// sub-node 13 (face)
+      8,9,10,11// sub-node 14 (cell)
+    };
   
   static const int TETRA_EDGES_GENERAL_24[48] = 
     {
@@ -133,6 +146,65 @@ namespace INTERP_KERNEL
       3,2
     };
   
+  // Each sub-node is the barycenter of two other nodes.
+  // For the edges, these lie on the original mesh.
+  // For the faces, these are the edge sub-nodes.
+  // For the cell these are two face sub-nodes.
+  static const int GENERAL_48_SUB_NODES[38] = 
+    {
+      0,1,   // sub-node 8 (edge)
+      0,4,   // sub-node 9 (edge)
+      1,5,   // sub-node 10 (edge)
+      4,5,   // sub-node 11 (edge)
+      0,3,   // sub-node 12 (edge)
+      1,2,   // sub-node 13 (edge)
+      4,7,   // sub-node 14 (edge)
+      5,6,   // sub-node 15 (edge)
+      2,3,   // sub-node 16 (edge)
+      3,7,   // sub-node 17 (edge)
+      2,6,   // sub-node 18 (edge)
+      6,7,   // sub-node 19 (edge)
+      8,11,  // sub-node 20 (face)
+      12,13, // sub-node 21 (face)
+      9,17,  // sub-node 22 (face)
+      10,18, // sub-node 23 (face)
+      14,15, // sub-node 24 (face)
+      16,19, // sub-node 25 (face)
+      20,25  // sub-node 26 (cell)
+    };
+
+  // Define 8 hexahedral subzones as in Grandy, p449
+  // the values correspond to the nodes that correspond to nodes 1,2,3,4,5,6,7,8 in the subcell
+  // For the correspondance of the nodes, see the GENERAL_48_SUB_NODES table in calculateSubNodes
+  static const int GENERAL_48_SUBZONES[64] = 
+    {
+      0,8,21,12,9,20,26,22,
+      8,1,13,21,20,10,23,26,
+      12,21,16,3,22,26,25,17,
+      21,13,2,16,26,23,18,25,
+      9,20,26,22,4,11,24,14,
+      20,10,23,26,11,5,15,24,
+      22,26,25,17,14,24,19,7,
+      26,23,18,25,24,15,6,19
+    };
+
+  static const int GENERAL_48_SUBZONES_2[64] = 
+    {
+      0,-1,-14,-5,-2,-13,-19,-15,
+      -1,1,-6,-14,-13,-3,-16,-19,
+      -5,-14,-9,3,-15,-19,-18,-10,
+      -14,-6,2,-9,-19,-16,-11,-18,
+      -2,-13,-19,-15,4,-4,-17,-7,
+      -13,-3,-16,-19,-4,5,-8,-17,
+      -15,-19,-18,-10,-7,-17,-12,7,
+      -19,-16,-11,-18,-17,-8,6,-12};
+
+  void SplitHexa8IntoTetras(SplittingPolicy policy, const int *nodalConnBg, const int *nodalConnEnd, const double *coords,
+                            std::vector<int>& tetrasNodalConn, std::vector<double>& addCoords);
+  
+  INTERPKERNEL_EXPORT void SplitIntoTetras(SplittingPolicy policy, NormalizedCellType gt, const int *nodalConnBg, const int *nodalConnEnd, const double *coords,
+                                           std::vector<int>& tetrasNodalConn, std::vector<double>& addCoords);
+  
   /**
    * \brief Class representing a triangular face, used as key in caching hash map in SplitterTetra.
    *
@@ -152,7 +224,7 @@ namespace INTERP_KERNEL
      */
     TriangleFaceKey(int node1, int node2, int node3)
     {
-      sort3Ints(_nodes, node1, node2, node3);
+      Sort3Ints(_nodes, node1, node2, node3);
       _hashVal = ( _nodes[0] + _nodes[1] + _nodes[2] ) % 29;
     }
 
@@ -201,7 +273,7 @@ namespace INTERP_KERNEL
       return _hashVal;
     }
      
-    inline void sort3Ints(int* sorted, int node1, int node2, int node3);
+    inline static void Sort3Ints(int* sorted, int node1, int node2, int node3);
 
   private:
     /// global numbers of the three nodes, sorted in ascending order
@@ -219,7 +291,7 @@ namespace INTERP_KERNEL
    * @param x2   second integer
    * @param x3   third integer
    */
-  inline void TriangleFaceKey::sort3Ints(int* sorted, int x1, int x2, int x3)
+  inline void TriangleFaceKey::Sort3Ints(int* sorted, int x1, int x2, int x3)
   {
     if(x1 < x2)
       {
@@ -280,7 +352,6 @@ namespace INTERP_KERNEL
 
 namespace INTERP_KERNEL
 {
-
   /** 
    * \brief Class calculating the volume of intersection between a tetrahedral target element and
    * source elements with triangular or quadratilateral faces.
@@ -292,6 +363,8 @@ namespace INTERP_KERNEL
   public: 
     
     SplitterTetra(const MyMeshType& srcMesh, const double** tetraCorners, const typename MyMeshType::MyConnType *nodesId);
+
+    SplitterTetra(const MyMeshType& srcMesh, const double tetraCorners[12], const int *conn = 0);
 
     ~SplitterTetra();
 
@@ -316,10 +389,8 @@ namespace INTERP_KERNEL
     void clearVolumesCache();
 
   private:
-    // member functions
-    inline void createAffineTransform(const double** corners);
-    inline void checkIsOutside(const double* pt, bool* isOutside, const double errTol = DEFAULT_ABS_TOL) const;
-    inline void checkIsStrictlyOutside(const double* pt, bool* isStrictlyOutside, const double errTol = DEFAULT_ABS_TOL) const;
+    inline static void CheckIsOutside(const double* pt, bool* isOutside, const double errTol = DEFAULT_ABS_TOL);
+    inline static void CheckIsStrictlyOutside(const double* pt, bool* isStrictlyOutside, const double errTol = DEFAULT_ABS_TOL);
     inline void calculateNode(typename MyMeshType::MyConnType globalNodeNum);
     inline void calculateNode2(typename MyMeshType::MyConnType globalNodeNum, const double* node);
     inline void calculateVolume(TransformedTriangle& tri, const TriangleFaceKey& key);
@@ -347,11 +418,7 @@ namespace INTERP_KERNEL
     HashMap< int , double* > _nodes;
     
     /// HashMap relating triangular faces to calculated volume contributions, used for caching
-    HashMap< TriangleFaceKey, double
-// #ifdef WIN32
-//         , hash_compare<TriangleFaceKey,TriangleFaceKeyComparator> 
-// #endif
-    > _volumes;
+    HashMap< TriangleFaceKey, double > _volumes;
 
     /// reference to the source mesh
     const MyMeshType& _src_mesh;
@@ -360,20 +427,11 @@ namespace INTERP_KERNEL
     typename MyMeshType::MyConnType _conn[4];
 
     double _coords[12];
+    
+    /// Smallest volume of the intersecting elements in the transformed space that will be returned as non-zero. 
+    /// Since the scale is always the same in the transformed space (the target tetrahedron is unitary), this number is independent of the scale of the meshes.
+    static const double SPARSE_TRUNCATION_LIMIT;
   };
-
-  /**
-   * Creates the affine transform _t from the corners of the tetrahedron. Used by the constructors
-   *
-   * @param corners  double*[4] array containing pointers to four double[3] arrays with the 
-   *                 coordinates of the corners of the tetrahedron
-   */
-  template<class MyMeshType>
-  inline void SplitterTetra<MyMeshType>::createAffineTransform(const double** corners)
-  {
-    // create AffineTransform from tetrahedron
-    _t = new TetraAffineTransform( corners );
-  }
 
   /**
    * Function used to filter out elements by checking if they belong to one of the halfspaces
@@ -385,7 +443,7 @@ namespace INTERP_KERNEL
    * @param isOutside bool[8] which indicate the results of earlier checks. 
    */
   template<class MyMeshType>
-  inline void SplitterTetra<MyMeshType>::checkIsOutside(const double* pt, bool* isOutside, const double errTol) const
+  inline void SplitterTetra<MyMeshType>::CheckIsOutside(const double* pt, bool* isOutside, const double errTol)
   {
     isOutside[0] = isOutside[0] && (pt[0] < errTol);
     isOutside[1] = isOutside[1] && (pt[0] > (1.0-errTol) );
@@ -398,7 +456,7 @@ namespace INTERP_KERNEL
   }
   
   template<class MyMeshType>
-  inline void SplitterTetra<MyMeshType>::checkIsStrictlyOutside(const double* pt, bool* isStrictlyOutside, const double errTol) const
+  inline void SplitterTetra<MyMeshType>::CheckIsStrictlyOutside(const double* pt, bool* isStrictlyOutside, const double errTol)
   {
     isStrictlyOutside[0] = isStrictlyOutside[0] && (pt[0] < -errTol);
     isStrictlyOutside[1] = isStrictlyOutside[1] && (pt[0] > (1.0 + errTol));
@@ -484,20 +542,21 @@ namespace INTERP_KERNEL
     SplitterTetra2(const MyMeshTypeT& targetMesh, const MyMeshTypeS& srcMesh, SplittingPolicy policy);
     ~SplitterTetra2();
     void releaseArrays();
+    void splitTargetCell2(typename MyMeshTypeT::MyConnType targetCell, typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra);
     void splitTargetCell(typename MyMeshTypeT::MyConnType targetCell, typename MyMeshTypeT::MyConnType nbOfNodesT,
-                         typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra);
-    void fiveSplit(const int* const subZone, typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra);
-    void sixSplit(const int* const subZone, typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra);
-    void calculateGeneral24Tetra(typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra);
-    void calculateGeneral48Tetra(typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra);
-    void splitPyram5(typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra);
-    void splitConvex(typename MyMeshTypeT::MyConnType                     targetCell,
-                     typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra);
-    void calculateSubNodes(const MyMeshTypeT& targetMesh, typename MyMeshTypeT::MyConnType targetCell);
-    inline const double* getCoordsOfSubNode(typename MyMeshTypeT::MyConnType node);
-    inline const double* getCoordsOfSubNode2(typename MyMeshTypeT::MyConnType node, typename MyMeshTypeT::MyConnType& nodeId);
+                         typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra);//to suppress
+    void fiveSplit(const int* const subZone, typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra);//to suppress
+    void sixSplit(const int* const subZone, typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra);//to suppress
+    void calculateGeneral24Tetra(typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra);//to suppress
+    void calculateGeneral48Tetra(typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra);//to suppress
+    void splitPyram5(typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra);//to suppress
+    void splitConvex(typename MyMeshTypeT::MyConnType                     targetCell,//to suppress
+                     typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra);//to suppress
+    void calculateSubNodes(const MyMeshTypeT& targetMesh, typename MyMeshTypeT::MyConnType targetCell);//to suppress
+    inline const double* getCoordsOfSubNode(typename MyMeshTypeT::MyConnType node);//to suppress
+    inline const double* getCoordsOfSubNode2(typename MyMeshTypeT::MyConnType node, typename MyMeshTypeT::MyConnType& nodeId);//to suppress
     //template<int n>
-    inline void calcBarycenter(int n, double* barycenter, const typename MyMeshTypeT::MyConnType* pts);
+    inline void calcBarycenter(int n, double* barycenter, const typename MyMeshTypeT::MyConnType* pts);//to suppress
   private:
     const MyMeshTypeT& _target_mesh;
     const MyMeshTypeS& _src_mesh;

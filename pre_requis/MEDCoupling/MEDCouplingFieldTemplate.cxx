@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,7 +27,7 @@
 
 using namespace ParaMEDMEM;
 
-MEDCouplingFieldTemplate *MEDCouplingFieldTemplate::New(const MEDCouplingFieldDouble& f) throw(INTERP_KERNEL::Exception)
+MEDCouplingFieldTemplate *MEDCouplingFieldTemplate::New(const MEDCouplingFieldDouble& f)
 {
   return new MEDCouplingFieldTemplate(f);
 }
@@ -40,7 +40,7 @@ MEDCouplingFieldTemplate *MEDCouplingFieldTemplate::New(TypeOfField type)
   return new MEDCouplingFieldTemplate(type);
 }
 
-MEDCouplingFieldTemplate::MEDCouplingFieldTemplate(const MEDCouplingFieldDouble& f) throw(INTERP_KERNEL::Exception):MEDCouplingField(f,false) 
+MEDCouplingFieldTemplate::MEDCouplingFieldTemplate(const MEDCouplingFieldDouble& f):MEDCouplingField(f,false) 
 {
   forceTimeOfThis(f);
   checkCoherency();
@@ -50,7 +50,7 @@ MEDCouplingFieldTemplate::MEDCouplingFieldTemplate(TypeOfField type):MEDCoupling
 {
 }
 
-void MEDCouplingFieldTemplate::checkCoherency() const throw(INTERP_KERNEL::Exception)
+void MEDCouplingFieldTemplate::checkCoherency() const
 {
   if(_mesh==0)
     throw INTERP_KERNEL::Exception("MEDCouplingFieldTemplate::checkCoherency : Empty mesh !");
@@ -130,17 +130,17 @@ void MEDCouplingFieldTemplate::serialize(DataArrayInt *&dataInt) const
   _type->getSerializationIntArray(dataInt);
 }
 
-void MEDCouplingFieldTemplate::reprQuickOverview(std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+void MEDCouplingFieldTemplate::reprQuickOverview(std::ostream& stream) const
 {
   stream << "MEDCouplingFieldTemplate C++ instance at " << this << ". Name : \"" << _name << "\"." << std::endl;
   const char *nat=0;
   try
-    {
+  {
       nat=MEDCouplingNatureOfField::GetRepr(_nature);
       stream << "Nature of field template : " << nat << ".\n";
-    }
-  catch(INTERP_KERNEL::Exception& e)
-    {  }
+  }
+  catch(INTERP_KERNEL::Exception& /*e*/)
+  {  }
   const MEDCouplingFieldDiscretization *fd(_type);
   if(!fd)
     stream << "No spatial discretization set !";

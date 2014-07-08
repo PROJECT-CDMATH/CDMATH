@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -43,8 +43,9 @@ void _MEDfileObjectsMount236(int dummy,...) {
   med_int  rfileversionMMR,rfileversionMM,rfileversionM;
   med_int  lfileversionMMR,lfileversionMM,lfileversionM;
   med_bool _datagroupexist=MED_FALSE,_isasoftlink=MED_FALSE;
-  
+
   MED_VARGS_DECL(const, med_idt         , , fid           );
+  MED_VARGS_DECL(const, med_idt         , , gid           );
   MED_VARGS_DECL(const, char*     , const , mountfilename );
   MED_VARGS_DECL(const, med_class       , , medclass      );
   MED_VARGS_DECL(, med_idt *             ,, fret          );
@@ -53,6 +54,7 @@ void _MEDfileObjectsMount236(int dummy,...) {
   va_start(params,dummy);
 
   MED_VARGS_DEF(const, med_idt         , , fid           );
+  MED_VARGS_DEF(const, med_idt         , , gid           );
   MED_VARGS_DEF(const, char*     , const , mountfilename );
   MED_VARGS_DEF(const, med_class       , , medclass      );
   MED_VARGS_DEF(, med_idt *             ,, fret          );

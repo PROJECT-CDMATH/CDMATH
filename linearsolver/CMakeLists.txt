@@ -1,0 +1,9 @@
+# nom du projet mesh
+PROJECT(linearsolver)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
+
+ADD_SUBDIRECTORY(src)
+ADD_SUBDIRECTORY(inc)
+
+

@@ -114,7 +114,7 @@ void
 Node::addFaceId (const int numFace, const int faceId )
 //----------------------------------------------------------------------
 {
-	_facesId[numFace] = faceId ;
+	_facesId(numFace) = faceId ;
 }
 
 //----------------------------------------------------------------------
@@ -122,7 +122,7 @@ void
 Node::addCellId (const int numCell, const int cellId )
 //----------------------------------------------------------------------
 {
-	_cellsId[numCell] = cellId ;
+	_cellsId(numCell) = cellId ;
 }
 
 //----------------------------------------------------------------------

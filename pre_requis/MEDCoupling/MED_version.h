@@ -33,8 +33,8 @@
 
 // MED_VERSION is reserved enum of MEDMEM,
 // thus we use alternative constant name for SALOME MED module
-#define SALOMEMED_VERSION_STR "7.2.0"
-#define SALOMEMED_VERSION     0x070200
+#define SALOMEMED_VERSION_STR "7.4.0"
+#define SALOMEMED_VERSION     0x070400
 #define SALOMEMED_DEVELOPMENT 0
 
 #endif // __MED_VERSION_H__

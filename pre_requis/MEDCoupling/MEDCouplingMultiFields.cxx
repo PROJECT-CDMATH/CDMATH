@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -29,7 +29,7 @@
 
 using namespace ParaMEDMEM;
 
-MEDCouplingMultiFields *MEDCouplingMultiFields::New(const std::vector<MEDCouplingFieldDouble *>& fs) throw(INTERP_KERNEL::Exception)
+MEDCouplingMultiFields *MEDCouplingMultiFields::New(const std::vector<MEDCouplingFieldDouble *>& fs)
 {
   return new MEDCouplingMultiFields(fs);
 }
@@ -105,7 +105,7 @@ std::string MEDCouplingMultiFields::getTimeUnit() const
   return std::string();
 }
 
-double MEDCouplingMultiFields::getTimeResolution() const throw(INTERP_KERNEL::Exception)
+double MEDCouplingMultiFields::getTimeResolution() const
 {
   std::vector< MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> >::const_iterator it=_fs.begin();
   for(;it!=_fs.end();it++)
@@ -124,12 +124,12 @@ std::string MEDCouplingMultiFields::simpleRepr() const
   std::vector<MEDCouplingMesh *> ms;
   std::vector<int> refms;
   try
-    {
+  {
       ms=getDifferentMeshes(refms);
       ret << ms.size() << "\n";
-    }
-  catch(INTERP_KERNEL::Exception& e)
-    { ret << "Current instance is INVALID !\n"; }
+  }
+  catch(INTERP_KERNEL::Exception& /*e*/)
+  { ret << "Current instance is INVALID !\n"; }
   return ret.str();
 }
 
@@ -149,7 +149,7 @@ bool MEDCouplingMultiFields::isEqualWithoutConsideringStr(const MEDCouplingMulti
   return true;
 }
 
-const MEDCouplingFieldDouble *MEDCouplingMultiFields::getFieldWithId(int id) const throw(INTERP_KERNEL::Exception)
+const MEDCouplingFieldDouble *MEDCouplingMultiFields::getFieldWithId(int id) const
 {
   if(id>=(int)_fs.size() || id < 0)
     throw INTERP_KERNEL::Exception("MEDCouplingMultiFields::getFieldWithId : invalid id outside boundaries !");
@@ -168,7 +168,7 @@ int MEDCouplingMultiFields::getNumberOfFields() const
   return (int)_fs.size();
 }
 
-const MEDCouplingFieldDouble *MEDCouplingMultiFields::getFieldAtPos(int id) const throw(INTERP_KERNEL::Exception)
+const MEDCouplingFieldDouble *MEDCouplingMultiFields::getFieldAtPos(int id) const
 {
   if(id<0 || id>=(int)_fs.size())
     {
@@ -190,23 +190,24 @@ void MEDCouplingMultiFields::updateTime() const
       updateTimeWith(*(*it));
 }
 
-std::size_t MEDCouplingMultiFields::getHeapMemorySize() const
+std::size_t MEDCouplingMultiFields::getHeapMemorySizeWithoutChildren() const
 {
-  std::vector<int> tmp;
-  std::vector< std::vector<int> > tmp2;
-  std::vector<MEDCouplingMesh *> ms=getDifferentMeshes(tmp);
-  std::vector<DataArrayDouble *> arrs=getDifferentArrays(tmp2);
-  std::size_t ret=0;
-  for(std::vector<MEDCouplingMesh *>::const_iterator it=ms.begin();it!=ms.end();it++)
-    if(*it)
-      ret+=(*it)->getHeapMemorySize();
-  for(std::vector<DataArrayDouble *>::const_iterator it=arrs.begin();it!=arrs.end();it++)
-    if(*it)
-      ret+=(*it)->getHeapMemorySize();
+  return 0;
+}
+
+std::vector<const BigMemoryObject *> MEDCouplingMultiFields::getDirectChildren() const
+{
+  std::vector<const BigMemoryObject *> ret;
+  for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> >::const_iterator it=_fs.begin();it!=_fs.end();it++)
+    {
+      const MEDCouplingFieldDouble *curF(*it);
+      if(curF)
+        ret.push_back(curF);
+    }
   return ret;
 }
 
-std::vector<MEDCouplingMesh *> MEDCouplingMultiFields::getMeshes() const throw(INTERP_KERNEL::Exception)
+std::vector<MEDCouplingMesh *> MEDCouplingMultiFields::getMeshes() const
 {
   std::vector<MEDCouplingMesh *> ms;
   for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> >::const_iterator it=_fs.begin();it!=_fs.end();it++)
@@ -219,7 +220,7 @@ std::vector<MEDCouplingMesh *> MEDCouplingMultiFields::getMeshes() const throw(I
   return ms;
 }
 
-std::vector<MEDCouplingMesh *> MEDCouplingMultiFields::getDifferentMeshes(std::vector<int>& refs) const throw(INTERP_KERNEL::Exception)
+std::vector<MEDCouplingMesh *> MEDCouplingMultiFields::getDifferentMeshes(std::vector<int>& refs) const
 {
   refs.resize(_fs.size());
   std::vector<MEDCouplingMesh *> ms;
@@ -246,7 +247,7 @@ std::vector<MEDCouplingMesh *> MEDCouplingMultiFields::getDifferentMeshes(std::v
   return ms;
 }
 
-std::vector<DataArrayDouble *> MEDCouplingMultiFields::getArrays() const throw(INTERP_KERNEL::Exception)
+std::vector<DataArrayDouble *> MEDCouplingMultiFields::getArrays() const
 {
   std::vector<DataArrayDouble *> tmp;
   for(std::vector< MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> >::const_iterator it=_fs.begin();it!=_fs.end();it++)
@@ -257,7 +258,7 @@ std::vector<DataArrayDouble *> MEDCouplingMultiFields::getArrays() const throw(I
   return tmp;
 }
 
-std::vector<DataArrayDouble *> MEDCouplingMultiFields::getDifferentArrays(std::vector< std::vector<int> >& refs) const throw(INTERP_KERNEL::Exception)
+std::vector<DataArrayDouble *> MEDCouplingMultiFields::getDifferentArrays(std::vector< std::vector<int> >& refs) const
 {
   refs.resize(_fs.size());
   int id=0;
@@ -293,7 +294,7 @@ std::vector<DataArrayDouble *> MEDCouplingMultiFields::getDifferentArrays(std::v
   return ret;
 }
 
-void MEDCouplingMultiFields::checkCoherency() const throw(INTERP_KERNEL::Exception)
+void MEDCouplingMultiFields::checkCoherency() const
 {
   std::vector< MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> >::const_iterator it=_fs.begin();
   for(;it!=_fs.end();it++)
@@ -304,7 +305,7 @@ void MEDCouplingMultiFields::checkCoherency() const throw(INTERP_KERNEL::Excepti
     }
 }
 
-MEDCouplingMultiFields::MEDCouplingMultiFields(const std::vector<MEDCouplingFieldDouble *>& fs) throw(INTERP_KERNEL::Exception):_fs(fs.size())
+MEDCouplingMultiFields::MEDCouplingMultiFields(const std::vector<MEDCouplingFieldDouble *>& fs):_fs(fs.size())
 {
   int id=0;
   for(std::vector< MEDCouplingFieldDouble * >::const_iterator it=fs.begin();it!=fs.end();it++,id++)
@@ -322,7 +323,7 @@ MEDCouplingMultiFields::MEDCouplingMultiFields(const std::vector<MEDCouplingFiel
 /*!
  * Performs deepCpy.
  */
-MEDCouplingMultiFields::MEDCouplingMultiFields(const MEDCouplingMultiFields& other)
+MEDCouplingMultiFields::MEDCouplingMultiFields(const MEDCouplingMultiFields& other):RefCountObject(other)
 {
   std::size_t sz=other._fs.size();
   _fs.resize(sz);

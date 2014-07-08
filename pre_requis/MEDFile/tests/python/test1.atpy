@@ -1,0 +1,18 @@
+AT_SETUP([test python n1])
+
+AT_KEYWORDS([python test1])
+
+# List of executables that should be run to perform the tests
+#AT_TESTED([test1.py])
+
+# AT_CHECK([cp $abs_srcdir/test1.expout expout],[0],[ignore],[ignore])
+
+AT_CHECK([python $testpydir/test1.py],
+         [0],
+         [ignore],
+         [ignore],
+	 [],
+	 [ln test1.med $builddir/test1.med]
+	 )
+
+AT_CLEANUP

@@ -27,7 +27,7 @@ Cell::Cell( int numberOfNodes, int numberOfFaces, double measure, const Point p 
 	_numberOfFaces    = numberOfFaces ;
 	_nodesId = IntTab(_numberOfNodes,0);
 	_facesId = IntTab(_numberOfFaces,0);
-	_normalVectors = DoubleTab(2*_numberOfFaces,0.0);
+	_normalVectors = Vector(2*_numberOfFaces);
 	_measure = measure ;
 }
 
@@ -129,7 +129,7 @@ void
 Cell::addFaceId (int numFace, int faceId )
 //----------------------------------------------------------------------
 {
-	_facesId[numFace] = faceId ;
+	_facesId(numFace) = faceId ;
 }
 
 //----------------------------------------------------------------------
@@ -137,8 +137,8 @@ void
 Cell::addNormalVector (int numNormalVector, double x, double y, double z)
 //----------------------------------------------------------------------
 {
-	_normalVectors[2*numNormalVector] = x ;
-	_normalVectors[2*numNormalVector+1] = y ;
+	_normalVectors(2*numNormalVector) = x ;
+	_normalVectors(2*numNormalVector+1) = y ;
 }
 
 //----------------------------------------------------------------------
@@ -147,9 +147,9 @@ Cell::getNormalVector( int numNormalVector, int numComposant ) const
 //----------------------------------------------------------------------
 {
 	if (numComposant==0)
-		return _normalVectors[2*numNormalVector];
+		return _normalVectors(2*numNormalVector);
 	else if (numComposant==1)
-		return _normalVectors[2*numNormalVector+1];
+		return _normalVectors(2*numNormalVector+1);
 	else
 	{
 		assert("Error : error dans getNormalVector");
@@ -158,7 +158,7 @@ Cell::getNormalVector( int numNormalVector, int numComposant ) const
 }
 
 //----------------------------------------------------------------------
-DoubleTab
+Vector
 Cell::getNormalVectors (void) const
 //----------------------------------------------------------------------
 {
@@ -170,7 +170,7 @@ void
 Cell::addNodeId (int numNode, int nodeId )
 //----------------------------------------------------------------------
 {
-	_nodesId[numNode] = nodeId ;
+	_nodesId(numNode) = nodeId ;
 }
 
 //----------------------------------------------------------------------

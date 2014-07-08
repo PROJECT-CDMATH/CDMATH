@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -89,7 +89,7 @@ if (_MEDcheckVersion30(fid) < 0) goto ERROR;
     MED_ERR_(_ret,MED_ERR_OPEN,MED_ERR_LINK,MED_NOM_COO);
     goto ERROR;
   }
-  ISCRUTE_int(_isasoftlink);
+/*  ISCRUTE_int(_isasoftlink);*/
   if (!_isasoftlink) {
     MED_ERR_(_ret,MED_ERR_NULL,MED_ERR_DATASET,MED_NOM_COO);
     goto ERROR;

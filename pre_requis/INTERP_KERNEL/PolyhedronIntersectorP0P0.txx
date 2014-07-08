@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -77,9 +77,8 @@ namespace INTERP_KERNEL
   template<class MyMeshType, class MyMatrix>
   void PolyhedronIntersectorP0P0<MyMeshType,MyMatrix>::intersectCells(ConnType targetCell, const std::vector<ConnType>& srcCells, MyMatrix& res)
   {
-    int nbOfNodesT=Intersector3D<MyMeshType,MyMatrix>::_target_mesh.getNumberOfNodesOfElement(OTT<ConnType,numPol>::indFC(targetCell));
     releaseArrays();
-    _split.splitTargetCell(targetCell,nbOfNodesT,_tetra);
+    _split.splitTargetCell2(targetCell,_tetra);
     for(typename std::vector<ConnType>::const_iterator iterCellS=srcCells.begin();iterCellS!=srcCells.end();iterCellS++)
       {
         double volume = 0.;

@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -18,7 +18,7 @@
 #ifndef MEDIMPORTCXX_WIN_DLL_H
 #define MEDIMPORTCXX_WIN_DLL_H
 
-#ifdef PPRO_NT 
+#if !defined(MED3_USESTATIC) && defined(PPRO_NT)
 # ifdef MEDIMPORTCXX_DLL_EXPORTS
 #  define MEDIMPORTCXX_EXPORT __declspec( dllexport )
 # else
