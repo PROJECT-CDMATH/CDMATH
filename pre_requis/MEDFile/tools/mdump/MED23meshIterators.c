@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -64,6 +64,7 @@ med_geometry_type MED23MESH_GET_CELL_GEOMETRY_TYPE[MED_N_CELL_FIXED_GEO+2]={
   MED_OCTA12,
   MED_HEXA27,
   MED_POLYGON,
+  MED_POLYGON2,
   MED_POLYHEDRON,
   MED_NO_GEOTYPE
 };
@@ -91,6 +92,7 @@ const char * const MED23MESH_GET_CELL_GEOMETRY_TYPENAME[MED_N_CELL_FIXED_GEO+2]=
   "MED_OCTA12",
   "MED_HEXA27",
   "MED_POLYGONE",
+  "MED_POLYGONE2",
   "MED_POLYEDRE",
   "(AUCUN)"
 };
@@ -105,6 +107,7 @@ med_geometry_type MED23MESH_GET_FACE_GEOMETRY_TYPE[MED_N_FACE_FIXED_GEO+2]={
   MED_TRIA7,
   MED_QUAD9,
   MED_POLYGON,
+  MED_POLYGON2,
   MED_NO_GEOTYPE
 };
 
@@ -117,6 +120,7 @@ const char * const MED23MESH_GET_FACE_GEOMETRY_TYPENAME[MED_N_FACE_FIXED_GEO+2]=
   "MED_TRIA7",
   "MED_QUAD9",
   "MED_POLYGONE",
+  "MED_POLYGONE2",
   "(AUCUN)"
 };
 

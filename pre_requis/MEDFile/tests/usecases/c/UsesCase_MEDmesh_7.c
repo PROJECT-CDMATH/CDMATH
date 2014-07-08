@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -133,7 +133,7 @@ int main (int argc, char **argv) {
   }
   if (MEDmeshElementConnectivityRd(fid, meshname, MED_NO_DT, MED_NO_IT, MED_CELL,
 				   MED_QUAD4, MED_NODAL, MED_FULL_INTERLACE, quadconnectivity) < 0) {
-    MESSAGE("ERROR : MED_TRIA3 connectivity ...");
+    MESSAGE("ERROR : MED_QUAD4 connectivity ...");
     free(quadconnectivity);
     goto ERROR;
   }

@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,29 +23,43 @@
 
 #include "MEDCoupling.hxx"
 
+#include <cstddef>
+
 namespace ParaMEDMEM
 {
   /*!
    * Class representing a label of time of the lastely modified part of this.
    * More _time is high more the object has been modified recently.
    */
-  class MEDCOUPLING_EXPORT TimeLabel
+  class TimeLabel
   {
   public:
-    TimeLabel& operator=(const TimeLabel& other);
+    MEDCOUPLING_EXPORT TimeLabel& operator=(const TimeLabel& other);
     //! This method should be called when write access has been done on this.
-    void declareAsNew() const;
+    MEDCOUPLING_EXPORT void declareAsNew() const;
     //! This method should be called on high level classes as Field or Mesh to take into acount modifications done in aggregates objects.
-    virtual void updateTime() const = 0;
-    unsigned int getTimeOfThis() const { return _time; }
+    MEDCOUPLING_EXPORT virtual void updateTime() const = 0;
+    MEDCOUPLING_EXPORT std::size_t getTimeOfThis() const { return _time; }
   protected:
-    TimeLabel();
-    virtual ~TimeLabel();
-    void updateTimeWith(const TimeLabel& other) const;
-    void forceTimeOfThis(const TimeLabel& other) const;
+    MEDCOUPLING_EXPORT TimeLabel();
+    MEDCOUPLING_EXPORT virtual ~TimeLabel();
+    MEDCOUPLING_EXPORT void updateTimeWith(const TimeLabel& other) const;
+    MEDCOUPLING_EXPORT void forceTimeOfThis(const TimeLabel& other) const;
   private:
-    static unsigned int GLOBAL_TIME;
-    mutable unsigned int _time;
+    static std::size_t GLOBAL_TIME;
+    mutable std::size_t _time;
+  };
+
+  class TimeLabelConstOverseer
+  {
+  public:
+    MEDCOUPLING_EXPORT TimeLabelConstOverseer(const TimeLabel *tl);
+    MEDCOUPLING_EXPORT void checkConst() const;
+    MEDCOUPLING_EXPORT bool resetState();
+    MEDCOUPLING_EXPORT bool keepTrackOfNewTL(const TimeLabel *tl);
+  private:
+    const TimeLabel *_tl;
+    std::size_t _ref_time;
   };
 }
 

@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,6 +17,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // Author : Anthony Geay (CEA/DEN)
+
 #ifndef __INTERPOLATION3D_TXX__
 #define __INTERPOLATION3D_TXX__
 
@@ -33,6 +34,7 @@
 #include "PointLocator3DIntersectorP1P0.txx"
 #include "PolyhedronIntersectorP1P1.txx"
 #include "PointLocator3DIntersectorP1P1.txx"
+#include "Barycentric3DIntersectorP1P1.txx"
 #include "Log.hxx"
 /// If defined, use recursion to traverse the binary search tree, else use the BBTree class
 //#define USE_RECURSIVE_BBOX_FILTER
@@ -72,7 +74,7 @@ namespace INTERP_KERNEL
    *
    */
   template<class MyMeshType, class MatrixType>
-  int Interpolation3D::interpolateMeshes(const MyMeshType& srcMesh, const MyMeshType& targetMesh, MatrixType& result, const char *method)
+  int Interpolation3D::interpolateMeshes(const MyMeshType& srcMesh, const MyMeshType& targetMesh, MatrixType& result, const std::string& method)
   {
     typedef typename MyMeshType::MyConnType ConnType;
     // create MeshElement objects corresponding to each element of the two meshes
@@ -132,16 +134,12 @@ namespace INTERP_KERNEL
           case PointLocator:
             intersector=new PointLocator3DIntersectorP1P0<MyMeshType,MatrixType>(targetMesh, srcMesh, getPrecision());
             break;
+          case Barycentric:
+            intersector=new PolyhedronIntersectorP1P0Bary<MyMeshType,MatrixType>(targetMesh, srcMesh, getSplittingPolicy());
+            break;
           default:
-            throw INTERP_KERNEL::Exception("Invalid 3D intersection type for P1P0 interp specified : must be Triangle or PointLocator.");
+            throw INTERP_KERNEL::Exception("Invalid 3D intersection type for P1P0 interp specified : must be Triangle, PointLocator or Barycentric.");
           }
-      }
-    else if(methC=="P1P0Bary")
-      {
-        if(InterpolationOptions::getIntersectionType()==Triangulation)
-          intersector=new PolyhedronIntersectorP1P0Bary<MyMeshType,MatrixType>(targetMesh, srcMesh, getSplittingPolicy());
-        else
-          throw INTERP_KERNEL::Exception("Invalid 3D intersection type specified : must be Triangle.");
       }
     else if(methC=="P1P1")
       {
@@ -152,6 +150,9 @@ namespace INTERP_KERNEL
             break;
           case PointLocator:
             intersector=new PointLocator3DIntersectorP1P1<MyMeshType,MatrixType>(targetMesh, srcMesh, getPrecision());
+            break;
+          case Barycentric:
+            intersector=new Barycentric3DIntersectorP1P1<MyMeshType,MatrixType>(targetMesh, srcMesh, getPrecision());
             break;
           default:
             throw INTERP_KERNEL::Exception("Invalid 3D intersection type for P1P1 interp specified : must be Triangle or PointLocator.");

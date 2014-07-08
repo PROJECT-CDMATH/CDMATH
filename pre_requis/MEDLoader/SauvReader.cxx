@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -44,14 +44,14 @@ using namespace std;
  */
 //================================================================================
 
-SauvReader* SauvReader::New(const char *fileName) throw(INTERP_KERNEL::Exception)
+SauvReader* SauvReader::New(const std::string& fileName)
 {
-  if ( !fileName || strlen(fileName) < 1 ) THROW_IK_EXCEPTION("Invalid file name");
+  if ( fileName.empty() ) THROW_IK_EXCEPTION("Invalid file name");
 
   ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr< SauvUtilities::FileReader> parser;
 
   // try to open as XRD
-  parser = new XDRReader( fileName );
+  parser = new XDRReader( fileName.c_str() );
   if ( parser->open() )
     {
       SauvReader* reader = new SauvReader;
@@ -60,7 +60,7 @@ SauvReader* SauvReader::New(const char *fileName) throw(INTERP_KERNEL::Exception
     }
 
   // try to open as ASCII
-  parser = new ASCIIReader( fileName );
+  parser = new ASCIIReader( fileName.c_str() );
   if ( parser->open() )
     {
       SauvReader* reader = new SauvReader;
@@ -79,6 +79,16 @@ SauvReader* SauvReader::New(const char *fileName) throw(INTERP_KERNEL::Exception
 SauvReader::~SauvReader()
 {
   _fileReader->decrRef();
+}
+
+std::size_t SauvReader::getHeapMemorySizeWithoutChildren() const
+{
+  return 0;
+}
+
+std::vector<const BigMemoryObject *> SauvReader::getDirectChildren() const
+{
+  return std::vector<const BigMemoryObject *>();
 }
 
 //================================================================================
@@ -102,7 +112,7 @@ std::string SauvReader::lineNb() const
  */
 //================================================================================
 
-ParaMEDMEM::MEDFileData * SauvReader::loadInMEDFileDS() throw(INTERP_KERNEL::Exception)
+ParaMEDMEM::MEDFileData * SauvReader::loadInMEDFileDS(bool fix2DOri)
 {
   SauvUtilities::IntermediateMED iMed; // intermadiate DS
   _iMed = &iMed;
@@ -136,7 +146,7 @@ ParaMEDMEM::MEDFileData * SauvReader::loadInMEDFileDS() throw(INTERP_KERNEL::Exc
           THROW_IK_EXCEPTION("XDR : ENREGISTREMENT DE TYPE " << recordNumber << " not implemented!!!");
     }
 
-  ParaMEDMEM::MEDFileData* medFileData = iMed.convertInMEDFileDS();
+  ParaMEDMEM::MEDFileData* medFileData = iMed.convertInMEDFileDS( fix2DOri );
 
   return medFileData;
 }
@@ -374,7 +384,7 @@ void SauvReader::read_PILE_SOUS_MAILLAGE(const int                 nbObjects,
       else
         for (initIntReading(nbElements); more(); next());
 
-      // not a composit group
+      // not a composite group
       if (castemCellType>0 && nbSubGroups==0)
         {
           group._cellType = SauvUtilities::gibi2medGeom(castemCellType);
@@ -418,9 +428,9 @@ void SauvReader::read_PILE_SOUS_MAILLAGE(const int                 nbObjects,
       SauvUtilities::Group & grp = _iMed->_groups[ grpID-1 ];
       if ( !grp._name.empty() ) // a group has several names
         { // create a group with subgroup grp and named grp.name
-          _iMed->_groups.push_back(Group());
-          _iMed->_groups.back()._groups.push_back( &_iMed->_groups[ grpID-1 ]);
-          _iMed->_groups.back()._name = grp._name;
+          SauvUtilities::Group* newGroup = _iMed->addNewGroup();
+          newGroup->_groups.push_back( &_iMed->_groups[ grpID-1 ]);
+          newGroup->_name = grp._name;
         }
       grp._name=objectNames[i];
 #ifdef _DEBUG
@@ -628,33 +638,46 @@ void SauvReader::read_PILE_COORDONNEES (const int nbObjects, std::vector<std::st
 
 //================================================================================
 /*!
- * \brief Finds or create a Group equal to a given field support 
+ * \brief Find or create a Group equal to a given field support
  */
 //================================================================================
 
-SauvUtilities::Group* SauvReader::getFieldSupport(const vector<SauvUtilities::Group*>& supports)
+void SauvReader::setFieldSupport(const vector<SauvUtilities::Group*>& supports,
+                                 SauvUtilities::DoubleField*          field)
 {
   SauvUtilities::Group* group = NULL;
   set<SauvUtilities::Group*> sup_set( supports.begin(), supports.end() );
-  if (sup_set.size() == 1 ) // one or equal supports
+  if ( sup_set.size() == 1 ) // one or equal supports
     {
       group = supports[0];
     }
   else
     {
-      // try to find an existing composite group with the same sub-groups
-      for ( size_t i = 0; i < _iMed->_groups.size() && !group; ++i )
+      // check if sub-components are on cells of different types
+      map<int,int> nbGaussByCellType;
+      for ( size_t i = 0; i < supports.size(); ++i )
         {
-          Group & grp = _iMed->_groups[i];
-          if (sup_set.size() == grp._groups.size())
-            {
-              bool sameOrder = true;
-              for ( size_t j = 0; j < supports.size() && sameOrder; ++j )
-                sameOrder = ( supports[j] == grp._groups[ j % grp._groups.size() ]);
-              if ( sameOrder )
-                group = & _iMed->_groups[i];
-            }
+          map<int,int>::iterator ct2ng = nbGaussByCellType.find( supports[i]->_cellType );
+          if ( ct2ng == nbGaussByCellType.end() )
+            nbGaussByCellType[ supports[i]->_cellType ] = field->_sub[i].nbGauss();
+          else if ( ct2ng->second != field->_sub[i].nbGauss() )
+            return;
         }
+      bool isSameCellType = ( nbGaussByCellType.size() == 1 );
+      // try to find an existing composite group with the same sub-groups
+      if ( isSameCellType )
+        for ( size_t i = 0; i < _iMed->_groups.size() && !group; ++i )
+          {
+            Group & grp = _iMed->_groups[i];
+            if (sup_set.size() == grp._groups.size())
+              {
+                bool sameOrder = true;
+                for ( size_t j = 0; j < supports.size() && sameOrder; ++j )
+                  sameOrder = ( supports[j] == grp._groups[ j % grp._groups.size() ]);
+                if ( sameOrder )
+                  group = & _iMed->_groups[i];
+              }
+          }
       if ( !group ) // no such a group, add a new one
         {
           vector<SauvUtilities::Group*> newGroups( supports.begin(),
@@ -665,20 +688,71 @@ SauvUtilities::Group* SauvReader::getFieldSupport(const vector<SauvUtilities::Gr
             sameOrder = ( supports[j] == newGroups[ j % newGroups.size() ]);
           if ( sameOrder )
             {
-              _iMed->_groups.push_back( SauvUtilities::Group() );
-              group = & _iMed->_groups.back();
+              group = _iMed->addNewGroup( & newGroups );
               group->_groups.swap( newGroups );
+            }
+        }
+      // sort field sub-components and supports by cell type
+      if ( group && !isSameCellType )
+        {
+          // sort groups
+          vector<SauvUtilities::Group*>& groups = group->_groups;
+          bool isModified = false, isSwapped = true;
+          while ( isSwapped )
+            {
+              isSwapped = false;
+              for ( size_t i = 1; i < groups.size(); ++i )
+                {
+                  int nbN1 = groups[i-1]->empty() ? 0 : groups[i-1]->_cells[0]->_nodes.size();
+                  int nbN2 = groups[i  ]->empty() ? 0 : groups[i  ]->_cells[0]->_nodes.size();
+                  if ( nbN1 > nbN2 )
+                    {
+                      isSwapped = isModified = true;
+                      std::swap( groups[i], groups[i-1] );
+                    }
+                }
+            }
+          // relocate sub-components according to a new order of groups
+          if ( isModified )
+            {
+              vector< DoubleField::_Sub_data > newSub   ( field->_sub.size() );
+              vector< vector< double > >       newValues( field->_comp_values.size() );
+              size_t iFromSub = 0, iNewSub = 0, iNewComp = 0;
+              for ( ; iFromSub < field->_sub.size(); iFromSub += groups.size() )
+                {
+                  size_t iFromComp = iNewComp;
+                  for ( size_t iG = 0; iG < groups.size(); ++iG )
+                    {
+                      size_t iComp = iFromComp;
+                      for ( size_t iSub = iFromSub; iSub < field->_sub.size(); ++iSub )
+                        if ( field->_sub[ iSub ]._support == groups[ iG ] )
+                          {
+                            newSub[ iNewSub++ ] = field->_sub[ iSub ];
+                            int iC = 0, nbC = field->_sub[ iSub ].nbComponents();
+                            for ( ; iC < nbC; ++iC )
+                              newValues[ iNewComp++ ].swap( field->_comp_values[ iComp++ ]);
+                            break;
+                          }
+                        else
+                          {
+                            iComp += field->_sub[ iSub ].nbComponents();
+                          }
+                    }
+                }
+              field->_sub.swap( newSub );
+              field->_comp_values.swap( newValues );
             }
         }
     }
   if ( group )
     group->_isProfile = true;
-  return group;
+
+  field->_group = group;
 }
 
 //================================================================================
 /*!
- * \brief set field names
+ * \brief Set field names
  */
 //================================================================================
 
@@ -803,10 +877,10 @@ void SauvReader::read_PILE_NODES_FIELD (const int                 nbObjects,
       // set a supporting group including all subs supports but only
       // if all subs have the same components
       if ( fdouble && fdouble->hasSameComponentsBySupport() )
-        fdouble->_group = getFieldSupport( supports );
+        setFieldSupport( supports, fdouble );
       else
         for ( i_sub = 0; i_sub < nb_sub; ++i_sub )
-          fdouble->_sub[ i_sub ]._support->_isProfile;
+          fdouble->_sub[ i_sub ]._support->_isProfile = true;
 
     } // end loop on field objects
 
@@ -973,7 +1047,7 @@ void SauvReader::read_PILE_FIELD (const int                 nbObjects,
       // set id of a group including all sub supports but only
       // if all subs have the same nb of components
       if ( fdouble && fdouble->hasSameComponentsBySupport() )
-        fdouble->_group = getFieldSupport( supports );
+        setFieldSupport( supports, fdouble );
       else
         for ( i_sub = 0; i_sub < nb_sub; ++i_sub )
           fdouble->_sub[ i_sub ]._support->_isProfile = true;

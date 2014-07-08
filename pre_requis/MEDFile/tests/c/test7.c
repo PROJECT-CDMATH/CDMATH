@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -55,6 +55,7 @@ int main (int argc, char **argv)
   char maa[MED_NAME_SIZE+1] ="maa1";
   med_int mdim=0,sdim=0;
   med_bool inoele=MED_FALSE,inuele=MED_FALSE,chgt=MED_FALSE,trsf=MED_FALSE;
+  med_bool inoele3=MED_FALSE,inuele3=MED_FALSE;
   med_int tse2,ttr3;
   char str[MED_SNAME_SIZE+1];
   med_int flt[2] = { 2, 3 }, fltsize=2;
@@ -194,16 +195,16 @@ int main (int argc, char **argv)
   /* Lecture (optionnelle) des noms des triangles */
   if (MEDmeshEntityNameRd(fid, maa, MED_NO_DT, MED_NO_IT,
 			  MED_CELL, MED_TRIA3, nomtr3) < 0)
-    inoele = MED_FALSE;
+    inoele3 = MED_FALSE;
   else
-    inoele = MED_TRUE;
+    inoele3 = MED_TRUE;
 
   /* Lecture (optionnelle) des numeros des triangles */
   if (MEDmeshEntityNumberRd(fid, maa, MED_NO_DT, MED_NO_IT,
 			    MED_CELL, MED_TRIA3, numtr3) < 0)
-    inuele = MED_FALSE;
+    inuele3 = MED_FALSE;
   else
-    inuele = MED_TRUE;
+    inuele3 = MED_TRUE;
 
   /* Lecture des numeros des familles des triangles */
   if ( (ret = MEDmeshEntityFamilyNumberRd(fid,maa, MED_NO_DT, MED_NO_IT,
@@ -247,7 +248,7 @@ int main (int argc, char **argv)
     printf("\nConnectivite des triangles : \n");
     for (i=0;i<ntr3*ttr3;i++)
       printf(IFORMAT" ",*(tr3+i));
-    if (inoele) {
+    if (inoele3) {
       printf("\nNoms des triangles :\n");
       for (i=0;i<ntr3;i++) {
 	strncpy(str,nomtr3+i*MED_SNAME_SIZE,MED_SNAME_SIZE);
@@ -255,7 +256,7 @@ int main (int argc, char **argv)
 	printf("|%s| ",str);
       }
     }
-    if (inuele) {
+    if (inuele3) {
       printf("\nNumeros des triangles :\n");
       for (i=0;i<ntr3;i++)
 	printf(IFORMAT" ",*(numtr3+i));

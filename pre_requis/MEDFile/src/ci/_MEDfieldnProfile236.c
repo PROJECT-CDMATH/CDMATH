@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -83,7 +83,7 @@ _MEDfieldnProfile236(int dummy, ...) {
    */
 #if ! defined(MED_CHECK_23FORMAT)
 #error "Data model objects version checking must be either activated or deactivated, hence MED_CHECK_23FORMAT macro must be defined."
-#error "Verify that you include  med_config.h, thanks."
+#error "Verify that you include med_config.h, thanks."
 #endif
 
 # if MED_CHECK_23FORMAT == 1

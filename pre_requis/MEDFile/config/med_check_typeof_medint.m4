@@ -1,6 +1,6 @@
 dnl  This file is part of MED.
 dnl
-dnl  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+dnl  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
 dnl  MED is free software: you can redistribute it and/or modify
 dnl  it under the terms of the GNU Lesser General Public License as published by
 dnl  the Free Software Foundation, either version 3 of the License, or
@@ -30,7 +30,7 @@ test x"$withval" = xno && test x"$enable_fortran" = xno && withval=int
 
 dnl Si aucune directive n'est donnée, test par compilation c/f quel
 dnl type d'entier il faut utiliser pour med_int en utilisant les flags fortran
-dnl Pour la cross-compilation, il ne faut lancer un test de compilation  
+dnl Pour la cross-compilation, il ne faut pas lancer un test de compilation  
 dnl  -> l'utilisateur spécifie le type à utiliser : int ou long
 if test x"$withval" = xno
 then
@@ -43,10 +43,14 @@ then
      AC_CHECK_SIZEOF(long)
      test "x$ac_cv_sizeof_long" = "x8" || AC_MSG_ERROR([Size of C type long expected to be eight bytes])
      LONG_OR_INT="long"
+     #pour le module python qui est le meme pour int/long on a besoin des deux définitions 
+     AC_CHECK_SIZEOF(int)
   elif test "x$ac_cv_sizeof_fortran_integer" = "x4" ; then
      AC_CHECK_SIZEOF(int)
      test "x$ac_cv_sizeof_int" = "x4" || AC_MSG_ERROR([Size of C type int expected to be four bytes])
      LONG_OR_INT="int"
+     #pour le module python qui est le meme pour int/long on a besoin des deux définitions 
+     AC_CHECK_SIZEOF(long)
   else
      AC_MSG_ERROR([Size of Fortran type integer is neither four nor eigth bytes])
   fi

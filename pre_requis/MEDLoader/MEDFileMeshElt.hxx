@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,6 +22,7 @@
 #define __MEDFILEMESHELT_HXX__
 
 #include "MEDCouplingMemArray.hxx"
+#include "MEDCoupling1GTUMesh.hxx"
 #include "MEDCouplingAutoRefCountObjectPtr.hxx"
 
 #include "NormalizedUnstructuredMesh.hxx"
@@ -31,37 +32,36 @@
 namespace ParaMEDMEM
 {
   class MEDCouplingUMesh;
+  class MEDFileMeshReadSelector;
 
   class MEDFileUMeshPerType : public RefCountObject
   {
   public:
-    static MEDFileUMeshPerType *New(med_idt fid, const char *mName, int dt, int it, int mdim, med_geometry_type geoElt, INTERP_KERNEL::NormalizedCellType geoElt2);
+    static MEDFileUMeshPerType *New(med_idt fid, const char *mName, int dt, int it, int mdim, med_geometry_type geoElt, INTERP_KERNEL::NormalizedCellType geoElt2, MEDFileMeshReadSelector *mrs);
     static bool isExisting(med_idt fid, const char *mName, int dt, int it, med_geometry_type geoElt, med_entity_type& whichEntity);
-    std::size_t getHeapMemorySize() const { return 0; }
+    std::size_t getHeapMemorySizeWithoutChildren() const;
+    std::vector<const BigMemoryObject *> getDirectChildren() const;
     int getDim() const;
-    const DataArrayInt *getNodal() const { return _conn; }
-    const DataArrayInt *getNodalIndex() const { return _conn_index; }
+    MEDCoupling1GTUMesh *getMesh() const { return const_cast<MEDCoupling1GTUMesh *>((const MEDCoupling1GTUMesh *)_m); }
     const DataArrayInt *getFam() const { return _fam; }
     const DataArrayInt *getNum() const { return _num; }
     const DataArrayAsciiChar *getNames() const { return _names; }
-    static void write(med_idt fid, const char *mname, int mdim, const MEDCouplingUMesh *m, const DataArrayInt *fam, const DataArrayInt *num, const DataArrayAsciiChar *names);
+    static void Write(med_idt fid, const std::string& mname, int mdim, const MEDCoupling1GTUMesh *m, const DataArrayInt *fam, const DataArrayInt *num, const DataArrayAsciiChar *names);
   private:
     MEDFileUMeshPerType(med_idt fid, const char *mName, int dt, int it, int mdim, med_geometry_type geoElt, INTERP_KERNEL::NormalizedCellType type,
-                        med_entity_type entity);
+                        med_entity_type entity, MEDFileMeshReadSelector *mrs);
     void loadFromStaticType(med_idt fid, const char *mName, int dt, int it, int mdim, int curNbOfElem, med_geometry_type geoElt, INTERP_KERNEL::NormalizedCellType type,
-                            med_entity_type entity);
+                            med_entity_type entity, MEDFileMeshReadSelector *mrs);
     void loadPolyg(med_idt fid, const char *mName, int dt, int it, int mdim, int arraySize, med_geometry_type geoElt,
-                   med_entity_type entity);
+                   med_entity_type entity, MEDFileMeshReadSelector *mrs);
     void loadPolyh(med_idt fid, const char *mName, int dt, int it, int mdim, int connFaceLgth, med_geometry_type geoElt,
-                   med_entity_type entity);
-    void loadCommonPart(med_idt fid, const char *mName, int dt, int it, int mdim, int curNbOfElem, med_geometry_type geoElt, med_entity_type entity);
+                   med_entity_type entity, MEDFileMeshReadSelector *mrs);
+    void loadCommonPart(med_idt fid, const char *mName, int dt, int it, int mdim, int curNbOfElem, med_geometry_type geoElt, med_entity_type entity, MEDFileMeshReadSelector *mrs);
   private:
-    MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _conn;
-    MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _conn_index;
+    MEDCouplingAutoRefCountObjectPtr<MEDCoupling1GTUMesh> _m;
     MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _num;
     MEDCouplingAutoRefCountObjectPtr<DataArrayInt> _fam;
     MEDCouplingAutoRefCountObjectPtr<DataArrayAsciiChar> _names;
-    INTERP_KERNEL::NormalizedCellType _type;
     med_entity_type _entity;
   };
 }

@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -109,6 +109,10 @@ med_err _MEDgetExternalGeometryTypeName(char * const geotypename,med_geometry_ty
 
     case MED_POLYGON :
       strcpy(geotypename,"MED_POLYGON");
+      break;
+
+    case MED_POLYGON2 :
+      strcpy(geotypename,"MED_POLYGON2");
       break;
 
     case MED_POLYHEDRON :

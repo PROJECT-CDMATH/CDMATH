@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -39,22 +39,19 @@ namespace INTERP_KERNEL
    * more than one 3D target cell, and the value of '_duplicate_faces'
    * the 3D target cells. The size of the value of '_duplicate_faces' is more than or equal to 2.
    */
-  class INTERPKERNEL_EXPORT Interpolation3D2D : public Interpolation<Interpolation3D2D>
+  class Interpolation3D2D : public Interpolation<Interpolation3D2D>
   {
   public:
     typedef std::map<int,std::set<int> > DuplicateFacesType;
 
-    Interpolation3D2D();
-    Interpolation3D2D(const InterpolationOptions& io);
+    INTERPKERNEL_EXPORT Interpolation3D2D();
+    INTERPKERNEL_EXPORT Interpolation3D2D(const InterpolationOptions& io);
     template<class MyMeshType, class MyMatrixType>
     int interpolateMeshes(const MyMeshType& srcMesh,
                           const MyMeshType& targetMesh,
                           MyMatrixType& matrix,
-                          const char *method);
-    DuplicateFacesType retrieveDuplicateFaces() const
-    {
-      return _duplicate_faces;
-    }
+                          const std::string& method);
+    INTERPKERNEL_EXPORT DuplicateFacesType retrieveDuplicateFaces() const { return _duplicate_faces; }
   private:
     SplittingPolicy _splitting_policy;
     DuplicateFacesType _duplicate_faces;

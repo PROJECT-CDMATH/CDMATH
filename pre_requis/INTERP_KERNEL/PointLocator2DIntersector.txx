@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -38,9 +38,9 @@ namespace INTERP_KERNEL
 {
   INTERSECTOR_TEMPLATE
   PTLOC2D_INTERSECTOR::PointLocator2DIntersector(const MyMeshType& meshT, const MyMeshType& meshS,
-                                               double dimCaracteristic, double md3DSurf, double medianPlane,
+                                               double dimCaracteristic, double md3DSurf, double minDot3DSurf, double medianPlane,
                                                double precision, int orientation):
-    InterpType<MyMeshType,MyMatrix,PTLOC2D_INTERSECTOR >(meshT,meshS,dimCaracteristic, precision, md3DSurf, medianPlane, true, orientation, 0)
+    InterpType<MyMeshType,MyMatrix,PTLOC2D_INTERSECTOR >(meshT,meshS,dimCaracteristic, precision, md3DSurf, minDot3DSurf, medianPlane, true, orientation, 0)
   {
   }
   

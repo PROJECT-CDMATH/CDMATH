@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,8 +20,8 @@
 
 #include "MEDCouplingPointSet.hxx"
 #include "MEDCouplingAutoRefCountObjectPtr.hxx"
+#include "MEDCoupling1GTUMesh.hxx"
 #include "MEDCouplingUMesh.hxx"
-#include "MEDCouplingUMeshDesc.hxx"
 #include "MEDCouplingMemArray.hxx"
 #include "PlanarIntersector.txx"
 #include "InterpKernelGeo2DQuadraticPolygon.hxx"
@@ -75,12 +75,17 @@ void MEDCouplingPointSet::updateTime() const
     }
 }
 
-std::size_t MEDCouplingPointSet::getHeapMemorySize() const
+std::size_t MEDCouplingPointSet::getHeapMemorySizeWithoutChildren() const
 {
-  std::size_t ret=0;
+  return MEDCouplingMesh::getHeapMemorySizeWithoutChildren();
+}
+
+std::vector<const BigMemoryObject *> MEDCouplingPointSet::getDirectChildren() const
+{
+  std::vector<const BigMemoryObject *> ret;
   if(_coords)
-    ret+=_coords->getHeapMemorySize();
-  return MEDCouplingMesh::getHeapMemorySize()+ret;
+    ret.push_back(_coords);
+  return ret;
 }
 
 void MEDCouplingPointSet::setCoords(const DataArrayDouble *coords)
@@ -117,17 +122,17 @@ DataArrayDouble *MEDCouplingPointSet::getCoordinatesAndOwner() const
  *
  *  \param [in] other - the mesh to copy string attributes from.
  */
-void MEDCouplingPointSet::copyTinyStringsFrom(const MEDCouplingMesh *other) throw(INTERP_KERNEL::Exception)
+void MEDCouplingPointSet::copyTinyStringsFrom(const MEDCouplingMesh *other)
 {
+  MEDCouplingMesh::copyTinyStringsFrom(other);
   const MEDCouplingPointSet *otherC=dynamic_cast<const MEDCouplingPointSet *>(other);
   if(!otherC)
     throw INTERP_KERNEL::Exception("MEDCouplingPointSet::copyTinyStringsFrom : meshes have not same type !");
-  MEDCouplingMesh::copyTinyStringsFrom(other);
   if(_coords && otherC->_coords)
     _coords->copyStringInfoFrom(*otherC->_coords);
 }
 
-bool MEDCouplingPointSet::isEqualIfNotWhy(const MEDCouplingMesh *other, double prec, std::string& reason) const throw(INTERP_KERNEL::Exception)
+bool MEDCouplingPointSet::isEqualIfNotWhy(const MEDCouplingMesh *other, double prec, std::string& reason) const
 {
   if(!other)
     throw INTERP_KERNEL::Exception("MEDCouplingPointSet::isEqualIfNotWhy : null mesh instance in input !");
@@ -218,10 +223,12 @@ bool MEDCouplingPointSet::areCoordsEqualWithoutConsideringStr(const MEDCouplingP
  *  \throw If the coordinates array is not set.
  *  \throw If \a nodeId is not a valid index for the coordinates array.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcpointset_getcoordinatesofnode "Here is a C++ example".<br>
  *  \ref  py_mcpointset_getcoordinatesofnode "Here is a Python example".
+ *  \endif
  */
-void MEDCouplingPointSet::getCoordinatesOfNode(int nodeId, std::vector<double>& coo) const throw(INTERP_KERNEL::Exception)
+void MEDCouplingPointSet::getCoordinatesOfNode(int nodeId, std::vector<double>& coo) const
 {
   if(!_coords)
     throw INTERP_KERNEL::Exception("MEDCouplingPointSet::getCoordinatesOfNode : no coordinates array set !");
@@ -288,8 +295,10 @@ DataArrayInt *MEDCouplingPointSet::buildPermArrayForMergeNode(double precision, 
  *               is to delete this array using decrRef() as it is no more needed.
  *  \throw If the coordinates array is not set.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcpointset_findcommonnodes "Here is a C++ example".<br>
  *  \ref  py_mcpointset_findcommonnodes "Here is a Python example".
+ *  \endif
  */
 void MEDCouplingPointSet::findCommonNodes(double prec, int limitNodeId, DataArrayInt *&comm, DataArrayInt *&commIndex) const
 {
@@ -310,10 +319,12 @@ void MEDCouplingPointSet::findCommonNodes(double prec, int limitNodeId, DataArra
  *          array using decrRef() as it is no more needed.
  *  \throw If the coordinates array is not set.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcpointset_getnodeidsnearpoint "Here is a C++ example".<br>
  *  \ref  py_mcpointset_getnodeidsnearpoint "Here is a Python example".
+ *  \endif
  */
-DataArrayInt *MEDCouplingPointSet::getNodeIdsNearPoint(const double *pos, double eps) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *MEDCouplingPointSet::getNodeIdsNearPoint(const double *pos, double eps) const
 {
   DataArrayInt *c=0,*cI=0;
   getNodeIdsNearPoints(pos,1,eps,c,cI);
@@ -343,10 +354,12 @@ DataArrayInt *MEDCouplingPointSet::getNodeIdsNearPoint(const double *pos, double
  *         The caller is to delete this array using decrRef() as it is no more needed.
  *  \throw If the coordinates array is not set.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcpointset_getnodeidsnearpoints "Here is a C++ example".<br>
  *  \ref  py_mcpointset_getnodeidsnearpoints "Here is a Python example".
+ *  \endif
  */
-void MEDCouplingPointSet::getNodeIdsNearPoints(const double *pos, int nbOfPoints, double eps, DataArrayInt *& c, DataArrayInt *& cI) const throw(INTERP_KERNEL::Exception)
+void MEDCouplingPointSet::getNodeIdsNearPoints(const double *pos, int nbOfPoints, double eps, DataArrayInt *& c, DataArrayInt *& cI) const
 {
   if(!_coords)
     throw INTERP_KERNEL::Exception("MEDCouplingPointSet::getNodeIdsNearPoint : no coordiantes set !");
@@ -369,29 +382,50 @@ DataArrayInt *MEDCouplingPointSet::buildNewNumberingFromCommonNodesFormat(const 
   return DataArrayInt::BuildOld2NewArrayFromSurjectiveFormat2(getNumberOfNodes(),comm->begin(),commIndex->begin(),commIndex->end(),newNbOfNodes);
 }
 
-/*
- * This method renumber 'this' using 'newNodeNumbers' array of size this->getNumberOfNodes.
- * newNbOfNodes specifies the *std::max_element(newNodeNumbers,newNodeNumbers+this->getNumberOfNodes())
- * This value is asked because often known by the caller of this method.
- * @param newNodeNumbers array specifying the new numbering in old2New convention..
- * @param newNbOfNodes the new number of nodes.
+/*!
+ * Permutes and possibly removes nodes as specified by \a newNodeNumbers array.
+ * If \a newNodeNumbers[ i ] < 0 then the i-th node is removed, 
+ * else \a newNodeNumbers[ i ] is a new id of the i-th node. The nodal connectivity
+ * array is modified accordingly.
+ *  \param [in] newNodeNumbers - a permutation array, of length \a
+ *         this->getNumberOfNodes(), in "Old to New" mode. 
+ *         See \ref MEDCouplingArrayRenumbering for more info on renumbering modes.
+ *  \param [in] newNbOfNodes - number of nodes remaining after renumbering.
+ *  \throw If the coordinates array is not set.
+ *  \throw If the nodal connectivity of cells is not defined.
+ *
+ *  \if ENABLE_EXAMPLES
+ *  \ref cpp_mcumesh_renumberNodes "Here is a C++ example".<br>
+ *  \ref  py_mcumesh_renumberNodes "Here is a Python example".
+ *  \endif
  */
 void MEDCouplingPointSet::renumberNodes(const int *newNodeNumbers, int newNbOfNodes)
 {
   if(!_coords)
     throw INTERP_KERNEL::Exception("MEDCouplingPointSet::renumberNodes : no coords specified !");
   MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> newCoords=_coords->renumberAndReduce(newNodeNumbers,newNbOfNodes);
-  setCoords(newCoords);
+  renumberNodesInConn(newNodeNumbers);
+  setCoords(newCoords);//let it here not before renumberNodesInConn because old number of nodes is sometimes used...
 }
 
-/*
- * This method renumber 'this' using 'newNodeNumbers' array of size this->getNumberOfNodes.
- * newNbOfNodes specifies the *std::max_element(newNodeNumbers,newNodeNumbers+this->getNumberOfNodes())
- * This value is asked because often known by the caller of this method.
- * Contrary to ParaMEDMEM::MEDCouplingPointSet::renumberNodes method for merged nodes the barycenter of them is computed here.
+/*!
+ * Permutes and possibly removes nodes as specified by \a newNodeNumbers array.
+ * If \a newNodeNumbers[ i ] < 0 then the i-th node is removed, 
+ * else \a newNodeNumbers[ i ] is a new id of the i-th node. The nodal connectivity
+ * array is modified accordingly. In contrast to renumberNodes(), location
+ * of merged nodes (whose new ids coincide) is changed to be at their barycenter.
+ *  \param [in] newNodeNumbers - a permutation array, of length \a
+ *         this->getNumberOfNodes(), in "Old to New" mode. 
+ *         See \ref MEDCouplingArrayRenumbering for more info on renumbering modes.
+ *  \param [in] newNbOfNodes - number of nodes remaining after renumbering, which is
+ *         actually one more than the maximal id in \a newNodeNumbers.
+ *  \throw If the coordinates array is not set.
+ *  \throw If the nodal connectivity of cells is not defined.
  *
- * @param newNodeNumbers array specifying the new numbering.
- * @param newNbOfNodes the new number of nodes.
+ *  \if ENABLE_EXAMPLES
+ *  \ref cpp_mcumesh_renumberNodes "Here is a C++ example".<br>
+ *  \ref  py_mcumesh_renumberNodes "Here is a Python example".
+ *  \endif
  */
 void MEDCouplingPointSet::renumberNodes2(const int *newNodeNumbers, int newNbOfNodes)
 {
@@ -414,6 +448,7 @@ void MEDCouplingPointSet::renumberNodes2(const int *newNodeNumbers, int newNbOfN
     ptToFill=std::transform(ptToFill,ptToFill+spaceDim,ptToFill,std::bind2nd(std::multiplies<double>(),1./(double)div[i]));
   setCoords(newCoords);
   newCoords->decrRef();
+  renumberNodesInConn(newNodeNumbers);
 }
 
 /*!
@@ -426,10 +461,12 @@ void MEDCouplingPointSet::renumberNodes2(const int *newNodeNumbers, int newNbOfN
  *         pre-allocated by the caller.
  *  \throw If the coordinates array is not set.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcpointset_getBoundingBox "Here is a C++ example".<br>
  *  \ref  py_mcpointset_getBoundingBox "Here is a Python example".
+ *  \endif
  */
-void MEDCouplingPointSet::getBoundingBox(double *bbox) const throw(INTERP_KERNEL::Exception)
+void MEDCouplingPointSet::getBoundingBox(double *bbox) const
 {
   if(!_coords)
     throw INTERP_KERNEL::Exception("MEDCouplingPointSet::getBoundingBox : Coordinates not set !");
@@ -475,7 +512,7 @@ double MEDCouplingPointSet::getCaracteristicDimension() const
  * \param [in] eps absolute epsilon. under that value of delta between max and min no scale is performed.
  *
  */
-void MEDCouplingPointSet::recenterForMaxPrecision(double eps) throw(INTERP_KERNEL::Exception)
+void MEDCouplingPointSet::recenterForMaxPrecision(double eps)
 {
   if(!_coords)
     throw INTERP_KERNEL::Exception("MEDCouplingPointSet::recenterForMaxPrecision : Coordinates not set !");
@@ -498,8 +535,10 @@ void MEDCouplingPointSet::recenterForMaxPrecision(double eps) throw(INTERP_KERNE
  *  \throw If \a vector == NULL && \a this->getSpaceDimension() == 3.
  *  \throw If Magnitude of \a vector is zero.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcpointset_rotate "Here is a C++ example".<br>
  *  \ref  py_mcpointset_rotate "Here is a Python example".
+ *  \endif
  */
 void MEDCouplingPointSet::rotate(const double *center, const double *vector, double angle)
 {
@@ -521,8 +560,10 @@ void MEDCouplingPointSet::rotate(const double *center, const double *vector, dou
  *  \throw If the coordinates array is not set.
  *  \throw If \a vector == NULL.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcpointset_translate "Here is a C++ example".<br>
  *  \ref  py_mcpointset_translate "Here is a Python example".
+ *  \endif
  */
 void MEDCouplingPointSet::translate(const double *vector)
 {
@@ -549,8 +590,10 @@ void MEDCouplingPointSet::translate(const double *vector)
  *  \throw If the coordinates array is not set.
  *  \throw If \a point == NULL.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcpointset_scale "Here is a C++ example".<br>
  *  \ref  py_mcpointset_scale "Here is a Python example".
+ *  \endif
  */
 void MEDCouplingPointSet::scale(const double *point, double factor)
 {
@@ -582,7 +625,7 @@ void MEDCouplingPointSet::scale(const double *point, double factor)
  *  \throw If the coordinates array is not set.
  *  \throw If \a newSpaceDim < 1.
  */
-void MEDCouplingPointSet::changeSpaceDimension(int newSpaceDim, double dftValue) throw(INTERP_KERNEL::Exception)
+void MEDCouplingPointSet::changeSpaceDimension(int newSpaceDim, double dftValue)
 {
   if(getCoords()==0)
     throw INTERP_KERNEL::Exception("changeSpaceDimension must be called on an MEDCouplingPointSet instance with coordinates set !");
@@ -607,7 +650,7 @@ void MEDCouplingPointSet::changeSpaceDimension(int newSpaceDim, double dftValue)
  *  \throw If the coordinates array of \a other is not set.
  *  \throw If the coordinates of \a this and \a other do not match.
  */
-void MEDCouplingPointSet::tryToShareSameCoords(const MEDCouplingPointSet& other, double epsilon) throw(INTERP_KERNEL::Exception)
+void MEDCouplingPointSet::tryToShareSameCoords(const MEDCouplingPointSet& other, double epsilon)
 {
   if(_coords==other._coords)
     return ;
@@ -627,7 +670,7 @@ void MEDCouplingPointSet::tryToShareSameCoords(const MEDCouplingPointSet& other,
  * \param [in] nodeIdsToDuplicateBg begin of node ids (included) to be duplicated in connectivity only
  * \param [in] nodeIdsToDuplicateEnd end of node ids (excluded) to be duplicated in connectivity only
  */
-void MEDCouplingPointSet::duplicateNodesInCoords(const int *nodeIdsToDuplicateBg, const int *nodeIdsToDuplicateEnd) throw(INTERP_KERNEL::Exception)
+void MEDCouplingPointSet::duplicateNodesInCoords(const int *nodeIdsToDuplicateBg, const int *nodeIdsToDuplicateEnd)
 {
   if(!_coords)
     throw INTERP_KERNEL::Exception("MEDCouplingPointSet::duplicateNodesInCoords : no coords set !");
@@ -651,7 +694,7 @@ void MEDCouplingPointSet::duplicateNodesInCoords(const int *nodeIdsToDuplicateBg
  *  \throw If the magnitude of \a vec is zero.
  *  \throw If \a this->getSpaceDimension() != 3.
  */
-void MEDCouplingPointSet::findNodesOnPlane(const double *pt, const double *vec, double eps, std::vector<int>& nodes) const throw(INTERP_KERNEL::Exception)
+void MEDCouplingPointSet::findNodesOnPlane(const double *pt, const double *vec, double eps, std::vector<int>& nodes) const
 {
   if(getSpaceDimension()!=3)
     throw INTERP_KERNEL::Exception("MEDCouplingPointSet::findNodesOnPlane : Invalid spacedim to be applied on this ! Must be equal to 3 !");
@@ -690,7 +733,7 @@ void MEDCouplingPointSet::findNodesOnPlane(const double *pt, const double *vec, 
  *  \throw If the magnitude of \a vec is zero.
  *  \throw If ( \a this->getSpaceDimension() != 3 && \a this->getSpaceDimension() != 2 ).
  */
-void MEDCouplingPointSet::findNodesOnLine(const double *pt, const double *vec, double eps, std::vector<int>& nodes) const throw(INTERP_KERNEL::Exception)
+void MEDCouplingPointSet::findNodesOnLine(const double *pt, const double *vec, double eps, std::vector<int>& nodes) const
 {
   int spaceDim=getSpaceDimension();
   if(spaceDim!=2 && spaceDim!=3)
@@ -748,7 +791,7 @@ void MEDCouplingPointSet::findNodesOnLine(const double *pt, const double *vec, d
  *  \throw If both \a m1 and \a m2 are NULL.
  *  \throw If \a m1->getSpaceDimension() != \a m2->getSpaceDimension().
  */
-DataArrayDouble *MEDCouplingPointSet::MergeNodesArray(const MEDCouplingPointSet *m1, const MEDCouplingPointSet *m2) throw(INTERP_KERNEL::Exception)
+DataArrayDouble *MEDCouplingPointSet::MergeNodesArray(const MEDCouplingPointSet *m1, const MEDCouplingPointSet *m2)
 {
   int spaceDim=m1->getSpaceDimension();
   if(spaceDim!=m2->getSpaceDimension())
@@ -756,7 +799,7 @@ DataArrayDouble *MEDCouplingPointSet::MergeNodesArray(const MEDCouplingPointSet 
   return DataArrayDouble::Aggregate(m1->getCoords(),m2->getCoords());
 }
 
-DataArrayDouble *MEDCouplingPointSet::MergeNodesArray(const std::vector<const MEDCouplingPointSet *>& ms) throw(INTERP_KERNEL::Exception)
+DataArrayDouble *MEDCouplingPointSet::MergeNodesArray(const std::vector<const MEDCouplingPointSet *>& ms)
 {
   if(ms.empty())
     throw INTERP_KERNEL::Exception("MEDCouplingPointSet::MergeNodesArray : input array must be NON EMPTY !");
@@ -764,18 +807,25 @@ DataArrayDouble *MEDCouplingPointSet::MergeNodesArray(const std::vector<const ME
   std::vector<const DataArrayDouble *> coo(ms.size());
   int spaceDim=(*it)->getSpaceDimension();
   coo[0]=(*it++)->getCoords();
+  if(!coo[0]->isAllocated())
+    throw INTERP_KERNEL::Exception("MEDCouplingPointSet::MergeNodesArray : first element in coordinates is not allocated !");
   for(int i=1;it!=ms.end();it++,i++)
     {
       const DataArrayDouble *tmp=(*it)->getCoords();
       if(tmp)
         {
-          if((*it)->getSpaceDimension()==spaceDim)
-            coo[i]=tmp;
+          if(tmp->isAllocated())
+            {
+              if((*it)->getSpaceDimension()==spaceDim)
+                coo[i]=tmp;
+              else
+                throw INTERP_KERNEL::Exception("MEDCouplingPointSet::MergeNodesArray : Mismatch in SpaceDim !");
+            }
           else
-            throw INTERP_KERNEL::Exception("Mismatch in SpaceDim during call of MergeNodesArray !");
+            throw INTERP_KERNEL::Exception("MEDCouplingPointSet::MergeNodesArray : Presence of a non allocated array !");
         }
       else
-        throw INTERP_KERNEL::Exception("Empty coords detected during call of MergeNodesArray !");
+        throw INTERP_KERNEL::Exception("MEDCouplingPointSet::MergeNodesArray : Empty coords detected !");
     }
   return DataArrayDouble::Aggregate(coo);
 }
@@ -790,8 +840,10 @@ MEDCouplingPointSet *MEDCouplingPointSet::BuildInstanceFromMeshType(MEDCouplingM
     {
     case UNSTRUCTURED:
       return MEDCouplingUMesh::New();
-    case UNSTRUCTURED_DESC:
-      return MEDCouplingUMeshDesc::New();
+    case SINGLE_STATIC_GEO_TYPE_UNSTRUCTURED:
+      return MEDCoupling1SGTUMesh::New();
+    case SINGLE_DYNAMIC_GEO_TYPE_UNSTRUCTURED:
+      return MEDCoupling1DGTUMesh::New();
     default:
       throw INTERP_KERNEL::Exception("Invalid type of mesh specified");
     }
@@ -878,24 +930,24 @@ void MEDCouplingPointSet::unserialization(const std::vector<double>& tinyInfoD, 
   if(tinyInfo[2]>=0 && tinyInfo[1]>=1)
     {
       setCoords(a2);
-      setName(littleStrings[0].c_str());
-      setDescription(littleStrings[1].c_str());
-      a2->setName(littleStrings[2].c_str());
-      setTimeUnit(littleStrings[3].c_str());
+      setName(littleStrings[0]);
+      setDescription(littleStrings[1]);
+      a2->setName(littleStrings[2]);
+      setTimeUnit(littleStrings[3]);
       for(int i=0;i<tinyInfo[1];i++)
-        getCoords()->setInfoOnComponent(i,littleStrings[i+4].c_str());
+        getCoords()->setInfoOnComponent(i,littleStrings[i+4]);
       setTime(tinyInfoD[0],tinyInfo[3],tinyInfo[4]);
     }
   else
     {
-      setName(littleStrings[0].c_str());
-      setDescription(littleStrings[1].c_str());
-      setTimeUnit(littleStrings[2].c_str());
+      setName(littleStrings[0]);
+      setDescription(littleStrings[1]);
+      setTimeUnit(littleStrings[2]);
       setTime(tinyInfoD[0],tinyInfo[3],tinyInfo[4]);
     }
 }
 
-void MEDCouplingPointSet::checkCoherency() const throw(INTERP_KERNEL::Exception)
+void MEDCouplingPointSet::checkCoherency() const
 {
   if(!_coords)
     throw INTERP_KERNEL::Exception("MEDCouplingPointSet::checkCoherency : no coordinates set !");
@@ -1015,6 +1067,25 @@ void MEDCouplingPointSet::Rotate3DAlg(const double *center, const double *vect, 
 }
 
 /*!
+ * This method allows to give for each cell in \a trgMesh, how much it interacts with cells of \a srcMesh.
+ * The returned array can be seen as a weighted array on the target cells of \a trgMesh input parameter.
+ *
+ * \param [in] srcMesh - source mesh
+ * \param [in] trgMesh - target mesh
+ * \param [in] eps - precision of the detection
+ * \return DataArrayInt * - An array that gives for each cell of \a trgMesh, how many cells in \a srcMesh (regarding the precision of detection \a eps) can interacts.
+ * 
+ * \throw If \a srcMesh and \a trgMesh have not the same space dimension.
+ */
+DataArrayInt *MEDCouplingPointSet::ComputeNbOfInteractionsWithSrcCells(const MEDCouplingPointSet *srcMesh, const MEDCouplingPointSet *trgMesh, double eps)
+{
+  if(!srcMesh || !trgMesh)
+    throw INTERP_KERNEL::Exception("MEDCouplingPointSet::ComputeNbOfInteractionsWithSrcCells : the input meshes must be not NULL !");
+  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> sbbox(srcMesh->getBoundingBoxForBBTree()),tbbox(trgMesh->getBoundingBoxForBBTree());
+  return tbbox->computeNbOfInteractionsWith(sbbox,eps);
+}
+
+/*!
  * Creates a new MEDCouplingMesh containing a part of cells of \a this mesh. The new
  * mesh shares a coordinates array with \a this one. The cells to include to the
  * result mesh are specified by an array of cell ids.
@@ -1050,13 +1121,28 @@ MEDCouplingMesh *MEDCouplingPointSet::buildPartAndReduceNodes(const int *start, 
 }
 
 /*!
- * This method specialized the MEDCouplingMesh::buildPartRange
+ * This method specialized the MEDCouplingMesh::buildPartRange.
+ * This method is equivalent to MEDCouplingMesh::buildPart method except that here the cell ids are specified using slice
+ * \a beginCellIds \a endCellIds and \a stepCellIds.
+ * \b WARNING , there is a big difference compared to MEDCouplingMesh::buildPart method.
+ * If the input range is equal all cells in \a this, \a this is returned !
+ *
+ * \return a new ref to be managed by the caller. Warning this ref can be equal to \a this if input slice is exactly equal to the whole cells in the same order.
  *
  * \sa MEDCouplingUMesh::buildPartOfMySelf2
  */
-MEDCouplingMesh *MEDCouplingPointSet::buildPartRange(int beginCellIds, int endCellIds, int stepCellIds) const throw(INTERP_KERNEL::Exception)
+MEDCouplingMesh *MEDCouplingPointSet::buildPartRange(int beginCellIds, int endCellIds, int stepCellIds) const
 {
-  return buildPartOfMySelf2(beginCellIds,endCellIds,stepCellIds,true);
+  if(beginCellIds==0 && endCellIds==getNumberOfCells() && stepCellIds==1)
+    {
+      MEDCouplingMesh *ret(const_cast<MEDCouplingPointSet *>(this));
+      ret->incrRef();
+      return ret;
+    }
+  else
+    {
+      return buildPartOfMySelf2(beginCellIds,endCellIds,stepCellIds,true);
+    }
 }
 
 /*!
@@ -1069,7 +1155,7 @@ MEDCouplingMesh *MEDCouplingPointSet::buildPartRange(int beginCellIds, int endCe
  * 
  * \sa MEDCouplingUMesh::buildPartOfMySelf2
  */
-MEDCouplingMesh *MEDCouplingPointSet::buildPartRangeAndReduceNodes(int beginCellIds, int endCellIds, int stepCellIds, int& beginOut, int& endOut, int& stepOut, DataArrayInt*& arr) const throw(INTERP_KERNEL::Exception)
+MEDCouplingMesh *MEDCouplingPointSet::buildPartRangeAndReduceNodes(int beginCellIds, int endCellIds, int stepCellIds, int& beginOut, int& endOut, int& stepOut, DataArrayInt*& arr) const
 {
   MEDCouplingAutoRefCountObjectPtr<MEDCouplingPointSet> ret=buildPartOfMySelf2(beginCellIds,endCellIds,stepCellIds,true);
   arr=ret->zipCoordsTraducer();
@@ -1136,7 +1222,7 @@ void MEDCouplingPointSet::project2DCellOnXY(const int *startConn, const int *end
     {
       std::vector<double> cpy(res);
       int nbNodes=(int)std::distance(startConn,endConn);
-      INTERP_KERNEL::PlanarIntersector<DummyClsMCPS,int>::projection(&res[0],&cpy[0],nbNodes,nbNodes,1.e-12,0.,0.,true);
+      INTERP_KERNEL::PlanarIntersector<DummyClsMCPS,int>::Projection(&res[0],&cpy[0],nbNodes,nbNodes,1.e-12,0./*max distance*/,-1./*min dot*/,0.,true);
       res.resize(2*nbNodes);
       for(int i=0;i<nbNodes;i++)
         {
@@ -1169,5 +1255,427 @@ bool MEDCouplingPointSet::isButterfly2DCell(const std::vector<double>& res, bool
     pol=INTERP_KERNEL::QuadraticPolygon::BuildLinearPolygon(nodes);
   bool ret=pol->isButterflyAbs();
   delete pol;
+  return ret;
+}
+
+/*!
+ * This method compares 2 cells coming from two unstructured meshes : \a this and \a other.
+ * This method compares 2 cells having the same id 'cellId' in \a this and \a other.
+ */
+bool MEDCouplingPointSet::areCellsFrom2MeshEqual(const MEDCouplingPointSet *other, int cellId, double prec) const
+{
+  if(getTypeOfCell(cellId)!=other->getTypeOfCell(cellId))
+    return false;
+  std::vector<int> c1,c2;
+  getNodeIdsOfCell(cellId,c1);
+  other->getNodeIdsOfCell(cellId,c2);
+  std::size_t sz=c1.size();
+  if(sz!=c2.size())
+    return false;
+  for(std::size_t i=0;i<sz;i++)
+    {
+      std::vector<double> n1,n2;
+      getCoordinatesOfNode(c1[0],n1);
+      other->getCoordinatesOfNode(c2[0],n2);
+      std::transform(n1.begin(),n1.end(),n2.begin(),n1.begin(),std::minus<double>());
+      std::transform(n1.begin(),n1.end(),n1.begin(),std::ptr_fun<double,double>(fabs));
+      if(*std::max_element(n1.begin(),n1.end())>prec)
+        return false;
+    }
+  return true;
+}
+
+/*!
+ * Substitutes node coordinates array of \a this mesh with that of \a other mesh
+ * (i.e. \a this->_coords with \a other._coords) provided that coordinates of the two
+ * meshes match with a specified precision, else an exception is thrown and \a this
+ * remains unchanged. In case of success the nodal connectivity of \a this mesh
+ * is permuted according to new order of nodes.
+ * Contrary to tryToShareSameCoords() this method makes a deeper analysis of
+ * coordinates (and so more expensive) than simple equality.
+ *  \param [in] other - the other mesh whose node coordinates array will be used by
+ *         \a this mesh in case of their equality.
+ *  \param [in] epsilon - the precision used to compare coordinates (using infinite norm).
+ *  \throw If the coordinates array of \a this is not set.
+ *  \throw If the coordinates array of \a other is not set.
+ *  \throw If the coordinates of \a this and \a other do not match.
+ */
+void MEDCouplingPointSet::tryToShareSameCoordsPermute(const MEDCouplingPointSet& other, double epsilon)
+{
+  const DataArrayDouble *coords=other.getCoords();
+  if(!coords)
+    throw INTERP_KERNEL::Exception("MEDCouplingPointSet::tryToShareSameCoordsPermute : No coords specified in other !");
+  if(!_coords)
+    throw INTERP_KERNEL::Exception("MEDCouplingPointSet::tryToShareSameCoordsPermute : No coords specified in this whereas there is any in other !");
+  int otherNbOfNodes=other.getNumberOfNodes();
+  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> newCoords=MergeNodesArray(&other,this);
+  _coords->incrRef();
+  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> oldCoords=_coords;
+  setCoords(newCoords);
+  bool areNodesMerged;
+  int newNbOfNodes;
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> da=buildPermArrayForMergeNode(epsilon,otherNbOfNodes,areNodesMerged,newNbOfNodes);
+  if(!areNodesMerged)
+    {
+      setCoords(oldCoords);
+      throw INTERP_KERNEL::Exception("MEDCouplingPointSet::tryToShareSameCoordsPermute fails : no nodes are mergeable with specified given epsilon !");
+    }
+  int maxId=*std::max_element(da->getConstPointer(),da->getConstPointer()+otherNbOfNodes);
+  const int *pt=std::find_if(da->getConstPointer()+otherNbOfNodes,da->getConstPointer()+da->getNbOfElems(),std::bind2nd(std::greater<int>(),maxId));
+  if(pt!=da->getConstPointer()+da->getNbOfElems())
+    {
+      setCoords(oldCoords);
+      throw INTERP_KERNEL::Exception("MEDCouplingPointSet::tryToShareSameCoordsPermute fails : some nodes in this are not in other !");
+    }
+  setCoords(oldCoords);
+  renumberNodesInConn(da->getConstPointer()+otherNbOfNodes);
+  setCoords(coords);
+}
+
+MEDCouplingPointSet *MEDCouplingPointSet::buildPartOfMySelf(const int *begin, const int *end, bool keepCoords) const
+{
+  MEDCouplingAutoRefCountObjectPtr<MEDCouplingPointSet> ret=buildPartOfMySelfKeepCoords(begin,end);
+  if(!keepCoords)
+    ret->zipCoords();
+  return ret.retn();
+}
+
+MEDCouplingPointSet *MEDCouplingPointSet::buildPartOfMySelf2(int start, int end, int step, bool keepCoords) const
+{
+  MEDCouplingAutoRefCountObjectPtr<MEDCouplingPointSet> ret=buildPartOfMySelfKeepCoords2(start,end,step);
+  if(!keepCoords)
+    ret->zipCoords();
+  return ret.retn();
+}
+
+/*!
+ Creates a new MEDCouplingUMesh containing some cells of \a this mesh. The cells to
+ copy are selected basing on specified node ids and the value of \a fullyIn
+ parameter. If \a fullyIn ==\c true, a cell is copied if its all nodes are in the 
+ array \a begin of node ids. If \a fullyIn ==\c false, a cell is copied if any its
+ node is in the array of node ids. The created mesh shares the node coordinates array
+ with \a this mesh.
+ *  \param [in] begin - the array of node ids.
+ *  \param [in] end - a pointer to the (last+1)-th element of \a begin.
+ *  \param [in] fullyIn - if \c true, then cells whose all nodes are in the
+ *         array \a begin are copied, else cells whose any node is in the
+ *         array \a begin are copied.
+ *  \return MEDCouplingPointSet * - new instance of MEDCouplingUMesh. The caller is
+ *         to delete this mesh using decrRef() as it is no more needed. 
+ *  \throw If the coordinates array is not set.
+ *  \throw If the nodal connectivity of cells is not defined.
+ *  \throw If any node id in \a begin is not valid.
+ *
+ *  \if ENABLE_EXAMPLES
+ *  \ref cpp_mcumesh_buildPartOfMySelfNode "Here is a C++ example".<br>
+ *  \ref  py_mcumesh_buildPartOfMySelfNode "Here is a Python example".
+ *  \endif
+ */
+MEDCouplingPointSet *MEDCouplingPointSet::buildPartOfMySelfNode(const int *begin, const int *end, bool fullyIn) const
+{
+  DataArrayInt *cellIdsKept=0;
+  fillCellIdsToKeepFromNodeIds(begin,end,fullyIn,cellIdsKept);
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> cellIdsKept2(cellIdsKept);
+  return buildPartOfMySelf(cellIdsKept->begin(),cellIdsKept->end(),true);
+}
+
+/*!
+ * Removes duplicates of cells from \a this mesh and returns an array mapping between
+ * new and old cell ids in "Old to New" mode. Nothing is changed in \a this mesh if no
+ * equal cells found.
+ *  \warning Cells of the result mesh are \b not sorted by geometric type, hence,
+ *           to write this mesh to the MED file, its cells must be sorted using
+ *           sortCellsInMEDFileFrmt().
+ *  \param [in] compType - specifies a cell comparison technique. Meaning of its
+ *          valid values [0,1,2] is as follows.
+ *   - 0 : "exact". Two cells are considered equal \c iff they have exactly same nodal
+ *         connectivity and type. This is the strongest policy.
+ *   - 1 : "permuted same orientation". Two cells are considered equal \c iff they
+ *         are based on same nodes and have the same type and orientation.
+ *   - 2 : "nodal". Two cells are considered equal \c iff they
+ *         are based on same nodes and have the same type. This is the weakest
+ *         policy, it can be used by users not sensitive to cell orientation.
+ *  \param [in] startCellId - specifies the cell id at which search for equal cells
+ *         starts. By default it is 0, which means that all cells in \a this will be
+ *         scanned. 
+ *  \return DataArrayInt - a new instance of DataArrayInt, of length \a
+ *           this->getNumberOfCells() before call of this method. The caller is to
+ *           delete this array using decrRef() as it is no more needed. 
+ *  \throw If the coordinates array is not set.
+ *  \throw If the nodal connectivity of cells is not defined.
+ *  \throw If the nodal connectivity includes an invalid id.
+ *
+ *  \if ENABLE_EXAMPLES
+ *  \ref cpp_mcumesh_zipConnectivityTraducer "Here is a C++ example".<br>
+ *  \ref  py_mcumesh_zipConnectivityTraducer "Here is a Python example".
+ *  \endif
+ */
+DataArrayInt *MEDCouplingPointSet::zipConnectivityTraducer(int compType, int startCellId)
+{
+  DataArrayInt *commonCells=0,*commonCellsI=0;
+  findCommonCells(compType,startCellId,commonCells,commonCellsI);
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> commonCellsTmp(commonCells),commonCellsITmp(commonCellsI);
+  int newNbOfCells=-1;
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=DataArrayInt::BuildOld2NewArrayFromSurjectiveFormat2(getNumberOfCells(),commonCells->begin(),commonCellsI->begin(),
+                                                                                                          commonCellsI->end(),newNbOfCells);
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret2=ret->invertArrayO2N2N2O(newNbOfCells);
+  MEDCouplingAutoRefCountObjectPtr<MEDCouplingPointSet> self=buildPartOfMySelf(ret2->begin(),ret2->end(),true);
+  shallowCopyConnectivityFrom(self);
+  return ret.retn();
+}
+
+/*!
+ * Checks if \a this and \a other meshes are geometrically equivalent, else an
+ * exception is thrown. The meshes are
+ * considered equivalent if (1) \a this mesh contains the same nodes as the \a other
+ * mesh (with a specified precision) and (2) \a this mesh contains the same cells as
+ * the \a other mesh (with use of a specified cell comparison technique). The mapping 
+ * from \a other to \a this for nodes and cells is returned via out parameters.
+ *  \param [in] other - the mesh to compare with.
+ *  \param [in] cellCompPol - id [0-2] of cell comparison method. See meaning of
+ *         each method in description of MEDCouplingPointSet::zipConnectivityTraducer().
+ *  \param [in] prec - the precision used to compare nodes of the two meshes.
+ *  \param [out] cellCor - a cell permutation array in "Old to New" mode. The caller is
+ *         to delete this array using decrRef() as it is no more needed.
+ *  \param [out] nodeCor - a node permutation array in "Old to New" mode. The caller is
+ *         to delete this array using decrRef() as it is no more needed.
+ *  \throw If the two meshes do not match.
+ *
+ *  \if ENABLE_EXAMPLES
+ *  \ref cpp_mcumesh_checkDeepEquivalWith "Here is a C++ example".<br>
+ *  \ref  py_mcumesh_checkDeepEquivalWith "Here is a Python example".
+ *  \endif
+ */
+void MEDCouplingPointSet::checkDeepEquivalWith(const MEDCouplingMesh *other, int cellCompPol, double prec,
+                                               DataArrayInt *&cellCor, DataArrayInt *&nodeCor) const
+{
+  if(!other)
+    throw INTERP_KERNEL::Exception("MEDCouplingPointSet::checkDeepEquivalWith : input is null !");
+  const MEDCouplingPointSet *otherC=dynamic_cast<const MEDCouplingPointSet *>(other);
+  if(!otherC)
+    throw INTERP_KERNEL::Exception("MEDCouplingPointSet::checkDeepEquivalWith : other is not a PointSet mesh !");
+  MEDCouplingAutoRefCountObjectPtr<MEDCouplingPointSet> m=dynamic_cast<MEDCouplingPointSet *>(mergeMyselfWith(otherC));
+  bool areNodesMerged;
+  int newNbOfNodes;
+  int oldNbOfNodes=getNumberOfNodes();
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> da=m->buildPermArrayForMergeNode(prec,oldNbOfNodes,areNodesMerged,newNbOfNodes);
+  //mergeNodes
+  if(!areNodesMerged)
+    throw INTERP_KERNEL::Exception("checkDeepEquivalWith : Nodes are incompatible ! ");
+  const int *pt=std::find_if(da->getConstPointer()+oldNbOfNodes,da->getConstPointer()+da->getNbOfElems(),std::bind2nd(std::greater<int>(),oldNbOfNodes-1));
+  if(pt!=da->getConstPointer()+da->getNbOfElems())
+    throw INTERP_KERNEL::Exception("checkDeepEquivalWith : some nodes in other are not in this !");
+  m->renumberNodes(da->getConstPointer(),newNbOfNodes);
+  //
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> nodeCor2=da->substr(oldNbOfNodes);
+  da=m->mergeNodes(prec,areNodesMerged,newNbOfNodes);
+  //
+  da=m->zipConnectivityTraducer(cellCompPol);
+  int nbCells=getNumberOfCells();
+  if (nbCells != other->getNumberOfCells())
+    throw INTERP_KERNEL::Exception("checkDeepEquivalWith : some cells in other are not in this !");
+  int dan(da->getNumberOfTuples());
+  if (dan)
+    {
+      MEDCouplingAutoRefCountObjectPtr<DataArrayInt> da1(DataArrayInt::New()),da2(DataArrayInt::New());
+      da1->alloc(dan/2,1); da2->alloc(dan/2,1);
+      std::copy(da->getConstPointer(), da->getConstPointer()+dan/2, da1->getPointer());
+      std::copy(da->getConstPointer()+dan/2, da->getConstPointer()+dan, da2->getPointer());
+      da1->sort(); da2->sort();
+      if (!da1->isEqualWithoutConsideringStr(*da2))
+        throw INTERP_KERNEL::Exception("checkDeepEquivalWith : some cells in other are not in this !");
+    }
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> cellCor2=da->selectByTupleId2(nbCells,da->getNbOfElems(),1);
+  nodeCor=nodeCor2->isIdentity()?0:nodeCor2.retn();
+  cellCor=cellCor2->isIdentity()?0:cellCor2.retn();
+}
+
+/*!
+ * Checks if \a this and \a other meshes are geometrically equivalent, else an
+ * exception is thrown. The meshes are considered equivalent if (1) they share one
+ * node coordinates array and (2) they contain the same cells (with use of a specified
+ * cell comparison technique). The mapping from cells of the \a other to ones of \a this 
+ * is returned via an out parameter.
+ *  \param [in] other - the mesh to compare with.
+ *  \param [in] cellCompPol - id [0-2] of cell comparison method. See the meaning of
+ *         each method in description of MEDCouplingPointSet::zipConnectivityTraducer().
+ *  \param [in] prec - a not used parameter.
+ *  \param [out] cellCor - the permutation array in "Old to New" mode. The caller is
+ *         to delete this array using decrRef() as it is no more needed.
+ *  \throw If the two meshes do not match.
+ *
+ * \if ENABLE_EXAMPLES
+ * \ref cpp_mcumesh_checkDeepEquivalWith "Here is a C++ example".<br>
+ * \ref  py_mcumesh_checkDeepEquivalWith "Here is a Python example".
+ * \endif
+ */
+void MEDCouplingPointSet::checkDeepEquivalOnSameNodesWith(const MEDCouplingMesh *other, int cellCompPol, double prec,
+                                                       DataArrayInt *&cellCor) const
+{
+  if(!other)
+    throw INTERP_KERNEL::Exception("MEDCouplingPointSet::checkDeepEquivalOnSameNodesWith : input is null !");
+  const MEDCouplingPointSet *otherC=dynamic_cast<const MEDCouplingPointSet *>(other);
+  if(!otherC)
+    throw INTERP_KERNEL::Exception("MEDCouplingPointSet::checkDeepEquivalOnSameNodesWith : other is not a PointSet mesh !");
+  if(_coords!=otherC->_coords)
+    throw INTERP_KERNEL::Exception("checkDeepEquivalOnSameNodesWith : meshes do not share the same coordinates ! Use tryToShareSameCoordinates or call checkDeepEquivalWith !");
+  MEDCouplingAutoRefCountObjectPtr<MEDCouplingPointSet> m=mergeMyselfWithOnSameCoords(otherC);
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> da=m->zipConnectivityTraducer(cellCompPol);
+  int maxId=*std::max_element(da->getConstPointer(),da->getConstPointer()+getNumberOfCells());
+  const int *pt=std::find_if(da->getConstPointer()+getNumberOfCells(),da->getConstPointer()+da->getNbOfElems(),std::bind2nd(std::greater<int>(),maxId));
+  if(pt!=da->getConstPointer()+da->getNbOfElems())
+    {
+      throw INTERP_KERNEL::Exception("checkDeepEquivalOnSameNodesWith : some cells in other are not in this !");
+    }
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> cellCor2=da->selectByTupleId2(getNumberOfCells(),da->getNbOfElems(),1);
+  cellCor=cellCor2->isIdentity()?0:cellCor2.retn();
+}
+
+void MEDCouplingPointSet::checkFastEquivalWith(const MEDCouplingMesh *other, double prec) const
+{
+  MEDCouplingMesh::checkFastEquivalWith(other,prec);
+  //other not null checked by the line before
+  const MEDCouplingPointSet *otherC=dynamic_cast<const MEDCouplingPointSet *>(other);
+  if(!otherC)
+    throw INTERP_KERNEL::Exception("MEDCouplingPointSet::checkFastEquivalWith : fails because other is not a pointset mesh !");
+  int nbOfCells=getNumberOfCells();
+  if(nbOfCells<1)
+    return ;
+  bool status=true;
+  status&=areCellsFrom2MeshEqual(otherC,0,prec);
+  status&=areCellsFrom2MeshEqual(otherC,nbOfCells/2,prec);
+  status&=areCellsFrom2MeshEqual(otherC,nbOfCells-1,prec);
+  if(!status)
+    throw INTERP_KERNEL::Exception("checkFastEquivalWith : Two meshes are not equal because on 3 test cells some difference have been detected !");
+}
+
+/*!
+ * Finds cells whose all or some nodes are in a given array of node ids.
+ *  \param [in] begin - the array of node ids.
+ *  \param [in] end - a pointer to the (last+1)-th element of \a begin.
+ *  \param [in] fullyIn - if \c true, then cells whose all nodes are in the
+ *         array \a begin are returned only, else cells whose any node is in the
+ *         array \a begin are returned.
+ *  \return DataArrayInt * - a new instance of DataArrayInt holding ids of found
+ *         cells. The caller is to delete this array using decrRef() as it is no more
+ *         needed. 
+ *  \throw If the coordinates array is not set.
+ *  \throw If the nodal connectivity of cells is not defined.
+ *  \throw If any cell id in \a begin is not valid.
+ *
+ * \sa MEDCouplingPointSet::getCellIdsFullyIncludedInNodeIds
+ *
+ *  \if ENABLE_EXAMPLES
+ *  \ref cpp_mcumesh_getCellIdsLyingOnNodes "Here is a C++ example".<br>
+ *  \ref  py_mcumesh_getCellIdsLyingOnNodes "Here is a Python example".
+ *  \endif
+ */
+DataArrayInt *MEDCouplingPointSet::getCellIdsLyingOnNodes(const int *begin, const int *end, bool fullyIn) const
+{
+  DataArrayInt *cellIdsKept=0;
+  fillCellIdsToKeepFromNodeIds(begin,end,fullyIn,cellIdsKept);
+  cellIdsKept->setName(getName());
+  return cellIdsKept;
+}
+
+/*!
+ * Finds cells whose all nodes are in a given array of node ids.
+ * This method is a specialization of MEDCouplingPointSet::getCellIdsLyingOnNodes (true
+ * as last input argument).
+ *  \param [in] partBg - the array of node ids.
+ *  \param [in] partEnd - a pointer to a (last+1)-th element of \a partBg.
+ *  \return DataArrayInt * - a new instance of DataArrayInt holding ids of found
+ *          cells. The caller is to delete this array using decrRef() as it is no
+ *          more needed.
+ *  \throw If the coordinates array is not set.
+ *  \throw If the nodal connectivity of cells is not defined.
+ *  \throw If any cell id in \a partBg is not valid.
+ * 
+ * \sa MEDCouplingPointSet::getCellIdsLyingOnNodes
+ *
+ *  \if ENABLE_EXAMPLES
+ *  \ref cpp_mcumesh_getCellIdsFullyIncludedInNodeIds "Here is a C++ example".<br>
+ *  \ref  py_mcumesh_getCellIdsFullyIncludedInNodeIds "Here is a Python example".
+ *  \endif
+ */
+DataArrayInt *MEDCouplingPointSet::getCellIdsFullyIncludedInNodeIds(const int *partBg, const int *partEnd) const
+{
+  return getCellIdsLyingOnNodes(partBg,partEnd,true);
+}
+
+/*!
+ * Removes unused nodes (the node coordinates array is shorten) and returns an array
+ * mapping between new and old node ids in "Old to New" mode. -1 values in the returned
+ * array mean that the corresponding old node is no more used. 
+ *  \return DataArrayInt * - a new instance of DataArrayInt of length \a
+ *           this->getNumberOfNodes() before call of this method. The caller is to
+ *           delete this array using decrRef() as it is no more needed. 
+ *  \throw If the coordinates array is not set.
+ *  \throw If the nodal connectivity of cells is not defined.
+ *  \throw If the nodal connectivity includes an invalid id.
+ *
+ *  \if ENABLE_EXAMPLES
+ *  \ref cpp_mcumesh_zipCoordsTraducer "Here is a C++ example".<br>
+ *  \ref  py_mcumesh_zipCoordsTraducer "Here is a Python example".
+ *  \endif
+ */
+DataArrayInt *MEDCouplingPointSet::zipCoordsTraducer()
+{
+  int newNbOfNodes=-1;
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> traducer=getNodeIdsInUse(newNbOfNodes);
+  renumberNodes(traducer->getConstPointer(),newNbOfNodes);
+  return traducer.retn();
+}
+
+/*!
+ * Merges nodes equal within \a precision and returns an array describing the 
+ * permutation used to remove duplicate nodes.
+ *  \param [in] precision - minimal absolute distance between two nodes at which they are
+ *              considered not coincident.
+ *  \param [out] areNodesMerged - is set to \c true if any coincident nodes removed.
+ *  \param [out] newNbOfNodes - number of nodes remaining after the removal.
+ *  \return DataArrayInt * - the permutation array in "Old to New" mode. For more 
+ *          info on "Old to New" mode see \ref MEDCouplingArrayRenumbering. The caller
+ *          is to delete this array using decrRef() as it is no more needed.
+ *  \throw If the coordinates array is not set.
+ *  \throw If the nodal connectivity of cells is not defined.
+ *
+ *  \if ENABLE_EXAMPLES
+ *  \ref cpp_mcumesh_mergeNodes "Here is a C++ example".<br>
+ *  \ref  py_mcumesh_mergeNodes "Here is a Python example".
+ *  \endif
+ */
+DataArrayInt *MEDCouplingPointSet::mergeNodes(double precision, bool& areNodesMerged, int& newNbOfNodes)
+{
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=buildPermArrayForMergeNode(precision,-1,areNodesMerged,newNbOfNodes);
+  if(areNodesMerged)
+    renumberNodes(ret->begin(),newNbOfNodes);
+  return ret.retn();
+}
+
+/*!
+ * Merges nodes equal within \a precision and returns an array describing the 
+ * permutation used to remove duplicate nodes. In contrast to mergeNodes(), location
+ *  of merged nodes is changed to be at their barycenter.
+ *  \param [in] precision - minimal absolute distance between two nodes at which they are
+ *              considered not coincident.
+ *  \param [out] areNodesMerged - is set to \c true if any coincident nodes removed.
+ *  \param [out] newNbOfNodes - number of nodes remaining after the removal.
+ *  \return DataArrayInt * - the permutation array in "Old to New" mode. For more 
+ *          info on "Old to New" mode see \ref MEDCouplingArrayRenumbering. The caller
+ *          is to delete this array using decrRef() as it is no more needed.
+ *  \throw If the coordinates array is not set.
+ *  \throw If the nodal connectivity of cells is not defined.
+ *
+ *  \if ENABLE_EXAMPLES
+ *  \ref cpp_mcumesh_mergeNodes "Here is a C++ example".<br>
+ *  \ref  py_mcumesh_mergeNodes "Here is a Python example".
+ *  \endif
+ */
+DataArrayInt *MEDCouplingPointSet::mergeNodes2(double precision, bool& areNodesMerged, int& newNbOfNodes)
+{
+  DataArrayInt *ret=buildPermArrayForMergeNode(precision,-1,areNodesMerged,newNbOfNodes);
+  if(areNodesMerged)
+    renumberNodes2(ret->getConstPointer(),newNbOfNodes);
   return ret;
 }

@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -93,6 +93,7 @@ void  MEDchampEcr233(int dummy,...) {
   char chemin[MED_TAILLE_CHA+MED_TAILLE_NOM+1]="";
   char chemin_loc[MED_TAILLE_GAUSS+MED_TAILLE_NOM+1]="";
   med_geometrie_element type_geo_g;
+  med_int  type_geo_g_int=0;
   char oldpflname   [MED_TAILLE_NOM+1]=MED_NOPFLi;
   med_int maj, pfluseold, modifpfl;
   med_mode_acces MED_MODE_ACCES;
@@ -293,11 +294,12 @@ if (MEDcheckVersion(fid) < 0) {*fret=-1;return;}
       ISCRUTE(ngauss);goto ERROR;
     };  
     
-    if (_MEDattrEntierLire(gid_loc,MED_NOM_GEO,&type_geo_g) < 0) {
+    if (_MEDattrEntierLire(gid_loc,MED_NOM_GEO,&type_geo_g_int) < 0) {
       MESSAGE("Erreur à la lecture de l'attribut MED_NOM_GEO : ");
-      ISCRUTE(type_geo);goto ERROR;
+      ISCRUTE(type_geo_g_int);goto ERROR;
     };
-    
+    type_geo_g = type_geo_g_int;
+
     if ( type_geo_g != type_geo ) {
       MESSAGE("Erreur, la localisation ne porte pas sur le meme type géométrique : ");
       SSCRUTE(locname);ISCRUTE(type_geo);ISCRUTE(type_geo_g);goto ERROR;

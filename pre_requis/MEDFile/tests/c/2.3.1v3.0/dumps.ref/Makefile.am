@@ -19,5 +19,7 @@ CLEANFILES = \
 ./test20.dump
 
 EXTRA_DIST = \
-./test20.med
+./test20.med \
+./test10-med.hdf\
+./test2-med.hdf
 

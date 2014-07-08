@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -40,7 +40,7 @@
 med_err
 MEDinterpInfoByName(const med_idt                   fid,
 		    const char*               const interpname,
-		           med_geometry_type*       geotype,
+		           med_geometry_type* const geotype,
 		           med_bool*          const cellnode,
 		           med_int*           const nbasisfunc,
 		           med_int*           const nvariable,

@@ -121,3 +121,6 @@ libci_la_SOURCES += MEDchampEcr231.c MEDchampEcr232.c \
 noinst_LTLIBRARIES += libci23v30.la
 
 libci23v30_la_SOURCES = MED23v30axesInfo.c
+
+EXTRA_DIST = CMakeLists.txt
+

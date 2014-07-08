@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -35,43 +35,43 @@ namespace INTERP_KERNEL
 {
   class ValueDouble;
 
-  class INTERPKERNEL_EXPORT LeafExpr
+  class LeafExpr
   {
   public:
-    virtual ~LeafExpr();
-    virtual void fillValue(Value *val) const throw(INTERP_KERNEL::Exception) = 0;
-    virtual void compileX86(std::vector<std::string>& ass) const = 0;
-    virtual void compileX86_64(std::vector<std::string>& ass) const = 0;
-    virtual void replaceValues(const std::vector<double>& valuesInExpr) throw(INTERP_KERNEL::Exception) = 0;
-    static LeafExpr *buildInstanceFrom(const std::string& expr) throw(INTERP_KERNEL::Exception);
+    INTERPKERNEL_EXPORT virtual ~LeafExpr();
+    INTERPKERNEL_EXPORT virtual void fillValue(Value *val) const = 0;
+    INTERPKERNEL_EXPORT virtual void compileX86(std::vector<std::string>& ass) const = 0;
+    INTERPKERNEL_EXPORT virtual void compileX86_64(std::vector<std::string>& ass) const = 0;
+    INTERPKERNEL_EXPORT virtual void replaceValues(const std::vector<double>& valuesInExpr) = 0;
+    INTERPKERNEL_EXPORT static LeafExpr *buildInstanceFrom(const std::string& expr);
   };
 
-  class INTERPKERNEL_EXPORT LeafExprVal : public LeafExpr
+  class LeafExprVal : public LeafExpr
   {
   public:
-    LeafExprVal(double value);
-    ~LeafExprVal();
-    void compileX86(std::vector<std::string>& ass) const;
-    void compileX86_64(std::vector<std::string>& ass) const;
-    void fillValue(Value *val) const throw(INTERP_KERNEL::Exception);
-    void replaceValues(const std::vector<double>& valuesInExpr) throw(INTERP_KERNEL::Exception);
+    INTERPKERNEL_EXPORT LeafExprVal(double value);
+    INTERPKERNEL_EXPORT ~LeafExprVal();
+    INTERPKERNEL_EXPORT void compileX86(std::vector<std::string>& ass) const;
+    INTERPKERNEL_EXPORT void compileX86_64(std::vector<std::string>& ass) const;
+    INTERPKERNEL_EXPORT void fillValue(Value *val) const;
+    INTERPKERNEL_EXPORT void replaceValues(const std::vector<double>& valuesInExpr);
   private:
     double _value;
   };
 
-  class INTERPKERNEL_EXPORT LeafExprVar : public LeafExpr
+  class LeafExprVar : public LeafExpr
   {
   public:
-    LeafExprVar(const std::string& var);
-    ~LeafExprVar();
-    void compileX86(std::vector<std::string>& ass) const;
-    void compileX86_64(std::vector<std::string>& ass) const;
-    void fillValue(Value *val) const throw(INTERP_KERNEL::Exception);
-    std::string getVar() const { return _var_name; }
-    void prepareExprEvaluation(const std::vector<std::string>& vars, int nbOfCompo, int targetNbOfCompo) const throw(INTERP_KERNEL::Exception);
-    void prepareExprEvaluationVec() const throw(INTERP_KERNEL::Exception);
-    void replaceValues(const std::vector<double>& valuesInExpr) throw(INTERP_KERNEL::Exception);
-    static bool isRecognizedKeyVar(const std::string& var, int& pos);
+    INTERPKERNEL_EXPORT LeafExprVar(const std::string& var);
+    INTERPKERNEL_EXPORT ~LeafExprVar();
+    INTERPKERNEL_EXPORT void compileX86(std::vector<std::string>& ass) const;
+    INTERPKERNEL_EXPORT void compileX86_64(std::vector<std::string>& ass) const;
+    INTERPKERNEL_EXPORT void fillValue(Value *val) const;
+    INTERPKERNEL_EXPORT std::string getVar() const { return _var_name; }
+    INTERPKERNEL_EXPORT void prepareExprEvaluation(const std::vector<std::string>& vars, int nbOfCompo, int targetNbOfCompo) const;
+    INTERPKERNEL_EXPORT void prepareExprEvaluationVec() const;
+    INTERPKERNEL_EXPORT void replaceValues(const std::vector<double>& valuesInExpr);
+    INTERPKERNEL_EXPORT static bool isRecognizedKeyVar(const std::string& var, int& pos);
   public:
     static const char END_OF_RECOGNIZED_VAR[];
   private:
@@ -79,47 +79,47 @@ namespace INTERP_KERNEL
     std::string _var_name;
   };
 
-  class INTERPKERNEL_EXPORT ExprParser
+  class ExprParser
   {
   public:
-    ExprParser(const char *expr, ExprParser *father=0);
-    ExprParser(const char *expr, int lgth, ExprParser *father=0);
-    ~ExprParser();
-    void parse() throw(INTERP_KERNEL::Exception);
-    bool isParsingSuccessfull() const { return _is_parsing_ok; }
-    double evaluate() const throw(INTERP_KERNEL::Exception);
-    DecompositionInUnitBase evaluateUnit() const throw(INTERP_KERNEL::Exception);
-    void prepareExprEvaluation(const std::vector<std::string>& vars, int nbOfCompo, int targetNbOfCompo) const throw(INTERP_KERNEL::Exception);
-    void evaluateExpr(int szOfOutParam, const double *inParam, double *outParam) const throw(INTERP_KERNEL::Exception);
-    void prepareExprEvaluationVec() const throw(INTERP_KERNEL::Exception);
-    void getSetOfVars(std::set<std::string>& vars) const;
-    void getTrueSetOfVars(std::set<std::string>& vars) const;
+    INTERPKERNEL_EXPORT ExprParser(const std::string& expr, ExprParser *father=0);
+    INTERPKERNEL_EXPORT ExprParser(const char *expr, int lgth, ExprParser *father=0);
+    INTERPKERNEL_EXPORT ~ExprParser();
+    INTERPKERNEL_EXPORT void parse();
+    INTERPKERNEL_EXPORT bool isParsingSuccessfull() const { return _is_parsing_ok; }
+    INTERPKERNEL_EXPORT double evaluate() const;
+    INTERPKERNEL_EXPORT DecompositionInUnitBase evaluateUnit() const;
+    INTERPKERNEL_EXPORT void prepareExprEvaluation(const std::vector<std::string>& vars, int nbOfCompo, int targetNbOfCompo) const;
+    INTERPKERNEL_EXPORT void evaluateExpr(int szOfOutParam, const double *inParam, double *outParam) const;
+    INTERPKERNEL_EXPORT void prepareExprEvaluationVec() const;
+    INTERPKERNEL_EXPORT void getSetOfVars(std::set<std::string>& vars) const;
+    INTERPKERNEL_EXPORT void getTrueSetOfVars(std::set<std::string>& vars) const;
     //
-    char *compileX86() const;
-    char *compileX86_64() const;
-    void compileX86LowLev(std::vector<std::string>& ass) const;
-    void compileX86_64LowLev(std::vector<std::string>& ass) const;
-    int getStackSizeToPlayX86(const ExprParser *asker) const;
+    INTERPKERNEL_EXPORT char *compileX86() const;
+    INTERPKERNEL_EXPORT char *compileX86_64() const;
+    INTERPKERNEL_EXPORT void compileX86LowLev(std::vector<std::string>& ass) const;
+    INTERPKERNEL_EXPORT void compileX86_64LowLev(std::vector<std::string>& ass) const;
+    INTERPKERNEL_EXPORT int getStackSizeToPlayX86(const ExprParser *asker) const;
     //
-    static std::string buildStringFromFortran(const char *expr, int lgth);
-    static std::string deleteWhiteSpaces(const std::string& expr);
+    INTERPKERNEL_EXPORT static std::string buildStringFromFortran(const char *expr, int lgth);
+    INTERPKERNEL_EXPORT static std::string deleteWhiteSpaces(const std::string& expr);
   private:
-    Value *evaluateLowLev(Value *valGen) const throw(INTERP_KERNEL::Exception);
+    Value *evaluateLowLev(Value *valGen) const;
   private:
-    void prepareExprEvaluationVecLowLev() const throw(INTERP_KERNEL::Exception);
-    bool tryToInterpALeaf() throw(INTERP_KERNEL::Exception);
-    void parseUnaryFunc() throw(INTERP_KERNEL::Exception);
-    void parseForCmp() throw(INTERP_KERNEL::Exception);
-    void parseForAddMin() throw(INTERP_KERNEL::Exception);
-    void parseForMulDiv() throw(INTERP_KERNEL::Exception);
-    void parseForPow() throw(INTERP_KERNEL::Exception);
-    void parseDeeper() throw(INTERP_KERNEL::Exception);
-    bool simplify() throw(INTERP_KERNEL::Exception);
+    void prepareExprEvaluationVecLowLev() const;
+    bool tryToInterpALeaf();
+    void parseUnaryFunc();
+    void parseForCmp();
+    void parseForAddMin();
+    void parseForMulDiv();
+    void parseForPow();
+    void parseDeeper();
+    bool simplify();
     void releaseFunctions();
-    void checkBracketsParity() const throw(INTERP_KERNEL::Exception);
-    void fillValuesInExpr(std::vector<double>& valuesInExpr) throw(INTERP_KERNEL::Exception);
-    void replaceValues(const std::vector<double>& valuesInExpr) throw(INTERP_KERNEL::Exception);
-    static double ReplaceAndTraduce(std::string& expr, int id, std::size_t bg, std::size_t end, int& delta) throw(INTERP_KERNEL::Exception);
+    void checkBracketsParity() const;
+    void fillValuesInExpr(std::vector<double>& valuesInExpr);
+    void replaceValues(const std::vector<double>& valuesInExpr);
+    static double ReplaceAndTraduce(std::string& expr, int id, std::size_t bg, std::size_t end, int& delta);
     static std::size_t FindCorrespondingOpenBracket(const std::string& expr, std::size_t posOfCloseBracket);
     static void LocateError(std::ostream& stringToDisp, const std::string& srcOfErr, int posOfErr);
   private:

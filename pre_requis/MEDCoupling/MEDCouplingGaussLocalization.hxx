@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -31,42 +31,42 @@ namespace ParaMEDMEM
 {
   class MEDCouplingMesh;
 
-  class MEDCOUPLING_EXPORT MEDCouplingGaussLocalization
+  class MEDCouplingGaussLocalization
   {
   public:
-    MEDCouplingGaussLocalization(INTERP_KERNEL::NormalizedCellType type, const std::vector<double>& refCoo,
-                                 const std::vector<double>& gsCoo, const std::vector<double>& w) throw(INTERP_KERNEL::Exception);
-    MEDCouplingGaussLocalization(INTERP_KERNEL::NormalizedCellType typ) throw(INTERP_KERNEL::Exception);
-    INTERP_KERNEL::NormalizedCellType getType() const { return _type; }
-    void setType(INTERP_KERNEL::NormalizedCellType typ) throw(INTERP_KERNEL::Exception);
-    int getNumberOfGaussPt() const { return (int)_weight.size(); }
-    int getDimension() const;
-    int getNumberOfPtsInRefCell() const;
-    std::string getStringRepr() const;
-    std::size_t getHeapMemorySize() const;
-    void checkCoherency() const throw(INTERP_KERNEL::Exception);
-    bool isEqual(const MEDCouplingGaussLocalization& other, double eps) const;
-    void pushTinySerializationIntInfo(std::vector<int>& tinyInfo) const;
-    void pushTinySerializationDblInfo(std::vector<double>& tinyInfo) const;
-    const double *fillWithValues(const double *vals);
+    MEDCOUPLING_EXPORT MEDCouplingGaussLocalization(INTERP_KERNEL::NormalizedCellType type, const std::vector<double>& refCoo,
+                                                    const std::vector<double>& gsCoo, const std::vector<double>& w);
+    MEDCOUPLING_EXPORT MEDCouplingGaussLocalization(INTERP_KERNEL::NormalizedCellType typ);
+    MEDCOUPLING_EXPORT INTERP_KERNEL::NormalizedCellType getType() const { return _type; }
+    MEDCOUPLING_EXPORT void setType(INTERP_KERNEL::NormalizedCellType typ);
+    MEDCOUPLING_EXPORT int getNumberOfGaussPt() const { return (int)_weight.size(); }
+    MEDCOUPLING_EXPORT int getDimension() const;
+    MEDCOUPLING_EXPORT int getNumberOfPtsInRefCell() const;
+    MEDCOUPLING_EXPORT std::string getStringRepr() const;
+    MEDCOUPLING_EXPORT std::size_t getMemorySize() const;
+    MEDCOUPLING_EXPORT void checkCoherency() const;
+    MEDCOUPLING_EXPORT bool isEqual(const MEDCouplingGaussLocalization& other, double eps) const;
+    MEDCOUPLING_EXPORT void pushTinySerializationIntInfo(std::vector<int>& tinyInfo) const;
+    MEDCOUPLING_EXPORT void pushTinySerializationDblInfo(std::vector<double>& tinyInfo) const;
+    MEDCOUPLING_EXPORT const double *fillWithValues(const double *vals);
     //
-    const std::vector<double>& getRefCoords() const { return _ref_coord; }
-    double getRefCoord(int ptIdInCell, int comp) const throw(INTERP_KERNEL::Exception);
-    const std::vector<double>& getGaussCoords() const { return _gauss_coord; }
-    double getGaussCoord(int gaussPtIdInCell, int comp) const throw(INTERP_KERNEL::Exception);
-    const std::vector<double>& getWeights() const { return _weight; }
-    double getWeight(int gaussPtIdInCell, double newVal) const throw(INTERP_KERNEL::Exception);
-    void setRefCoord(int ptIdInCell, int comp, double newVal) throw(INTERP_KERNEL::Exception);
-    void setGaussCoord(int gaussPtIdInCell, int comp, double newVal) throw(INTERP_KERNEL::Exception);
-    void setWeight(int gaussPtIdInCell, double newVal) throw(INTERP_KERNEL::Exception);
-    void setRefCoords(const std::vector<double>& refCoo) throw(INTERP_KERNEL::Exception);
-    void setGaussCoords(const std::vector<double>& gsCoo) throw(INTERP_KERNEL::Exception);
-    void setWeights(const std::vector<double>& w) throw(INTERP_KERNEL::Exception);
+    MEDCOUPLING_EXPORT const std::vector<double>& getRefCoords() const { return _ref_coord; }
+    MEDCOUPLING_EXPORT double getRefCoord(int ptIdInCell, int comp) const;
+    MEDCOUPLING_EXPORT const std::vector<double>& getGaussCoords() const { return _gauss_coord; }
+    MEDCOUPLING_EXPORT double getGaussCoord(int gaussPtIdInCell, int comp) const;
+    MEDCOUPLING_EXPORT const std::vector<double>& getWeights() const { return _weight; }
+    MEDCOUPLING_EXPORT double getWeight(int gaussPtIdInCell, double newVal) const;
+    MEDCOUPLING_EXPORT void setRefCoord(int ptIdInCell, int comp, double newVal);
+    MEDCOUPLING_EXPORT void setGaussCoord(int gaussPtIdInCell, int comp, double newVal);
+    MEDCOUPLING_EXPORT void setWeight(int gaussPtIdInCell, double newVal);
+    MEDCOUPLING_EXPORT void setRefCoords(const std::vector<double>& refCoo);
+    MEDCOUPLING_EXPORT void setGaussCoords(const std::vector<double>& gsCoo);
+    MEDCOUPLING_EXPORT void setWeights(const std::vector<double>& w);
     //
-    static MEDCouplingGaussLocalization BuildNewInstanceFromTinyInfo(int dim, const std::vector<int>& tinyData);
-    static bool AreAlmostEqual(const std::vector<double>& v1, const std::vector<double>& v2, double eps);
+    MEDCOUPLING_EXPORT static MEDCouplingGaussLocalization BuildNewInstanceFromTinyInfo(int dim, const std::vector<int>& tinyData);
+    MEDCOUPLING_EXPORT static bool AreAlmostEqual(const std::vector<double>& v1, const std::vector<double>& v2, double eps);
   private:
-    int checkCoherencyOfRequest(int gaussPtIdInCell, int comp) const throw(INTERP_KERNEL::Exception);
+    int checkCoherencyOfRequest(int gaussPtIdInCell, int comp) const;
   private:
     INTERP_KERNEL::NormalizedCellType _type;
     std::vector<double> _ref_coord;

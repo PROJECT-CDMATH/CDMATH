@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -110,7 +110,8 @@ namespace SauvUtilities
     virtual double getDouble() const = 0;
     virtual std::string getName() const = 0;
   protected:
-    std::size_t getHeapMemorySize() const { return 0; }
+    std::size_t getHeapMemorySizeWithoutChildren() const { return 0; }
+    std::vector<const BigMemoryObject *> getDirectChildren() const { return std::vector<const BigMemoryObject *>(); }
   protected:
     std::string _fileName, _curLocale;
     int _iRead, _nbToRead;

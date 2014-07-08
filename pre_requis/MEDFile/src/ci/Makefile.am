@@ -34,6 +34,7 @@ MEDfileCompatibility.c \
 MEDfileNumVersionRd.c \
 MEDfileStrVersionRd.c \
 MEDfileObjectsMount.c \
+MEDfileObjectsMountById.c \
 MEDfileObjectsUnmount.c \
 MEDnProfile.c \
 MEDprofileInfo.c \
@@ -133,7 +134,9 @@ MEDmeshEntityFamilyNumberRd.c \
 MEDmeshnAxis.c \
 MEDmeshnAxisByName.c \
 MEDmeshPolygonWr.c \
+MEDmeshPolygon2Wr.c \
 MEDmeshPolygonRd.c \
+MEDmeshPolygon2Rd.c \
 MEDmeshPolyhedronWr.c \
 MEDmeshPolyhedronRd.c \
 MEDfamilyCr.c \
@@ -285,4 +288,6 @@ if WITHPMED
 libci_la_SOURCES   += \
 MEDparFileOpen.c
 endif
+
+EXTRA_DIST = CMakeLists.txt
 

@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,7 +21,9 @@
 #include "MEDCouplingMemArray.txx"
 #include "MEDCouplingAutoRefCountObjectPtr.hxx"
 
+#include "BBTree.txx"
 #include "GenMathFormulae.hxx"
+#include "InterpKernelAutoPtr.hxx"
 #include "InterpKernelExprParser.hxx"
 
 #include <set>
@@ -108,7 +110,7 @@ void DataArrayDouble::FindClosestTupleIdAlg(const BBTreePts<SPACEDIM,int>& myTre
     }
 }
 
-std::size_t DataArray::getHeapMemorySize() const
+std::size_t DataArray::getHeapMemorySizeWithoutChildren() const
 {
   std::size_t sz1=_name.capacity();
   std::size_t sz2=_info_on_compo.capacity();
@@ -118,12 +120,17 @@ std::size_t DataArray::getHeapMemorySize() const
   return sz1+sz2+sz3;
 }
 
+std::vector<const BigMemoryObject *> DataArray::getDirectChildren() const
+{
+  return std::vector<const BigMemoryObject *>();
+}
+
 /*!
  * Sets the attribute \a _name of \a this array.
  * See \ref MEDCouplingArrayBasicsName "DataArrays infos" for more information.
  *  \param [in] name - new array name
  */
-void DataArray::setName(const char *name)
+void DataArray::setName(const std::string& name)
 {
   _name=name;
 }
@@ -138,7 +145,7 @@ void DataArray::setName(const char *name)
  *  \param [in] other - another instance of DataArray to copy the textual data from.
  *  \throw If number of components of \a this array differs from that of the \a other.
  */
-void DataArray::copyStringInfoFrom(const DataArray& other) throw(INTERP_KERNEL::Exception)
+void DataArray::copyStringInfoFrom(const DataArray& other)
 {
   if(_info_on_compo.size()!=other._info_on_compo.size())
     throw INTERP_KERNEL::Exception("Size of arrays mismatches on copyStringInfoFrom !");
@@ -146,7 +153,7 @@ void DataArray::copyStringInfoFrom(const DataArray& other) throw(INTERP_KERNEL::
   _info_on_compo=other._info_on_compo;
 }
 
-void DataArray::copyPartOfStringInfoFrom(const DataArray& other, const std::vector<int>& compoIds) throw(INTERP_KERNEL::Exception)
+void DataArray::copyPartOfStringInfoFrom(const DataArray& other, const std::vector<int>& compoIds)
 {
   int nbOfCompoOth=other.getNumberOfComponents();
   std::size_t newNbOfCompo=compoIds.size();
@@ -157,10 +164,10 @@ void DataArray::copyPartOfStringInfoFrom(const DataArray& other, const std::vect
         throw INTERP_KERNEL::Exception(oss.str().c_str());
       }
   for(std::size_t i=0;i<newNbOfCompo;i++)
-    setInfoOnComponent((int)i,other.getInfoOnComponent(compoIds[i]).c_str());
+    setInfoOnComponent((int)i,other.getInfoOnComponent(compoIds[i]));
 }
 
-void DataArray::copyPartOfStringInfoFrom2(const std::vector<int>& compoIds, const DataArray& other) throw(INTERP_KERNEL::Exception)
+void DataArray::copyPartOfStringInfoFrom2(const std::vector<int>& compoIds, const DataArray& other)
 {
   int nbOfCompo=getNumberOfComponents();
   std::size_t partOfCompoToSet=compoIds.size();
@@ -173,10 +180,10 @@ void DataArray::copyPartOfStringInfoFrom2(const std::vector<int>& compoIds, cons
         throw INTERP_KERNEL::Exception(oss.str().c_str());
       }
   for(std::size_t i=0;i<partOfCompoToSet;i++)
-    setInfoOnComponent(compoIds[i],other.getInfoOnComponent((int)i).c_str());
+    setInfoOnComponent(compoIds[i],other.getInfoOnComponent((int)i));
 }
 
-bool DataArray::areInfoEqualsIfNotWhy(const DataArray& other, std::string& reason) const throw(INTERP_KERNEL::Exception)
+bool DataArray::areInfoEqualsIfNotWhy(const DataArray& other, std::string& reason) const
 {
   std::ostringstream oss;
   if(_name!=other._name)
@@ -209,13 +216,13 @@ bool DataArray::areInfoEqualsIfNotWhy(const DataArray& other, std::string& reaso
  *  \param [in] other - another instance of DataArray to compare the textual data of.
  *  \return bool - \a true if the textual information is same, \a false else.
  */
-bool DataArray::areInfoEquals(const DataArray& other) const throw(INTERP_KERNEL::Exception)
+bool DataArray::areInfoEquals(const DataArray& other) const
 {
   std::string tmp;
   return areInfoEqualsIfNotWhy(other,tmp);
 }
 
-void DataArray::reprWithoutNameStream(std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+void DataArray::reprWithoutNameStream(std::ostream& stream) const
 {
   stream << "Number of components : "<< getNumberOfComponents() << "\n";
   stream << "Info of these components : ";
@@ -224,7 +231,7 @@ void DataArray::reprWithoutNameStream(std::ostream& stream) const throw(INTERP_K
   stream << "\n";
 }
 
-std::string DataArray::cppRepr(const char *varName) const throw(INTERP_KERNEL::Exception)
+std::string DataArray::cppRepr(const std::string& varName) const
 {
   std::ostringstream ret;
   reprCppStream(varName,ret);
@@ -237,7 +244,7 @@ std::string DataArray::cppRepr(const char *varName) const throw(INTERP_KERNEL::E
  *  \param [in] info - a vector of strings.
  *  \throw If size of \a info differs from the number of components of \a this.
  */
-void DataArray::setInfoOnComponents(const std::vector<std::string>& info) throw(INTERP_KERNEL::Exception)
+void DataArray::setInfoOnComponents(const std::vector<std::string>& info)
 {
   if(getNumberOfComponents()!=(int)info.size())
     {
@@ -247,7 +254,43 @@ void DataArray::setInfoOnComponents(const std::vector<std::string>& info) throw(
   _info_on_compo=info;
 }
 
-std::vector<std::string> DataArray::getVarsOnComponent() const throw(INTERP_KERNEL::Exception)
+/*!
+ * This method is only a dispatcher towards DataArrayDouble::setPartOfValues3, DataArrayInt::setPartOfValues3, DataArrayChar::setPartOfValues3 depending on the true
+ * type of \a this and \a aBase.
+ *
+ * \throw If \a aBase and \a this do not have the same type.
+ *
+ * \sa DataArrayDouble::setPartOfValues3, DataArrayInt::setPartOfValues3, DataArrayChar::setPartOfValues3.
+ */
+void DataArray::setPartOfValuesBase3(const DataArray *aBase, const int *bgTuples, const int *endTuples, int bgComp, int endComp, int stepComp, bool strictCompoCompare)
+{
+  if(!aBase)
+    throw INTERP_KERNEL::Exception("DataArray::setPartOfValuesBase3 : input aBase object is NULL !");
+  DataArrayDouble *this1(dynamic_cast<DataArrayDouble *>(this));
+  DataArrayInt *this2(dynamic_cast<DataArrayInt *>(this));
+  DataArrayChar *this3(dynamic_cast<DataArrayChar *>(this));
+  const DataArrayDouble *a1(dynamic_cast<const DataArrayDouble *>(aBase));
+  const DataArrayInt *a2(dynamic_cast<const DataArrayInt *>(aBase));
+  const DataArrayChar *a3(dynamic_cast<const DataArrayChar *>(aBase));
+  if(this1 && a1)
+    {
+      this1->setPartOfValues3(a1,bgTuples,endTuples,bgComp,endComp,stepComp,strictCompoCompare);
+      return ;
+    }
+  if(this2 && a2)
+    {
+      this2->setPartOfValues3(a2,bgTuples,endTuples,bgComp,endComp,stepComp,strictCompoCompare);
+      return ;
+    }
+  if(this3 && a3)
+    {
+      this3->setPartOfValues3(a3,bgTuples,endTuples,bgComp,endComp,stepComp,strictCompoCompare);
+      return ;
+    }
+  throw INTERP_KERNEL::Exception("DataArray::setPartOfValuesBase3 : input aBase object and this do not have the same type !");
+}
+
+std::vector<std::string> DataArray::getVarsOnComponent() const
 {
   int nbOfCompo=(int)_info_on_compo.size();
   std::vector<std::string> ret(nbOfCompo);
@@ -256,7 +299,7 @@ std::vector<std::string> DataArray::getVarsOnComponent() const throw(INTERP_KERN
   return ret;
 }
 
-std::vector<std::string> DataArray::getUnitsOnComponent() const throw(INTERP_KERNEL::Exception)
+std::vector<std::string> DataArray::getUnitsOnComponent() const
 {
   int nbOfCompo=(int)_info_on_compo.size();
   std::vector<std::string> ret(nbOfCompo);
@@ -273,7 +316,7 @@ std::vector<std::string> DataArray::getUnitsOnComponent() const throw(INTERP_KER
  *  \return std::string - a string containing the information on \a i-th component.
  *  \throw If \a i is not a valid component index.
  */
-std::string DataArray::getInfoOnComponent(int i) const throw(INTERP_KERNEL::Exception)
+std::string DataArray::getInfoOnComponent(int i) const
 {
   if(i<(int)_info_on_compo.size() && i>=0)
     return _info_on_compo[i];
@@ -296,7 +339,7 @@ std::string DataArray::getInfoOnComponent(int i) const throw(INTERP_KERNEL::Exce
  *  \return std::string - a string containing the var information, or the full info.
  *  \throw If \a i is not a valid component index.
  */
-std::string DataArray::getVarOnComponent(int i) const throw(INTERP_KERNEL::Exception)
+std::string DataArray::getVarOnComponent(int i) const
 {
   if(i<(int)_info_on_compo.size() && i>=0)
     {
@@ -321,7 +364,7 @@ std::string DataArray::getVarOnComponent(int i) const throw(INTERP_KERNEL::Excep
  *  \return std::string - a string containing the unit information, if any, or "".
  *  \throw If \a i is not a valid component index.
  */
-std::string DataArray::getUnitOnComponent(int i) const throw(INTERP_KERNEL::Exception)
+std::string DataArray::getUnitOnComponent(int i) const
 {
   if(i<(int)_info_on_compo.size() && i>=0)
     {
@@ -344,7 +387,7 @@ std::string DataArray::getUnitOnComponent(int i) const throw(INTERP_KERNEL::Exce
  *  \param [in] info - the full component information.
  *  \return std::string - a string containing only var information, or the \a info.
  */
-std::string DataArray::GetVarNameFromInfo(const std::string& info) throw(INTERP_KERNEL::Exception)
+std::string DataArray::GetVarNameFromInfo(const std::string& info)
 {
   std::size_t p1=info.find_last_of('[');
   std::size_t p2=info.find_last_of(']');
@@ -368,7 +411,7 @@ std::string DataArray::GetVarNameFromInfo(const std::string& info) throw(INTERP_
  *  \param [in] info - the full component information.
  *  \return std::string - a string containing only unit information, if any, or "".
  */
-std::string DataArray::GetUnitFromInfo(const std::string& info) throw(INTERP_KERNEL::Exception)
+std::string DataArray::GetUnitFromInfo(const std::string& info)
 {
   std::size_t p1=info.find_last_of('[');
   std::size_t p2=info.find_last_of(']');
@@ -380,6 +423,65 @@ std::string DataArray::GetUnitFromInfo(const std::string& info) throw(INTERP_KER
 }
 
 /*!
+ * This method put in info format the result of the merge of \a var and \a unit.
+ * The standard format for that is "var [unit]".
+ * Inversely you can retrieve the var part or the unit part of info string using resp. GetVarNameFromInfo and GetUnitFromInfo.
+ */
+std::string DataArray::BuildInfoFromVarAndUnit(const std::string& var, const std::string& unit)
+{
+  std::ostringstream oss;
+  oss << var << " [" << unit << "]";
+  return oss.str();
+}
+
+/*!
+ * Returns a new DataArray by concatenating all given arrays, so that (1) the number
+ * of tuples in the result array is a sum of the number of tuples of given arrays and (2)
+ * the number of component in the result array is same as that of each of given arrays.
+ * Info on components is copied from the first of the given arrays. Number of components
+ * in the given arrays must be  the same.
+ *  \param [in] arrs - a sequence of arrays to include in the result array. All arrays must have the same type.
+ *  \return DataArray * - the new instance of DataArray (that can be either DataArrayInt, DataArrayDouble, DataArrayChar).
+ *          The caller is to delete this result array using decrRef() as it is no more
+ *          needed.
+ *  \throw If all arrays within \a arrs are NULL.
+ *  \throw If all not null arrays in \a arrs have not the same type.
+ *  \throw If getNumberOfComponents() of arrays within \a arrs.
+ */
+DataArray *DataArray::Aggregate(const std::vector<const DataArray *>& arrs)
+{
+  std::vector<const DataArray *> arr2;
+  for(std::vector<const DataArray *>::const_iterator it=arrs.begin();it!=arrs.end();it++)
+    if(*it)
+      arr2.push_back(*it);
+  if(arr2.empty())
+    throw INTERP_KERNEL::Exception("DataArray::Aggregate : only null instance in input vector !");
+  std::vector<const DataArrayDouble *> arrd;
+  std::vector<const DataArrayInt *> arri;
+  std::vector<const DataArrayChar *> arrc;
+  for(std::vector<const DataArray *>::const_iterator it=arr2.begin();it!=arr2.end();it++)
+    {
+      const DataArrayDouble *a=dynamic_cast<const DataArrayDouble *>(*it);
+      if(a)
+        { arrd.push_back(a); continue; }
+      const DataArrayInt *b=dynamic_cast<const DataArrayInt *>(*it);
+      if(b)
+        { arri.push_back(b); continue; }
+      const DataArrayChar *c=dynamic_cast<const DataArrayChar *>(*it);
+      if(c)
+        { arrc.push_back(c); continue; }
+      throw INTERP_KERNEL::Exception("DataArray::Aggregate : presence of not null instance in inuput that is not in [DataArrayDouble, DataArrayInt, DataArrayChar] !");
+    }
+  if(arr2.size()==arrd.size())
+    return DataArrayDouble::Aggregate(arrd);
+  if(arr2.size()==arri.size())
+    return DataArrayInt::Aggregate(arri);
+  if(arr2.size()==arrc.size())
+    return DataArrayChar::Aggregate(arrc);
+  throw INTERP_KERNEL::Exception("DataArray::Aggregate : all input arrays must have the same type !");
+}
+
+/*!
  * Sets information on a component specified by an index.
  * To know more on format of this information
  * see \ref MEDCouplingArrayBasicsCompoName "DataArrays infos".
@@ -388,7 +490,7 @@ std::string DataArray::GetUnitFromInfo(const std::string& info) throw(INTERP_KER
  *  \param [in] info - the string containing the information.
  *  \throw If \a i is not a valid component index.
  */
-void DataArray::setInfoOnComponent(int i, const char *info) throw(INTERP_KERNEL::Exception)
+void DataArray::setInfoOnComponent(int i, const std::string& info)
 {
   if(i<(int)_info_on_compo.size() && i>=0)
     _info_on_compo[i]=info;
@@ -399,7 +501,34 @@ void DataArray::setInfoOnComponent(int i, const char *info) throw(INTERP_KERNEL:
     }
 }
 
-void DataArray::checkNbOfTuples(int nbOfTuples, const char *msg) const throw(INTERP_KERNEL::Exception)
+/*!
+ * Sets information on all components. This method can change number of components
+ * at certain conditions; if the conditions are not respected, an exception is thrown.
+ * The number of components can be changed in \a this only if \a this is not allocated.
+ * The condition of number of components must not be changed.
+ *
+ * To know more on format of the component information see
+ * \ref MEDCouplingArrayBasicsCompoName "DataArrays infos".
+ *  \param [in] info - a vector of component infos.
+ *  \throw If \a this->getNumberOfComponents() != \a info.size() && \a this->isAllocated()
+ */
+void DataArray::setInfoAndChangeNbOfCompo(const std::vector<std::string>& info)
+{
+  if(getNumberOfComponents()!=(int)info.size())
+    {
+      if(!isAllocated())
+        _info_on_compo=info;
+      else
+        {
+          std::ostringstream oss; oss << "DataArray::setInfoAndChangeNbOfCompo : input is of size " << info.size() << " whereas number of components is equal to " << getNumberOfComponents() << "  and this is already allocated !";
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
+        }
+    }
+  else
+    _info_on_compo=info;
+}
+
+void DataArray::checkNbOfTuples(int nbOfTuples, const std::string& msg) const
 {
   if(getNumberOfTuples()!=nbOfTuples)
     {
@@ -408,7 +537,7 @@ void DataArray::checkNbOfTuples(int nbOfTuples, const char *msg) const throw(INT
     }
 }
 
-void DataArray::checkNbOfComps(int nbOfCompo, const char *msg) const throw(INTERP_KERNEL::Exception)
+void DataArray::checkNbOfComps(int nbOfCompo, const std::string& msg) const
 {
   if(getNumberOfComponents()!=nbOfCompo)
     {
@@ -417,7 +546,7 @@ void DataArray::checkNbOfComps(int nbOfCompo, const char *msg) const throw(INTER
     }
 }
 
-void DataArray::checkNbOfElems(std::size_t nbOfElems, const char *msg) const throw(INTERP_KERNEL::Exception)
+void DataArray::checkNbOfElems(std::size_t nbOfElems, const std::string& msg) const
 {
   if(getNbOfElems()!=nbOfElems)
     {
@@ -426,9 +555,9 @@ void DataArray::checkNbOfElems(std::size_t nbOfElems, const char *msg) const thr
     }
 }
 
-void DataArray::checkNbOfTuplesAndComp(const DataArray& other, const char *msg) const throw(INTERP_KERNEL::Exception)
+void DataArray::checkNbOfTuplesAndComp(const DataArray& other, const std::string& msg) const
 {
-   if(getNumberOfTuples()!=other.getNumberOfTuples())
+  if(getNumberOfTuples()!=other.getNumberOfTuples())
     {
       std::ostringstream oss; oss << msg << " : mismatch number of tuples : expected " <<  other.getNumberOfTuples() << " having " << getNumberOfTuples() << " !";
       throw INTERP_KERNEL::Exception(oss.str().c_str());
@@ -440,7 +569,7 @@ void DataArray::checkNbOfTuplesAndComp(const DataArray& other, const char *msg) 
     }
 }
 
-void DataArray::checkNbOfTuplesAndComp(int nbOfTuples, int nbOfCompo, const char *msg) const throw(INTERP_KERNEL::Exception)
+void DataArray::checkNbOfTuplesAndComp(int nbOfTuples, int nbOfCompo, const std::string& msg) const
 {
   checkNbOfTuples(nbOfTuples,msg);
   checkNbOfComps(nbOfCompo,msg);
@@ -449,7 +578,7 @@ void DataArray::checkNbOfTuplesAndComp(int nbOfTuples, int nbOfCompo, const char
 /*!
  * Simply this method checks that \b value is in [0,\b ref).
  */
-void DataArray::CheckValueInRange(int ref, int value, const char *msg) throw(INTERP_KERNEL::Exception)
+void DataArray::CheckValueInRange(int ref, int value, const std::string& msg)
 {
   if(value<0 || value>=ref)
     {
@@ -462,7 +591,7 @@ void DataArray::CheckValueInRange(int ref, int value, const char *msg) throw(INT
  * This method checks that [\b start, \b end) is compliant with ref length \b value.
  * typicaly start in [0,\b value) and end in [0,\b value). If value==start and start==end, it is supported.
  */
-void DataArray::CheckValueInRangeEx(int value, int start, int end, const char *msg) throw(INTERP_KERNEL::Exception)
+void DataArray::CheckValueInRangeEx(int value, int start, int end, const std::string& msg)
 {
   if(start<0 || start>=value)
     {
@@ -479,7 +608,7 @@ void DataArray::CheckValueInRangeEx(int value, int start, int end, const char *m
     }
 }
 
-void DataArray::CheckClosingParInRange(int ref, int value, const char *msg) throw(INTERP_KERNEL::Exception)
+void DataArray::CheckClosingParInRange(int ref, int value, const std::string& msg)
 {
   if(value<0 || value>ref)
     {
@@ -488,7 +617,46 @@ void DataArray::CheckClosingParInRange(int ref, int value, const char *msg) thro
     }
 }
 
-int DataArray::GetNumberOfItemGivenBES(int begin, int end, int step, const char *msg) throw(INTERP_KERNEL::Exception)
+/*!
+ * This method is useful to slice work among a pool of threads or processes. \a begin, \a end \a step is the input whole slice of work to perform, 
+ * typically it is a whole slice of tuples of DataArray or cells, nodes of a mesh...
+ *
+ * The input \a sliceId should be an id in [0, \a nbOfSlices) that specifies the slice of work.
+ *
+ * \param [in] start - the start of the input slice of the whole work to perform splitted into slices.
+ * \param [in] stop - the stop of the input slice of the whole work to perform splitted into slices.
+ * \param [in] step - the step (that can be <0) of the input slice of the whole work to perform splitted into slices.
+ * \param [in] sliceId - the slice id considered
+ * \param [in] nbOfSlices - the number of slices (typically the number of cores on which the work is expected to be sliced)
+ * \param [out] startSlice - the start of the slice considered
+ * \param [out] stopSlice - the stop of the slice consided
+ * 
+ * \throw If \a step == 0
+ * \throw If \a nbOfSlices not > 0
+ * \throw If \a sliceId not in [0,nbOfSlices)
+ */
+void DataArray::GetSlice(int start, int stop, int step, int sliceId, int nbOfSlices, int& startSlice, int& stopSlice)
+{
+  if(nbOfSlices<=0)
+    {
+      std::ostringstream oss; oss << "DataArray::GetSlice : nbOfSlices (" << nbOfSlices << ") must be > 0 !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
+  if(sliceId<0 || sliceId>=nbOfSlices)
+    {
+      std::ostringstream oss; oss << "DataArray::GetSlice : sliceId (" << nbOfSlices << ") must be in [0 , nbOfSlices (" << nbOfSlices << ") ) !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
+  int nbElems=GetNumberOfItemGivenBESRelative(start,stop,step,"DataArray::GetSlice");
+  int minNbOfElemsPerSlice=nbElems/nbOfSlices;
+  startSlice=start+minNbOfElemsPerSlice*step*sliceId;
+  if(sliceId<nbOfSlices-1)
+    stopSlice=start+minNbOfElemsPerSlice*step*(sliceId+1);
+  else
+    stopSlice=stop;
+}
+
+int DataArray::GetNumberOfItemGivenBES(int begin, int end, int step, const std::string& msg)
 {
   if(end<begin)
     {
@@ -505,7 +673,7 @@ int DataArray::GetNumberOfItemGivenBES(int begin, int end, int step, const char 
   return (end-1-begin)/step+1;
 }
 
-int DataArray::GetNumberOfItemGivenBESRelative(int begin, int end, int step, const char *msg) throw(INTERP_KERNEL::Exception)
+int DataArray::GetNumberOfItemGivenBESRelative(int begin, int end, int step, const std::string& msg)
 {
   if(step==0)
     throw INTERP_KERNEL::Exception("DataArray::GetNumberOfItemGivenBES : step=0 is not allowed !");
@@ -525,7 +693,7 @@ int DataArray::GetNumberOfItemGivenBESRelative(int begin, int end, int step, con
     return 0;
 }
 
-int DataArray::GetPosOfItemGivenBESRelativeNoThrow(int value, int begin, int end, int step) throw(INTERP_KERNEL::Exception)
+int DataArray::GetPosOfItemGivenBESRelativeNoThrow(int value, int begin, int end, int step)
 {
   if(step!=0)
     {
@@ -572,7 +740,7 @@ DataArrayDouble *DataArrayDouble::New()
  * in \ref MEDCouplingArrayBasicsTuplesAndCompo "DataArrays infos" for more information.
  *  \return bool - \a true if the raw data is allocated, \a false else.
  */
-bool DataArrayDouble::isAllocated() const throw(INTERP_KERNEL::Exception)
+bool DataArrayDouble::isAllocated() const
 {
   return getConstPointer()!=0;
 }
@@ -581,43 +749,27 @@ bool DataArrayDouble::isAllocated() const throw(INTERP_KERNEL::Exception)
  * Checks if raw data is allocated and throws an exception if it is not the case.
  *  \throw If the raw data is not allocated.
  */
-void DataArrayDouble::checkAllocated() const throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::checkAllocated() const
 {
   if(!isAllocated())
     throw INTERP_KERNEL::Exception("DataArrayDouble::checkAllocated : Array is defined but not allocated ! Call alloc or setValues method first !");
 }
 
-std::size_t DataArrayDouble::getHeapMemorySize() const
+/*!
+ * This method desallocated \a this without modification of informations relative to the components.
+ * After call of this method, DataArrayDouble::isAllocated will return false.
+ * If \a this is already not allocated, \a this is let unchanged.
+ */
+void DataArrayDouble::desallocate()
 {
-  std::size_t sz=_mem.getNbOfElemAllocated();
-  sz*=sizeof(double);
-  return DataArray::getHeapMemorySize()+sz;
+  _mem.destroy();
 }
 
-/*!
- * Sets information on all components. This method can change number of components
- * at certain conditions; if the conditions are not respected, an exception is thrown.
- * The number of components can be changed provided that \a this is not allocated.
- *
- * To know more on format of the component information see
- * \ref MEDCouplingArrayBasicsCompoName "DataArrays infos".
- *  \param [in] info - a vector of component infos.
- *  \throw If \a this->getNumberOfComponents() != \a info.size() && \a this->isAllocated()
- */
-void DataArrayDouble::setInfoAndChangeNbOfCompo(const std::vector<std::string>& info) throw(INTERP_KERNEL::Exception)
+std::size_t DataArrayDouble::getHeapMemorySizeWithoutChildren() const
 {
-  if(getNumberOfComponents()!=(int)info.size())
-    {
-      if(!isAllocated())
-        _info_on_compo=info;
-      else
-        {
-          std::ostringstream oss; oss << "DataArrayDouble::setInfoAndChangeNbOfCompo : input is of size " << info.size() << " whereas number of components is equal to " << getNumberOfComponents() << "  and this is already allocated !";
-          throw INTERP_KERNEL::Exception(oss.str().c_str());
-        }
-    }
-  else
-    _info_on_compo=info;
+  std::size_t sz(_mem.getNbOfElemAllocated());
+  sz*=sizeof(double);
+  return DataArray::getHeapMemorySizeWithoutChildren()+sz;
 }
 
 /*!
@@ -626,7 +778,7 @@ void DataArrayDouble::setInfoAndChangeNbOfCompo(const std::vector<std::string>& 
  *  \return double - the sole value stored in \a this array.
  *  \throw If at least one of conditions stated above is not fulfilled.
  */
-double DataArrayDouble::doubleValue() const throw(INTERP_KERNEL::Exception)
+double DataArrayDouble::doubleValue() const
 {
   if(isAllocated())
     {
@@ -646,7 +798,7 @@ double DataArrayDouble::doubleValue() const throw(INTERP_KERNEL::Exception)
  *  \return bool - \a true if getNumberOfTuples() == 0, \a false else.
  *  \throw If \a this is not allocated.
  */
-bool DataArrayDouble::empty() const throw(INTERP_KERNEL::Exception)
+bool DataArrayDouble::empty() const
 {
   checkAllocated();
   return getNumberOfTuples()==0;
@@ -658,7 +810,7 @@ bool DataArrayDouble::empty() const throw(INTERP_KERNEL::Exception)
  *  \return DataArrayDouble * - a new instance of DataArrayDouble. The caller is to
  *          delete this array using decrRef() as it is no more needed. 
  */
-DataArrayDouble *DataArrayDouble::deepCpy() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::deepCpy() const
 {
   return new DataArrayDouble(*this);
 }
@@ -670,7 +822,7 @@ DataArrayDouble *DataArrayDouble::deepCpy() const throw(INTERP_KERNEL::Exception
  *  \return DataArrayDouble * - either a new instance of DataArrayDouble (if \a dCpy
  *          == \a true) or \a this instance (if \a dCpy == \a false).
  */
-DataArrayDouble *DataArrayDouble::performCpy(bool dCpy) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::performCpy(bool dCpy) const
 {
   if(dCpy)
     return deepCpy();
@@ -687,7 +839,7 @@ DataArrayDouble *DataArrayDouble::performCpy(bool dCpy) const throw(INTERP_KERNE
  *  \param [in] other - another instance of DataArrayDouble to copy data from.
  *  \throw If the \a other is not allocated.
  */
-void DataArrayDouble::cpyFrom(const DataArrayDouble& other) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::cpyFrom(const DataArrayDouble& other)
 {
   other.checkAllocated();
   int nbOfTuples=other.getNumberOfTuples();
@@ -709,7 +861,7 @@ void DataArrayDouble::cpyFrom(const DataArrayDouble& other) throw(INTERP_KERNEL:
  * 
  * \sa DataArrayDouble::pack, DataArrayDouble::pushBackSilent, DataArrayDouble::pushBackValsSilent
  */
-void DataArrayDouble::reserve(std::size_t nbOfElems) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::reserve(std::size_t nbOfElems)
 {
   int nbCompo=getNumberOfComponents();
   if(nbCompo==1)
@@ -733,7 +885,7 @@ void DataArrayDouble::reserve(std::size_t nbOfElems) throw(INTERP_KERNEL::Except
  * \throw If \a this has already been allocated with number of components different from one.
  * \sa DataArrayDouble::pushBackValsSilent
  */
-void DataArrayDouble::pushBackSilent(double val) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::pushBackSilent(double val)
 {
   int nbCompo=getNumberOfComponents();
   if(nbCompo==1)
@@ -757,7 +909,7 @@ void DataArrayDouble::pushBackSilent(double val) throw(INTERP_KERNEL::Exception)
  * \throw If \a this has already been allocated with number of components different from one.
  * \sa DataArrayDouble::pushBackSilent
  */
-void DataArrayDouble::pushBackValsSilent(const double *valsBg, const double *valsEnd) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::pushBackValsSilent(const double *valsBg, const double *valsEnd)
 {
   int nbCompo=getNumberOfComponents();
   if(nbCompo==1)
@@ -776,7 +928,7 @@ void DataArrayDouble::pushBackValsSilent(const double *valsBg, const double *val
  * \throw If \a this is already empty.
  * \throw If \a this has number of components different from one.
  */
-double DataArrayDouble::popBackSilent() throw(INTERP_KERNEL::Exception)
+double DataArrayDouble::popBackSilent()
 {
   if(getNumberOfComponents()==1)
     return _mem.popBack();
@@ -787,9 +939,9 @@ double DataArrayDouble::popBackSilent() throw(INTERP_KERNEL::Exception)
 /*!
  * This method \b do \b not modify content of \a this. It only modify its memory footprint if the allocated memory is to high regarding real data to store.
  *
- * \sa DataArrayDouble::getHeapMemorySize, DataArrayDouble::reserve
+ * \sa DataArrayDouble::getHeapMemorySizeWithoutChildren, DataArrayDouble::reserve
  */
-void DataArrayDouble::pack() const throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::pack() const
 {
   _mem.pack();
 }
@@ -801,7 +953,7 @@ void DataArrayDouble::pack() const throw(INTERP_KERNEL::Exception)
  *  \param [in] nbOfCompo - number of components of data to allocate.
  *  \throw If \a nbOfTuple < 0 or \a nbOfCompo < 0.
  */
-void DataArrayDouble::allocIfNecessary(int nbOfTuple, int nbOfCompo) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::allocIfNecessary(int nbOfTuple, int nbOfCompo)
 {
   if(isAllocated())
     {
@@ -820,7 +972,7 @@ void DataArrayDouble::allocIfNecessary(int nbOfTuple, int nbOfCompo) throw(INTER
  *  \param [in] nbOfCompo - number of components of data to allocate.
  *  \throw If \a nbOfTuple < 0 or \a nbOfCompo < 0.
  */
-void DataArrayDouble::alloc(int nbOfTuple, int nbOfCompo) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::alloc(int nbOfTuple, int nbOfCompo)
 {
   if(nbOfTuple<0 || nbOfCompo<0)
     throw INTERP_KERNEL::Exception("DataArrayDouble::alloc : request for negative length of data !");
@@ -834,7 +986,7 @@ void DataArrayDouble::alloc(int nbOfTuple, int nbOfCompo) throw(INTERP_KERNEL::E
  * \ref MEDCouplingArrayFill.
  * \throw If \a this is not allocated.
  */
-void DataArrayDouble::fillWithZero() throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::fillWithZero()
 {
   checkAllocated();
   _mem.fillWithValue(0.);
@@ -847,7 +999,7 @@ void DataArrayDouble::fillWithZero() throw(INTERP_KERNEL::Exception)
  *  \param [in] val - the value to fill with.
  *  \throw If \a this is not allocated.
  */
-void DataArrayDouble::fillWithValue(double val) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::fillWithValue(double val)
 {
   checkAllocated();
   _mem.fillWithValue(val);
@@ -861,7 +1013,7 @@ void DataArrayDouble::fillWithValue(double val) throw(INTERP_KERNEL::Exception)
  *  \throw If \a this->getNumberOfComponents() != 1
  *  \throw If \a this is not allocated.
  */
-void DataArrayDouble::iota(double init) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::iota(double init)
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -882,7 +1034,7 @@ void DataArrayDouble::iota(double init) throw(INTERP_KERNEL::Exception)
  *  \throw If \a this->getNumberOfComponents() != 1
  *  \throw If \a this is not allocated.
  */
-bool DataArrayDouble::isUniform(double val, double eps) const throw(INTERP_KERNEL::Exception)
+bool DataArrayDouble::isUniform(double val, double eps) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -904,7 +1056,7 @@ bool DataArrayDouble::isUniform(double val, double eps) const throw(INTERP_KERNE
  *  \throw If \a this is not allocated.
  *  \throw If \a this->getNumberOfComponents() != 1.
  */
-void DataArrayDouble::sort(bool asc) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::sort(bool asc)
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -918,7 +1070,7 @@ void DataArrayDouble::sort(bool asc) throw(INTERP_KERNEL::Exception)
  *  \throw If \a this->getNumberOfComponents() < 1.
  *  \throw If \a this is not allocated.
  */
-void DataArrayDouble::reverse() throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::reverse()
 {
   checkAllocated();
   _mem.reverse(getNumberOfComponents());
@@ -937,7 +1089,7 @@ void DataArrayDouble::reverse() throw(INTERP_KERNEL::Exception)
  *  \throw If \a this->getNumberOfComponents() != 1.
  *  \throw If \a this is not allocated.
  */
-void DataArrayDouble::checkMonotonic(bool increasing, double eps) const throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::checkMonotonic(bool increasing, double eps) const
 {
   if(!isMonotonic(increasing,eps))
     {
@@ -958,7 +1110,7 @@ void DataArrayDouble::checkMonotonic(bool increasing, double eps) const throw(IN
  *  \throw If \a this->getNumberOfComponents() != 1.
  *  \throw If \a this is not allocated.
  */
-bool DataArrayDouble::isMonotonic(bool increasing, double eps) const throw(INTERP_KERNEL::Exception)
+bool DataArrayDouble::isMonotonic(bool increasing, double eps) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -996,57 +1148,75 @@ bool DataArrayDouble::isMonotonic(bool increasing, double eps) const throw(INTER
  * DataArrayDouble. This text is shown when a DataArrayDouble is printed in Python.
  *  \return std::string - text describing \a this DataArrayDouble.
  */
-std::string DataArrayDouble::repr() const throw(INTERP_KERNEL::Exception)
+std::string DataArrayDouble::repr() const
 {
   std::ostringstream ret;
   reprStream(ret);
   return ret.str();
 }
 
-std::string DataArrayDouble::reprZip() const throw(INTERP_KERNEL::Exception)
+std::string DataArrayDouble::reprZip() const
 {
   std::ostringstream ret;
   reprZipStream(ret);
   return ret.str();
 }
 
-void DataArrayDouble::writeVTK(std::ostream& ofs, int indent, const char *nameInFile) const throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::writeVTK(std::ostream& ofs, int indent, const std::string& nameInFile, DataArrayByte *byteArr) const
 {
+  static const char SPACE[4]={' ',' ',' ',' '};
+  checkAllocated();
   std::string idt(indent,' ');
   ofs.precision(17);
   ofs << idt << "<DataArray type=\"Float32\" Name=\"" << nameInFile << "\" NumberOfComponents=\"" << getNumberOfComponents() << "\"";
-  ofs << " format=\"ascii\" RangeMin=\"" << getMinValueInArray() << "\" RangeMax=\"" << getMaxValueInArray() << "\">\n" << idt;
-  std::copy(begin(),end(),std::ostream_iterator<double>(ofs," "));
+  if(byteArr)
+    {
+      ofs << " format=\"appended\" offset=\"" << byteArr->getNumberOfTuples() << "\">";
+      INTERP_KERNEL::AutoPtr<float> tmp(new float[getNbOfElems()]);
+      float *pt(tmp);
+      // to make Visual C++ happy : instead of std::copy(begin(),end(),(float *)tmp);
+      for(const double *src=begin();src!=end();src++,pt++)
+        *pt=float(*src);
+      const char *data(reinterpret_cast<const char *>((float *)tmp));
+      std::size_t sz(getNbOfElems()*sizeof(float));
+      byteArr->insertAtTheEnd(data,data+sz);
+      byteArr->insertAtTheEnd(SPACE,SPACE+4);
+    }
+  else
+    {
+      ofs << " RangeMin=\"" << getMinValueInArray() << "\" RangeMax=\"" << getMaxValueInArray() << "\" format=\"ascii\">\n" << idt;
+      std::copy(begin(),end(),std::ostream_iterator<double>(ofs," "));
+    }
   ofs << std::endl << idt << "</DataArray>\n";
 }
 
-void DataArrayDouble::reprStream(std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::reprStream(std::ostream& stream) const
 {
   stream << "Name of double array : \"" << _name << "\"\n";
   reprWithoutNameStream(stream);
 }
 
-void DataArrayDouble::reprZipStream(std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::reprZipStream(std::ostream& stream) const
 {
   stream << "Name of double array : \"" << _name << "\"\n";
   reprZipWithoutNameStream(stream);
 }
 
-void DataArrayDouble::reprWithoutNameStream(std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::reprWithoutNameStream(std::ostream& stream) const
 {
   DataArray::reprWithoutNameStream(stream);
   stream.precision(17);
   _mem.repr(getNumberOfComponents(),stream);
 }
 
-void DataArrayDouble::reprZipWithoutNameStream(std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::reprZipWithoutNameStream(std::ostream& stream) const
 {
   DataArray::reprWithoutNameStream(stream);
   stream.precision(17);
   _mem.reprZip(getNumberOfComponents(),stream);
 }
 
-void DataArrayDouble::reprCppStream(const char *varName, std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::reprCppStream(const std::string& varName, std::ostream& stream) const
 {
   int nbTuples=getNumberOfTuples(),nbComp=getNumberOfComponents();
   const double *data=getConstPointer();
@@ -1067,7 +1237,7 @@ void DataArrayDouble::reprCppStream(const char *varName, std::ostream& stream) c
 /*!
  * Method that gives a quick overvien of \a this for python.
  */
-void DataArrayDouble::reprQuickOverview(std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::reprQuickOverview(std::ostream& stream) const
 {
   static const std::size_t MAX_NB_OF_BYTE_IN_REPR=300;
   stream << "DataArrayDouble C++ instance at " << this << ". ";
@@ -1087,7 +1257,7 @@ void DataArrayDouble::reprQuickOverview(std::ostream& stream) const throw(INTERP
     stream << "*** No data allocated ****";
 }
 
-void DataArrayDouble::reprQuickOverviewData(std::ostream& stream, std::size_t maxNbOfByteInRepr) const throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::reprQuickOverviewData(std::ostream& stream, std::size_t maxNbOfByteInRepr) const
 {
   const double *data=begin();
   int nbOfTuples=getNumberOfTuples();
@@ -1132,7 +1302,7 @@ void DataArrayDouble::reprQuickOverviewData(std::ostream& stream, std::size_t ma
  * \param [out] reason In case of inequality returns the reason.
  * \sa DataArrayDouble::isEqual
  */
-bool DataArrayDouble::isEqualIfNotWhy(const DataArrayDouble& other, double prec, std::string& reason) const throw(INTERP_KERNEL::Exception)
+bool DataArrayDouble::isEqualIfNotWhy(const DataArrayDouble& other, double prec, std::string& reason) const
 {
   if(!areInfoEqualsIfNotWhy(other,reason))
     return false;
@@ -1146,7 +1316,7 @@ bool DataArrayDouble::isEqualIfNotWhy(const DataArrayDouble& other, double prec,
  *  \param [in] prec - precision value to compare numeric data of the arrays.
  *  \return bool - \a true if the two arrays are equal, \a false else.
  */
-bool DataArrayDouble::isEqual(const DataArrayDouble& other, double prec) const throw(INTERP_KERNEL::Exception)
+bool DataArrayDouble::isEqual(const DataArrayDouble& other, double prec) const
 {
   std::string tmp;
   return isEqualIfNotWhy(other,prec,tmp);
@@ -1159,7 +1329,7 @@ bool DataArrayDouble::isEqual(const DataArrayDouble& other, double prec) const t
  *  \param [in] prec - precision value to compare numeric data of the arrays.
  *  \return bool - \a true if the values of two arrays are equal, \a false else.
  */
-bool DataArrayDouble::isEqualWithoutConsideringStr(const DataArrayDouble& other, double prec) const throw(INTERP_KERNEL::Exception)
+bool DataArrayDouble::isEqualWithoutConsideringStr(const DataArrayDouble& other, double prec) const
 {
   std::string tmp;
   return _mem.isEqual(other._mem,prec,tmp);
@@ -1170,9 +1340,12 @@ bool DataArrayDouble::isEqualWithoutConsideringStr(const DataArrayDouble& other,
  * than the current number the array is truncated, otherwise the array is extended.
  *  \param [in] nbOfTuples - new number of tuples. 
  *  \throw If \a this is not allocated.
+ *  \throw If \a nbOfTuples is negative.
  */
-void DataArrayDouble::reAlloc(int nbOfTuples) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::reAlloc(int nbOfTuples)
 {
+  if(nbOfTuples<0)
+    throw INTERP_KERNEL::Exception("DataArrayDouble::reAlloc : input new number of tuples should be >=0 !");
   checkAllocated();
   _mem.reAlloc(getNumberOfComponents()*(std::size_t)nbOfTuples);
   declareAsNew();
@@ -1187,10 +1360,10 @@ DataArrayInt *DataArrayDouble::convertToIntArr() const
 {
   DataArrayInt *ret=DataArrayInt::New();
   ret->alloc(getNumberOfTuples(),getNumberOfComponents());
-  std::size_t nbOfVals=getNbOfElems();
-  const double *src=getConstPointer();
   int *dest=ret->getPointer();
-  std::copy(src,src+nbOfVals,dest);
+  // to make Visual C++ happy : instead of std::size_t nbOfVals=getNbOfElems(); std::copy(src,src+nbOfVals,dest);
+  for(const double *src=begin();src!=end();src++,dest++)
+    *dest=(int)*src;
   ret->copyStringInfoFrom(*this);
   return ret;
 }
@@ -1205,13 +1378,13 @@ DataArrayInt *DataArrayDouble::convertToIntArr() const
  *          is to delete using decrRef() as it is no more needed.
  *  \throw If \a this is not allocated.
  */
-DataArrayDouble *DataArrayDouble::fromNoInterlace() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::fromNoInterlace() const
 {
   if(_mem.isNull())
     throw INTERP_KERNEL::Exception("DataArrayDouble::fromNoInterlace : Not defined array !");
   double *tab=_mem.fromNoInterlace(getNumberOfComponents());
   DataArrayDouble *ret=DataArrayDouble::New();
-  ret->useArray(tab,true,CPP_DEALLOC,getNumberOfTuples(),getNumberOfComponents());
+  ret->useArray(tab,true,C_DEALLOC,getNumberOfTuples(),getNumberOfComponents());
   return ret;
 }
 
@@ -1225,13 +1398,13 @@ DataArrayDouble *DataArrayDouble::fromNoInterlace() const throw(INTERP_KERNEL::E
  *          is to delete using decrRef() as it is no more needed.
  *  \throw If \a this is not allocated.
  */
-DataArrayDouble *DataArrayDouble::toNoInterlace() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::toNoInterlace() const
 {
   if(_mem.isNull())
     throw INTERP_KERNEL::Exception("DataArrayDouble::toNoInterlace : Not defined array !");
   double *tab=_mem.toNoInterlace(getNumberOfComponents());
   DataArrayDouble *ret=DataArrayDouble::New();
-  ret->useArray(tab,true,CPP_DEALLOC,getNumberOfTuples(),getNumberOfComponents());
+  ret->useArray(tab,true,C_DEALLOC,getNumberOfTuples(),getNumberOfComponents());
   return ret;
 }
 
@@ -1244,7 +1417,7 @@ DataArrayDouble *DataArrayDouble::toNoInterlace() const throw(INTERP_KERNEL::Exc
  *  \param [in] old2New - C array of length equal to \a this->getNumberOfTuples()
  *     giving a new position for i-th old value.
  */
-void DataArrayDouble::renumberInPlace(const int *old2New) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::renumberInPlace(const int *old2New)
 {
   checkAllocated();
   int nbTuples=getNumberOfTuples();
@@ -1252,7 +1425,16 @@ void DataArrayDouble::renumberInPlace(const int *old2New) throw(INTERP_KERNEL::E
   double *tmp=new double[nbTuples*nbOfCompo];
   const double *iptr=getConstPointer();
   for(int i=0;i<nbTuples;i++)
-    std::copy(iptr+nbOfCompo*i,iptr+nbOfCompo*(i+1),tmp+nbOfCompo*old2New[i]);
+    {
+      int v=old2New[i];
+      if(v>=0 && v<nbTuples)
+        std::copy(iptr+nbOfCompo*i,iptr+nbOfCompo*(i+1),tmp+nbOfCompo*v);
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayDouble::renumberInPlace : At place #" << i << " value is " << v << " ! Should be in [0," << nbTuples << ") !";
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
+        }
+    }
   std::copy(tmp,tmp+nbTuples*nbOfCompo,getPointer());
   delete [] tmp;
   declareAsNew();
@@ -1268,7 +1450,7 @@ void DataArrayDouble::renumberInPlace(const int *old2New) throw(INTERP_KERNEL::E
  *  \return DataArrayDouble * - the new instance of DataArrayDouble that the caller
  *          is to delete using decrRef() as it is no more needed.
  */
-void DataArrayDouble::renumberInPlaceR(const int *new2Old) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::renumberInPlaceR(const int *new2Old)
 {
   checkAllocated();
   int nbTuples=getNumberOfTuples();
@@ -1276,7 +1458,16 @@ void DataArrayDouble::renumberInPlaceR(const int *new2Old) throw(INTERP_KERNEL::
   double *tmp=new double[nbTuples*nbOfCompo];
   const double *iptr=getConstPointer();
   for(int i=0;i<nbTuples;i++)
-    std::copy(iptr+nbOfCompo*new2Old[i],iptr+nbOfCompo*(new2Old[i]+1),tmp+nbOfCompo*i);
+    {
+      int v=new2Old[i];
+      if(v>=0 && v<nbTuples)
+        std::copy(iptr+nbOfCompo*v,iptr+nbOfCompo*(v+1),tmp+nbOfCompo*i);
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayDouble::renumberInPlaceR : At place #" << i << " value is " << v << " ! Should be in [0," << nbTuples << ") !";
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
+        }
+    }
   std::copy(tmp,tmp+nbTuples*nbOfCompo,getPointer());
   delete [] tmp;
   declareAsNew();
@@ -1294,7 +1485,7 @@ void DataArrayDouble::renumberInPlaceR(const int *new2Old) throw(INTERP_KERNEL::
  *          is to delete using decrRef() as it is no more needed.
  *  \throw If \a this is not allocated.
  */
-DataArrayDouble *DataArrayDouble::renumber(const int *old2New) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::renumber(const int *old2New) const
 {
   checkAllocated();
   int nbTuples=getNumberOfTuples();
@@ -1321,7 +1512,7 @@ DataArrayDouble *DataArrayDouble::renumber(const int *old2New) const throw(INTER
  *  \return DataArrayDouble * - the new instance of DataArrayDouble that the caller
  *          is to delete using decrRef() as it is no more needed.
  */
-DataArrayDouble *DataArrayDouble::renumberR(const int *new2Old) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::renumberR(const int *new2Old) const
 {
   checkAllocated();
   int nbTuples=getNumberOfTuples();
@@ -1350,7 +1541,7 @@ DataArrayDouble *DataArrayDouble::renumberR(const int *new2Old) const throw(INTE
  *  \return DataArrayDouble * - the new instance of DataArrayDouble that the caller
  *          is to delete using decrRef() as it is no more needed.
  */
-DataArrayDouble *DataArrayDouble::renumberAndReduce(const int *old2New, int newNbOfTuple) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::renumberAndReduce(const int *old2New, int newNbOfTuple) const
 {
   checkAllocated();
   int nbTuples=getNumberOfTuples();
@@ -1420,7 +1611,7 @@ DataArrayDouble *DataArrayDouble::selectByTupleId(const int *new2OldBg, const in
  *          is to delete using decrRef() as it is no more needed.
  *  \throw If \a new2OldEnd - \a new2OldBg > \a this->getNumberOfTuples().
  */
-DataArrayDouble *DataArrayDouble::selectByTupleIdSafe(const int *new2OldBg, const int *new2OldEnd) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::selectByTupleIdSafe(const int *new2OldBg, const int *new2OldEnd) const
 {
   checkAllocated();
   MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> ret=DataArrayDouble::New();
@@ -1455,7 +1646,7 @@ DataArrayDouble *DataArrayDouble::selectByTupleIdSafe(const int *new2OldBg, cons
  *          is to delete using decrRef() as it is no more needed.
  *  \sa DataArrayDouble::substr.
  */
-DataArrayDouble *DataArrayDouble::selectByTupleId2(int bg, int end2, int step) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::selectByTupleId2(int bg, int end2, int step) const
 {
   checkAllocated();
   MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> ret=DataArrayDouble::New();
@@ -1482,7 +1673,7 @@ DataArrayDouble *DataArrayDouble::selectByTupleId2(int bg, int end2, int step) c
  *  \throw If \a end > \a this->getNumberOfTuples().
  *  \throw If \a this is not allocated.
  */
-DataArrayDouble *DataArrayDouble::selectByTupleRanges(const std::vector<std::pair<int,int> >& ranges) const throw(INTERP_KERNEL::Exception)
+DataArray *DataArrayDouble::selectByTupleRanges(const std::vector<std::pair<int,int> >& ranges) const
 {
   checkAllocated();
   int nbOfComp=getNumberOfComponents();
@@ -1549,7 +1740,7 @@ DataArrayDouble *DataArrayDouble::selectByTupleRanges(const std::vector<std::pai
     \throw If \a tupleIdEnd != -1 && \a tupleIdEnd < \a this->getNumberOfTuples().
  *  \sa DataArrayDouble::selectByTupleId2
  */
-DataArrayDouble *DataArrayDouble::substr(int tupleIdBg, int tupleIdEnd) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::substr(int tupleIdBg, int tupleIdEnd) const
 {
   checkAllocated();
   int nbt=getNumberOfTuples();
@@ -1586,7 +1777,7 @@ DataArrayDouble *DataArrayDouble::substr(int tupleIdBg, int tupleIdEnd) const th
  *          is to delete using decrRef() as it is no more needed.
  *  \throw If \a this is not allocated.
  */
-DataArrayDouble *DataArrayDouble::changeNbOfComponents(int newNbOfComp, double dftValue) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::changeNbOfComponents(int newNbOfComp, double dftValue) const
 {
   checkAllocated();
   MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> ret=DataArrayDouble::New();
@@ -1604,10 +1795,10 @@ DataArrayDouble *DataArrayDouble::changeNbOfComponents(int newNbOfComp, double d
       for(;j<newNbOfComp;j++)
         nc[newNbOfComp*i+j]=dftValue;
     }
-  ret->setName(getName().c_str());
+  ret->setName(getName());
   for(int i=0;i<dim;i++)
-    ret->setInfoOnComponent(i,getInfoOnComponent(i).c_str());
-  ret->setName(getName().c_str());
+    ret->setInfoOnComponent(i,getInfoOnComponent(i));
+  ret->setName(getName());
   return ret.retn();
 }
 
@@ -1622,7 +1813,7 @@ DataArrayDouble *DataArrayDouble::changeNbOfComponents(int newNbOfComp, double d
  *  \throw If the rearrange method would lead to a number of tuples higher than 2147483647 (maximal capacity of int32 !).
  *  \warning This method erases all (name and unit) component info set before!
  */
-void DataArrayDouble::rearrange(int newNbOfCompo) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::rearrange(int newNbOfCompo)
 {
   checkAllocated();
   if(newNbOfCompo<1)
@@ -1647,7 +1838,7 @@ void DataArrayDouble::rearrange(int newNbOfCompo) throw(INTERP_KERNEL::Exception
  *  \throw If \a this is not allocated.
  *  \sa rearrange()
  */
-void DataArrayDouble::transpose() throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::transpose()
 {
   checkAllocated();
   int nbOfTuples=getNumberOfTuples();
@@ -1667,9 +1858,11 @@ void DataArrayDouble::transpose() throw(INTERP_KERNEL::Exception)
  *  \throw If a component index (\a i) is not valid: 
  *         \a i < 0 || \a i >= \a this->getNumberOfComponents().
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarraydouble_KeepSelectedComponents "Here is a Python example".
+ *  \endif
  */
-DataArrayDouble *DataArrayDouble::keepSelectedComponents(const std::vector<int>& compoIds) const throw(INTERP_KERNEL::Exception)
+DataArray *DataArrayDouble::keepSelectedComponents(const std::vector<int>& compoIds) const
 {
   checkAllocated();
   MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> ret(DataArrayDouble::New());
@@ -1700,11 +1893,13 @@ DataArrayDouble *DataArrayDouble::keepSelectedComponents(const std::vector<int>&
  *  \throw If \a this is not allocated.
  *  \throw If \a this and \a other arrays have different number of tuples.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcdataarraydouble_meldwith "Here is a C++ example".
  *
  *  \ref py_mcdataarraydouble_meldwith "Here is a Python example".
+ *  \endif
  */
-void DataArrayDouble::meldWith(const DataArrayDouble *other) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::meldWith(const DataArrayDouble *other)
 {
   checkAllocated();
   other->checkAllocated();
@@ -1713,7 +1908,7 @@ void DataArrayDouble::meldWith(const DataArrayDouble *other) throw(INTERP_KERNEL
     throw INTERP_KERNEL::Exception("DataArrayDouble::meldWith : mismatch of number of tuples !");
   int nbOfComp1=getNumberOfComponents();
   int nbOfComp2=other->getNumberOfComponents();
-  double *newArr=new double[nbOfTuples*(nbOfComp1+nbOfComp2)];
+  double *newArr=(double *)malloc((nbOfTuples*(nbOfComp1+nbOfComp2))*sizeof(double));
   double *w=newArr;
   const double *inp1=getConstPointer();
   const double *inp2=other->getConstPointer();
@@ -1722,7 +1917,7 @@ void DataArrayDouble::meldWith(const DataArrayDouble *other) throw(INTERP_KERNEL
       w=std::copy(inp1,inp1+nbOfComp1,w);
       w=std::copy(inp2,inp2+nbOfComp2,w);
     }
-  useArray(newArr,true,CPP_DEALLOC,nbOfTuples,nbOfComp1+nbOfComp2);
+  useArray(newArr,true,C_DEALLOC,nbOfTuples,nbOfComp1+nbOfComp2);
   std::vector<int> compIds(nbOfComp2);
   for(int i=0;i<nbOfComp2;i++)
     compIds[i]=nbOfComp1+i;
@@ -1730,9 +1925,36 @@ void DataArrayDouble::meldWith(const DataArrayDouble *other) throw(INTERP_KERNEL
 }
 
 /*!
+ * This method checks that all tuples in \a other are in \a this.
+ * If true, the output param \a tupleIds contains the tuples ids of \a this that correspond to tupes in \a this.
+ * For each i in [ 0 , other->getNumberOfTuples() ) tuple #i in \a other is equal ( regarding input precision \a prec ) to tuple tupleIds[i] in \a this.
+ *
+ * \param [in] other - the array having the same number of components than \a this.
+ * \param [out] tupleIds - the tuple ids containing the same number of tuples than \a other has.
+ * \sa DataArrayDouble::findCommonTuples
+ */
+bool DataArrayDouble::areIncludedInMe(const DataArrayDouble *other, double prec, DataArrayInt *&tupleIds) const
+{
+  if(!other)
+    throw INTERP_KERNEL::Exception("DataArrayDouble::areIncludedInMe : input array is NULL !");
+  checkAllocated(); other->checkAllocated();
+  if(getNumberOfComponents()!=other->getNumberOfComponents())
+    throw INTERP_KERNEL::Exception("DataArrayDouble::areIncludedInMe : the number of components does not match !");
+  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> a=DataArrayDouble::Aggregate(this,other);
+  DataArrayInt *c=0,*ci=0;
+  a->findCommonTuples(prec,getNumberOfTuples(),c,ci);
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> cSafe(c),ciSafe(ci);
+  int newNbOfTuples=-1;
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ids=DataArrayInt::BuildOld2NewArrayFromSurjectiveFormat2(a->getNumberOfTuples(),c->begin(),ci->begin(),ci->end(),newNbOfTuples);
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret1=ids->selectByTupleId2(getNumberOfTuples(),a->getNumberOfTuples(),1);
+  tupleIds=ret1.retn();
+  return newNbOfTuples==getNumberOfTuples();
+}
+
+/*!
  * Searches for tuples coincident within \a prec tolerance. Each tuple is considered
  * as coordinates of a point in getNumberOfComponents()-dimensional space. The
- * distance is computed using norm2.
+ * distance separating two points is computed with the infinite norm.
  *
  * Indices of coincident tuples are stored in output arrays.
  * A pair of arrays (\a comm, \a commIndex) is called "Surjective Format 2".
@@ -1753,25 +1975,30 @@ void DataArrayDouble::meldWith(const DataArrayDouble *other) throw(INTERP_KERNEL
  *               [ \a commIndex[1], \a commIndex[2] ). \a commIndex->getNumberOfTuples()-1
  *               gives the number of groups of coincident tuples.
  *  \throw If \a this is not allocated.
- *  \throw If the number of components is not in [1,2,3].
+ *  \throw If the number of components is not in [1,2,3,4].
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcdataarraydouble_findcommontuples "Here is a C++ example".
  *
  *  \ref py_mcdataarraydouble_findcommontuples  "Here is a Python example".
- *  \sa DataArrayInt::BuildOld2NewArrayFromSurjectiveFormat2().
+ *  \endif
+ *  \sa DataArrayInt::BuildOld2NewArrayFromSurjectiveFormat2(), DataArrayDouble::areIncludedInMe
  */
-void DataArrayDouble::findCommonTuples(double prec, int limitTupleId, DataArrayInt *&comm, DataArrayInt *&commIndex) const throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::findCommonTuples(double prec, int limitTupleId, DataArrayInt *&comm, DataArrayInt *&commIndex) const
 {
   checkAllocated();
   int nbOfCompo=getNumberOfComponents();
-  if ((nbOfCompo<1) || (nbOfCompo>3)) //test before work
-    throw INTERP_KERNEL::Exception("DataArrayDouble::findCommonTuples : Unexpected spacedim of coords. Must be 1, 2 or 3.");
-  
+  if ((nbOfCompo<1) || (nbOfCompo>4)) //test before work
+    throw INTERP_KERNEL::Exception("DataArrayDouble::findCommonTuples : Unexpected spacedim of coords. Must be 1, 2, 3 or 4.");
+
   int nbOfTuples=getNumberOfTuples();
   //
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> c(DataArrayInt::New()),cI(DataArrayInt::New()); c->alloc(0,1); cI->pushBackSilent(0);
   switch(nbOfCompo)
-    {
+  {
+    case 4:
+      findCommonTuplesAlg<4>(begin(),nbOfTuples,limitTupleId,prec,c,cI);
+      break;
     case 3:
       findCommonTuplesAlg<3>(begin(),nbOfTuples,limitTupleId,prec,c,cI);
       break;
@@ -1782,8 +2009,8 @@ void DataArrayDouble::findCommonTuples(double prec, int limitTupleId, DataArrayI
       findCommonTuplesAlg<1>(begin(),nbOfTuples,limitTupleId,prec,c,cI);
       break;
     default:
-      throw INTERP_KERNEL::Exception("DataArrayDouble::findCommonTuples : nb of components managed are 1,2 and 3 ! not implemented for other number of components !");
-    }
+      throw INTERP_KERNEL::Exception("DataArrayDouble::findCommonTuples : nb of components managed are 1,2,3 and 4 ! not implemented for other number of components !");
+  }
   comm=c.retn();
   commIndex=cI.retn();
 }
@@ -1795,7 +2022,7 @@ void DataArrayDouble::findCommonTuples(double prec, int limitTupleId, DataArrayI
  * \return a newly allocated DataArrayDouble having one component and number of tuples equal to \a nbTimes * \c this->getNumberOfTuples.
  * \throw if \a this is not allocated or if \a this has not number of components set to one or if \a nbTimes is lower than 1.
  */
-DataArrayDouble *DataArrayDouble::duplicateEachTupleNTimes(int nbTimes) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::duplicateEachTupleNTimes(int nbTimes) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -1826,7 +2053,7 @@ DataArrayDouble *DataArrayDouble::duplicateEachTupleNTimes(int nbTimes) const th
  * \return the minimal distance between the two set of points \a this and \a other.
  * \sa DataArrayDouble::findClosestTupleId
  */
-double DataArrayDouble::minimalDistanceTo(const DataArrayDouble *other, int& thisTupleId, int& otherTupleId) const throw(INTERP_KERNEL::Exception)
+double DataArrayDouble::minimalDistanceTo(const DataArrayDouble *other, int& thisTupleId, int& otherTupleId) const
 {
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> part1=findClosestTupleId(other);
   int nbOfCompo(getNumberOfComponents());
@@ -1853,7 +2080,7 @@ double DataArrayDouble::minimalDistanceTo(const DataArrayDouble *other, int& thi
  * \return a newly allocated (new object to be dealt by the caller) DataArrayInt having \c other->getNumberOfTuples() tuples and one components.
  * \sa DataArrayDouble::minimalDistanceTo
  */
-DataArrayInt *DataArrayDouble::findClosestTupleId(const DataArrayDouble *other) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayDouble::findClosestTupleId(const DataArrayDouble *other) const
 {
   if(!other)
     throw INTERP_KERNEL::Exception("DataArrayDouble::findClosestTupleId : other instance is NULL !");
@@ -1871,7 +2098,7 @@ DataArrayInt *DataArrayDouble::findClosestTupleId(const DataArrayDouble *other) 
   double bounds[6];
   getMinMaxPerComponent(bounds);
   switch(nbOfCompo)
-    {
+  {
     case 3:
       {
         double xDelta(fabs(bounds[1]-bounds[0])),yDelta(fabs(bounds[3]-bounds[2])),zDelta(fabs(bounds[5]-bounds[4]));
@@ -1899,7 +2126,69 @@ DataArrayInt *DataArrayDouble::findClosestTupleId(const DataArrayDouble *other) 
       }
     default:
       throw INTERP_KERNEL::Exception("Unexpected spacedim of coords for findClosestTupleId. Must be 1, 2 or 3.");
+  }
+  return ret.retn();
+}
+
+/*!
+ * This method expects that \a this and \a otherBBoxFrmt arrays are bounding box arrays ( as the output of MEDCouplingPointSet::getBoundingBoxForBBTree method ).
+ * This method will return a DataArrayInt array having the same number of tuples than \a this. This returned array tells for each cell in \a this
+ * how many bounding boxes in \a otherBBoxFrmt.
+ * So, this method expects that \a this and \a otherBBoxFrmt have the same number of components.
+ *
+ * \param [in] otherBBoxFrmt - It is an array .
+ * \param [in] eps - the absolute precision of the detection. when eps < 0 the bboxes are enlarged so more interactions are detected. Inversely when > 0 the bboxes are stretched.
+ * \sa MEDCouplingPointSet::getBoundingBoxForBBTree
+ * \throw If \a this and \a otherBBoxFrmt have not the same number of components.
+ * \throw If \a this and \a otherBBoxFrmt number of components is not even (BBox format).
+ */
+DataArrayInt *DataArrayDouble::computeNbOfInteractionsWith(const DataArrayDouble *otherBBoxFrmt, double eps) const
+{
+  if(!otherBBoxFrmt)
+    throw INTERP_KERNEL::Exception("DataArrayDouble::computeNbOfInteractionsWith : input array is NULL !");
+  if(!isAllocated() || !otherBBoxFrmt->isAllocated())
+    throw INTERP_KERNEL::Exception("DataArrayDouble::computeNbOfInteractionsWith : this and input array must be allocated !");
+  int nbOfComp(getNumberOfComponents()),nbOfTuples(getNumberOfTuples());
+  if(nbOfComp!=otherBBoxFrmt->getNumberOfComponents())
+    {
+      std::ostringstream oss; oss << "DataArrayDouble::computeNbOfInteractionsWith : this number of components (" << nbOfComp << ") must be equal to the number of components of input array (" << otherBBoxFrmt->getNumberOfComponents() << ") !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
     }
+  if(nbOfComp%2!=0)
+    {
+      std::ostringstream oss; oss << "DataArrayDouble::computeNbOfInteractionsWith : Number of components (" << nbOfComp << ") is not even ! It should be to be compatible with bbox format !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(nbOfTuples,1);
+  const double *thisBBPtr(begin());
+  int *retPtr(ret->getPointer());
+  switch(nbOfComp/2)
+  {
+    case 3:
+      {
+        BBTree<3,int> bbt(otherBBoxFrmt->begin(),0,0,otherBBoxFrmt->getNumberOfTuples(),eps);
+        for(int i=0;i<nbOfTuples;i++,retPtr++,thisBBPtr+=nbOfComp)
+          *retPtr=bbt.getNbOfIntersectingElems(thisBBPtr);
+        break;
+      }
+    case 2:
+      {
+        BBTree<2,int> bbt(otherBBoxFrmt->begin(),0,0,otherBBoxFrmt->getNumberOfTuples(),eps);
+        for(int i=0;i<nbOfTuples;i++,retPtr++,thisBBPtr+=nbOfComp)
+          *retPtr=bbt.getNbOfIntersectingElems(thisBBPtr);
+        break;
+      }
+    case 1:
+      {
+        BBTree<1,int> bbt(otherBBoxFrmt->begin(),0,0,otherBBoxFrmt->getNumberOfTuples(),eps);
+        for(int i=0;i<nbOfTuples;i++,retPtr++,thisBBPtr+=nbOfComp)
+          *retPtr=bbt.getNbOfIntersectingElems(thisBBPtr);
+        break;
+      }
+    default:
+      throw INTERP_KERNEL::Exception("DataArrayDouble::computeNbOfInteractionsWith : space dimension supported are [1,2,3] !");
+  }
+
   return ret.retn();
 }
 
@@ -1917,11 +2206,13 @@ DataArrayInt *DataArrayDouble::findClosestTupleId(const DataArrayDouble *other) 
  *  \return DataArrayDouble * - the new instance of DataArrayDouble that the caller
  *          is to delete using decrRef() as it is no more needed.
  *  \throw If \a this is not allocated.
- *  \throw If the number of components is not in [1,2,3].
+ *  \throw If the number of components is not in [1,2,3,4].
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarraydouble_getdifferentvalues "Here is a Python example".
+ *  \endif
  */
-DataArrayDouble *DataArrayDouble::getDifferentValues(double prec, int limitTupleId) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::getDifferentValues(double prec, int limitTupleId) const
 {
   checkAllocated();
   DataArrayInt *c0=0,*cI0=0;
@@ -1943,9 +2234,11 @@ DataArrayDouble *DataArrayDouble::getDifferentValues(double prec, int limitTuple
  *  \throw If \a compoIds.size() != \a a->getNumberOfComponents().
  *  \throw If \a compoIds[i] < 0 or \a compoIds[i] > \a this->getNumberOfComponents().
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarraydouble_setselectedcomponents "Here is a Python example".
+ *  \endif
  */
-void DataArrayDouble::setSelectedComponents(const DataArrayDouble *a, const std::vector<int>& compoIds) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::setSelectedComponents(const DataArrayDouble *a, const std::vector<int>& compoIds)
 {
   if(!a)
     throw INTERP_KERNEL::Exception("DataArrayDouble::setSelectedComponents : input DataArrayDouble is NULL !");
@@ -1993,9 +2286,11 @@ void DataArrayDouble::setSelectedComponents(const DataArrayDouble *a, const std:
  *  \throw If \a strictCompoCompare == \a true && \a a->getNumberOfComponents() !=
  *            \c len(\c range(\a bgComp,\a endComp,\a stepComp)).
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarraydouble_setpartofvalues1 "Here is a Python example".
+ *  \endif
  */
-void DataArrayDouble::setPartOfValues1(const DataArrayDouble *a, int bgTuples, int endTuples, int stepTuples, int bgComp, int endComp, int stepComp, bool strictCompoCompare) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::setPartOfValues1(const DataArrayDouble *a, int bgTuples, int endTuples, int stepTuples, int bgComp, int endComp, int stepComp, bool strictCompoCompare)
 {
   if(!a)
     throw INTERP_KERNEL::Exception("DataArrayDouble::setPartOfValues1 : input DataArrayDouble is NULL !");
@@ -2056,9 +2351,11 @@ void DataArrayDouble::setPartOfValues1(const DataArrayDouble *a, int bgTuples, i
  *            non-empty range of increasing indices or indices are out of a valid range
  *            for \this array.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarraydouble_setpartofvaluessimple1 "Here is a Python example".
+ *  \endif
  */
-void DataArrayDouble::setPartOfValuesSimple1(double a, int bgTuples, int endTuples, int stepTuples, int bgComp, int endComp, int stepComp) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::setPartOfValuesSimple1(double a, int bgTuples, int endTuples, int stepTuples, int bgComp, int endComp, int stepComp)
 {
   const char msg[]="DataArrayDouble::setPartOfValuesSimple1";
   checkAllocated();
@@ -2110,9 +2407,11 @@ void DataArrayDouble::setPartOfValuesSimple1(double a, int bgTuples, int endTupl
  *  \throw In the second *mode of usage*, if \a a->getNumberOfTuples() != 1 or
  *         <em> a->getNumberOfComponents() != (endComp - bgComp)</em>.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarraydouble_setpartofvalues2 "Here is a Python example".
+ *  \endif
  */
-void DataArrayDouble::setPartOfValues2(const DataArrayDouble *a, const int *bgTuples, const int *endTuples, const int *bgComp, const int *endComp, bool strictCompoCompare) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::setPartOfValues2(const DataArrayDouble *a, const int *bgTuples, const int *endTuples, const int *bgComp, const int *endComp, bool strictCompoCompare)
 {
   if(!a)
     throw INTERP_KERNEL::Exception("DataArrayDouble::setPartOfValues2 : input DataArrayDouble is NULL !");
@@ -2181,9 +2480,11 @@ void DataArrayDouble::setPartOfValues2(const DataArrayDouble *a, const int *bgTu
  *  \throw If any index of tuple/component given by <em>bgTuples / bgComp</em> is
  *         out of a valid range for \a this array.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarraydouble_setpartofvaluessimple2 "Here is a Python example".
+ *  \endif
  */
-void DataArrayDouble::setPartOfValuesSimple2(double a, const int *bgTuples, const int *endTuples, const int *bgComp, const int *endComp) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::setPartOfValuesSimple2(double a, const int *bgTuples, const int *endTuples, const int *bgComp, const int *endComp)
 {
   checkAllocated();
   int nbComp=getNumberOfComponents();
@@ -2241,9 +2542,11 @@ void DataArrayDouble::setPartOfValuesSimple2(double a, const int *bgTuples, cons
  *            non-empty range of increasing indices or indices are out of a valid range
  *            for \this array.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarraydouble_setpartofvalues3 "Here is a Python example".
+ *  \endif
  */
-void DataArrayDouble::setPartOfValues3(const DataArrayDouble *a, const int *bgTuples, const int *endTuples, int bgComp, int endComp, int stepComp, bool strictCompoCompare) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::setPartOfValues3(const DataArrayDouble *a, const int *bgTuples, const int *endTuples, int bgComp, int endComp, int stepComp, bool strictCompoCompare)
 {
   if(!a)
     throw INTERP_KERNEL::Exception("DataArrayDouble::setPartOfValues3 : input DataArrayDouble is NULL !");
@@ -2313,9 +2616,11 @@ void DataArrayDouble::setPartOfValues3(const DataArrayDouble *a, const int *bgTu
  *            non-empty range of increasing indices or indices are out of a valid range
  *            for \this array.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarraydouble_setpartofvaluessimple3 "Here is a Python example".
+ *  \endif
  */
-void DataArrayDouble::setPartOfValuesSimple3(double a, const int *bgTuples, const int *endTuples, int bgComp, int endComp, int stepComp) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::setPartOfValuesSimple3(double a, const int *bgTuples, const int *endTuples, int bgComp, int endComp, int stepComp)
 {
   const char msg[]="DataArrayDouble::setPartOfValuesSimple3";
   checkAllocated();
@@ -2366,7 +2671,7 @@ void DataArrayDouble::setPartOfValuesSimple3(double a, const int *bgTuples, cons
  *            \c len(\c range(\a bgComp,\a endComp,\a stepComp)).
  *
  */
-void DataArrayDouble::setPartOfValues4(const DataArrayDouble *a, int bgTuples, int endTuples, int stepTuples, const int *bgComp, const int *endComp, bool strictCompoCompare) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::setPartOfValues4(const DataArrayDouble *a, int bgTuples, int endTuples, int stepTuples, const int *bgComp, const int *endComp, bool strictCompoCompare)
 {
   if(!a)
     throw INTERP_KERNEL::Exception("DataArrayDouble::setPartOfValues4 : input DataArrayDouble is NULL !");
@@ -2410,7 +2715,7 @@ void DataArrayDouble::setPartOfValues4(const DataArrayDouble *a, int bgTuples, i
     }
 }
 
-void DataArrayDouble::setPartOfValuesSimple4(double a, int bgTuples, int endTuples, int stepTuples, const int *bgComp, const int *endComp) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::setPartOfValuesSimple4(double a, int bgTuples, int endTuples, int stepTuples, const int *bgComp, const int *endComp)
 {
   const char msg[]="DataArrayDouble::setPartOfValuesSimple4";
   checkAllocated();
@@ -2447,7 +2752,7 @@ void DataArrayDouble::setPartOfValuesSimple4(double a, int bgTuples, int endTupl
  *  \throw If any tuple index given by \a tuplesSelec is out of a valid range for 
  *         the corresponding (\a this or \a a) array.
  */
-void DataArrayDouble::setPartOfValuesAdv(const DataArrayDouble *a, const DataArrayInt *tuplesSelec) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::setPartOfValuesAdv(const DataArrayDouble *a, const DataArrayInt *tuplesSelec)
 {
   if(!a || !tuplesSelec)
     throw INTERP_KERNEL::Exception("DataArrayDouble::setPartOfValuesAdv : input DataArrayDouble is NULL !");
@@ -2486,7 +2791,7 @@ void DataArrayDouble::setPartOfValuesAdv(const DataArrayDouble *a, const DataArr
 }
 
 /*!
- * Copy some tuples from another DataArrayDouble (\a a) into contiguous tuples
+ * Copy some tuples from another DataArrayDouble (\a aBase) into contiguous tuples
  * of \a this array. Textual data is not copied. Both arrays must have equal number of
  * components.
  * The tuples to assign to are defined by index of the first tuple, and
@@ -2495,23 +2800,26 @@ void DataArrayDouble::setPartOfValuesAdv(const DataArrayDouble *a, const DataArr
  * All components of selected tuples are copied.
  *  \param [in] tupleIdStart - index of the first tuple of \a this array to assign
  *              values to.
- *  \param [in] a - the array to copy values from.
+ *  \param [in] aBase - the array to copy values from.
  *  \param [in] tuplesSelec - the array specifying tuples of \a a to copy.
  *  \throw If \a this is not allocated.
- *  \throw If \a a is NULL.
- *  \throw If \a a is not allocated.
+ *  \throw If \a aBase is NULL.
+ *  \throw If \a aBase is not allocated.
  *  \throw If \a tuplesSelec is NULL.
  *  \throw If \a tuplesSelec is not allocated.
- *  \throw If <em>this->getNumberOfComponents() != a->getNumberOfComponents()</em>.
+ *  \throw If <em>this->getNumberOfComponents() != aBase->getNumberOfComponents()</em>.
  *  \throw If \a tuplesSelec->getNumberOfComponents() != 1.
  *  \throw If <em>tupleIdStart + tuplesSelec->getNumberOfTuples() > this->getNumberOfTuples().</em>
  *  \throw If any tuple index given by \a tuplesSelec is out of a valid range for 
- *         \a a array.
+ *         \a aBase array.
  */
-void DataArrayDouble::setContigPartOfSelectedValues(int tupleIdStart, const DataArrayDouble *a, const DataArrayInt *tuplesSelec) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::setContigPartOfSelectedValues(int tupleIdStart, const DataArray *aBase, const DataArrayInt *tuplesSelec)
 {
-  if(!a || !tuplesSelec)
+  if(!aBase || !tuplesSelec)
     throw INTERP_KERNEL::Exception("DataArrayDouble::setContigPartOfSelectedValues : input DataArray is NULL !");
+  const DataArrayDouble *a=dynamic_cast<const DataArrayDouble *>(aBase);
+  if(!a)
+    throw INTERP_KERNEL::Exception("DataArrayDouble::setContigPartOfSelectedValues : input DataArray aBase is not a DataArrayDouble !");
   checkAllocated();
   a->checkAllocated();
   tuplesSelec->checkAllocated();
@@ -2543,7 +2851,7 @@ void DataArrayDouble::setContigPartOfSelectedValues(int tupleIdStart, const Data
 }
 
 /*!
- * Copy some tuples from another DataArrayDouble (\a a) into contiguous tuples
+ * Copy some tuples from another DataArrayDouble (\a aBase) into contiguous tuples
  * of \a this array. Textual data is not copied. Both arrays must have equal number of
  * components.
  * The tuples to copy are defined by three values similar to parameters of
@@ -2553,24 +2861,27 @@ void DataArrayDouble::setContigPartOfSelectedValues(int tupleIdStart, const Data
  * All components of selected tuples are copied.
  *  \param [in] tupleIdStart - index of the first tuple of \a this array to assign
  *              values to.
- *  \param [in] a - the array to copy values from.
- *  \param [in] bg - index of the first tuple to copy of the array \a a.
- *  \param [in] end2 - index of the tuple of \a a before which the tuples to copy
+ *  \param [in] aBase - the array to copy values from.
+ *  \param [in] bg - index of the first tuple to copy of the array \a aBase.
+ *  \param [in] end2 - index of the tuple of \a aBase before which the tuples to copy
  *              are located.
  *  \param [in] step - index increment to get index of the next tuple to copy.
  *  \throw If \a this is not allocated.
- *  \throw If \a a is NULL.
- *  \throw If \a a is not allocated.
- *  \throw If <em>this->getNumberOfComponents() != a->getNumberOfComponents()</em>.
+ *  \throw If \a aBase is NULL.
+ *  \throw If \a aBase is not allocated.
+ *  \throw If <em>this->getNumberOfComponents() != aBase->getNumberOfComponents()</em>.
  *  \throw If <em>tupleIdStart + len(range(bg,end2,step)) > this->getNumberOfTuples().</em>
  *  \throw If parameters specifying tuples to copy, do not give a
  *            non-empty range of increasing indices or indices are out of a valid range
- *            for the array \a a.
+ *            for the array \a aBase.
  */
-void DataArrayDouble::setContigPartOfSelectedValues2(int tupleIdStart, const DataArrayDouble *a, int bg, int end2, int step) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::setContigPartOfSelectedValues2(int tupleIdStart, const DataArray *aBase, int bg, int end2, int step)
 {
+  if(!aBase)
+    throw INTERP_KERNEL::Exception("DataArrayDouble::setContigPartOfSelectedValues2 : input DataArray is NULL !");
+  const DataArrayDouble *a=dynamic_cast<const DataArrayDouble *>(aBase);
   if(!a)
-    throw INTERP_KERNEL::Exception("DataArrayDouble::setContigPartOfSelectedValues2 : input DataArrayDouble is NULL !");
+    throw INTERP_KERNEL::Exception("DataArrayDouble::setContigPartOfSelectedValues2 : input DataArray aBase is not a DataArrayDouble !");
   checkAllocated();
   a->checkAllocated();
   int nbOfComp=getNumberOfComponents();
@@ -2604,7 +2915,7 @@ void DataArrayDouble::setContigPartOfSelectedValues2(int tupleIdStart, const Dat
  *  \throw If condition <em>( 0 <= tupleId < this->getNumberOfTuples() )</em> is violated.
  *  \throw If condition <em>( 0 <= compoId < this->getNumberOfComponents() )</em> is violated.
  */
-double DataArrayDouble::getIJSafe(int tupleId, int compoId) const throw(INTERP_KERNEL::Exception)
+double DataArrayDouble::getIJSafe(int tupleId, int compoId) const
 {
   checkAllocated();
   if(tupleId<0 || tupleId>=getNumberOfTuples())
@@ -2621,13 +2932,31 @@ double DataArrayDouble::getIJSafe(int tupleId, int compoId) const throw(INTERP_K
 }
 
 /*!
+ * Returns the first value of \a this. 
+ *  \return double - the last value of \a this array.
+ *  \throw If \a this is not allocated.
+ *  \throw If \a this->getNumberOfComponents() != 1.
+ *  \throw If \a this->getNumberOfTuples() < 1.
+ */
+double DataArrayDouble::front() const
+{
+  checkAllocated();
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayDouble::front : number of components not equal to one !");
+  int nbOfTuples=getNumberOfTuples();
+  if(nbOfTuples<1)
+    throw INTERP_KERNEL::Exception("DataArrayDouble::front : number of tuples must be >= 1 !");
+  return *(getConstPointer());
+}
+
+/*!
  * Returns the last value of \a this. 
  *  \return double - the last value of \a this array.
  *  \throw If \a this is not allocated.
  *  \throw If \a this->getNumberOfComponents() != 1.
  *  \throw If \a this->getNumberOfTuples() < 1.
  */
-double DataArrayDouble::back() const throw(INTERP_KERNEL::Exception)
+double DataArrayDouble::back() const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -2662,14 +2991,14 @@ void DataArrayDouble::SetArrayIn(DataArrayDouble *newArray, DataArrayDouble* &ar
  *  \param [in] nbOfTuple - new number of tuples in \a this.
  *  \param [in] nbOfCompo - new number of components in \a this.
  */
-void DataArrayDouble::useArray(const double *array, bool ownership, DeallocType type, int nbOfTuple, int nbOfCompo) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::useArray(const double *array, bool ownership, DeallocType type, int nbOfTuple, int nbOfCompo)
 {
   _info_on_compo.resize(nbOfCompo);
   _mem.useArray(array,ownership,type,(std::size_t)nbOfTuple*nbOfCompo);
   declareAsNew();
 }
 
-void DataArrayDouble::useExternalArrayWithRWAccess(const double *array, int nbOfTuple, int nbOfCompo) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::useExternalArrayWithRWAccess(const double *array, int nbOfTuple, int nbOfCompo)
 {
   _info_on_compo.resize(nbOfCompo);
   _mem.useExternalArrayWithRWAccess(array,(std::size_t)nbOfTuple*nbOfCompo);
@@ -2681,7 +3010,7 @@ void DataArrayDouble::useExternalArrayWithRWAccess(const double *array, int nbOf
  * is thrown.
  * \throw If zero is found in \a this array.
  */
-void DataArrayDouble::checkNoNullValues() const throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::checkNoNullValues() const
 {
   const double *tmp=getConstPointer();
   std::size_t nbOfElems=getNbOfElems();
@@ -2702,7 +3031,7 @@ void DataArrayDouble::checkNoNullValues() const throw(INTERP_KERNEL::Exception)
  *               \a bounds[3] = \c max_of_component_1 <br>
  *               ...
  */
-void DataArrayDouble::getMinMaxPerComponent(double *bounds) const throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::getMinMaxPerComponent(double *bounds) const
 {
   checkAllocated();
   int dim=getNumberOfComponents();
@@ -2738,7 +3067,7 @@ void DataArrayDouble::getMinMaxPerComponent(double *bounds) const throw(INTERP_K
  *
  * \throw If \a this is not allocated yet.
  */
-DataArrayDouble *DataArrayDouble::computeBBoxPerTuple(double epsilon)const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::computeBBoxPerTuple(double epsilon) const
 {
   checkAllocated();
   const double *dataPtr=getConstPointer();
@@ -2776,7 +3105,7 @@ DataArrayDouble *DataArrayDouble::computeBBoxPerTuple(double epsilon)const throw
  *
  * \sa MEDCouplingPointSet::getNodeIdsNearPoints, DataArrayDouble::getDifferentValues
  */
-void DataArrayDouble::computeTupleIdsNearTuples(const DataArrayDouble *other, double eps, DataArrayInt *& c, DataArrayInt *& cI) const throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::computeTupleIdsNearTuples(const DataArrayDouble *other, double eps, DataArrayInt *& c, DataArrayInt *& cI) const
 {
   if(!other)
     throw INTERP_KERNEL::Exception("DataArrayDouble::computeTupleIdsNearTuples : input pointer other is null !");
@@ -2789,7 +3118,7 @@ void DataArrayDouble::computeTupleIdsNearTuples(const DataArrayDouble *other, do
   int nbOfTuplesOther=other->getNumberOfTuples();
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> cArr(DataArrayInt::New()),cIArr(DataArrayInt::New()); cArr->alloc(0,1); cIArr->pushBackSilent(0);
   switch(nbOfCompo)
-    {
+  {
     case 3:
       {
         BBTreePts<3,int> myTree(begin(),0,0,getNumberOfTuples(),eps);
@@ -2810,7 +3139,7 @@ void DataArrayDouble::computeTupleIdsNearTuples(const DataArrayDouble *other, do
       }
     default:
       throw INTERP_KERNEL::Exception("Unexpected spacedim of coords for computeTupleIdsNearTuples. Must be 1, 2 or 3.");
-    }
+  }
   c=cArr.retn(); cI=cIArr.retn();
 }
 
@@ -2820,7 +3149,7 @@ void DataArrayDouble::computeTupleIdsNearTuples(const DataArrayDouble *other, do
  * 
  * \param [in] eps absolute epsilon. under that value of delta between max and min no scale is performed.
  */
-void DataArrayDouble::recenterForMaxPrecision(double eps) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::recenterForMaxPrecision(double eps)
 {
   checkAllocated();
   int dim=getNumberOfComponents();
@@ -2844,7 +3173,7 @@ void DataArrayDouble::recenterForMaxPrecision(double eps) throw(INTERP_KERNEL::E
  *  \throw If \a this->getNumberOfComponents() != 1
  *  \throw If \a this->getNumberOfTuples() < 1
  */
-double DataArrayDouble::getMaxValue(int& tupleId) const throw(INTERP_KERNEL::Exception)
+double DataArrayDouble::getMaxValue(int& tupleId) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -2864,7 +3193,7 @@ double DataArrayDouble::getMaxValue(int& tupleId) const throw(INTERP_KERNEL::Exc
  *  \return double - the maximal value among all values of \a this array.
  *  \throw If \a this is not allocated.
  */
-double DataArrayDouble::getMaxValueInArray() const throw(INTERP_KERNEL::Exception)
+double DataArrayDouble::getMaxValueInArray() const
 {
   checkAllocated();
   const double *loc=std::max_element(begin(),end());
@@ -2880,7 +3209,7 @@ double DataArrayDouble::getMaxValueInArray() const throw(INTERP_KERNEL::Exceptio
  *  \throw If \a this->getNumberOfComponents() != 1
  *  \throw If \a this->getNumberOfTuples() < 1
  */
-double DataArrayDouble::getMaxValue2(DataArrayInt*& tupleIds) const throw(INTERP_KERNEL::Exception)
+double DataArrayDouble::getMaxValue2(DataArrayInt*& tupleIds) const
 {
   int tmp;
   tupleIds=0;
@@ -2896,7 +3225,7 @@ double DataArrayDouble::getMaxValue2(DataArrayInt*& tupleIds) const throw(INTERP
  *  \throw If \a this->getNumberOfComponents() != 1
  *  \throw If \a this->getNumberOfTuples() < 1
  */
-double DataArrayDouble::getMinValue(int& tupleId) const throw(INTERP_KERNEL::Exception)
+double DataArrayDouble::getMinValue(int& tupleId) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -2916,7 +3245,7 @@ double DataArrayDouble::getMinValue(int& tupleId) const throw(INTERP_KERNEL::Exc
  *  \return double - the minimal value among all values of \a this array.
  *  \throw If \a this is not allocated.
  */
-double DataArrayDouble::getMinValueInArray() const throw(INTERP_KERNEL::Exception)
+double DataArrayDouble::getMinValueInArray() const
 {
   checkAllocated();
   const double *loc=std::min_element(begin(),end());
@@ -2932,7 +3261,7 @@ double DataArrayDouble::getMinValueInArray() const throw(INTERP_KERNEL::Exceptio
  *  \throw If \a this->getNumberOfComponents() != 1
  *  \throw If \a this->getNumberOfTuples() < 1
  */
-double DataArrayDouble::getMinValue2(DataArrayInt*& tupleIds) const throw(INTERP_KERNEL::Exception)
+double DataArrayDouble::getMinValue2(DataArrayInt*& tupleIds) const
 {
   int tmp;
   tupleIds=0;
@@ -2942,12 +3271,35 @@ double DataArrayDouble::getMinValue2(DataArrayInt*& tupleIds) const throw(INTERP
 }
 
 /*!
+ * This method returns the number of values in \a this that are equals ( within an absolute precision of \a eps ) to input parameter \a value.
+ * This method only works for single component array.
+ *
+ * \return a value in [ 0, \c this->getNumberOfTuples() )
+ *
+ * \throw If \a this is not allocated
+ *
+ */
+int DataArrayDouble::count(double value, double eps) const
+{
+  int ret=0;
+  checkAllocated();
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayDouble::count : must be applied on DataArrayDouble with only one component, you can call 'rearrange' method before !");
+  const double *vals=begin();
+  int nbOfTuples=getNumberOfTuples();
+  for(int i=0;i<nbOfTuples;i++,vals++)
+    if(fabs(*vals-value)<=eps)
+      ret++;
+  return ret;
+}
+
+/*!
  * Returns the average value of \a this one-dimensional array.
  *  \return double - the average value over all values of \a this array.
  *  \throw If \a this->getNumberOfComponents() != 1
  *  \throw If \a this->getNumberOfTuples() < 1
  */
-double DataArrayDouble::getAverageValue() const throw(INTERP_KERNEL::Exception)
+double DataArrayDouble::getAverageValue() const
 {
   if(getNumberOfComponents()!=1)
     throw INTERP_KERNEL::Exception("DataArrayDouble::getAverageValue : must be applied on DataArrayDouble with only one component, you can call 'rearrange' method before !");
@@ -2965,7 +3317,7 @@ double DataArrayDouble::getAverageValue() const throw(INTERP_KERNEL::Exception)
  *          the square root of the inner product of vector.
  *  \throw If \a this is not allocated.
  */
-double DataArrayDouble::norm2() const throw(INTERP_KERNEL::Exception)
+double DataArrayDouble::norm2() const
 {
   checkAllocated();
   double ret=0.;
@@ -2978,20 +3330,45 @@ double DataArrayDouble::norm2() const throw(INTERP_KERNEL::Exception)
 
 /*!
  * Returns the maximum norm of the vector defined by \a this array.
+ * This method works even if the number of components is diferent from one.
+ * If the number of elements in \a this is 0, -1. is returned.
  *  \return double - the value of the maximum norm, i.e.
- *          the maximal absolute value among values of \a this array.
+ *          the maximal absolute value among values of \a this array (whatever its number of components).
  *  \throw If \a this is not allocated.
  */
-double DataArrayDouble::normMax() const throw(INTERP_KERNEL::Exception)
+double DataArrayDouble::normMax() const
 {
   checkAllocated();
-  double ret=-1.;
-  std::size_t nbOfElems=getNbOfElems();
-  const double *pt=getConstPointer();
+  double ret(-1.);
+  std::size_t nbOfElems(getNbOfElems());
+  const double *pt(getConstPointer());
   for(std::size_t i=0;i<nbOfElems;i++,pt++)
     {
-      double val=std::abs(*pt);
+      double val(std::abs(*pt));
       if(val>ret)
+        ret=val;
+    }
+  return ret;
+}
+
+/*!
+ * Returns the minimum norm (absolute value) of the vector defined by \a this array.
+ * This method works even if the number of components is diferent from one.
+ * If the number of elements in \a this is 0, std::numeric_limits<double>::max() is returned.
+ *  \return double - the value of the minimum norm, i.e.
+ *          the minimal absolute value among values of \a this array (whatever its number of components).
+ *  \throw If \a this is not allocated.
+ */
+double DataArrayDouble::normMin() const
+{
+  checkAllocated();
+  double ret(std::numeric_limits<double>::max());
+  std::size_t nbOfElems(getNbOfElems());
+  const double *pt(getConstPointer());
+  for(std::size_t i=0;i<nbOfElems;i++,pt++)
+    {
+      double val(std::abs(*pt));
+      if(val<ret)
         ret=val;
     }
   return ret;
@@ -3004,7 +3381,7 @@ double DataArrayDouble::normMax() const throw(INTERP_KERNEL::Exception)
  *         component.
  *  \throw If \a this is not allocated.
  */
-void DataArrayDouble::accumulate(double *res) const throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::accumulate(double *res) const
 {
   checkAllocated();
   const double *ptr=getConstPointer();
@@ -3029,7 +3406,7 @@ void DataArrayDouble::accumulate(double *res) const throw(INTERP_KERNEL::Excepti
  * \return the min distance.
  * \sa MEDCouplingUMesh::distanceToPoint
  */
-double DataArrayDouble::distanceToTuple(const double *tupleBg, const double *tupleEnd, int& tupleId) const throw(INTERP_KERNEL::Exception)
+double DataArrayDouble::distanceToTuple(const double *tupleBg, const double *tupleEnd, int& tupleId) const
 {
   checkAllocated();
   int nbTuple=getNumberOfTuples();
@@ -3062,7 +3439,7 @@ double DataArrayDouble::distanceToTuple(const double *tupleBg, const double *tup
  *  \throw If \a the condition ( 0 <= \a compId < \a this->getNumberOfComponents() ) is
  *         not respected.
  */
-double DataArrayDouble::accumulate(int compId) const throw(INTERP_KERNEL::Exception)
+double DataArrayDouble::accumulate(int compId) const
 {
   checkAllocated();
   const double *ptr=getConstPointer();
@@ -3077,6 +3454,66 @@ double DataArrayDouble::accumulate(int compId) const throw(INTERP_KERNEL::Except
 }
 
 /*!
+ * This method accumulate using addition tuples in \a this using input index array [ \a bgOfIndex, \a endOfIndex ).
+ * The returned array will have same number of components than \a this and number of tuples equal to
+ * \c std::distance(bgOfIndex,endOfIndex) \b minus \b one.
+ *
+ * The input index array is expected to be ascendingly sorted in which the all referenced ids should be in [0, \c this->getNumberOfTuples).
+ * This method is quite useful for users that need to put a field on cells to field on nodes on the same mesh without a need of conservation.
+ *
+ * \param [in] bgOfIndex - begin (included) of the input index array.
+ * \param [in] endOfIndex - end (excluded) of the input index array.
+ * \return DataArrayDouble * - the new instance having the same number of components than \a this.
+ * 
+ * \throw If bgOfIndex or end is NULL.
+ * \throw If input index array is not ascendingly sorted.
+ * \throw If there is an id in [ \a bgOfIndex, \a endOfIndex ) not in [0, \c this->getNumberOfTuples).
+ * \throw If std::distance(bgOfIndex,endOfIndex)==0.
+ */
+DataArrayDouble *DataArrayDouble::accumulatePerChunck(const int *bgOfIndex, const int *endOfIndex) const
+{
+  if(!bgOfIndex || !endOfIndex)
+    throw INTERP_KERNEL::Exception("DataArrayDouble::accumulatePerChunck : input pointer NULL !");
+  checkAllocated();
+  int nbCompo=getNumberOfComponents();
+  int nbOfTuples=getNumberOfTuples();
+  int sz=(int)std::distance(bgOfIndex,endOfIndex);
+  if(sz<1)
+    throw INTERP_KERNEL::Exception("DataArrayDouble::accumulatePerChunck : invalid size of input index array !");
+  sz--;
+  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> ret=DataArrayDouble::New(); ret->alloc(sz,nbCompo);
+  const int *w=bgOfIndex;
+  if(*w<0 || *w>=nbOfTuples)
+    throw INTERP_KERNEL::Exception("DataArrayDouble::accumulatePerChunck : The first element of the input index not in [0,nbOfTuples) !");
+  const double *srcPt=begin()+(*w)*nbCompo;
+  double *tmp=ret->getPointer();
+  for(int i=0;i<sz;i++,tmp+=nbCompo,w++)
+    {
+      std::fill(tmp,tmp+nbCompo,0.);
+      if(w[1]>=w[0])
+        {
+          for(int j=w[0];j<w[1];j++,srcPt+=nbCompo)
+            {
+              if(j>=0 && j<nbOfTuples)
+                std::transform(srcPt,srcPt+nbCompo,tmp,tmp,std::plus<double>());
+              else
+                {
+                  std::ostringstream oss; oss << "DataArrayDouble::accumulatePerChunck : At rank #" << i << " the input index array points to id " << j << " should be in [0," << nbOfTuples << ") !";
+                  throw INTERP_KERNEL::Exception(oss.str().c_str());
+                }
+            }
+        }
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayDouble::accumulatePerChunck : At rank #" << i << " the input index array is not in ascendingly sorted.";
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
+        }
+    }
+  ret->copyStringInfoFrom(*this);
+  return ret.retn();
+}
+
+/*!
  * Converts each 2D point defined by the tuple of \a this array from the Polar to the
  * Cartesian coordinate system. The two components of the tuple of \a this array are 
  * considered to contain (1) radius and (2) angle of the point in the Polar CS.
@@ -3086,7 +3523,7 @@ double DataArrayDouble::accumulate(int compId) const throw(INTERP_KERNEL::Except
  *          does not contain any textual info on components.
  *  \throw If \a this->getNumberOfComponents() != 2.
  */
-DataArrayDouble *DataArrayDouble::fromPolarToCart() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::fromPolarToCart() const
 {
   checkAllocated();
   int nbOfComp=getNumberOfComponents();
@@ -3116,7 +3553,7 @@ DataArrayDouble *DataArrayDouble::fromPolarToCart() const throw(INTERP_KERNEL::E
  *          is to delete this array using decrRef() as it is no more needed. 
  *  \throw If \a this->getNumberOfComponents() != 3.
  */
-DataArrayDouble *DataArrayDouble::fromCylToCart() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::fromCylToCart() const
 {
   checkAllocated();
   int nbOfComp=getNumberOfComponents();
@@ -3133,7 +3570,7 @@ DataArrayDouble *DataArrayDouble::fromCylToCart() const throw(INTERP_KERNEL::Exc
       w[1]=wIn[0]*sin(wIn[1]);
       w[2]=wIn[2];
     }
-  ret->setInfoOnComponent(2,getInfoOnComponent(2).c_str());
+  ret->setInfoOnComponent(2,getInfoOnComponent(2));
   return ret;
 }
 
@@ -3148,7 +3585,7 @@ DataArrayDouble *DataArrayDouble::fromCylToCart() const throw(INTERP_KERNEL::Exc
  *          is to delete this array using decrRef() as it is no more needed.
  *  \throw If \a this->getNumberOfComponents() != 3.
  */
-DataArrayDouble *DataArrayDouble::fromSpherToCart() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::fromSpherToCart() const
 {
   checkAllocated();
   int nbOfComp=getNumberOfComponents();
@@ -3177,7 +3614,7 @@ DataArrayDouble *DataArrayDouble::fromSpherToCart() const throw(INTERP_KERNEL::E
  *         The caller is to delete this result array using decrRef() as it is no more needed. 
  *  \throw If \a this->getNumberOfComponents() != 6.
  */
-DataArrayDouble *DataArrayDouble::doublyContractedProduct() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::doublyContractedProduct() const
 {
   checkAllocated();
   int nbOfComp=getNumberOfComponents();
@@ -3203,7 +3640,7 @@ DataArrayDouble *DataArrayDouble::doublyContractedProduct() const throw(INTERP_K
  *          needed. 
  *  \throw If \a this->getNumberOfComponents() is not in [4,6,9].
  */
-DataArrayDouble *DataArrayDouble::determinant() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::determinant() const
 {
   checkAllocated();
   DataArrayDouble *ret=DataArrayDouble::New();
@@ -3212,7 +3649,7 @@ DataArrayDouble *DataArrayDouble::determinant() const throw(INTERP_KERNEL::Excep
   const double *src=getConstPointer();
   double *dest=ret->getPointer();
   switch(getNumberOfComponents())
-    {
+  {
     case 6:
       for(int i=0;i<nbOfTuple;i++,dest++,src+=6)
         *dest=src[0]*src[1]*src[2]+2.*src[4]*src[5]*src[3]-src[0]*src[4]*src[4]-src[2]*src[3]*src[3]-src[1]*src[5]*src[5];
@@ -3228,7 +3665,7 @@ DataArrayDouble *DataArrayDouble::determinant() const throw(INTERP_KERNEL::Excep
     default:
       ret->decrRef();
       throw INTERP_KERNEL::Exception("DataArrayDouble::determinant : Invalid number of components ! must be in 4,6,9 !");
-    }
+  }
 }
 
 /*!
@@ -3241,7 +3678,7 @@ DataArrayDouble *DataArrayDouble::determinant() const throw(INTERP_KERNEL::Excep
  *          needed. 
  *  \throw If \a this->getNumberOfComponents() != 6.
  */
-DataArrayDouble *DataArrayDouble::eigenValues() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::eigenValues() const
 {
   checkAllocated();
   int nbOfComp=getNumberOfComponents();
@@ -3267,7 +3704,7 @@ DataArrayDouble *DataArrayDouble::eigenValues() const throw(INTERP_KERNEL::Excep
  *          needed.
  *  \throw If \a this->getNumberOfComponents() != 6.
  */
-DataArrayDouble *DataArrayDouble::eigenVectors() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::eigenVectors() const
 {
   checkAllocated();
   int nbOfComp=getNumberOfComponents();
@@ -3299,7 +3736,7 @@ DataArrayDouble *DataArrayDouble::eigenVectors() const throw(INTERP_KERNEL::Exce
  *          needed. 
  *  \throw If \a this->getNumberOfComponents() is not in [4,6,9].
  */
-DataArrayDouble *DataArrayDouble::inverse() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::inverse() const
 {
   checkAllocated();
   int nbOfComp=getNumberOfComponents();
@@ -3310,7 +3747,7 @@ DataArrayDouble *DataArrayDouble::inverse() const throw(INTERP_KERNEL::Exception
   ret->alloc(nbOfTuple,nbOfComp);
   const double *src=getConstPointer();
   double *dest=ret->getPointer();
-if(nbOfComp==6)
+  if(nbOfComp==6)
     for(int i=0;i<nbOfTuple;i++,dest+=6,src+=6)
       {
         double det=src[0]*src[1]*src[2]+2.*src[4]*src[5]*src[3]-src[0]*src[4]*src[4]-src[2]*src[3]*src[3]-src[1]*src[5]*src[5];
@@ -3358,7 +3795,7 @@ if(nbOfComp==6)
  *          needed. 
  *  \throw If \a this->getNumberOfComponents() is not in [4,6,9].
  */
-DataArrayDouble *DataArrayDouble::trace() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::trace() const
 {
   checkAllocated();
   int nbOfComp=getNumberOfComponents();
@@ -3390,7 +3827,7 @@ DataArrayDouble *DataArrayDouble::trace() const throw(INTERP_KERNEL::Exception)
  *          needed.
  *  \throw If \a this->getNumberOfComponents() != 6.
  */
-DataArrayDouble *DataArrayDouble::deviator() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::deviator() const
 {
   checkAllocated();
   int nbOfComp=getNumberOfComponents();
@@ -3423,7 +3860,7 @@ DataArrayDouble *DataArrayDouble::deviator() const throw(INTERP_KERNEL::Exceptio
  *          needed.
  *  \throw If \a this is not allocated.
  */
-DataArrayDouble *DataArrayDouble::magnitude() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::magnitude() const
 {
   checkAllocated();
   int nbOfComp=getNumberOfComponents();
@@ -3443,25 +3880,81 @@ DataArrayDouble *DataArrayDouble::magnitude() const throw(INTERP_KERNEL::Excepti
 }
 
 /*!
+ * Computes for each tuple the sum of number of components values in the tuple and return it.
+ * 
+ * \return DataArrayDouble * - the new instance of DataArrayDouble containing the
+ *          same number of tuples as \a this array and one component.
+ *          The caller is to delete this result array using decrRef() as it is no more
+ *          needed.
+ *  \throw If \a this is not allocated.
+ */
+DataArrayDouble *DataArrayDouble::sumPerTuple() const
+{
+  checkAllocated();
+  int nbOfComp(getNumberOfComponents()),nbOfTuple(getNumberOfTuples());
+  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> ret(DataArrayDouble::New());
+  ret->alloc(nbOfTuple,1);
+  const double *src(getConstPointer());
+  double *dest(ret->getPointer());
+  for(int i=0;i<nbOfTuple;i++,dest++,src+=nbOfComp)
+    *dest=std::accumulate(src,src+nbOfComp,0.);
+  return ret.retn();
+}
+
+/*!
  * Computes the maximal value within every tuple of \a this array.
  *  \return DataArrayDouble * - the new instance of DataArrayDouble containing the
  *          same number of tuples as \a this array and one component.
  *          The caller is to delete this result array using decrRef() as it is no more
  *          needed.
  *  \throw If \a this is not allocated.
+ *  \sa DataArrayDouble::maxPerTupleWithCompoId
  */
-DataArrayDouble *DataArrayDouble::maxPerTuple() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::maxPerTuple() const
 {
   checkAllocated();
   int nbOfComp=getNumberOfComponents();
-  DataArrayDouble *ret=DataArrayDouble::New();
+  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> ret=DataArrayDouble::New();
   int nbOfTuple=getNumberOfTuples();
   ret->alloc(nbOfTuple,1);
   const double *src=getConstPointer();
   double *dest=ret->getPointer();
   for(int i=0;i<nbOfTuple;i++,dest++,src+=nbOfComp)
     *dest=*std::max_element(src,src+nbOfComp);
-  return ret;
+  return ret.retn();
+}
+
+/*!
+ * Computes the maximal value within every tuple of \a this array and it returns the first component
+ * id for each tuple that corresponds to the maximal value within the tuple.
+ * 
+ *  \param [out] compoIdOfMaxPerTuple - the new new instance of DataArrayInt containing the
+ *          same number of tuples and only one component.
+ *  \return DataArrayDouble * - the new instance of DataArrayDouble containing the
+ *          same number of tuples as \a this array and one component.
+ *          The caller is to delete this result array using decrRef() as it is no more
+ *          needed.
+ *  \throw If \a this is not allocated.
+ *  \sa DataArrayDouble::maxPerTuple
+ */
+DataArrayDouble *DataArrayDouble::maxPerTupleWithCompoId(DataArrayInt* &compoIdOfMaxPerTuple) const
+{
+  checkAllocated();
+  int nbOfComp=getNumberOfComponents();
+  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> ret0=DataArrayDouble::New();
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret1=DataArrayInt::New();
+  int nbOfTuple=getNumberOfTuples();
+  ret0->alloc(nbOfTuple,1); ret1->alloc(nbOfTuple,1);
+  const double *src=getConstPointer();
+  double *dest=ret0->getPointer(); int *dest1=ret1->getPointer();
+  for(int i=0;i<nbOfTuple;i++,dest++,dest1++,src+=nbOfComp)
+    {
+      const double *loc=std::max_element(src,src+nbOfComp);
+      *dest=*loc;
+      *dest1=(int)std::distance(src,loc);
+    }
+  compoIdOfMaxPerTuple=ret1.retn();
+  return ret0.retn();
 }
 
 /*!
@@ -3478,7 +3971,7 @@ DataArrayDouble *DataArrayDouble::maxPerTuple() const throw(INTERP_KERNEL::Excep
  *
  * \sa DataArrayDouble::buildEuclidianDistanceDenseMatrixWith
  */
-DataArrayDouble *DataArrayDouble::buildEuclidianDistanceDenseMatrix() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::buildEuclidianDistanceDenseMatrix() const
 {
   checkAllocated();
   int nbOfComp=getNumberOfComponents();
@@ -3519,7 +4012,7 @@ DataArrayDouble *DataArrayDouble::buildEuclidianDistanceDenseMatrix() const thro
  *
  * \sa DataArrayDouble::buildEuclidianDistanceDenseMatrix
  */
-DataArrayDouble *DataArrayDouble::buildEuclidianDistanceDenseMatrixWith(const DataArrayDouble *other) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::buildEuclidianDistanceDenseMatrixWith(const DataArrayDouble *other) const
 {
   if(!other)
     throw INTERP_KERNEL::Exception("DataArrayDouble::buildEuclidianDistanceDenseMatrixWith : input parameter is null !");
@@ -3559,7 +4052,7 @@ DataArrayDouble *DataArrayDouble::buildEuclidianDistanceDenseMatrixWith(const Da
  *              in descending order.
  *  \throw If \a this is not allocated.
  */
-void DataArrayDouble::sortPerTuple(bool asc) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::sortPerTuple(bool asc)
 {
   checkAllocated();
   double *pt=getPointer();
@@ -3576,44 +4069,75 @@ void DataArrayDouble::sortPerTuple(bool asc) throw(INTERP_KERNEL::Exception)
 
 /*!
  * Converts every value of \a this array to its absolute value.
- *  \throw If \a this is not allocated.
+ * \b WARNING this method is non const. If a new DataArrayDouble instance should be built containing the result of abs DataArrayDouble::computeAbs
+ * should be called instead.
+ *
+ * \throw If \a this is not allocated.
+ * \sa DataArrayDouble::computeAbs
  */
-void DataArrayDouble::abs() throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::abs()
 {
   checkAllocated();
-  double *ptr=getPointer();
-  std::size_t nbOfElems=getNbOfElems();
+  double *ptr(getPointer());
+  std::size_t nbOfElems(getNbOfElems());
   std::transform(ptr,ptr+nbOfElems,ptr,std::ptr_fun<double,double>(fabs));
   declareAsNew();
 }
 
 /*!
- * Apply a liner function to a given component of \a this array, so that
+ * This method builds a new instance of \a this object containing the result of std::abs applied of all elements in \a this.
+ * This method is a const method (that do not change any values in \a this) contrary to  DataArrayDouble::abs method.
+ *
+ * \return DataArrayDouble * - the new instance of DataArrayDouble containing the
+ *         same number of tuples and component as \a this array.
+ *         The caller is to delete this result array using decrRef() as it is no more
+ *         needed.
+ * \throw If \a this is not allocated.
+ * \sa DataArrayDouble::abs
+ */
+DataArrayDouble *DataArrayDouble::computeAbs() const
+{
+  checkAllocated();
+  DataArrayDouble *newArr(DataArrayDouble::New());
+  int nbOfTuples(getNumberOfTuples());
+  int nbOfComp(getNumberOfComponents());
+  newArr->alloc(nbOfTuples,nbOfComp);
+  std::transform(begin(),end(),newArr->getPointer(),std::ptr_fun<double,double>(fabs));
+  newArr->copyStringInfoFrom(*this);
+  return newArr;
+}
+
+/*!
+ * Apply a linear function to a given component of \a this array, so that
  * an array element <em>(x)</em> becomes \f$ a * x + b \f$.
  *  \param [in] a - the first coefficient of the function.
  *  \param [in] b - the second coefficient of the function.
  *  \param [in] compoId - the index of component to modify.
- *  \throw If \a this is not allocated.
+ *  \throw If \a this is not allocated, or \a compoId is not in [0,\c this->getNumberOfComponents() ).
  */
-void DataArrayDouble::applyLin(double a, double b, int compoId) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::applyLin(double a, double b, int compoId)
 {
   checkAllocated();
-  double *ptr=getPointer()+compoId;
-  int nbOfComp=getNumberOfComponents();
-  int nbOfTuple=getNumberOfTuples();
+  double *ptr(getPointer()+compoId);
+  int nbOfComp(getNumberOfComponents()),nbOfTuple(getNumberOfTuples());
+  if(compoId<0 || compoId>=nbOfComp)
+    {
+      std::ostringstream oss; oss << "DataArrayDouble::applyLin : The compoId requested (" << compoId << ") is not valid ! Must be in [0," << nbOfComp << ") !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
   for(int i=0;i<nbOfTuple;i++,ptr+=nbOfComp)
     *ptr=a*(*ptr)+b;
   declareAsNew();
 }
 
 /*!
- * Apply a liner function to all elements of \a this array, so that
+ * Apply a linear function to all elements of \a this array, so that
  * an element _x_ becomes \f$ a * x + b \f$.
  *  \param [in] a - the first coefficient of the function.
  *  \param [in] b - the second coefficient of the function.
  *  \throw If \a this is not allocated.
  */
-void DataArrayDouble::applyLin(double a, double b) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::applyLin(double a, double b)
 {
   checkAllocated();
   double *ptr=getPointer();
@@ -3633,7 +4157,7 @@ void DataArrayDouble::applyLin(double a, double b) throw(INTERP_KERNEL::Exceptio
  *  \throw If \a this is not allocated.
  *  \throw If there is an element equal to 0.0 in \a this array.
  */
-void DataArrayDouble::applyInv(double numerator) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::applyInv(double numerator)
 {
   checkAllocated();
   double *ptr=getPointer();
@@ -3662,7 +4186,7 @@ void DataArrayDouble::applyInv(double numerator) throw(INTERP_KERNEL::Exception)
  *          needed.
  *  \throw If \a this is not allocated.
  */
-DataArrayDouble *DataArrayDouble::negate() const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::negate() const
 {
   checkAllocated();
   DataArrayDouble *newArr=DataArrayDouble::New();
@@ -3685,7 +4209,7 @@ DataArrayDouble *DataArrayDouble::negate() const throw(INTERP_KERNEL::Exception)
  *           array and \a val is \b not integer, all elements processed before detection of the zero element remain
  *           modified.
  */
-void DataArrayDouble::applyPow(double val) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::applyPow(double val)
 {
   checkAllocated();
   double *ptr=getPointer();
@@ -3723,7 +4247,7 @@ void DataArrayDouble::applyPow(double val) throw(INTERP_KERNEL::Exception)
  *           array, all elements processed before detection of the zero element remain
  *           modified.
  */
-void DataArrayDouble::applyRPow(double val) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::applyRPow(double val)
 {
   checkAllocated();
   if(val<0.)
@@ -3753,7 +4277,7 @@ void DataArrayDouble::applyRPow(double val) throw(INTERP_KERNEL::Exception)
  *  \throw If \a this is not allocated.
  *  \throw If \a func returns \a false.
  */
-DataArrayDouble *DataArrayDouble::applyFunc(int nbOfComp, FunctionToEvaluate func) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::applyFunc(int nbOfComp, FunctionToEvaluate func) const
 {
   checkAllocated();
   DataArrayDouble *newArr=DataArrayDouble::New();
@@ -3790,7 +4314,7 @@ DataArrayDouble *DataArrayDouble::applyFunc(int nbOfComp, FunctionToEvaluate fun
  *  \throw If \a this is not allocated.
  *  \throw If computing \a func fails.
  */
-DataArrayDouble *DataArrayDouble::applyFunc(int nbOfComp, const char *func) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::applyFunc(int nbOfComp, const std::string& func) const
 {
   checkAllocated();
   INTERP_KERNEL::ExprParser expr(func);
@@ -3816,17 +4340,17 @@ DataArrayDouble *DataArrayDouble::applyFunc(int nbOfComp, const char *func) cons
   for(int i=0;i<nbOfTuples;i++)
     {
       try
-        {
+      {
           expr.evaluateExpr(nbOfComp,ptr+i*oldNbOfComp,ptrToFill+i*nbOfComp);
-        }
+      }
       catch(INTERP_KERNEL::Exception& e)
-        {
+      {
           std::ostringstream oss; oss << "For tuple # " << i << " with value (";
           std::copy(ptr+oldNbOfComp*i,ptr+oldNbOfComp*(i+1),std::ostream_iterator<double>(oss,", "));
           oss << ") : Evaluation of function failed !" << e.what();
           newArr->decrRef();
           throw INTERP_KERNEL::Exception(oss.str().c_str());
-        }
+      }
     }
   return newArr;
 }
@@ -3844,7 +4368,7 @@ DataArrayDouble *DataArrayDouble::applyFunc(int nbOfComp, const char *func) cons
  *  \throw If \a this is not allocated.
  *  \throw If computing \a func fails.
  */
-DataArrayDouble *DataArrayDouble::applyFunc(const char *func) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::applyFunc(const std::string& func) const
 {
   checkAllocated();
   INTERP_KERNEL::ExprParser expr(func);
@@ -3860,17 +4384,17 @@ DataArrayDouble *DataArrayDouble::applyFunc(const char *func) const throw(INTERP
   for(int i=0;i<nbOfTuples;i++)
     {
       try
-        {
+      {
           expr.evaluateExpr(nbOfComp,ptr+i*nbOfComp,ptrToFill+i*nbOfComp);
-        }
+      }
       catch(INTERP_KERNEL::Exception& e)
-        {
+      {
           std::ostringstream oss; oss << "For tuple # " << i << " with value (";
           std::copy(ptr+nbOfComp*i,ptr+nbOfComp*(i+1),std::ostream_iterator<double>(oss,", "));
           oss << ") : Evaluation of function failed ! " << e.what();
           newArr->decrRef();
           throw INTERP_KERNEL::Exception(oss.str().c_str());
-        }
+      }
     }
   return newArr;
 }
@@ -3890,7 +4414,7 @@ DataArrayDouble *DataArrayDouble::applyFunc(const char *func) const throw(INTERP
  *  \throw If \a func contains vars that are not in \a this->getInfoOnComponent().
  *  \throw If computing \a func fails.
  */
-DataArrayDouble *DataArrayDouble::applyFunc2(int nbOfComp, const char *func) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::applyFunc2(int nbOfComp, const std::string& func) const
 {
   checkAllocated();
   INTERP_KERNEL::ExprParser expr(func);
@@ -3915,17 +4439,17 @@ DataArrayDouble *DataArrayDouble::applyFunc2(int nbOfComp, const char *func) con
   for(int i=0;i<nbOfTuples;i++)
     {
       try
-        {
+      {
           expr.evaluateExpr(nbOfComp,ptr+i*oldNbOfComp,ptrToFill+i*nbOfComp);
-        }
+      }
       catch(INTERP_KERNEL::Exception& e)
-        {
+      {
           std::ostringstream oss; oss << "For tuple # " << i << " with value (";
           std::copy(ptr+oldNbOfComp*i,ptr+oldNbOfComp*(i+1),std::ostream_iterator<double>(oss,", "));
           oss << ") : Evaluation of function failed !" << e.what();
           newArr->decrRef();
           throw INTERP_KERNEL::Exception(oss.str().c_str());
-        }
+      }
     }
   return newArr;
 }
@@ -3946,7 +4470,7 @@ DataArrayDouble *DataArrayDouble::applyFunc2(int nbOfComp, const char *func) con
  *  \throw If \a func contains vars not in \a varsOrder.
  *  \throw If computing \a func fails.
  */
-DataArrayDouble *DataArrayDouble::applyFunc3(int nbOfComp, const std::vector<std::string>& varsOrder, const char *func) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::applyFunc3(int nbOfComp, const std::vector<std::string>& varsOrder, const std::string& func) const
 {
   checkAllocated();
   INTERP_KERNEL::ExprParser expr(func);
@@ -3971,22 +4495,22 @@ DataArrayDouble *DataArrayDouble::applyFunc3(int nbOfComp, const std::vector<std
   for(int i=0;i<nbOfTuples;i++)
     {
       try
-        {
+      {
           expr.evaluateExpr(nbOfComp,ptr+i*oldNbOfComp,ptrToFill+i*nbOfComp);
-        }
+      }
       catch(INTERP_KERNEL::Exception& e)
-        {
+      {
           std::ostringstream oss; oss << "For tuple # " << i << " with value (";
           std::copy(ptr+oldNbOfComp*i,ptr+oldNbOfComp*(i+1),std::ostream_iterator<double>(oss,", "));
           oss << ") : Evaluation of function failed !" << e.what();
           newArr->decrRef();
           throw INTERP_KERNEL::Exception(oss.str().c_str());
-        }
+      }
     }
   return newArr;
 }
 
-void DataArrayDouble::applyFuncFast32(const char *func) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::applyFuncFast32(const std::string& func)
 {
   checkAllocated();
   INTERP_KERNEL::ExprParser expr(func);
@@ -4004,7 +4528,7 @@ void DataArrayDouble::applyFuncFast32(const char *func) throw(INTERP_KERNEL::Exc
   declareAsNew();
 }
 
-void DataArrayDouble::applyFuncFast64(const char *func) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::applyFuncFast64(const std::string& func)
 {
   checkAllocated();
   INTERP_KERNEL::ExprParser expr(func);
@@ -4022,7 +4546,7 @@ void DataArrayDouble::applyFuncFast64(const char *func) throw(INTERP_KERNEL::Exc
   declareAsNew();
 }
 
-DataArrayDoubleIterator *DataArrayDouble::iterator() throw(INTERP_KERNEL::Exception)
+DataArrayDoubleIterator *DataArrayDouble::iterator()
 {
   return new DataArrayDoubleIterator(this);
 }
@@ -4030,26 +4554,56 @@ DataArrayDoubleIterator *DataArrayDouble::iterator() throw(INTERP_KERNEL::Except
 /*!
  * Returns a new DataArrayInt contating indices of tuples of \a this one-dimensional
  * array whose values are within a given range. Textual data is not copied.
- *  \param [in] vmin - a lowest acceptable value.
- *  \param [in] vmax - a greatest acceptable value.
+ *  \param [in] vmin - a lowest acceptable value (included).
+ *  \param [in] vmax - a greatest acceptable value (included).
  *  \return DataArrayInt * - the new instance of DataArrayInt.
  *          The caller is to delete this result array using decrRef() as it is no more
  *          needed.
  *  \throw If \a this->getNumberOfComponents() != 1.
  *
+ *  \sa DataArrayDouble::getIdsNotInRange
+ *
+ *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcdataarraydouble_getidsinrange "Here is a C++ example".<br>
  *  \ref py_mcdataarraydouble_getidsinrange "Here is a Python example".
+ *  \endif
  */
-DataArrayInt *DataArrayDouble::getIdsInRange(double vmin, double vmax) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayDouble::getIdsInRange(double vmin, double vmax) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
     throw INTERP_KERNEL::Exception("DataArrayDouble::getIdsInRange : this must have exactly one component !");
-  const double *cptr=getConstPointer();
-  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=DataArrayInt::New(); ret->alloc(0,1);
-  int nbOfTuples=getNumberOfTuples();
+  const double *cptr(begin());
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(0,1);
+  int nbOfTuples(getNumberOfTuples());
   for(int i=0;i<nbOfTuples;i++,cptr++)
     if(*cptr>=vmin && *cptr<=vmax)
+      ret->pushBackSilent(i);
+  return ret.retn();
+}
+
+/*!
+ * Returns a new DataArrayInt contating indices of tuples of \a this one-dimensional
+ * array whose values are not within a given range. Textual data is not copied.
+ *  \param [in] vmin - a lowest not acceptable value (excluded).
+ *  \param [in] vmax - a greatest not acceptable value (excluded).
+ *  \return DataArrayInt * - the new instance of DataArrayInt.
+ *          The caller is to delete this result array using decrRef() as it is no more
+ *          needed.
+ *  \throw If \a this->getNumberOfComponents() != 1.
+ *
+ *  \sa DataArrayDouble::getIdsInRange
+ */
+DataArrayInt *DataArrayDouble::getIdsNotInRange(double vmin, double vmax) const
+{
+  checkAllocated();
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayDouble::getIdsNotInRange : this must have exactly one component !");
+  const double *cptr(begin());
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(0,1);
+  int nbOfTuples(getNumberOfTuples());
+  for(int i=0;i<nbOfTuples;i++,cptr++)
+    if(*cptr<vmin || *cptr>vmax)
       ret->pushBackSilent(i);
   return ret.retn();
 }
@@ -4068,7 +4622,7 @@ DataArrayInt *DataArrayDouble::getIdsInRange(double vmin, double vmax) const thr
  *  \throw If both \a a1 and \a a2 are NULL.
  *  \throw If \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents().
  */
-DataArrayDouble *DataArrayDouble::Aggregate(const DataArrayDouble *a1, const DataArrayDouble *a2) throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::Aggregate(const DataArrayDouble *a1, const DataArrayDouble *a2)
 {
   std::vector<const DataArrayDouble *> tmp(2);
   tmp[0]=a1; tmp[1]=a2;
@@ -4081,6 +4635,8 @@ DataArrayDouble *DataArrayDouble::Aggregate(const DataArrayDouble *a1, const Dat
  * the number of component in the result array is same as that of each of given arrays.
  * Info on components is copied from the first of the given arrays. Number of components
  * in the given arrays must be  the same.
+ * If the number of non null of elements in \a arr is equal to one the returned object is a copy of it
+ * not the object itself.
  *  \param [in] arr - a sequence of arrays to include in the result array.
  *  \return DataArrayDouble * - the new instance of DataArrayDouble.
  *          The caller is to delete this result array using decrRef() as it is no more
@@ -4088,7 +4644,7 @@ DataArrayDouble *DataArrayDouble::Aggregate(const DataArrayDouble *a1, const Dat
  *  \throw If all arrays within \a arr are NULL.
  *  \throw If getNumberOfComponents() of arrays within \a arr.
  */
-DataArrayDouble *DataArrayDouble::Aggregate(const std::vector<const DataArrayDouble *>& arr) throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::Aggregate(const std::vector<const DataArrayDouble *>& arr)
 {
   std::vector<const DataArrayDouble *> a;
   for(std::vector<const DataArrayDouble *>::const_iterator it4=arr.begin();it4!=arr.end();it4++)
@@ -4130,7 +4686,7 @@ DataArrayDouble *DataArrayDouble::Aggregate(const std::vector<const DataArrayDou
  *  \throw If any given array is not allocated.
  *  \throw If \a a1->getNumberOfTuples() != \a a2->getNumberOfTuples()
  */
-DataArrayDouble *DataArrayDouble::Meld(const DataArrayDouble *a1, const DataArrayDouble *a2) throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::Meld(const DataArrayDouble *a1, const DataArrayDouble *a2)
 {
   std::vector<const DataArrayDouble *> arr(2);
   arr[0]=a1; arr[1]=a2;
@@ -4152,7 +4708,7 @@ DataArrayDouble *DataArrayDouble::Meld(const DataArrayDouble *a1, const DataArra
  *  \throw If any given array is not allocated.
  *  \throw If getNumberOfTuples() of arrays within \a arr is different.
  */
-DataArrayDouble *DataArrayDouble::Meld(const std::vector<const DataArrayDouble *>& arr) throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::Meld(const std::vector<const DataArrayDouble *>& arr)
 {
   std::vector<const DataArrayDouble *> a;
   for(std::vector<const DataArrayDouble *>::const_iterator it4=arr.begin();it4!=arr.end();it4++)
@@ -4189,7 +4745,7 @@ DataArrayDouble *DataArrayDouble::Meld(const std::vector<const DataArrayDouble *
   int k=0;
   for(int i=0;i<(int)a.size();i++)
     for(int j=0;j<nbc[i];j++,k++)
-      ret->setInfoOnComponent(k,a[i]->getInfoOnComponent(j).c_str());
+      ret->setInfoOnComponent(k,a[i]->getInfoOnComponent(j));
   return ret;
 }
 
@@ -4209,7 +4765,7 @@ DataArrayDouble *DataArrayDouble::Meld(const std::vector<const DataArrayDouble *
  *  \throw If \a a1->getNumberOfTuples() != \a a2->getNumberOfTuples()
  *  \throw If \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents()
  */
-DataArrayDouble *DataArrayDouble::Dot(const DataArrayDouble *a1, const DataArrayDouble *a2) throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::Dot(const DataArrayDouble *a1, const DataArrayDouble *a2)
 {
   if(!a1 || !a2)
     throw INTERP_KERNEL::Exception("DataArrayDouble::Dot : input DataArrayDouble instance is NULL !");
@@ -4233,8 +4789,8 @@ DataArrayDouble *DataArrayDouble::Dot(const DataArrayDouble *a1, const DataArray
         sum+=a1Ptr[i*nbOfComp+j]*a2Ptr[i*nbOfComp+j];
       retPtr[i]=sum;
     }
-  ret->setInfoOnComponent(0,a1->getInfoOnComponent(0).c_str());
-  ret->setName(a1->getName().c_str());
+  ret->setInfoOnComponent(0,a1->getInfoOnComponent(0));
+  ret->setName(a1->getName());
   return ret;
 }
 
@@ -4255,7 +4811,7 @@ DataArrayDouble *DataArrayDouble::Dot(const DataArrayDouble *a1, const DataArray
  *  \throw If \a a1->getNumberOfComponents() != 3
  *  \throw If \a a2->getNumberOfComponents() != 3
  */
-DataArrayDouble *DataArrayDouble::CrossProduct(const DataArrayDouble *a1, const DataArrayDouble *a2) throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::CrossProduct(const DataArrayDouble *a1, const DataArrayDouble *a2)
 {
   if(!a1 || !a2)
     throw INTERP_KERNEL::Exception("DataArrayDouble::CrossProduct : input DataArrayDouble instance is NULL !");
@@ -4295,7 +4851,7 @@ DataArrayDouble *DataArrayDouble::CrossProduct(const DataArrayDouble *a1, const 
  *  \throw If \a a1->getNumberOfTuples() != \a a2->getNumberOfTuples()
  *  \throw If \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents()
  */
-DataArrayDouble *DataArrayDouble::Max(const DataArrayDouble *a1, const DataArrayDouble *a2) throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::Max(const DataArrayDouble *a1, const DataArrayDouble *a2)
 {
   if(!a1 || !a2)
     throw INTERP_KERNEL::Exception("DataArrayDouble::Max : input DataArrayDouble instance is NULL !");
@@ -4330,7 +4886,7 @@ DataArrayDouble *DataArrayDouble::Max(const DataArrayDouble *a1, const DataArray
  *  \throw If \a a1->getNumberOfTuples() != \a a2->getNumberOfTuples()
  *  \throw If \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents()
  */
-DataArrayDouble *DataArrayDouble::Min(const DataArrayDouble *a1, const DataArrayDouble *a2) throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::Min(const DataArrayDouble *a1, const DataArrayDouble *a2)
 {
   if(!a1 || !a2)
     throw INTERP_KERNEL::Exception("DataArrayDouble::Min : input DataArrayDouble instance is NULL !");
@@ -4377,7 +4933,7 @@ DataArrayDouble *DataArrayDouble::Min(const DataArrayDouble *a1, const DataArray
  *         \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents() and
  *         none of them has number of tuples or components equal to 1.
  */
-DataArrayDouble *DataArrayDouble::Add(const DataArrayDouble *a1, const DataArrayDouble *a2) throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::Add(const DataArrayDouble *a1, const DataArrayDouble *a2)
 {
   if(!a1 || !a2)
     throw INTERP_KERNEL::Exception("DataArrayDouble::Add : input DataArrayDouble instance is NULL !");
@@ -4464,7 +5020,7 @@ DataArrayDouble *DataArrayDouble::Add(const DataArrayDouble *a1, const DataArray
  *         \a this->getNumberOfComponents() != \a other->getNumberOfComponents() and
  *         \a other has number of both tuples and components not equal to 1.
  */
-void DataArrayDouble::addEqual(const DataArrayDouble *other) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::addEqual(const DataArrayDouble *other)
 {
   if(!other)
     throw INTERP_KERNEL::Exception("DataArrayDouble::addEqual : input DataArrayDouble instance is NULL !");
@@ -4533,7 +5089,7 @@ void DataArrayDouble::addEqual(const DataArrayDouble *other) throw(INTERP_KERNEL
  *         \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents() and
  *         none of them has number of tuples or components equal to 1.
  */
-DataArrayDouble *DataArrayDouble::Substract(const DataArrayDouble *a1, const DataArrayDouble *a2) throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::Substract(const DataArrayDouble *a1, const DataArrayDouble *a2)
 {
   if(!a1 || !a2)
     throw INTERP_KERNEL::Exception("DataArrayDouble::Substract : input DataArrayDouble instance is NULL !");
@@ -4605,7 +5161,7 @@ DataArrayDouble *DataArrayDouble::Substract(const DataArrayDouble *a1, const Dat
  *         \a this->getNumberOfComponents() != \a other->getNumberOfComponents() and
  *         \a other has number of both tuples and components not equal to 1.
  */
-void DataArrayDouble::substractEqual(const DataArrayDouble *other) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::substractEqual(const DataArrayDouble *other)
 {
   if(!other)
     throw INTERP_KERNEL::Exception("DataArrayDouble::substractEqual : input DataArrayDouble instance is NULL !");
@@ -4674,7 +5230,7 @@ void DataArrayDouble::substractEqual(const DataArrayDouble *other) throw(INTERP_
  *         \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents() and
  *         none of them has number of tuples or components equal to 1.
  */
-DataArrayDouble *DataArrayDouble::Multiply(const DataArrayDouble *a1, const DataArrayDouble *a2) throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::Multiply(const DataArrayDouble *a1, const DataArrayDouble *a2)
 {
   if(!a1 || !a2)
     throw INTERP_KERNEL::Exception("DataArrayDouble::Multiply : input DataArrayDouble instance is NULL !");
@@ -4761,7 +5317,7 @@ DataArrayDouble *DataArrayDouble::Multiply(const DataArrayDouble *a1, const Data
  *         \a this->getNumberOfComponents() != \a other->getNumberOfComponents() and
  *         \a other has number of both tuples and components not equal to 1.
  */
-void DataArrayDouble::multiplyEqual(const DataArrayDouble *other) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::multiplyEqual(const DataArrayDouble *other)
 {
   if(!other)
     throw INTERP_KERNEL::Exception("DataArrayDouble::multiplyEqual : input DataArrayDouble instance is NULL !");
@@ -4831,7 +5387,7 @@ void DataArrayDouble::multiplyEqual(const DataArrayDouble *other) throw(INTERP_K
  *         \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents() and
  *         none of them has number of tuples or components equal to 1.
  */
-DataArrayDouble *DataArrayDouble::Divide(const DataArrayDouble *a1, const DataArrayDouble *a2) throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::Divide(const DataArrayDouble *a1, const DataArrayDouble *a2)
 {
   if(!a1 || !a2)
     throw INTERP_KERNEL::Exception("DataArrayDouble::Divide : input DataArrayDouble instance is NULL !");
@@ -4904,7 +5460,7 @@ DataArrayDouble *DataArrayDouble::Divide(const DataArrayDouble *a1, const DataAr
  *         \a this->getNumberOfComponents() != \a other->getNumberOfComponents() and
  *         \a other has number of both tuples and components not equal to 1.
  */
-void DataArrayDouble::divideEqual(const DataArrayDouble *other) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::divideEqual(const DataArrayDouble *other)
 {
   if(!other)
     throw INTERP_KERNEL::Exception("DataArrayDouble::divideEqual : input DataArrayDouble instance is NULL !");
@@ -4962,7 +5518,7 @@ void DataArrayDouble::divideEqual(const DataArrayDouble *other) throw(INTERP_KER
  *  \throw If \a a1->getNumberOfComponents() != 1 or \a a2->getNumberOfComponents() != 1.
  *  \throw If there is a negative value in \a a1.
  */
-DataArrayDouble *DataArrayDouble::Pow(const DataArrayDouble *a1, const DataArrayDouble *a2) throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDouble::Pow(const DataArrayDouble *a1, const DataArrayDouble *a2)
 {
   if(!a1 || !a2)
     throw INTERP_KERNEL::Exception("DataArrayDouble::Pow : at least one of input instances is null !");
@@ -5001,7 +5557,7 @@ DataArrayDouble *DataArrayDouble::Pow(const DataArrayDouble *a1, const DataArray
  *  \throw If \a this->getNumberOfComponents() != 1 or \a other->getNumberOfComponents() != 1
  *  \throw If there is a negative value in \a this.
  */
-void DataArrayDouble::powEqual(const DataArrayDouble *other) throw(INTERP_KERNEL::Exception)
+void DataArrayDouble::powEqual(const DataArrayDouble *other)
 {
   if(!other)
     throw INTERP_KERNEL::Exception("DataArrayDouble::powEqual : input instance is null !");
@@ -5026,6 +5582,37 @@ void DataArrayDouble::powEqual(const DataArrayDouble *other) throw(INTERP_KERNEL
         }
     }
   declareAsNew();
+}
+
+/*!
+ * This method is \b NOT wrapped into python because it can be useful only for performance reasons in C++ context.
+ * All values in \a this must be 0. or 1. within eps error. 0 means false, 1 means true.
+ * If an another value than 0 or 1 appear (within eps precision) an INTERP_KERNEL::Exception will be thrown.
+ *
+ * \throw if \a this is not allocated.
+ * \throw if \a this has not exactly one component.
+ */
+std::vector<bool> DataArrayDouble::toVectorOfBool(double eps) const
+{
+  checkAllocated();
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayDouble::toVectorOfBool : must be applied on single component array !");
+  int nbt(getNumberOfTuples());
+  std::vector<bool> ret(nbt);
+  const double *pt(begin());
+  for(int i=0;i<nbt;i++)
+    {
+      if(fabs(pt[i])<eps)
+        ret[i]=false;
+      else if(fabs(pt[i]-1.)<eps)
+        ret[i]=true;
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayDouble::toVectorOfBool : the tuple #" << i << " has value " << pt[i] << " is invalid ! must be 0. or 1. !";
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
+        }
+    }
+  return ret;
 }
 
 /*!
@@ -5089,12 +5676,12 @@ bool DataArrayDouble::resizeForUnserialization(const std::vector<int>& tinyInfoI
  */
 void DataArrayDouble::finishUnserialization(const std::vector<int>& tinyInfoI, const std::vector<std::string>& tinyInfoS)
 {
-  setName(tinyInfoS[0].c_str());
+  setName(tinyInfoS[0]);
   if(isAllocated())
     {
       int nbOfCompo=getNumberOfComponents();
       for(int i=0;i<nbOfCompo;i++)
-        setInfoOnComponent(i,tinyInfoS[i+1].c_str());
+        setInfoOnComponent(i,tinyInfoS[i+1]);
     }
 }
 
@@ -5118,7 +5705,7 @@ DataArrayDoubleIterator::~DataArrayDoubleIterator()
     _da->decrRef();
 }
 
-DataArrayDoubleTuple *DataArrayDoubleIterator::nextt() throw(INTERP_KERNEL::Exception)
+DataArrayDoubleTuple *DataArrayDoubleIterator::nextt()
 {
   if(_tuple_id<_nb_tuple)
     {
@@ -5136,7 +5723,7 @@ DataArrayDoubleTuple::DataArrayDoubleTuple(double *pt, int nbOfComp):_pt(pt),_nb
 }
 
 
-std::string DataArrayDoubleTuple::repr() const throw(INTERP_KERNEL::Exception)
+std::string DataArrayDoubleTuple::repr() const
 {
   std::ostringstream oss; oss.precision(17); oss << "(";
   for(int i=0;i<_nb_of_compo-1;i++)
@@ -5145,7 +5732,7 @@ std::string DataArrayDoubleTuple::repr() const throw(INTERP_KERNEL::Exception)
   return oss.str();
 }
 
-double DataArrayDoubleTuple::doubleValue() const throw(INTERP_KERNEL::Exception)
+double DataArrayDoubleTuple::doubleValue() const
 {
   if(_nb_of_compo==1)
     return *_pt;
@@ -5158,7 +5745,7 @@ double DataArrayDoubleTuple::doubleValue() const throw(INTERP_KERNEL::Exception)
  * This method throws an INTERP_KERNEL::Exception is it is impossible to match sizes of \b this that is too say \b nbOfCompo=this->_nb_of_elem and \bnbOfTuples==1 or
  * \b nbOfCompo=1 and \bnbOfTuples==this->_nb_of_elem.
  */
-DataArrayDouble *DataArrayDoubleTuple::buildDADouble(int nbOfTuples, int nbOfCompo) const throw(INTERP_KERNEL::Exception)
+DataArrayDouble *DataArrayDoubleTuple::buildDADouble(int nbOfTuples, int nbOfCompo) const
 {
   if((_nb_of_compo==nbOfCompo && nbOfTuples==1) || (_nb_of_compo==nbOfTuples && nbOfCompo==1))
     {
@@ -5188,7 +5775,7 @@ DataArrayInt *DataArrayInt::New()
  * in \ref MEDCouplingArrayBasicsTuplesAndCompo "DataArrays infos" for more information.
  *  \return bool - \a true if the raw data is allocated, \a false else.
  */
-bool DataArrayInt::isAllocated() const throw(INTERP_KERNEL::Exception)
+bool DataArrayInt::isAllocated() const
 {
   return getConstPointer()!=0;
 }
@@ -5197,43 +5784,27 @@ bool DataArrayInt::isAllocated() const throw(INTERP_KERNEL::Exception)
  * Checks if raw data is allocated and throws an exception if it is not the case.
  *  \throw If the raw data is not allocated.
  */
-void DataArrayInt::checkAllocated() const throw(INTERP_KERNEL::Exception)
+void DataArrayInt::checkAllocated() const
 {
   if(!isAllocated())
     throw INTERP_KERNEL::Exception("DataArrayInt::checkAllocated : Array is defined but not allocated ! Call alloc or setValues method first !");
 }
 
-std::size_t DataArrayInt::getHeapMemorySize() const
+/*!
+ * This method desallocated \a this without modification of informations relative to the components.
+ * After call of this method, DataArrayInt::isAllocated will return false.
+ * If \a this is already not allocated, \a this is let unchanged.
+ */
+void DataArrayInt::desallocate()
 {
-  std::size_t sz=_mem.getNbOfElemAllocated();
-  sz*=sizeof(int);
-  return DataArray::getHeapMemorySize()+sz;
+  _mem.destroy();
 }
 
-/*!
- * Sets information on all components. This method can change number of components
- * at certain conditions; if the conditions are not respected, an exception is thrown.
- * The number of components can be changed provided that \a this is not allocated.
- *
- * To know more on format of the component information see
- * \ref MEDCouplingArrayBasicsCompoName "DataArrays infos".
- *  \param [in] info - a vector of component infos.
- *  \throw If \a this->getNumberOfComponents() != \a info.size() && \a this->isAllocated()
- */
-void DataArrayInt::setInfoAndChangeNbOfCompo(const std::vector<std::string>& info) throw(INTERP_KERNEL::Exception)
+std::size_t DataArrayInt::getHeapMemorySizeWithoutChildren() const
 {
-  if(getNumberOfComponents()!=(int)info.size())
-    {
-      if(!isAllocated())
-        _info_on_compo=info;
-      else
-        {
-          std::ostringstream oss; oss << "DataArrayInt::setInfoAndChangeNbOfCompo : input is of size " << info.size() << " whereas number of components is equal to " << getNumberOfComponents() << "  and this is already allocated !";
-          throw INTERP_KERNEL::Exception(oss.str().c_str());
-        }
-    }
-  else
-    _info_on_compo=info;
+  std::size_t sz(_mem.getNbOfElemAllocated());
+  sz*=sizeof(int);
+  return DataArray::getHeapMemorySizeWithoutChildren()+sz;
 }
 
 /*!
@@ -5242,7 +5813,7 @@ void DataArrayInt::setInfoAndChangeNbOfCompo(const std::vector<std::string>& inf
  *  \return double - the sole value stored in \a this array.
  *  \throw If at least one of conditions stated above is not fulfilled.
  */
-int DataArrayInt::intValue() const throw(INTERP_KERNEL::Exception)
+int DataArrayInt::intValue() const
 {
   if(isAllocated())
     {
@@ -5263,7 +5834,7 @@ int DataArrayInt::intValue() const throw(INTERP_KERNEL::Exception)
  *  \return int - the hash value.
  *  \throw If \a this is not allocated.
  */
-int DataArrayInt::getHashCode() const throw(INTERP_KERNEL::Exception)
+int DataArrayInt::getHashCode() const
 {
   checkAllocated();
   std::size_t nbOfElems=getNbOfElems();
@@ -5283,7 +5854,7 @@ int DataArrayInt::getHashCode() const throw(INTERP_KERNEL::Exception)
  *  \return bool - \a true if getNumberOfTuples() == 0, \a false else.
  *  \throw If \a this is not allocated.
  */
-bool DataArrayInt::empty() const throw(INTERP_KERNEL::Exception)
+bool DataArrayInt::empty() const
 {
   checkAllocated();
   return getNumberOfTuples()==0;
@@ -5294,7 +5865,7 @@ bool DataArrayInt::empty() const throw(INTERP_KERNEL::Exception)
  * \ref MEDCouplingArrayBasicsCopyDeep.
  *  \return DataArrayInt * - a new instance of DataArrayInt.
  */
-DataArrayInt *DataArrayInt::deepCpy() const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::deepCpy() const
 {
   return new DataArrayInt(*this);
 }
@@ -5306,7 +5877,7 @@ DataArrayInt *DataArrayInt::deepCpy() const throw(INTERP_KERNEL::Exception)
  *  \return DataArrayInt * - either a new instance of DataArrayInt (if \a dCpy
  *          == \a true) or \a this instance (if \a dCpy == \a false).
  */
-DataArrayInt *DataArrayInt::performCpy(bool dCpy) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::performCpy(bool dCpy) const
 {
   if(dCpy)
     return deepCpy();
@@ -5323,7 +5894,7 @@ DataArrayInt *DataArrayInt::performCpy(bool dCpy) const throw(INTERP_KERNEL::Exc
  *  \param [in] other - another instance of DataArrayInt to copy data from.
  *  \throw If the \a other is not allocated.
  */
-void DataArrayInt::cpyFrom(const DataArrayInt& other) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::cpyFrom(const DataArrayInt& other)
 {
   other.checkAllocated();
   int nbOfTuples=other.getNumberOfTuples();
@@ -5345,7 +5916,7 @@ void DataArrayInt::cpyFrom(const DataArrayInt& other) throw(INTERP_KERNEL::Excep
  * 
  * \sa DataArrayInt::pack, DataArrayInt::pushBackSilent, DataArrayInt::pushBackValsSilent
  */
-void DataArrayInt::reserve(std::size_t nbOfElems) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::reserve(std::size_t nbOfElems)
 {
   int nbCompo=getNumberOfComponents();
   if(nbCompo==1)
@@ -5369,7 +5940,7 @@ void DataArrayInt::reserve(std::size_t nbOfElems) throw(INTERP_KERNEL::Exception
  * \throw If \a this has already been allocated with number of components different from one.
  * \sa DataArrayInt::pushBackValsSilent
  */
-void DataArrayInt::pushBackSilent(int val) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::pushBackSilent(int val)
 {
   int nbCompo=getNumberOfComponents();
   if(nbCompo==1)
@@ -5393,7 +5964,7 @@ void DataArrayInt::pushBackSilent(int val) throw(INTERP_KERNEL::Exception)
  * \throw If \a this has already been allocated with number of components different from one.
  * \sa DataArrayInt::pushBackSilent
  */
-void DataArrayInt::pushBackValsSilent(const int *valsBg, const int *valsEnd) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::pushBackValsSilent(const int *valsBg, const int *valsEnd)
 {
   int nbCompo=getNumberOfComponents();
   if(nbCompo==1)
@@ -5412,7 +5983,7 @@ void DataArrayInt::pushBackValsSilent(const int *valsBg, const int *valsEnd) thr
  * \throw If \a this is already empty.
  * \throw If \a this has number of components different from one.
  */
-int DataArrayInt::popBackSilent() throw(INTERP_KERNEL::Exception)
+int DataArrayInt::popBackSilent()
 {
   if(getNumberOfComponents()==1)
     return _mem.popBack();
@@ -5423,9 +5994,9 @@ int DataArrayInt::popBackSilent() throw(INTERP_KERNEL::Exception)
 /*!
  * This method \b do \b not modify content of \a this. It only modify its memory footprint if the allocated memory is to high regarding real data to store.
  *
- * \sa DataArrayInt::getHeapMemorySize, DataArrayInt::reserve
+ * \sa DataArrayInt::getHeapMemorySizeWithoutChildren, DataArrayInt::reserve
  */
-void DataArrayInt::pack() const throw(INTERP_KERNEL::Exception)
+void DataArrayInt::pack() const
 {
   _mem.pack();
 }
@@ -5437,7 +6008,7 @@ void DataArrayInt::pack() const throw(INTERP_KERNEL::Exception)
  *  \param [in] nbOfCompo - number of components of data to allocate.
  *  \throw If \a nbOfTuple < 0 or \a nbOfCompo < 0.
  */
-void DataArrayInt::allocIfNecessary(int nbOfTuple, int nbOfCompo) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::allocIfNecessary(int nbOfTuple, int nbOfCompo)
 {
   if(isAllocated())
     {
@@ -5456,7 +6027,7 @@ void DataArrayInt::allocIfNecessary(int nbOfTuple, int nbOfCompo) throw(INTERP_K
  *  \param [in] nbOfCompo - number of components of data to allocate.
  *  \throw If \a nbOfTuple < 0 or \a nbOfCompo < 0.
  */
-void DataArrayInt::alloc(int nbOfTuple, int nbOfCompo) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::alloc(int nbOfTuple, int nbOfCompo)
 {
   if(nbOfTuple<0 || nbOfCompo<0)
     throw INTERP_KERNEL::Exception("DataArrayInt::alloc : request for negative length of data !");
@@ -5470,7 +6041,7 @@ void DataArrayInt::alloc(int nbOfTuple, int nbOfCompo) throw(INTERP_KERNEL::Exce
  * \ref MEDCouplingArrayFill.
  * \throw If \a this is not allocated.
  */
-void DataArrayInt::fillWithZero() throw(INTERP_KERNEL::Exception)
+void DataArrayInt::fillWithZero()
 {
   checkAllocated();
   _mem.fillWithValue(0);
@@ -5483,7 +6054,7 @@ void DataArrayInt::fillWithZero() throw(INTERP_KERNEL::Exception)
  *  \param [in] val - the value to fill with.
  *  \throw If \a this is not allocated.
  */
-void DataArrayInt::fillWithValue(int val) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::fillWithValue(int val)
 {
   checkAllocated();
   _mem.fillWithValue(val);
@@ -5497,7 +6068,7 @@ void DataArrayInt::fillWithValue(int val) throw(INTERP_KERNEL::Exception)
  *  \throw If \a this->getNumberOfComponents() != 1
  *  \throw If \a this is not allocated.
  */
-void DataArrayInt::iota(int init) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::iota(int init)
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -5514,55 +6085,86 @@ void DataArrayInt::iota(int init) throw(INTERP_KERNEL::Exception)
  * DataArrayInt. This text is shown when a DataArrayInt is printed in Python.
  *  \return std::string - text describing \a this DataArrayInt.
  */
-std::string DataArrayInt::repr() const throw(INTERP_KERNEL::Exception)
+std::string DataArrayInt::repr() const
 {
   std::ostringstream ret;
   reprStream(ret);
   return ret.str();
 }
 
-std::string DataArrayInt::reprZip() const throw(INTERP_KERNEL::Exception)
+std::string DataArrayInt::reprZip() const
 {
   std::ostringstream ret;
   reprZipStream(ret);
   return ret.str();
 }
 
-void DataArrayInt::writeVTK(std::ostream& ofs, int indent, const char *type, const char *nameInFile) const throw(INTERP_KERNEL::Exception)
+void DataArrayInt::writeVTK(std::ostream& ofs, int indent, const std::string& type, const std::string& nameInFile, DataArrayByte *byteArr) const
 {
+  static const char SPACE[4]={' ',' ',' ',' '};
   checkAllocated();
   std::string idt(indent,' ');
   ofs << idt << "<DataArray type=\"" << type << "\" Name=\"" << nameInFile << "\" NumberOfComponents=\"" << getNumberOfComponents() << "\"";
-  ofs << " format=\"ascii\" RangeMin=\"" << getMinValueInArray() << "\" RangeMax=\"" << getMaxValueInArray() << "\">\n" << idt;
-  std::copy(begin(),end(),std::ostream_iterator<int>(ofs," "));
+  if(byteArr)
+    {
+      ofs << " format=\"appended\" offset=\"" << byteArr->getNumberOfTuples() << "\">";
+      if(std::string(type)=="Int32")
+        {
+          const char *data(reinterpret_cast<const char *>(begin()));
+          std::size_t sz(getNbOfElems()*sizeof(int));
+          byteArr->insertAtTheEnd(data,data+sz);
+          byteArr->insertAtTheEnd(SPACE,SPACE+4);
+        }
+      else if(std::string(type)=="Int8")
+        {
+          INTERP_KERNEL::AutoPtr<char> tmp(new char[getNbOfElems()]);
+          std::copy(begin(),end(),(char *)tmp);
+          byteArr->insertAtTheEnd((char *)tmp,(char *)tmp+getNbOfElems());
+          byteArr->insertAtTheEnd(SPACE,SPACE+4);
+        }
+      else if(std::string(type)=="UInt8")
+        {
+          INTERP_KERNEL::AutoPtr<unsigned char> tmp(new unsigned char[getNbOfElems()]);
+          std::copy(begin(),end(),(unsigned char *)tmp);
+          byteArr->insertAtTheEnd((unsigned char *)tmp,(unsigned char *)tmp+getNbOfElems());
+          byteArr->insertAtTheEnd(SPACE,SPACE+4);
+        }
+      else
+        throw INTERP_KERNEL::Exception("DataArrayInt::writeVTK : Only Int32, Int8 and UInt8 supported !");
+    }
+  else
+    {
+      ofs << " RangeMin=\"" << getMinValueInArray() << "\" RangeMax=\"" << getMaxValueInArray() << "\" format=\"ascii\">\n" << idt;
+      std::copy(begin(),end(),std::ostream_iterator<int>(ofs," "));
+    }
   ofs << std::endl << idt << "</DataArray>\n";
 }
 
-void DataArrayInt::reprStream(std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+void DataArrayInt::reprStream(std::ostream& stream) const
 {
   stream << "Name of int array : \"" << _name << "\"\n";
   reprWithoutNameStream(stream);
 }
 
-void DataArrayInt::reprZipStream(std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+void DataArrayInt::reprZipStream(std::ostream& stream) const
 {
   stream << "Name of int array : \"" << _name << "\"\n";
   reprZipWithoutNameStream(stream);
 }
 
-void DataArrayInt::reprWithoutNameStream(std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+void DataArrayInt::reprWithoutNameStream(std::ostream& stream) const
 {
   DataArray::reprWithoutNameStream(stream);
   _mem.repr(getNumberOfComponents(),stream);
 }
 
-void DataArrayInt::reprZipWithoutNameStream(std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+void DataArrayInt::reprZipWithoutNameStream(std::ostream& stream) const
 {
   DataArray::reprWithoutNameStream(stream);
   _mem.reprZip(getNumberOfComponents(),stream);
 }
 
-void DataArrayInt::reprCppStream(const char *varName, std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+void DataArrayInt::reprCppStream(const std::string& varName, std::ostream& stream) const
 {
   int nbTuples=getNumberOfTuples(),nbComp=getNumberOfComponents();
   const int *data=getConstPointer();
@@ -5582,7 +6184,7 @@ void DataArrayInt::reprCppStream(const char *varName, std::ostream& stream) cons
 /*!
  * Method that gives a quick overvien of \a this for python.
  */
-void DataArrayInt::reprQuickOverview(std::ostream& stream) const throw(INTERP_KERNEL::Exception)
+void DataArrayInt::reprQuickOverview(std::ostream& stream) const
 {
   static const std::size_t MAX_NB_OF_BYTE_IN_REPR=300;
   stream << "DataArrayInt C++ instance at " << this << ". ";
@@ -5602,7 +6204,7 @@ void DataArrayInt::reprQuickOverview(std::ostream& stream) const throw(INTERP_KE
     stream << "*** No data allocated ****";
 }
 
-void DataArrayInt::reprQuickOverviewData(std::ostream& stream, std::size_t maxNbOfByteInRepr) const throw(INTERP_KERNEL::Exception)
+void DataArrayInt::reprQuickOverviewData(std::ostream& stream, std::size_t maxNbOfByteInRepr) const
 {
   const int *data=begin();
   int nbOfTuples=getNumberOfTuples();
@@ -5648,7 +6250,7 @@ void DataArrayInt::reprQuickOverviewData(std::ostream& stream, std::size_t maxNb
  *  \throw If any value of \a this can't be used as a valid index for 
  *         [\a indArrBg, \a indArrEnd).
  */
-void DataArrayInt::transformWithIndArr(const int *indArrBg, const int *indArrEnd) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::transformWithIndArr(const int *indArrBg, const int *indArrEnd)
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -5662,7 +6264,7 @@ void DataArrayInt::transformWithIndArr(const int *indArrBg, const int *indArrEnd
         *pt=indArrBg[*pt];
       else
         {
-          std::ostringstream oss; oss << "DataArrayInt::transformWithIndArr : error on tuple #" << i << " value is " << *pt << " and indirectionnal array as a size equal to " << nbElemsIn;
+          std::ostringstream oss; oss << "DataArrayInt::transformWithIndArr : error on tuple #" << i << " of this value is " << *pt << ", should be in [0," << nbElemsIn << ") !";
           throw INTERP_KERNEL::Exception(oss.str().c_str());
         }
     }
@@ -5716,8 +6318,8 @@ void DataArrayInt::transformWithIndArr(const int *indArrBg, const int *indArrEnd
  *  \throw If any value of \a this is not less than \a arrEnd[-1].
  */
 void DataArrayInt::splitByValueRange(const int *arrBg, const int *arrEnd,
-                                     DataArrayInt *& castArr, DataArrayInt *& rankInsideCast, DataArrayInt *& castsPresent) const throw(INTERP_KERNEL::Exception)
-{
+                                     DataArrayInt *& castArr, DataArrayInt *& rankInsideCast, DataArrayInt *& castsPresent) const
+    {
   checkAllocated();
   if(getNumberOfComponents()!=1)
     throw INTERP_KERNEL::Exception("Call splitByValueRange  method on DataArrayInt with only one component, you can call 'rearrange' method before !");
@@ -5751,7 +6353,7 @@ void DataArrayInt::splitByValueRange(const int *arrBg, const int *arrEnd,
         }
       else
         {
-          std::ostringstream oss; oss << "DataArrayInt::splitByValueRange : At rank #" << i << " the value is " << work[i] << " whereas the last value is " << *bg;
+          std::ostringstream oss; oss << "DataArrayInt::splitByValueRange : At rank #" << i << " the value is " << work[i] << " should be in [0," << *bg << ") !";
           throw INTERP_KERNEL::Exception(oss.str().c_str());
         }
     }
@@ -5760,7 +6362,7 @@ void DataArrayInt::splitByValueRange(const int *arrBg, const int *arrEnd,
   castArr=ret1.retn();
   rankInsideCast=ret2.retn();
   castsPresent=ret3.retn();
-}
+    }
 
 /*!
  * Creates a one-dimensional DataArrayInt (\a res) whose contents are computed from 
@@ -5778,7 +6380,7 @@ void DataArrayInt::splitByValueRange(const int *arrBg, const int *arrEnd,
  *  \throw If any value of \a this array is not a valid index for \a indArrBg array.
  *  \throw If any value of \a indArrBg is not a valid index for \a this array.
  */
-DataArrayInt *DataArrayInt::transformWithIndArrR(const int *indArrBg, const int *indArrEnd) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::transformWithIndArrR(const int *indArrBg, const int *indArrEnd) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -5822,8 +6424,10 @@ DataArrayInt *DataArrayInt::transformWithIndArrR(const int *indArrBg, const int 
  *          The caller is to delete this result array using decrRef() as it is no more
  *          needed.
  * 
+ *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcdataarrayint_invertarrayo2n2n2o "Here is a C++ example".<br>
  *  \ref py_mcdataarrayint_invertarrayo2n2n2o  "Here is a Python example".
+ *  \endif
  */
 DataArrayInt *DataArrayInt::invertArrayO2N2N2O(int newNbOfElem) const
 {
@@ -5833,8 +6437,19 @@ DataArrayInt *DataArrayInt::invertArrayO2N2N2O(int newNbOfElem) const
   const int *old2New=getConstPointer();
   int *pt=ret->getPointer();
   for(int i=0;i!=nbOfOldNodes;i++)
-    if(old2New[i]!=-1)
-      pt[old2New[i]]=i;
+    {
+      int newp(old2New[i]);
+      if(newp!=-1)
+        {
+          if(newp>=0 && newp<newNbOfElem)
+            pt[newp]=i;
+          else
+            {
+              std::ostringstream oss; oss << "DataArrayInt::invertArrayO2N2N2O : At place #" << i << " the newplace is " << newp << " must be in [0," << newNbOfElem << ") !";
+              throw INTERP_KERNEL::Exception(oss.str().c_str());
+            }
+        }
+    }
   return ret.retn();
 }
 
@@ -5842,7 +6457,7 @@ DataArrayInt *DataArrayInt::invertArrayO2N2N2O(int newNbOfElem) const
  * This method is similar to DataArrayInt::invertArrayO2N2N2O except that 
  * Example : If \a this contains [0,1,2,0,3,4,5,4,6,4] this method will return [0,1,2,4,5,6,8] whereas DataArrayInt::invertArrayO2N2N2O returns [3,1,2,4,9,6,8]
  */
-DataArrayInt *DataArrayInt::invertArrayO2N2N2OBis(int newNbOfElem) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::invertArrayO2N2N2OBis(int newNbOfElem) const
 {
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=DataArrayInt::New();
   ret->alloc(newNbOfElem,1);
@@ -5850,8 +6465,19 @@ DataArrayInt *DataArrayInt::invertArrayO2N2N2OBis(int newNbOfElem) const throw(I
   const int *old2New=getConstPointer();
   int *pt=ret->getPointer();
   for(int i=nbOfOldNodes-1;i>=0;i--)
-    if(old2New[i]!=-1)
-      pt[old2New[i]]=i;
+    {
+      int newp(old2New[i]);
+      if(newp!=-1)
+        {
+          if(newp>=0 && newp<newNbOfElem)
+            pt[newp]=i;
+          else
+            {
+              std::ostringstream oss; oss << "DataArrayInt::invertArrayO2N2N2OBis : At place #" << i << " the newplace is " << newp << " must be in [0," << newNbOfElem << ") !";
+              throw INTERP_KERNEL::Exception(oss.str().c_str());
+            }
+        }
+    }
   return ret.retn();
 }
 
@@ -5865,9 +6491,11 @@ DataArrayInt *DataArrayInt::invertArrayO2N2N2OBis(int newNbOfElem) const throw(I
  *          The caller is to delete this result array using decrRef() as it is no more
  *          needed.
  * 
+ *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcdataarrayint_invertarrayn2o2o2n "Here is a C++ example".
  *
  *  \ref py_mcdataarrayint_invertarrayn2o2o2n "Here is a Python example".
+ *  \endif
  */
 DataArrayInt *DataArrayInt::invertArrayN2O2O2N(int oldNbOfElem) const
 {
@@ -5879,7 +6507,16 @@ DataArrayInt *DataArrayInt::invertArrayN2O2O2N(int oldNbOfElem) const
   std::fill(pt,pt+oldNbOfElem,-1);
   int nbOfNewElems=getNumberOfTuples();
   for(int i=0;i<nbOfNewElems;i++)
-    pt[new2Old[i]]=i;
+    {
+      int v(new2Old[i]);
+      if(v>=0 && v<oldNbOfElem)
+        pt[v]=i;
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::invertArrayN2O2O2N : in new id #" << i << " old value is " << v << " expected to be in [0," << oldNbOfElem << ") !";
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
+        }
+    }
   return ret.retn();
 }
 
@@ -5891,7 +6528,7 @@ DataArrayInt *DataArrayInt::invertArrayN2O2O2N(int oldNbOfElem) const
  * \param [out] reason In case of inequality returns the reason.
  * \sa DataArrayInt::isEqual
  */
-bool DataArrayInt::isEqualIfNotWhy(const DataArrayInt& other, std::string& reason) const throw(INTERP_KERNEL::Exception)
+bool DataArrayInt::isEqualIfNotWhy(const DataArrayInt& other, std::string& reason) const
 {
   if(!areInfoEqualsIfNotWhy(other,reason))
     return false;
@@ -5904,7 +6541,7 @@ bool DataArrayInt::isEqualIfNotWhy(const DataArrayInt& other, std::string& reaso
  *  \param [in] other - an instance of DataArrayInt to compare with \a this one.
  *  \return bool - \a true if the two arrays are equal, \a false else.
  */
-bool DataArrayInt::isEqual(const DataArrayInt& other) const throw(INTERP_KERNEL::Exception)
+bool DataArrayInt::isEqual(const DataArrayInt& other) const
 {
   std::string tmp;
   return isEqualIfNotWhy(other,tmp);
@@ -5916,7 +6553,7 @@ bool DataArrayInt::isEqual(const DataArrayInt& other) const throw(INTERP_KERNEL:
  *  \param [in] other - an instance of DataArrayInt to compare with \a this one.
  *  \return bool - \a true if the values of two arrays are equal, \a false else.
  */
-bool DataArrayInt::isEqualWithoutConsideringStr(const DataArrayInt& other) const throw(INTERP_KERNEL::Exception)
+bool DataArrayInt::isEqualWithoutConsideringStr(const DataArrayInt& other) const
 {
   std::string tmp;
   return _mem.isEqual(other._mem,0,tmp);
@@ -5929,7 +6566,7 @@ bool DataArrayInt::isEqualWithoutConsideringStr(const DataArrayInt& other) const
  *  \param [in] other - an instance of DataArrayInt to compare with \a this one.
  *  \return bool - \a true if the sorted values of two arrays are equal, \a false else.
  */
-bool DataArrayInt::isEqualWithoutConsideringStrAndOrder(const DataArrayInt& other) const throw(INTERP_KERNEL::Exception)
+bool DataArrayInt::isEqualWithoutConsideringStrAndOrder(const DataArrayInt& other) const
 {
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> a=deepCpy();
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> b=other.deepCpy();
@@ -5939,12 +6576,58 @@ bool DataArrayInt::isEqualWithoutConsideringStrAndOrder(const DataArrayInt& othe
 }
 
 /*!
+ * This method compares content of input vector \a v and \a this.
+ * If for each id in \a this v[id]==True and for all other ids id2 not in \a this v[id2]==False, true is returned.
+ * For performance reasons \a this is expected to be sorted ascendingly. If not an exception will be thrown.
+ *
+ * \param [in] v - the vector of 'flags' to be compared with \a this.
+ *
+ * \throw If \a this is not sorted ascendingly.
+ * \throw If \a this has not exactly one component.
+ * \throw If \a this is not allocated.
+ */
+bool DataArrayInt::isFittingWith(const std::vector<bool>& v) const
+{
+  checkAllocated();
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::isFittingWith : number of components of this should be equal to one !");
+  const int *w(begin()),*end2(end());
+  int refVal=-std::numeric_limits<int>::max();
+  int i=0;
+  std::vector<bool>::const_iterator it(v.begin());
+  for(;it!=v.end();it++,i++)
+    {
+      if(*it)
+        {
+          if(w!=end2)
+            {
+              if(*w++==i)
+                {
+                  if(i>refVal)
+                    refVal=i;
+                  else
+                    {
+                      std::ostringstream oss; oss << "DataArrayInt::isFittingWith : At pos #" << std::distance(begin(),w-1) << " this is not sorted ascendingly !";
+                      throw INTERP_KERNEL::Exception(oss.str().c_str());
+                    }
+                }
+              else
+                return false;
+            }
+          else
+            return false;
+        }
+    }
+  return w==end2;
+}
+
+/*!
  * Sorts values of the array.
  *  \param [in] asc - \a true means ascending order, \a false, descending.
  *  \throw If \a this is not allocated.
  *  \throw If \a this->getNumberOfComponents() != 1.
  */
-void DataArrayInt::sort(bool asc) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::sort(bool asc)
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -5954,11 +6637,33 @@ void DataArrayInt::sort(bool asc) throw(INTERP_KERNEL::Exception)
 }
 
 /*!
+ * Computes for each tuple the sum of number of components values in the tuple and return it.
+ * 
+ * \return DataArrayInt * - the new instance of DataArrayInt containing the
+ *          same number of tuples as \a this array and one component.
+ *          The caller is to delete this result array using decrRef() as it is no more
+ *          needed.
+ *  \throw If \a this is not allocated.
+ */
+DataArrayInt *DataArrayInt::sumPerTuple() const
+{
+  checkAllocated();
+  int nbOfComp(getNumberOfComponents()),nbOfTuple(getNumberOfTuples());
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New());
+  ret->alloc(nbOfTuple,1);
+  const int *src(getConstPointer());
+  int *dest(ret->getPointer());
+  for(int i=0;i<nbOfTuple;i++,dest++,src+=nbOfComp)
+    *dest=std::accumulate(src,src+nbOfComp,0);
+  return ret.retn();
+}
+
+/*!
  * Reverse the array values.
  *  \throw If \a this->getNumberOfComponents() < 1.
  *  \throw If \a this is not allocated.
  */
-void DataArrayInt::reverse() throw(INTERP_KERNEL::Exception)
+void DataArrayInt::reverse()
 {
   checkAllocated();
   _mem.reverse(getNumberOfComponents());
@@ -5974,7 +6679,7 @@ void DataArrayInt::reverse() throw(INTERP_KERNEL::Exception)
  *  \throw If \a this->getNumberOfComponents() != 1.
  *  \throw If \a this is not allocated.
  */
-void DataArrayInt::checkMonotonic(bool increasing) const throw(INTERP_KERNEL::Exception)
+void DataArrayInt::checkMonotonic(bool increasing) const
 {
   if(!isMonotonic(increasing))
     {
@@ -5992,7 +6697,7 @@ void DataArrayInt::checkMonotonic(bool increasing) const throw(INTERP_KERNEL::Ex
  *  \throw If \a this->getNumberOfComponents() != 1.
  *  \throw If \a this is not allocated.
  */
-bool DataArrayInt::isMonotonic(bool increasing) const throw(INTERP_KERNEL::Exception)
+bool DataArrayInt::isMonotonic(bool increasing) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -6028,7 +6733,7 @@ bool DataArrayInt::isMonotonic(bool increasing) const throw(INTERP_KERNEL::Excep
 /*!
  * This method check that array consistently INCREASING or DECREASING in value.
  */
-bool DataArrayInt::isStrictlyMonotonic(bool increasing) const throw(INTERP_KERNEL::Exception)
+bool DataArrayInt::isStrictlyMonotonic(bool increasing) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -6064,7 +6769,7 @@ bool DataArrayInt::isStrictlyMonotonic(bool increasing) const throw(INTERP_KERNE
 /*!
  * This method check that array consistently INCREASING or DECREASING in value.
  */
-void DataArrayInt::checkStrictlyMonotonic(bool increasing) const throw(INTERP_KERNEL::Exception)
+void DataArrayInt::checkStrictlyMonotonic(bool increasing) const
 {
   if(!isStrictlyMonotonic(increasing))
     {
@@ -6090,11 +6795,13 @@ void DataArrayInt::checkStrictlyMonotonic(bool increasing) const throw(INTERP_KE
  *  \throw If \a this->getNumberOfTuples() != \a other->getNumberOfTuples().
  *  \throw If \a other includes a value which is not in \a this array.
  * 
+ *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcdataarrayint_buildpermutationarr "Here is a C++ example".
  *
  *  \ref py_mcdataarrayint_buildpermutationarr "Here is a Python example".
+ *  \endif
  */
-DataArrayInt *DataArrayInt::buildPermutationArr(const DataArrayInt& other) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::buildPermutationArr(const DataArrayInt& other) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1 || other.getNumberOfComponents()!=1)
@@ -6137,14 +6844,14 @@ DataArrayInt *DataArrayInt::buildPermutationArr(const DataArrayInt& other) const
  *  \param [in] nbOfTuple - new number of tuples in \a this.
  *  \param [in] nbOfCompo - new number of components in \a this.
  */
-void DataArrayInt::useArray(const int *array, bool ownership,  DeallocType type, int nbOfTuple, int nbOfCompo) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::useArray(const int *array, bool ownership,  DeallocType type, int nbOfTuple, int nbOfCompo)
 {
   _info_on_compo.resize(nbOfCompo);
   _mem.useArray(array,ownership,type,nbOfTuple*nbOfCompo);
   declareAsNew();
 }
 
-void DataArrayInt::useExternalArrayWithRWAccess(const int *array, int nbOfTuple, int nbOfCompo) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::useExternalArrayWithRWAccess(const int *array, int nbOfTuple, int nbOfCompo)
 {
   _info_on_compo.resize(nbOfCompo);
   _mem.useExternalArrayWithRWAccess(array,nbOfTuple*nbOfCompo);
@@ -6161,14 +6868,14 @@ void DataArrayInt::useExternalArrayWithRWAccess(const int *array, int nbOfTuple,
  *          is to delete using decrRef() as it is no more needed.
  *  \throw If \a this is not allocated.
  */
-DataArrayInt *DataArrayInt::fromNoInterlace() const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::fromNoInterlace() const
 {
   checkAllocated();
   if(_mem.isNull())
     throw INTERP_KERNEL::Exception("DataArrayInt::fromNoInterlace : Not defined array !");
   int *tab=_mem.fromNoInterlace(getNumberOfComponents());
   DataArrayInt *ret=DataArrayInt::New();
-  ret->useArray(tab,true,CPP_DEALLOC,getNumberOfTuples(),getNumberOfComponents());
+  ret->useArray(tab,true,C_DEALLOC,getNumberOfTuples(),getNumberOfComponents());
   return ret;
 }
 
@@ -6182,14 +6889,14 @@ DataArrayInt *DataArrayInt::fromNoInterlace() const throw(INTERP_KERNEL::Excepti
  *          is to delete using decrRef() as it is no more needed.
  *  \throw If \a this is not allocated.
  */
-DataArrayInt *DataArrayInt::toNoInterlace() const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::toNoInterlace() const
 {
   checkAllocated();
   if(_mem.isNull())
     throw INTERP_KERNEL::Exception("DataArrayInt::toNoInterlace : Not defined array !");
   int *tab=_mem.toNoInterlace(getNumberOfComponents());
   DataArrayInt *ret=DataArrayInt::New();
-  ret->useArray(tab,true,CPP_DEALLOC,getNumberOfTuples(),getNumberOfComponents());
+  ret->useArray(tab,true,C_DEALLOC,getNumberOfTuples(),getNumberOfComponents());
   return ret;
 }
 
@@ -6202,7 +6909,7 @@ DataArrayInt *DataArrayInt::toNoInterlace() const throw(INTERP_KERNEL::Exception
  *  \param [in] old2New - C array of length equal to \a this->getNumberOfTuples()
  *     giving a new position for i-th old value.
  */
-void DataArrayInt::renumberInPlace(const int *old2New) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::renumberInPlace(const int *old2New)
 {
   checkAllocated();
   int nbTuples=getNumberOfTuples();
@@ -6210,7 +6917,16 @@ void DataArrayInt::renumberInPlace(const int *old2New) throw(INTERP_KERNEL::Exce
   int *tmp=new int[nbTuples*nbOfCompo];
   const int *iptr=getConstPointer();
   for(int i=0;i<nbTuples;i++)
-    std::copy(iptr+nbOfCompo*i,iptr+nbOfCompo*(i+1),tmp+nbOfCompo*old2New[i]);
+    {
+      int v=old2New[i];
+      if(v>=0 && v<nbTuples)
+        std::copy(iptr+nbOfCompo*i,iptr+nbOfCompo*(i+1),tmp+nbOfCompo*v);
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::renumberInPlace : At place #" << i << " value is " << v << " ! Should be in [0," << nbTuples << ") !";
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
+        }
+    }
   std::copy(tmp,tmp+nbTuples*nbOfCompo,getPointer());
   delete [] tmp;
   declareAsNew();
@@ -6226,7 +6942,7 @@ void DataArrayInt::renumberInPlace(const int *old2New) throw(INTERP_KERNEL::Exce
  *  \return DataArrayInt * - the new instance of DataArrayInt that the caller
  *          is to delete using decrRef() as it is no more needed.
  */
-void DataArrayInt::renumberInPlaceR(const int *new2Old) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::renumberInPlaceR(const int *new2Old)
 {
   checkAllocated();
   int nbTuples=getNumberOfTuples();
@@ -6234,7 +6950,16 @@ void DataArrayInt::renumberInPlaceR(const int *new2Old) throw(INTERP_KERNEL::Exc
   int *tmp=new int[nbTuples*nbOfCompo];
   const int *iptr=getConstPointer();
   for(int i=0;i<nbTuples;i++)
-    std::copy(iptr+nbOfCompo*new2Old[i],iptr+nbOfCompo*(new2Old[i]+1),tmp+nbOfCompo*i);
+    {
+      int v=new2Old[i];
+      if(v>=0 && v<nbTuples)
+        std::copy(iptr+nbOfCompo*v,iptr+nbOfCompo*(v+1),tmp+nbOfCompo*i);
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::renumberInPlaceR : At place #" << i << " value is " << v << " ! Should be in [0," << nbTuples << ") !";
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
+        }
+    }
   std::copy(tmp,tmp+nbTuples*nbOfCompo,getPointer());
   delete [] tmp;
   declareAsNew();
@@ -6252,7 +6977,7 @@ void DataArrayInt::renumberInPlaceR(const int *new2Old) throw(INTERP_KERNEL::Exc
  *          is to delete using decrRef() as it is no more needed.
  *  \throw If \a this is not allocated.
  */
-DataArrayInt *DataArrayInt::renumber(const int *old2New) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::renumber(const int *old2New) const
 {
   checkAllocated();
   int nbTuples=getNumberOfTuples();
@@ -6279,7 +7004,7 @@ DataArrayInt *DataArrayInt::renumber(const int *old2New) const throw(INTERP_KERN
  *  \return DataArrayInt * - the new instance of DataArrayInt that the caller
  *          is to delete using decrRef() as it is no more needed.
  */
-DataArrayInt *DataArrayInt::renumberR(const int *new2Old) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::renumberR(const int *new2Old) const
 {
   checkAllocated();
   int nbTuples=getNumberOfTuples();
@@ -6308,7 +7033,7 @@ DataArrayInt *DataArrayInt::renumberR(const int *new2Old) const throw(INTERP_KER
  *  \return DataArrayInt * - the new instance of DataArrayInt that the caller
  *          is to delete using decrRef() as it is no more needed.
  */
-DataArrayInt *DataArrayInt::renumberAndReduce(const int *old2New, int newNbOfTuple) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::renumberAndReduce(const int *old2New, int newNbOfTuple) const
 {
   checkAllocated();
   int nbTuples=getNumberOfTuples();
@@ -6378,7 +7103,7 @@ DataArrayInt *DataArrayInt::selectByTupleId(const int *new2OldBg, const int *new
  *          is to delete using decrRef() as it is no more needed.
  *  \throw If \a new2OldEnd - \a new2OldBg > \a this->getNumberOfTuples().
  */
-DataArrayInt *DataArrayInt::selectByTupleIdSafe(const int *new2OldBg, const int *new2OldEnd) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::selectByTupleIdSafe(const int *new2OldBg, const int *new2OldEnd) const
 {
   checkAllocated();
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=DataArrayInt::New();
@@ -6413,7 +7138,7 @@ DataArrayInt *DataArrayInt::selectByTupleIdSafe(const int *new2OldBg, const int 
  *          is to delete using decrRef() as it is no more needed.
  *  \sa DataArrayInt::substr.
  */
-DataArrayInt *DataArrayInt::selectByTupleId2(int bg, int end2, int step) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::selectByTupleId2(int bg, int end2, int step) const
 {
   checkAllocated();
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=DataArrayInt::New();
@@ -6440,7 +7165,7 @@ DataArrayInt *DataArrayInt::selectByTupleId2(int bg, int end2, int step) const t
  *  \throw If \a end > \a this->getNumberOfTuples().
  *  \throw If \a this is not allocated.
  */
-DataArrayInt *DataArrayInt::selectByTupleRanges(const std::vector<std::pair<int,int> >& ranges) const throw(INTERP_KERNEL::Exception)
+DataArray *DataArrayInt::selectByTupleRanges(const std::vector<std::pair<int,int> >& ranges) const
 {
   checkAllocated();
   int nbOfComp=getNumberOfComponents();
@@ -6506,7 +7231,7 @@ DataArrayInt *DataArrayInt::selectByTupleRanges(const std::vector<std::pair<int,
  *  \throw If \a this->getNumberOfComponents() != 1.
  *  \throw If there are equal values in \a this array.
  */
-DataArrayInt *DataArrayInt::checkAndPreparePermutation() const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::checkAndPreparePermutation() const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -6515,8 +7240,46 @@ DataArrayInt *DataArrayInt::checkAndPreparePermutation() const throw(INTERP_KERN
   const int *pt=getConstPointer();
   int *pt2=CheckAndPreparePermutation(pt,pt+nbTuples);
   DataArrayInt *ret=DataArrayInt::New();
-  ret->useArray(pt2,true,CPP_DEALLOC,nbTuples,1);
+  ret->useArray(pt2,true,C_DEALLOC,nbTuples,1);
   return ret;
+}
+
+/*!
+ * This method tries to find the permutation to apply to the first input \a ids1 to obtain the same array (without considering strings informations) the second
+ * input array \a ids2.
+ * \a ids1 and \a ids2 are expected to be both a list of ids (both with number of components equal to one) not sorted and with values that can be negative.
+ * This method will throw an exception is no such permutation array can be obtained. It is typically the case if there is some ids in \a ids1 not in \a ids2 or
+ * inversely.
+ * In case of success (no throw) : \c ids1->renumber(ret)->isEqual(ids2) where \a ret is the return of this method.
+ *
+ * \return DataArrayInt * - a new instance of DataArrayInt. The caller is to delete this
+ *          array using decrRef() as it is no more needed.
+ * \throw If either ids1 or ids2 is null not allocated or not with one components.
+ * 
+ */
+DataArrayInt *DataArrayInt::FindPermutationFromFirstToSecond(const DataArrayInt *ids1, const DataArrayInt *ids2)
+{
+  if(!ids1 || !ids2)
+    throw INTERP_KERNEL::Exception("DataArrayInt::FindPermutationFromFirstToSecond : the two input arrays must be not null !");
+  if(!ids1->isAllocated() || !ids2->isAllocated())
+    throw INTERP_KERNEL::Exception("DataArrayInt::FindPermutationFromFirstToSecond : the two input arrays must be allocated !");
+  if(ids1->getNumberOfComponents()!=1 || ids2->getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::FindPermutationFromFirstToSecond : the two input arrays have exactly one component !");
+  if(ids1->getNumberOfTuples()!=ids2->getNumberOfTuples())
+    {
+      std::ostringstream oss; oss << "DataArrayInt::FindPermutationFromFirstToSecond : first array has " << ids1->getNumberOfTuples() << " tuples and the second one " << ids2->getNumberOfTuples() << " tuples ! No chance to find a permutation between the 2 arrays !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> p1(ids1->deepCpy());
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> p2(ids2->deepCpy());
+  p1->sort(true); p2->sort(true);
+  if(!p1->isEqualWithoutConsideringStr(*p2))
+    throw INTERP_KERNEL::Exception("DataArrayInt::FindPermutationFromFirstToSecond : the two arrays are not lying on same ids ! Impossible to find a permutation between the 2 arrays !");
+  p1=ids1->checkAndPreparePermutation();
+  p2=ids2->checkAndPreparePermutation();
+  p2=p2->invertArrayO2N2N2O(p2->getNumberOfTuples());
+  p2=p2->selectByTupleIdSafe(p1->begin(),p1->end());
+  return p2.retn();
 }
 
 /*!
@@ -6554,7 +7317,7 @@ DataArrayInt *DataArrayInt::checkAndPreparePermutation() const throw(INTERP_KERN
  *  \throw If \a this->getNumberOfComponents() != 1.
  *  \throw If any value in \a this is more or equal to \a targetNb.
  */
-void DataArrayInt::changeSurjectiveFormat(int targetNb, DataArrayInt *&arr, DataArrayInt *&arrI) const throw(INTERP_KERNEL::Exception)
+void DataArrayInt::changeSurjectiveFormat(int targetNb, DataArrayInt *&arr, DataArrayInt *&arrI) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -6616,7 +7379,7 @@ void DataArrayInt::changeSurjectiveFormat(int targetNb, DataArrayInt *&arr, Data
  *          array using decrRef() as it is no more needed.
  *  \throw If any value of \a arr breaks condition ( 0 <= \a arr[ i ] < \a nbOfOldTuples ).
  */
-DataArrayInt *DataArrayInt::BuildOld2NewArrayFromSurjectiveFormat2(int nbOfOldTuples, const int *arr, const int *arrIBg, const int *arrIEnd, int &newNbOfTuples) throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::BuildOld2NewArrayFromSurjectiveFormat2(int nbOfOldTuples, const int *arr, const int *arrIBg, const int *arrIEnd, int &newNbOfTuples)
 {
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=DataArrayInt::New();
   ret->alloc(nbOfOldTuples,1);
@@ -6668,7 +7431,7 @@ DataArrayInt *DataArrayInt::BuildOld2NewArrayFromSurjectiveFormat2(int nbOfOldTu
  *  \throw If \a this is not allocated.
  *  \throw If \a this->getNumberOfComponents() != 1.
  */
-DataArrayInt *DataArrayInt::buildPermArrPerLevel() const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::buildPermArrPerLevel() const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -6717,7 +7480,7 @@ DataArrayInt *DataArrayInt::buildPermArrPerLevel() const throw(INTERP_KERNEL::Ex
  *  \throw If \a this is not allocated.
  *  \throw If \a this->getNumberOfComponents() != 1.
  */
-bool DataArrayInt::isIdentity() const throw(INTERP_KERNEL::Exception)
+bool DataArrayInt::isIdentity() const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -6737,7 +7500,7 @@ bool DataArrayInt::isIdentity() const throw(INTERP_KERNEL::Exception)
  *  \throw If \a this is not allocated.
  *  \throw If \a this->getNumberOfComponents() != 1
  */
-bool DataArrayInt::isUniform(int val) const throw(INTERP_KERNEL::Exception)
+bool DataArrayInt::isUniform(int val) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -6784,7 +7547,7 @@ DataArrayDouble *DataArrayInt::convertToDblArr() const
     \throw If \a tupleIdEnd != -1 && \a tupleIdEnd < \a this->getNumberOfTuples().
  *  \sa DataArrayInt::selectByTupleId2
  */
-DataArrayInt *DataArrayInt::substr(int tupleIdBg, int tupleIdEnd) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::substr(int tupleIdBg, int tupleIdEnd) const
 {
   checkAllocated();
   int nbt=getNumberOfTuples();
@@ -6819,7 +7582,7 @@ DataArrayInt *DataArrayInt::substr(int tupleIdBg, int tupleIdEnd) const throw(IN
  *  \throw If the rearrange method would lead to a number of tuples higher than 2147483647 (maximal capacity of int32 !).
  *  \warning This method erases all (name and unit) component info set before!
  */
-void DataArrayInt::rearrange(int newNbOfCompo) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::rearrange(int newNbOfCompo)
 {
   checkAllocated();
   if(newNbOfCompo<1)
@@ -6844,7 +7607,7 @@ void DataArrayInt::rearrange(int newNbOfCompo) throw(INTERP_KERNEL::Exception)
  *  \throw If \a this is not allocated.
  *  \sa rearrange()
  */
-void DataArrayInt::transpose() throw(INTERP_KERNEL::Exception)
+void DataArrayInt::transpose()
 {
   checkAllocated();
   int nbOfTuples=getNumberOfTuples();
@@ -6864,7 +7627,7 @@ void DataArrayInt::transpose() throw(INTERP_KERNEL::Exception)
  *          is to delete using decrRef() as it is no more needed.
  *  \throw If \a this is not allocated.
  */
-DataArrayInt *DataArrayInt::changeNbOfComponents(int newNbOfComp, int dftValue) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::changeNbOfComponents(int newNbOfComp, int dftValue) const
 {
   checkAllocated();
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=DataArrayInt::New();
@@ -6882,10 +7645,10 @@ DataArrayInt *DataArrayInt::changeNbOfComponents(int newNbOfComp, int dftValue) 
       for(;j<newNbOfComp;j++)
         nc[newNbOfComp*i+j]=dftValue;
     }
-  ret->setName(getName().c_str());
+  ret->setName(getName());
   for(int i=0;i<dim;i++)
-    ret->setInfoOnComponent(i,getInfoOnComponent(i).c_str());
-  ret->setName(getName().c_str());
+    ret->setInfoOnComponent(i,getInfoOnComponent(i));
+  ret->setName(getName());
   return ret.retn();
 }
 
@@ -6894,9 +7657,12 @@ DataArrayInt *DataArrayInt::changeNbOfComponents(int newNbOfComp, int dftValue) 
  * than the current number the array is truncated, otherwise the array is extended.
  *  \param [in] nbOfTuples - new number of tuples. 
  *  \throw If \a this is not allocated.
+ *  \throw If \a nbOfTuples is negative.
  */
-void DataArrayInt::reAlloc(int nbOfTuples) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::reAlloc(int nbOfTuples)
 {
+  if(nbOfTuples<0)
+    throw INTERP_KERNEL::Exception("DataArrayInt::reAlloc : input new number of tuples should be >=0 !");
   checkAllocated();
   _mem.reAlloc(getNumberOfComponents()*(std::size_t)nbOfTuples);
   declareAsNew();
@@ -6916,9 +7682,11 @@ void DataArrayInt::reAlloc(int nbOfTuples) throw(INTERP_KERNEL::Exception)
  *  \throw If a component index (\a i) is not valid: 
  *         \a i < 0 || \a i >= \a this->getNumberOfComponents().
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarrayint_keepselectedcomponents "Here is a Python example".
+ *  \endif
  */
-DataArrayInt *DataArrayInt::keepSelectedComponents(const std::vector<int>& compoIds) const throw(INTERP_KERNEL::Exception)
+DataArray *DataArrayInt::keepSelectedComponents(const std::vector<int>& compoIds) const
 {
   checkAllocated();
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New());
@@ -6945,11 +7713,13 @@ DataArrayInt *DataArrayInt::keepSelectedComponents(const std::vector<int>& compo
  *  \throw If \a this is not allocated.
  *  \throw If \a this and \a other arrays have different number of tuples.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref cpp_mcdataarrayint_meldwith "Here is a C++ example".
  *
  *  \ref py_mcdataarrayint_meldwith "Here is a Python example".
+ *  \endif
  */
-void DataArrayInt::meldWith(const DataArrayInt *other) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::meldWith(const DataArrayInt *other)
 {
   if(!other)
     throw INTERP_KERNEL::Exception("DataArrayInt::meldWith : DataArrayInt pointer in input is NULL !");
@@ -6960,7 +7730,7 @@ void DataArrayInt::meldWith(const DataArrayInt *other) throw(INTERP_KERNEL::Exce
     throw INTERP_KERNEL::Exception("DataArrayInt::meldWith : mismatch of number of tuples !");
   int nbOfComp1=getNumberOfComponents();
   int nbOfComp2=other->getNumberOfComponents();
-  int *newArr=new int[nbOfTuples*(nbOfComp1+nbOfComp2)];
+  int *newArr=(int *)malloc(nbOfTuples*(nbOfComp1+nbOfComp2)*sizeof(int));
   int *w=newArr;
   const int *inp1=getConstPointer();
   const int *inp2=other->getConstPointer();
@@ -6969,7 +7739,7 @@ void DataArrayInt::meldWith(const DataArrayInt *other) throw(INTERP_KERNEL::Exce
       w=std::copy(inp1,inp1+nbOfComp1,w);
       w=std::copy(inp2,inp2+nbOfComp2,w);
     }
-  useArray(newArr,true,CPP_DEALLOC,nbOfTuples,nbOfComp1+nbOfComp2);
+  useArray(newArr,true,C_DEALLOC,nbOfTuples,nbOfComp1+nbOfComp2);
   std::vector<int> compIds(nbOfComp2);
   for(int i=0;i<nbOfComp2;i++)
     compIds[i]=nbOfComp1+i;
@@ -6988,9 +7758,11 @@ void DataArrayInt::meldWith(const DataArrayInt *other) throw(INTERP_KERNEL::Exce
  *  \throw If \a compoIds.size() != \a a->getNumberOfComponents().
  *  \throw If \a compoIds[i] < 0 or \a compoIds[i] > \a this->getNumberOfComponents().
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarrayint_setselectedcomponents "Here is a Python example".
+ *  \endif
  */
-void DataArrayInt::setSelectedComponents(const DataArrayInt *a, const std::vector<int>& compoIds) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::setSelectedComponents(const DataArrayInt *a, const std::vector<int>& compoIds)
 {
   if(!a)
     throw INTERP_KERNEL::Exception("DataArrayInt::setSelectedComponents : input DataArrayInt is NULL !");
@@ -7039,9 +7811,11 @@ void DataArrayInt::setSelectedComponents(const DataArrayInt *a, const std::vecto
  *  \throw If \a strictCompoCompare == \a true && \a a->getNumberOfComponents() !=
  *            \c len(\c range(\a bgComp,\a endComp,\a stepComp)).
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarrayint_setpartofvalues1 "Here is a Python example".
+ *  \endif
  */
-void DataArrayInt::setPartOfValues1(const DataArrayInt *a, int bgTuples, int endTuples, int stepTuples, int bgComp, int endComp, int stepComp, bool strictCompoCompare) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::setPartOfValues1(const DataArrayInt *a, int bgTuples, int endTuples, int stepTuples, int bgComp, int endComp, int stepComp, bool strictCompoCompare)
 {
   if(!a)
     throw INTERP_KERNEL::Exception("DataArrayInt::setPartOfValues1 : DataArrayInt pointer in input is NULL !");
@@ -7102,9 +7876,11 @@ void DataArrayInt::setPartOfValues1(const DataArrayInt *a, int bgTuples, int end
  *            non-empty range of increasing indices or indices are out of a valid range
  *            for \this array.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarrayint_setpartofvaluessimple1 "Here is a Python example".
+ *  \endif
  */
-void DataArrayInt::setPartOfValuesSimple1(int a, int bgTuples, int endTuples, int stepTuples, int bgComp, int endComp, int stepComp) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::setPartOfValuesSimple1(int a, int bgTuples, int endTuples, int stepTuples, int bgComp, int endComp, int stepComp)
 {
   const char msg[]="DataArrayInt::setPartOfValuesSimple1";
   checkAllocated();
@@ -7157,9 +7933,11 @@ void DataArrayInt::setPartOfValuesSimple1(int a, int bgTuples, int endTuples, in
  *  \throw In the second *mode of usage*, if \a a->getNumberOfTuples() != 1 or
  *         <em> a->getNumberOfComponents() != (endComp - bgComp)</em>.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarrayint_setpartofvalues2 "Here is a Python example".
+ *  \endif
  */
-void DataArrayInt::setPartOfValues2(const DataArrayInt *a, const int *bgTuples, const int *endTuples, const int *bgComp, const int *endComp, bool strictCompoCompare) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::setPartOfValues2(const DataArrayInt *a, const int *bgTuples, const int *endTuples, const int *bgComp, const int *endComp, bool strictCompoCompare)
 {
   if(!a)
     throw INTERP_KERNEL::Exception("DataArrayInt::setPartOfValues2 : DataArrayInt pointer in input is NULL !");
@@ -7228,9 +8006,11 @@ void DataArrayInt::setPartOfValues2(const DataArrayInt *a, const int *bgTuples, 
  *  \throw If any index of tuple/component given by <em>bgTuples / bgComp</em> is
  *         out of a valid range for \a this array.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarrayint_setpartofvaluessimple2 "Here is a Python example".
+ *  \endif
  */
-void DataArrayInt::setPartOfValuesSimple2(int a, const int *bgTuples, const int *endTuples, const int *bgComp, const int *endComp) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::setPartOfValuesSimple2(int a, const int *bgTuples, const int *endTuples, const int *bgComp, const int *endComp)
 {
   checkAllocated();
   int nbComp=getNumberOfComponents();
@@ -7288,9 +8068,11 @@ void DataArrayInt::setPartOfValuesSimple2(int a, const int *bgTuples, const int 
  *            non-empty range of increasing indices or indices are out of a valid range
  *            for \this array.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarrayint_setpartofvalues3 "Here is a Python example".
+ *  \endif
  */
-void DataArrayInt::setPartOfValues3(const DataArrayInt *a, const int *bgTuples, const int *endTuples, int bgComp, int endComp, int stepComp, bool strictCompoCompare) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::setPartOfValues3(const DataArrayInt *a, const int *bgTuples, const int *endTuples, int bgComp, int endComp, int stepComp, bool strictCompoCompare)
 {
   if(!a)
     throw INTERP_KERNEL::Exception("DataArrayInt::setPartOfValues3 : DataArrayInt pointer in input is NULL !");
@@ -7360,9 +8142,11 @@ void DataArrayInt::setPartOfValues3(const DataArrayInt *a, const int *bgTuples, 
  *            non-empty range of increasing indices or indices are out of a valid range
  *            for \this array.
  *
+ *  \if ENABLE_EXAMPLES
  *  \ref py_mcdataarrayint_setpartofvaluessimple3 "Here is a Python example".
+ *  \endif
  */
-void DataArrayInt::setPartOfValuesSimple3(int a, const int *bgTuples, const int *endTuples, int bgComp, int endComp, int stepComp) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::setPartOfValuesSimple3(int a, const int *bgTuples, const int *endTuples, int bgComp, int endComp, int stepComp)
 {
   const char msg[]="DataArrayInt::setPartOfValuesSimple3";
   checkAllocated();
@@ -7379,7 +8163,7 @@ void DataArrayInt::setPartOfValuesSimple3(int a, const int *bgTuples, const int 
       }
 }
 
-void DataArrayInt::setPartOfValues4(const DataArrayInt *a, int bgTuples, int endTuples, int stepTuples, const int *bgComp, const int *endComp, bool strictCompoCompare) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::setPartOfValues4(const DataArrayInt *a, int bgTuples, int endTuples, int stepTuples, const int *bgComp, const int *endComp, bool strictCompoCompare)
 {
   if(!a)
     throw INTERP_KERNEL::Exception("DataArrayInt::setPartOfValues4 : input DataArrayInt is NULL !");
@@ -7423,7 +8207,7 @@ void DataArrayInt::setPartOfValues4(const DataArrayInt *a, int bgTuples, int end
     }
 }
 
-void DataArrayInt::setPartOfValuesSimple4(int a, int bgTuples, int endTuples, int stepTuples, const int *bgComp, const int *endComp) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::setPartOfValuesSimple4(int a, int bgTuples, int endTuples, int stepTuples, const int *bgComp, const int *endComp)
 {
   const char msg[]="DataArrayInt::setPartOfValuesSimple4";
   checkAllocated();
@@ -7460,7 +8244,7 @@ void DataArrayInt::setPartOfValuesSimple4(int a, int bgTuples, int endTuples, in
  *  \throw If any tuple index given by \a tuplesSelec is out of a valid range for 
  *         the corresponding (\a this or \a a) array.
  */
-void DataArrayInt::setPartOfValuesAdv(const DataArrayInt *a, const DataArrayInt *tuplesSelec) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::setPartOfValuesAdv(const DataArrayInt *a, const DataArrayInt *tuplesSelec)
 {
   if(!a || !tuplesSelec)
     throw INTERP_KERNEL::Exception("DataArrayInt::setPartOfValuesAdv : DataArrayInt pointer in input is NULL !");
@@ -7499,7 +8283,7 @@ void DataArrayInt::setPartOfValuesAdv(const DataArrayInt *a, const DataArrayInt 
 }
 
 /*!
- * Copy some tuples from another DataArrayInt (\a a) into contiguous tuples
+ * Copy some tuples from another DataArrayInt (\a aBase) into contiguous tuples
  * of \a this array. Textual data is not copied. Both arrays must have equal number of
  * components.
  * The tuples to assign to are defined by index of the first tuple, and
@@ -7508,21 +8292,26 @@ void DataArrayInt::setPartOfValuesAdv(const DataArrayInt *a, const DataArrayInt 
  * All components of selected tuples are copied.
  *  \param [in] tupleIdStart - index of the first tuple of \a this array to assign
  *              values to.
- *  \param [in] a - the array to copy values from.
- *  \param [in] tuplesSelec - the array specifying tuples of \a a to copy.
+ *  \param [in] aBase - the array to copy values from.
+ *  \param [in] tuplesSelec - the array specifying tuples of \a aBase to copy.
  *  \throw If \a this is not allocated.
- *  \throw If \a a is NULL.
- *  \throw If \a a is not allocated.
+ *  \throw If \a aBase is NULL.
+ *  \throw If \a aBase is not allocated.
  *  \throw If \a tuplesSelec is NULL.
  *  \throw If \a tuplesSelec is not allocated.
  *  \throw If <em>this->getNumberOfComponents() != a->getNumberOfComponents()</em>.
  *  \throw If \a tuplesSelec->getNumberOfComponents() != 1.
  *  \throw If <em>tupleIdStart + tuplesSelec->getNumberOfTuples() > this->getNumberOfTuples().</em>
  *  \throw If any tuple index given by \a tuplesSelec is out of a valid range for 
- *         \a a array.
+ *         \a aBase array.
  */
-void DataArrayInt::setContigPartOfSelectedValues(int tupleIdStart, const DataArrayInt*a, const DataArrayInt *tuplesSelec) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::setContigPartOfSelectedValues(int tupleIdStart, const DataArray *aBase, const DataArrayInt *tuplesSelec)
 {
+  if(!aBase || !tuplesSelec)
+    throw INTERP_KERNEL::Exception("DataArrayInt::setContigPartOfSelectedValues : input DataArray is NULL !");
+  const DataArrayInt *a=dynamic_cast<const DataArrayInt *>(aBase);
+  if(!a)
+    throw INTERP_KERNEL::Exception("DataArrayInt::setContigPartOfSelectedValues : input DataArray aBase is not a DataArrayInt !");
   checkAllocated();
   a->checkAllocated();
   tuplesSelec->checkAllocated();
@@ -7554,7 +8343,7 @@ void DataArrayInt::setContigPartOfSelectedValues(int tupleIdStart, const DataArr
 }
 
 /*!
- * Copy some tuples from another DataArrayInt (\a a) into contiguous tuples
+ * Copy some tuples from another DataArrayInt (\a aBase) into contiguous tuples
  * of \a this array. Textual data is not copied. Both arrays must have equal number of
  * components.
  * The tuples to copy are defined by three values similar to parameters of
@@ -7564,22 +8353,27 @@ void DataArrayInt::setContigPartOfSelectedValues(int tupleIdStart, const DataArr
  * All components of selected tuples are copied.
  *  \param [in] tupleIdStart - index of the first tuple of \a this array to assign
  *              values to.
- *  \param [in] a - the array to copy values from.
- *  \param [in] bg - index of the first tuple to copy of the array \a a.
- *  \param [in] end2 - index of the tuple of \a a before which the tuples to copy
+ *  \param [in] aBase - the array to copy values from.
+ *  \param [in] bg - index of the first tuple to copy of the array \a aBase.
+ *  \param [in] end2 - index of the tuple of \a aBase before which the tuples to copy
  *              are located.
  *  \param [in] step - index increment to get index of the next tuple to copy.
  *  \throw If \a this is not allocated.
- *  \throw If \a a is NULL.
- *  \throw If \a a is not allocated.
- *  \throw If <em>this->getNumberOfComponents() != a->getNumberOfComponents()</em>.
+ *  \throw If \a aBase is NULL.
+ *  \throw If \a aBase is not allocated.
+ *  \throw If <em>this->getNumberOfComponents() != aBase->getNumberOfComponents()</em>.
  *  \throw If <em>tupleIdStart + len(range(bg,end2,step)) > this->getNumberOfTuples().</em>
  *  \throw If parameters specifying tuples to copy, do not give a
  *            non-empty range of increasing indices or indices are out of a valid range
- *            for the array \a a.
+ *            for the array \a aBase.
  */
-void DataArrayInt::setContigPartOfSelectedValues2(int tupleIdStart, const DataArrayInt *a, int bg, int end2, int step) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::setContigPartOfSelectedValues2(int tupleIdStart, const DataArray *aBase, int bg, int end2, int step)
 {
+  if(!aBase)
+    throw INTERP_KERNEL::Exception("DataArrayInt::setContigPartOfSelectedValues2 : input DataArray is NULL !");
+  const DataArrayInt *a=dynamic_cast<const DataArrayInt *>(aBase);
+  if(!a)
+    throw INTERP_KERNEL::Exception("DataArrayInt::setContigPartOfSelectedValues2 : input DataArray aBase is not a DataArrayInt !");
   checkAllocated();
   a->checkAllocated();
   int nbOfComp=getNumberOfComponents();
@@ -7613,7 +8407,7 @@ void DataArrayInt::setContigPartOfSelectedValues2(int tupleIdStart, const DataAr
  *  \throw If condition <em>( 0 <= tupleId < this->getNumberOfTuples() )</em> is violated.
  *  \throw If condition <em>( 0 <= compoId < this->getNumberOfComponents() )</em> is violated.
  */
-int DataArrayInt::getIJSafe(int tupleId, int compoId) const throw(INTERP_KERNEL::Exception)
+int DataArrayInt::getIJSafe(int tupleId, int compoId) const
 {
   checkAllocated();
   if(tupleId<0 || tupleId>=getNumberOfTuples())
@@ -7630,13 +8424,31 @@ int DataArrayInt::getIJSafe(int tupleId, int compoId) const throw(INTERP_KERNEL:
 }
 
 /*!
- * Returns the last value of \a this. 
- *  \return double - the last value of \a this array.
+ * Returns the first value of \a this. 
+ *  \return int - the last value of \a this array.
  *  \throw If \a this is not allocated.
  *  \throw If \a this->getNumberOfComponents() != 1.
  *  \throw If \a this->getNumberOfTuples() < 1.
  */
-int DataArrayInt::back() const throw(INTERP_KERNEL::Exception)
+int DataArrayInt::front() const
+{
+  checkAllocated();
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::front : number of components not equal to one !");
+  int nbOfTuples=getNumberOfTuples();
+  if(nbOfTuples<1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::front : number of tuples must be >= 1 !");
+  return *(getConstPointer());
+}
+
+/*!
+ * Returns the last value of \a this. 
+ *  \return int - the last value of \a this array.
+ *  \throw If \a this is not allocated.
+ *  \throw If \a this->getNumberOfComponents() != 1.
+ *  \throw If \a this->getNumberOfTuples() < 1.
+ */
+int DataArrayInt::back() const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -7665,26 +8477,27 @@ void DataArrayInt::SetArrayIn(DataArrayInt *newArray, DataArrayInt* &arrayToSet)
     }
 }
 
-DataArrayIntIterator *DataArrayInt::iterator() throw(INTERP_KERNEL::Exception)
+DataArrayIntIterator *DataArrayInt::iterator()
 {
   return new DataArrayIntIterator(this);
 }
 
 /*!
  * Creates a new DataArrayInt containing IDs (indices) of tuples holding value equal to a
- * given one.
+ * given one. The ids are sorted in the ascending order.
  *  \param [in] val - the value to find within \a this.
  *  \return DataArrayInt * - a new instance of DataArrayInt. The caller is to delete this
  *          array using decrRef() as it is no more needed.
  *  \throw If \a this is not allocated.
  *  \throw If \a this->getNumberOfComponents() != 1.
+ *  \sa DataArrayInt::getIdsEqualTuple
  */
-DataArrayInt *DataArrayInt::getIdsEqual(int val) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::getIdsEqual(int val) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
     throw INTERP_KERNEL::Exception("DataArrayInt::getIdsEqual : the array must have only one component, you can call 'rearrange' method before !");
-  const int *cptr=getConstPointer();
+  const int *cptr(getConstPointer());
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(0,1);
   int nbOfTuples=getNumberOfTuples();
   for(int i=0;i<nbOfTuples;i++,cptr++)
@@ -7702,12 +8515,12 @@ DataArrayInt *DataArrayInt::getIdsEqual(int val) const throw(INTERP_KERNEL::Exce
  *  \throw If \a this is not allocated.
  *  \throw If \a this->getNumberOfComponents() != 1.
  */
-DataArrayInt *DataArrayInt::getIdsNotEqual(int val) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::getIdsNotEqual(int val) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
     throw INTERP_KERNEL::Exception("DataArrayInt::getIdsNotEqual : the array must have only one component, you can call 'rearrange' method before !");
-  const int *cptr=getConstPointer();
+  const int *cptr(getConstPointer());
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(0,1);
   int nbOfTuples=getNumberOfTuples();
   for(int i=0;i<nbOfTuples;i++,cptr++)
@@ -7716,6 +8529,45 @@ DataArrayInt *DataArrayInt::getIdsNotEqual(int val) const throw(INTERP_KERNEL::E
   return ret.retn();
 }
 
+/*!
+ * Creates a new DataArrayInt containing IDs (indices) of tuples holding tuple equal to those defined by [ \a tupleBg , \a tupleEnd )
+ * This method is an extension of  DataArrayInt::getIdsEqual method.
+ *
+ *  \param [in] tupleBg - the begin (included) of the input tuple to find within \a this.
+ *  \param [in] tupleEnd - the end (excluded) of the input tuple to find within \a this.
+ *  \return DataArrayInt * - a new instance of DataArrayInt. The caller is to delete this
+ *          array using decrRef() as it is no more needed.
+ *  \throw If \a this is not allocated.
+ *  \throw If \a this->getNumberOfComponents() != std::distance(tupleBg,tupleEnd).
+ * \throw If \a this->getNumberOfComponents() is equal to 0.
+ * \sa DataArrayInt::getIdsEqual
+ */
+DataArrayInt *DataArrayInt::getIdsEqualTuple(const int *tupleBg, const int *tupleEnd) const
+{
+  std::size_t nbOfCompoExp(std::distance(tupleBg,tupleEnd));
+  checkAllocated();
+  if(getNumberOfComponents()!=(int)nbOfCompoExp)
+    {
+      std::ostringstream oss; oss << "DataArrayInt::getIdsEqualTuple : mismatch of number of components. Input tuple has " << nbOfCompoExp << " whereas this array has " << getNumberOfComponents() << " components !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
+    }
+  if(nbOfCompoExp==0)
+    throw INTERP_KERNEL::Exception("DataArrayInt::getIdsEqualTuple : number of components should be > 0 !");
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(0,1);
+  const int *bg(begin()),*end2(end()),*work(begin());
+  while(work!=end2)
+    {
+      work=std::search(work,end2,tupleBg,tupleEnd);
+      if(work!=end2)
+        {
+          std::size_t pos(std::distance(bg,work));
+          if(pos%nbOfCompoExp==0)
+            ret->pushBackSilent(pos/nbOfCompoExp);
+          work++;
+        }
+    }
+  return ret.retn();
+}
 
 /*!
  * Assigns \a newValue to all elements holding \a oldValue within \a this
@@ -7726,7 +8578,7 @@ DataArrayInt *DataArrayInt::getIdsNotEqual(int val) const throw(INTERP_KERNEL::E
  *  \throw If \a this is not allocated.
  *  \throw If \a this->getNumberOfComponents() != 1.
  */
-int DataArrayInt::changeValue(int oldValue, int newValue) throw(INTERP_KERNEL::Exception)
+int DataArrayInt::changeValue(int oldValue, int newValue)
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -7755,7 +8607,7 @@ int DataArrayInt::changeValue(int oldValue, int newValue) throw(INTERP_KERNEL::E
  *          array using decrRef() as it is no more needed.
  *  \throw If \a this->getNumberOfComponents() != 1.
  */
-DataArrayInt *DataArrayInt::getIdsEqualList(const int *valsBg, const int *valsEnd) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::getIdsEqualList(const int *valsBg, const int *valsEnd) const
 {
   if(getNumberOfComponents()!=1)
     throw INTERP_KERNEL::Exception("DataArrayInt::getIdsEqualList : the array must have only one component, you can call 'rearrange' method before !");
@@ -7780,7 +8632,7 @@ DataArrayInt *DataArrayInt::getIdsEqualList(const int *valsBg, const int *valsEn
  *          array using decrRef() as it is no more needed.
  *  \throw If \a this->getNumberOfComponents() != 1.
  */
-DataArrayInt *DataArrayInt::getIdsNotEqualList(const int *valsBg, const int *valsEnd) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::getIdsNotEqualList(const int *valsBg, const int *valsEnd) const
 {
   if(getNumberOfComponents()!=1)
     throw INTERP_KERNEL::Exception("DataArrayInt::getIdsNotEqualList : the array must have only one component, you can call 'rearrange' method before !");
@@ -7807,7 +8659,7 @@ DataArrayInt *DataArrayInt::getIdsNotEqualList(const int *valsBg, const int *val
  * \return tuple id where \b tupl is. -1 if no such tuple exists in \b this.
  * \sa DataArrayInt::search, DataArrayInt::presenceOfTuple.
  */
-int DataArrayInt::locateTuple(const std::vector<int>& tupl) const throw(INTERP_KERNEL::Exception)
+int DataArrayInt::locateTuple(const std::vector<int>& tupl) const
 {
   checkAllocated();
   int nbOfCompo=getNumberOfComponents();
@@ -7840,7 +8692,7 @@ int DataArrayInt::locateTuple(const std::vector<int>& tupl) const throw(INTERP_K
  * This method differs from DataArrayInt::locateTuple in that the position is internal raw data is not considered here contrary to DataArrayInt::locateTuple.
  * \sa DataArrayInt::locateTuple
  */
-int DataArrayInt::search(const std::vector<int>& vals) const throw(INTERP_KERNEL::Exception)
+int DataArrayInt::search(const std::vector<int>& vals) const
 {
   checkAllocated();
   int nbOfCompo=getNumberOfComponents();
@@ -7860,7 +8712,7 @@ int DataArrayInt::search(const std::vector<int>& vals) const throw(INTERP_KERNEL
  * If not any tuple contains \b value -1 is returned.
  * \sa DataArrayInt::presenceOfValue
  */
-int DataArrayInt::locateValue(int value) const throw(INTERP_KERNEL::Exception)
+int DataArrayInt::locateValue(int value) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -7879,7 +8731,7 @@ int DataArrayInt::locateValue(int value) const throw(INTERP_KERNEL::Exception)
  * If not any tuple contains one of the values contained in 'vals' false is returned.
  * \sa DataArrayInt::presenceOfValue
  */
-int DataArrayInt::locateValue(const std::vector<int>& vals) const throw(INTERP_KERNEL::Exception)
+int DataArrayInt::locateValue(const std::vector<int>& vals) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -7894,6 +8746,29 @@ int DataArrayInt::locateValue(const std::vector<int>& vals) const throw(INTERP_K
 }
 
 /*!
+ * This method returns the number of values in \a this that are equals to input parameter \a value.
+ * This method only works for single component array.
+ *
+ * \return a value in [ 0, \c this->getNumberOfTuples() )
+ *
+ * \throw If \a this is not allocated
+ *
+ */
+int DataArrayInt::count(int value) const
+{
+  int ret=0;
+  checkAllocated();
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::count : must be applied on DataArrayInt with only one component, you can call 'rearrange' method before !");
+  const int *vals=begin();
+  int nbOfTuples=getNumberOfTuples();
+  for(int i=0;i<nbOfTuples;i++,vals++)
+    if(*vals==value)
+      ret++;
+  return ret;
+}
+
+/*!
  * This method is an extension of DataArrayInt::presenceOfValue method because this method works for DataArrayInt with
  * any number of components excepted 0 (an INTERP_KERNEL::Exception is thrown in this case).
  * This method searches in \b this is there is a tuple that matched the input parameter \b tupl.
@@ -7901,7 +8776,7 @@ int DataArrayInt::locateValue(const std::vector<int>& vals) const throw(INTERP_K
  * the input vector. An INTERP_KERNEL::Exception is thrown too if \b this is not allocated.
  * \sa DataArrayInt::locateTuple
  */
-bool DataArrayInt::presenceOfTuple(const std::vector<int>& tupl) const throw(INTERP_KERNEL::Exception)
+bool DataArrayInt::presenceOfTuple(const std::vector<int>& tupl) const
 {
   return locateTuple(tupl)!=-1;
 }
@@ -7915,7 +8790,7 @@ bool DataArrayInt::presenceOfTuple(const std::vector<int>& tupl) const throw(INT
  *  \throw If \a this->getNumberOfComponents() != 1.
  *  \sa locateValue()
  */
-bool DataArrayInt::presenceOfValue(int value) const throw(INTERP_KERNEL::Exception)
+bool DataArrayInt::presenceOfValue(int value) const
 {
   return locateValue(value)!=-1;
 }
@@ -7926,7 +8801,7 @@ bool DataArrayInt::presenceOfValue(int value) const throw(INTERP_KERNEL::Excepti
  * If not any tuple contains one of the values contained in 'vals' false is returned.
  * \sa DataArrayInt::locateValue
  */
-bool DataArrayInt::presenceOfValue(const std::vector<int>& vals) const throw(INTERP_KERNEL::Exception)
+bool DataArrayInt::presenceOfValue(const std::vector<int>& vals) const
 {
   return locateValue(vals)!=-1;
 }
@@ -7938,7 +8813,7 @@ bool DataArrayInt::presenceOfValue(const std::vector<int>& vals) const throw(INT
  *         component.
  *  \throw If \a this is not allocated.
  */
-void DataArrayInt::accumulate(int *res) const throw(INTERP_KERNEL::Exception)
+void DataArrayInt::accumulate(int *res) const
 {
   checkAllocated();
   const int *ptr=getConstPointer();
@@ -7949,7 +8824,7 @@ void DataArrayInt::accumulate(int *res) const throw(INTERP_KERNEL::Exception)
     std::transform(ptr+i*nbComps,ptr+(i+1)*nbComps,res,res,std::plus<int>());
 }
 
-int DataArrayInt::accumulate(int compId) const throw(INTERP_KERNEL::Exception)
+int DataArrayInt::accumulate(int compId) const
 {
   checkAllocated();
   const int *ptr=getConstPointer();
@@ -7961,6 +8836,65 @@ int DataArrayInt::accumulate(int compId) const throw(INTERP_KERNEL::Exception)
   for(int i=0;i<nbTuple;i++)
     ret+=ptr[i*nbComps+compId];
   return ret;
+}
+
+/*!
+ * This method accumulate using addition tuples in \a this using input index array [ \a bgOfIndex, \a endOfIndex ).
+ * The returned array will have same number of components than \a this and number of tuples equal to
+ * \c std::distance(bgOfIndex,endOfIndex) \b minus \b one.
+ *
+ * The input index array is expected to be ascendingly sorted in which the all referenced ids should be in [0, \c this->getNumberOfTuples).
+ *
+ * \param [in] bgOfIndex - begin (included) of the input index array.
+ * \param [in] endOfIndex - end (excluded) of the input index array.
+ * \return DataArrayInt * - the new instance having the same number of components than \a this.
+ * 
+ * \throw If bgOfIndex or end is NULL.
+ * \throw If input index array is not ascendingly sorted.
+ * \throw If there is an id in [ \a bgOfIndex, \a endOfIndex ) not in [0, \c this->getNumberOfTuples).
+ * \throw If std::distance(bgOfIndex,endOfIndex)==0.
+ */
+DataArrayInt *DataArrayInt::accumulatePerChunck(const int *bgOfIndex, const int *endOfIndex) const
+{
+  if(!bgOfIndex || !endOfIndex)
+    throw INTERP_KERNEL::Exception("DataArrayInt::accumulatePerChunck : input pointer NULL !");
+  checkAllocated();
+  int nbCompo=getNumberOfComponents();
+  int nbOfTuples=getNumberOfTuples();
+  int sz=(int)std::distance(bgOfIndex,endOfIndex);
+  if(sz<1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::accumulatePerChunck : invalid size of input index array !");
+  sz--;
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=DataArrayInt::New(); ret->alloc(sz,nbCompo);
+  const int *w=bgOfIndex;
+  if(*w<0 || *w>=nbOfTuples)
+    throw INTERP_KERNEL::Exception("DataArrayInt::accumulatePerChunck : The first element of the input index not in [0,nbOfTuples) !");
+  const int *srcPt=begin()+(*w)*nbCompo;
+  int *tmp=ret->getPointer();
+  for(int i=0;i<sz;i++,tmp+=nbCompo,w++)
+    {
+      std::fill(tmp,tmp+nbCompo,0);
+      if(w[1]>=w[0])
+        {
+          for(int j=w[0];j<w[1];j++,srcPt+=nbCompo)
+            {
+              if(j>=0 && j<nbOfTuples)
+                std::transform(srcPt,srcPt+nbCompo,tmp,tmp,std::plus<int>());
+              else
+                {
+                  std::ostringstream oss; oss << "DataArrayInt::accumulatePerChunck : At rank #" << i << " the input index array points to id " << j << " should be in [0," << nbOfTuples << ") !";
+                  throw INTERP_KERNEL::Exception(oss.str().c_str());
+                }
+            }
+        }
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::accumulatePerChunck : At rank #" << i << " the input index array is not in ascendingly sorted.";
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
+        }
+    }
+  ret->copyStringInfoFrom(*this);
+  return ret.retn();
 }
 
 /*!
@@ -8003,6 +8937,8 @@ DataArrayInt *DataArrayInt::Aggregate(const DataArrayInt *a1, const DataArrayInt
  * the number of component in the result array is same as that of each of given arrays.
  * Info on components is copied from the first of the given arrays. Number of components
  * in the given arrays must be  the same.
+ * If the number of non null of elements in \a arr is equal to one the returned object is a copy of it
+ * not the object itself.
  *  \param [in] arr - a sequence of arrays to include in the result array.
  *  \return DataArrayInt * - the new instance of DataArrayInt.
  *          The caller is to delete this result array using decrRef() as it is no more
@@ -8010,7 +8946,7 @@ DataArrayInt *DataArrayInt::Aggregate(const DataArrayInt *a1, const DataArrayInt
  *  \throw If all arrays within \a arr are NULL.
  *  \throw If getNumberOfComponents() of arrays within \a arr.
  */
-DataArrayInt *DataArrayInt::Aggregate(const std::vector<const DataArrayInt *>& arr) throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::Aggregate(const std::vector<const DataArrayInt *>& arr)
 {
   std::vector<const DataArrayInt *> a;
   for(std::vector<const DataArrayInt *>::const_iterator it4=arr.begin();it4!=arr.end();it4++)
@@ -8037,13 +8973,64 @@ DataArrayInt *DataArrayInt::Aggregate(const std::vector<const DataArrayInt *>& a
 }
 
 /*!
+ * This method takes as input a list of DataArrayInt instances \a arrs that represent each a packed index arrays.
+ * A packed index array is an allocated array with one component, and at least one tuple. The first element
+ * of each array in \a arrs must be 0. Each array in \a arrs is expected to be increasingly monotonic.
+ * This method is useful for users that want to aggregate a pair of DataArrayInt representing an indexed data (typically nodal connectivity index in unstructured meshes.
+ * 
+ * \return DataArrayInt * - a new object to be managed by the caller.
+ */
+DataArrayInt *DataArrayInt::AggregateIndexes(const std::vector<const DataArrayInt *>& arrs)
+{
+  int retSz=1;
+  for(std::vector<const DataArrayInt *>::const_iterator it4=arrs.begin();it4!=arrs.end();it4++)
+    {
+      if(*it4)
+        {
+          (*it4)->checkAllocated();
+          if((*it4)->getNumberOfComponents()!=1)
+            {
+              std::ostringstream oss; oss << "DataArrayInt::AggregateIndexes : presence of a DataArrayInt instance with nb of compo != 1 at pos " << std::distance(arrs.begin(),it4) << " !";
+              throw INTERP_KERNEL::Exception(oss.str().c_str());
+            }
+          int nbTupl=(*it4)->getNumberOfTuples();
+          if(nbTupl<1)
+            {
+              std::ostringstream oss; oss << "DataArrayInt::AggregateIndexes : presence of a DataArrayInt instance with nb of tuples < 1 at pos " << std::distance(arrs.begin(),it4) << " !";
+              throw INTERP_KERNEL::Exception(oss.str().c_str());
+            }
+          if((*it4)->front()!=0)
+            {
+              std::ostringstream oss; oss << "DataArrayInt::AggregateIndexes : presence of a DataArrayInt instance with front value != 0 at pos " << std::distance(arrs.begin(),it4) << " !";
+              throw INTERP_KERNEL::Exception(oss.str().c_str());
+            }
+          retSz+=nbTupl-1;
+        }
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::AggregateIndexes : presence of a null instance at pos " << std::distance(arrs.begin(),it4) << " !";
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
+        }
+    }
+  if(arrs.empty())
+    throw INTERP_KERNEL::Exception("DataArrayInt::AggregateIndexes : input list must be NON EMPTY !");
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=DataArrayInt::New();
+  ret->alloc(retSz,1);
+  int *pt=ret->getPointer(); *pt++=0;
+  for(std::vector<const DataArrayInt *>::const_iterator it=arrs.begin();it!=arrs.end();it++)
+    pt=std::transform((*it)->begin()+1,(*it)->end(),pt,std::bind2nd(std::plus<int>(),pt[-1]));
+  ret->copyStringInfoFrom(*(arrs[0]));
+  return ret.retn();
+}
+
+/*!
  * Returns the maximal value and its location within \a this one-dimensional array.
  *  \param [out] tupleId - index of the tuple holding the maximal value.
- *  \return double - the maximal value among all values of \a this array.
+ *  \return int - the maximal value among all values of \a this array.
  *  \throw If \a this->getNumberOfComponents() != 1
  *  \throw If \a this->getNumberOfTuples() < 1
  */
-int DataArrayInt::getMaxValue(int& tupleId) const throw(INTERP_KERNEL::Exception)
+int DataArrayInt::getMaxValue(int& tupleId) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -8063,7 +9050,7 @@ int DataArrayInt::getMaxValue(int& tupleId) const throw(INTERP_KERNEL::Exception
  *  \return int - the maximal value among all values of \a this array.
  *  \throw If \a this is not allocated.
  */
-int DataArrayInt::getMaxValueInArray() const throw(INTERP_KERNEL::Exception)
+int DataArrayInt::getMaxValueInArray() const
 {
   checkAllocated();
   const int *loc=std::max_element(begin(),end());
@@ -8077,7 +9064,7 @@ int DataArrayInt::getMaxValueInArray() const throw(INTERP_KERNEL::Exception)
  *  \throw If \a this->getNumberOfComponents() != 1
  *  \throw If \a this->getNumberOfTuples() < 1
  */
-int DataArrayInt::getMinValue(int& tupleId) const throw(INTERP_KERNEL::Exception)
+int DataArrayInt::getMinValue(int& tupleId) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -8097,7 +9084,7 @@ int DataArrayInt::getMinValue(int& tupleId) const throw(INTERP_KERNEL::Exception
  *  \return int - the minimal value among all values of \a this array.
  *  \throw If \a this is not allocated.
  */
-int DataArrayInt::getMinValueInArray() const throw(INTERP_KERNEL::Exception)
+int DataArrayInt::getMinValueInArray() const
 {
   checkAllocated();
   const int *loc=std::min_element(begin(),end());
@@ -8106,15 +9093,42 @@ int DataArrayInt::getMinValueInArray() const throw(INTERP_KERNEL::Exception)
 
 /*!
  * Converts every value of \a this array to its absolute value.
- *  \throw If \a this is not allocated.
+ * \b WARNING this method is non const. If a new DataArrayInt instance should be built containing the result of abs DataArrayInt::computeAbs
+ * should be called instead.
+ *
+ * \throw If \a this is not allocated.
+ * \sa DataArrayInt::computeAbs
  */
-void DataArrayInt::abs() throw(INTERP_KERNEL::Exception)
+void DataArrayInt::abs()
 {
   checkAllocated();
-  int *ptr=getPointer();
-  std::size_t nbOfElems=getNbOfElems();
+  int *ptr(getPointer());
+  std::size_t nbOfElems(getNbOfElems());
   std::transform(ptr,ptr+nbOfElems,ptr,std::ptr_fun<int,int>(std::abs));
   declareAsNew();
+}
+
+/*!
+ * This method builds a new instance of \a this object containing the result of std::abs applied of all elements in \a this.
+ * This method is a const method (that do not change any values in \a this) contrary to  DataArrayInt::abs method.
+ *
+ * \return DataArrayInt * - the new instance of DataArrayInt containing the
+ *         same number of tuples and component as \a this array.
+ *         The caller is to delete this result array using decrRef() as it is no more
+ *         needed.
+ * \throw If \a this is not allocated.
+ * \sa DataArrayInt::abs
+ */
+DataArrayInt *DataArrayInt::computeAbs() const
+{
+  checkAllocated();
+  DataArrayInt *newArr(DataArrayInt::New());
+  int nbOfTuples(getNumberOfTuples());
+  int nbOfComp(getNumberOfComponents());
+  newArr->alloc(nbOfTuples,nbOfComp);
+  std::transform(begin(),end(),newArr->getPointer(),std::ptr_fun<int,int>(std::abs));
+  newArr->copyStringInfoFrom(*this);
+  return newArr;
 }
 
 /*!
@@ -8125,7 +9139,7 @@ void DataArrayInt::abs() throw(INTERP_KERNEL::Exception)
  *  \param [in] compoId - the index of component to modify.
  *  \throw If \a this is not allocated.
  */
-void DataArrayInt::applyLin(int a, int b, int compoId) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::applyLin(int a, int b, int compoId)
 {
   checkAllocated();
   int *ptr=getPointer()+compoId;
@@ -8143,7 +9157,7 @@ void DataArrayInt::applyLin(int a, int b, int compoId) throw(INTERP_KERNEL::Exce
  *  \param [in] b - the second coefficient of the function.
  *  \throw If \a this is not allocated.
  */
-void DataArrayInt::applyLin(int a, int b) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::applyLin(int a, int b)
 {
   checkAllocated();
   int *ptr=getPointer();
@@ -8161,7 +9175,7 @@ void DataArrayInt::applyLin(int a, int b) throw(INTERP_KERNEL::Exception)
  *          needed.
  *  \throw If \a this is not allocated.
  */
-DataArrayInt *DataArrayInt::negate() const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::negate() const
 {
   checkAllocated();
   DataArrayInt *newArr=DataArrayInt::New();
@@ -8184,7 +9198,7 @@ DataArrayInt *DataArrayInt::negate() const throw(INTERP_KERNEL::Exception)
  *  \throw If \a this is not allocated.
  *  \throw If there is an element equal to 0 in \a this array.
  */
-void DataArrayInt::applyInv(int numerator) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::applyInv(int numerator)
 {
   checkAllocated();
   int *ptr=getPointer();
@@ -8212,7 +9226,7 @@ void DataArrayInt::applyInv(int numerator) throw(INTERP_KERNEL::Exception)
  *  \throw If \a this is not allocated.
  *  \throw If \a val == 0.
  */
-void DataArrayInt::applyDivideBy(int val) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::applyDivideBy(int val)
 {
   if(val==0)
     throw INTERP_KERNEL::Exception("DataArrayInt::applyDivideBy : Trying to divide by 0 !");
@@ -8230,7 +9244,7 @@ void DataArrayInt::applyDivideBy(int val) throw(INTERP_KERNEL::Exception)
  *  \throw If \a this is not allocated.
  *  \throw If \a val <= 0.
  */
-void DataArrayInt::applyModulus(int val) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::applyModulus(int val)
 {
   if(val<=0)
     throw INTERP_KERNEL::Exception("DataArrayInt::applyDivideBy : Trying to operate modulus on value <= 0 !");
@@ -8246,22 +9260,77 @@ void DataArrayInt::applyModulus(int val) throw(INTERP_KERNEL::Exception)
  * This method returns a newly allocated array storing stored ascendantly tuple ids in \b this so that
  * this[*id] in [\b vmin,\b vmax)
  * 
- * \param [in] vmin begin of range. This value is included in range.
- * \param [out] vmax end of range. This value is \b not included in range.
+ * \param [in] vmin begin of range. This value is included in range (included).
+ * \param [in] vmax end of range. This value is \b not included in range (excluded).
  * \return a newly allocated data array that the caller should deal with.
+ *
+ * \sa DataArrayInt::getIdsNotInRange
  */
-DataArrayInt *DataArrayInt::getIdsInRange(int vmin, int vmax) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::getIdsInRange(int vmin, int vmax) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
     throw INTERP_KERNEL::Exception("DataArrayInt::getIdsInRange : this must have exactly one component !");
-  const int *cptr=getConstPointer();
-  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=DataArrayInt::New(); ret->alloc(0,1);
-  int nbOfTuples=getNumberOfTuples();
+  const int *cptr(begin());
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(0,1);
+  int nbOfTuples(getNumberOfTuples());
   for(int i=0;i<nbOfTuples;i++,cptr++)
     if(*cptr>=vmin && *cptr<vmax)
       ret->pushBackSilent(i);
   return ret.retn();
+}
+
+/*!
+ * This method works only on data array with one component.
+ * This method returns a newly allocated array storing stored ascendantly tuple ids in \b this so that
+ * this[*id] \b not in [\b vmin,\b vmax)
+ * 
+ * \param [in] vmin begin of range. This value is \b not included in range (excluded).
+ * \param [in] vmax end of range. This value is included in range (included).
+ * \return a newly allocated data array that the caller should deal with.
+ * 
+ * \sa DataArrayInt::getIdsInRange
+ */
+DataArrayInt *DataArrayInt::getIdsNotInRange(int vmin, int vmax) const
+{
+  checkAllocated();
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::getIdsNotInRange : this must have exactly one component !");
+  const int *cptr(getConstPointer());
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(0,1);
+  int nbOfTuples(getNumberOfTuples());
+  for(int i=0;i<nbOfTuples;i++,cptr++)
+    if(*cptr<vmin || *cptr>=vmax)
+      ret->pushBackSilent(i);
+  return ret.retn();
+}
+
+/*!
+ * This method works only on data array with one component.
+ * This method checks that all ids in \b this are in [ \b vmin, \b vmax ). If there is at least one element in \a this not in [ \b vmin, \b vmax ) an exception will be thrown.
+ * 
+ * \param [in] vmin begin of range. This value is included in range (included).
+ * \param [in] vmax end of range. This value is \b not included in range (excluded).
+ * \return if all ids in \a this are so that (*this)[i]==i for all i in [ 0, \c this->getNumberOfTuples() ). */
+bool DataArrayInt::checkAllIdsInRange(int vmin, int vmax) const
+{
+  checkAllocated();
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::checkAllIdsInRange : this must have exactly one component !");
+  int nbOfTuples=getNumberOfTuples();
+  bool ret=true;
+  const int *cptr=getConstPointer();
+  for(int i=0;i<nbOfTuples;i++,cptr++)
+    {
+      if(*cptr>=vmin && *cptr<vmax)
+        { ret=ret && *cptr==i; }
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::checkAllIdsInRange : tuple #" << i << " has value " << *cptr << " should be in [" << vmin << "," << vmax << ") !";
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
+        }
+    }
+  return ret;
 }
 
 /*!
@@ -8274,7 +9343,7 @@ DataArrayInt *DataArrayInt::getIdsInRange(int vmin, int vmax) const throw(INTERP
  *  \throw If \a this is not allocated.
  *  \throw If there is an element equal to or less than 0 in \a this array.
  */
-void DataArrayInt::applyRModulus(int val) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::applyRModulus(int val)
 {
   checkAllocated();
   int *ptr=getPointer();
@@ -8302,7 +9371,7 @@ void DataArrayInt::applyRModulus(int val) throw(INTERP_KERNEL::Exception)
  *  \throw If \a this is not allocated.
  *  \throw If \a val < 0.
  */
-void DataArrayInt::applyPow(int val) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::applyPow(int val)
 {
   checkAllocated();
   if(val<0)
@@ -8311,7 +9380,7 @@ void DataArrayInt::applyPow(int val) throw(INTERP_KERNEL::Exception)
   std::size_t nbOfElems=getNbOfElems();
   if(val==0)
     {
-      std::fill(ptr,ptr+nbOfElems,1.);
+      std::fill(ptr,ptr+nbOfElems,1);
       return ;
     }
   for(std::size_t i=0;i<nbOfElems;i++,ptr++)
@@ -8334,7 +9403,7 @@ void DataArrayInt::applyPow(int val) throw(INTERP_KERNEL::Exception)
  *           array, all elements processed before detection of the zero element remain
  *           modified.
  */
-void DataArrayInt::applyRPow(int val) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::applyRPow(int val)
 {
   checkAllocated();
   int *ptr=getPointer();
@@ -8374,7 +9443,7 @@ void DataArrayInt::applyRPow(int val) throw(INTERP_KERNEL::Exception)
  *  \throw If any given array is not allocated.
  *  \throw If \a a1->getNumberOfTuples() != \a a2->getNumberOfTuples()
  */
-DataArrayInt *DataArrayInt::Meld(const DataArrayInt *a1, const DataArrayInt *a2) throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::Meld(const DataArrayInt *a1, const DataArrayInt *a2)
 {
   std::vector<const DataArrayInt *> arr(2);
   arr[0]=a1; arr[1]=a2;
@@ -8396,7 +9465,7 @@ DataArrayInt *DataArrayInt::Meld(const DataArrayInt *a1, const DataArrayInt *a2)
  *  \throw If any given array is not allocated.
  *  \throw If getNumberOfTuples() of arrays within \a arr is different.
  */
-DataArrayInt *DataArrayInt::Meld(const std::vector<const DataArrayInt *>& arr) throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::Meld(const std::vector<const DataArrayInt *>& arr)
 {
   std::vector<const DataArrayInt *> a;
   for(std::vector<const DataArrayInt *>::const_iterator it4=arr.begin();it4!=arr.end();it4++)
@@ -8433,7 +9502,7 @@ DataArrayInt *DataArrayInt::Meld(const std::vector<const DataArrayInt *>& arr) t
   int k=0;
   for(int i=0;i<(int)a.size();i++)
     for(int j=0;j<nbc[i];j++,k++)
-      ret->setInfoOnComponent(k,a[i]->getInfoOnComponent(j).c_str());
+      ret->setInfoOnComponent(k,a[i]->getInfoOnComponent(j));
   return ret;
 }
 
@@ -8461,7 +9530,7 @@ DataArrayInt *DataArrayInt::Meld(const std::vector<const DataArrayInt *>& arr) t
  *         delete this array using decrRef() as it is no more needed.
  *  \throw If any element ID in \a groups violates condition ( 0 <= ID < \a newNb ).
  */
-DataArrayInt *DataArrayInt::MakePartition(const std::vector<const DataArrayInt *>& groups, int newNb, std::vector< std::vector<int> >& fidsOfGroups) throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::MakePartition(const std::vector<const DataArrayInt *>& groups, int newNb, std::vector< std::vector<int> >& fidsOfGroups)
 {
   std::vector<const DataArrayInt *> groups2;
   for(std::vector<const DataArrayInt *>::const_iterator it4=groups.begin();it4!=groups.end();it4++)
@@ -8518,32 +9587,26 @@ DataArrayInt *DataArrayInt::MakePartition(const std::vector<const DataArrayInt *
 
 /*!
  * Returns a new DataArrayInt which contains all elements of given one-dimensional
- * not negative arrays. The result array does not contain any duplicates and its values
+ * arrays. The result array does not contain any duplicates and its values
  * are sorted in ascending order.
  *  \param [in] arr - sequence of DataArrayInt's to unite.
  *  \return DataArrayInt * - a new instance of DataArrayInt. The caller is to delete this
  *         array using decrRef() as it is no more needed.
  *  \throw If any \a arr[i] is not allocated.
  *  \throw If \a arr[i]->getNumberOfComponents() != 1.
- *  \throw If any value of \a arr[i] is negative.
  */
-DataArrayInt *DataArrayInt::BuildUnion(const std::vector<const DataArrayInt *>& arr) throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::BuildUnion(const std::vector<const DataArrayInt *>& arr)
 {
   std::vector<const DataArrayInt *> a;
   for(std::vector<const DataArrayInt *>::const_iterator it4=arr.begin();it4!=arr.end();it4++)
     if(*it4)
       a.push_back(*it4);
-  int valm=std::numeric_limits<int>::max();
   for(std::vector<const DataArrayInt *>::const_iterator it=a.begin();it!=a.end();it++)
     {
       (*it)->checkAllocated();
       if((*it)->getNumberOfComponents()!=1)
         throw INTERP_KERNEL::Exception("DataArrayInt::BuildUnion : only single component allowed !");
-      int tmp1;
-      valm=std::min((*it)->getMinValue(tmp1),valm);
     }
-  if(valm<0)
-    throw INTERP_KERNEL::Exception("DataArrayInt::BuildUnion : a negative value has been detected !");
   //
   std::set<int> r;
   for(std::vector<const DataArrayInt *>::const_iterator it=a.begin();it!=a.end();it++)
@@ -8560,32 +9623,26 @@ DataArrayInt *DataArrayInt::BuildUnion(const std::vector<const DataArrayInt *>& 
 
 /*!
  * Returns a new DataArrayInt which contains elements present in each of given one-dimensional
- * not negative arrays. The result array does not contain any duplicates and its values
+ * arrays. The result array does not contain any duplicates and its values
  * are sorted in ascending order.
  *  \param [in] arr - sequence of DataArrayInt's to intersect.
  *  \return DataArrayInt * - a new instance of DataArrayInt. The caller is to delete this
  *         array using decrRef() as it is no more needed.
  *  \throw If any \a arr[i] is not allocated.
  *  \throw If \a arr[i]->getNumberOfComponents() != 1.
- *  \throw If any value of \a arr[i] < 0.
  */
-DataArrayInt *DataArrayInt::BuildIntersection(const std::vector<const DataArrayInt *>& arr) throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::BuildIntersection(const std::vector<const DataArrayInt *>& arr)
 {
   std::vector<const DataArrayInt *> a;
   for(std::vector<const DataArrayInt *>::const_iterator it4=arr.begin();it4!=arr.end();it4++)
     if(*it4)
       a.push_back(*it4);
-  int valm=std::numeric_limits<int>::max();
   for(std::vector<const DataArrayInt *>::const_iterator it=a.begin();it!=a.end();it++)
     {
       (*it)->checkAllocated();
       if((*it)->getNumberOfComponents()!=1)
         throw INTERP_KERNEL::Exception("DataArrayInt::BuildIntersection : only single component allowed !");
-      int tmp1;
-      valm=std::min((*it)->getMinValue(tmp1),valm);
     }
-  if(valm<0)
-    throw INTERP_KERNEL::Exception("DataArrayInt::BuildIntersection : a negative value has been detected !");
   //
   std::set<int> r;
   for(std::vector<const DataArrayInt *>::const_iterator it=a.begin();it!=a.end();it++)
@@ -8602,10 +9659,80 @@ DataArrayInt *DataArrayInt::BuildIntersection(const std::vector<const DataArrayI
       else
         r=s1;
     }
-  DataArrayInt *ret=DataArrayInt::New();
+  DataArrayInt *ret(DataArrayInt::New());
   ret->alloc((int)r.size(),1);
   std::copy(r.begin(),r.end(),ret->getPointer());
   return ret;
+}
+
+/// @cond INTERNAL
+namespace ParaMEDMEMImpl
+{
+  class OpSwitchedOn
+  {
+  public:
+    OpSwitchedOn(int *pt):_pt(pt),_cnt(0) { }
+    void operator()(const bool& b) { if(b) *_pt++=_cnt; _cnt++; }
+  private:
+    int *_pt;
+    int _cnt;
+  };
+
+  class OpSwitchedOff
+  {
+  public:
+    OpSwitchedOff(int *pt):_pt(pt),_cnt(0) { }
+    void operator()(const bool& b) { if(!b) *_pt++=_cnt; _cnt++; }
+  private:
+    int *_pt;
+    int _cnt;
+  };
+}
+/// @endcond
+
+/*!
+ * This method returns the list of ids in ascending mode so that v[id]==true.
+ */
+DataArrayInt *DataArrayInt::BuildListOfSwitchedOn(const std::vector<bool>& v)
+{
+  int sz((int)std::count(v.begin(),v.end(),true));
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(sz,1);
+  std::for_each(v.begin(),v.end(),ParaMEDMEMImpl::OpSwitchedOn(ret->getPointer()));
+  return ret.retn();
+}
+
+/*!
+ * This method returns the list of ids in ascending mode so that v[id]==false.
+ */
+DataArrayInt *DataArrayInt::BuildListOfSwitchedOff(const std::vector<bool>& v)
+{
+  int sz((int)std::count(v.begin(),v.end(),false));
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(sz,1);
+  std::for_each(v.begin(),v.end(),ParaMEDMEMImpl::OpSwitchedOff(ret->getPointer()));
+  return ret.retn();
+}
+
+/*!
+ * This method allows to put a vector of vector of integer into a more compact data stucture (skyline). 
+ * This method is not available into python because no available optimized data structure available to map std::vector< std::vector<int> >.
+ *
+ * \param [in] v the input data structure to be translate into skyline format.
+ * \param [out] data the first element of the skyline format. The user is expected to deal with newly allocated array.
+ * \param [out] dataIndex the second element of the skyline format.
+ */
+void DataArrayInt::PutIntoToSkylineFrmt(const std::vector< std::vector<int> >& v, DataArrayInt *& data, DataArrayInt *& dataIndex)
+{
+  int sz((int)v.size());
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret0(DataArrayInt::New()),ret1(DataArrayInt::New());
+  ret1->alloc(sz+1,1);
+  int *pt(ret1->getPointer()); *pt=0;
+  for(int i=0;i<sz;i++,pt++)
+    pt[1]=pt[0]+(int)v[i].size();
+  ret0->alloc(ret1->back(),1);
+  pt=ret0->getPointer();
+  for(int i=0;i<sz;i++)
+    pt=std::copy(v[i].begin(),v[i].end(),pt);
+  data=ret0.retn(); dataIndex=ret1.retn();
 }
 
 /*!
@@ -8620,28 +9747,28 @@ DataArrayInt *DataArrayInt::BuildIntersection(const std::vector<const DataArrayI
  *  \throw If any element \a x of \a this array violates condition ( 0 <= \a x < \a
  *         nbOfElement ).
  */
-DataArrayInt *DataArrayInt::buildComplement(int nbOfElement) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::buildComplement(int nbOfElement) const
 {
-   checkAllocated();
-   if(getNumberOfComponents()!=1)
-     throw INTERP_KERNEL::Exception("DataArrayInt::buildComplement : only single component allowed !");
-   std::vector<bool> tmp(nbOfElement);
-   const int *pt=getConstPointer();
-   int nbOfTuples=getNumberOfTuples();
-   for(const int *w=pt;w!=pt+nbOfTuples;w++)
-     if(*w>=0 && *w<nbOfElement)
-       tmp[*w]=true;
-     else
-       throw INTERP_KERNEL::Exception("DataArrayInt::buildComplement : an element is not in valid range : [0,nbOfElement) !");
-   int nbOfRetVal=(int)std::count(tmp.begin(),tmp.end(),false);
-   DataArrayInt *ret=DataArrayInt::New();
-   ret->alloc(nbOfRetVal,1);
-   int j=0;
-   int *retPtr=ret->getPointer();
-   for(int i=0;i<nbOfElement;i++)
-     if(!tmp[i])
-       retPtr[j++]=i;
-   return ret;
+  checkAllocated();
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::buildComplement : only single component allowed !");
+  std::vector<bool> tmp(nbOfElement);
+  const int *pt=getConstPointer();
+  int nbOfTuples=getNumberOfTuples();
+  for(const int *w=pt;w!=pt+nbOfTuples;w++)
+    if(*w>=0 && *w<nbOfElement)
+      tmp[*w]=true;
+    else
+      throw INTERP_KERNEL::Exception("DataArrayInt::buildComplement : an element is not in valid range : [0,nbOfElement) !");
+  int nbOfRetVal=(int)std::count(tmp.begin(),tmp.end(),false);
+  DataArrayInt *ret=DataArrayInt::New();
+  ret->alloc(nbOfRetVal,1);
+  int j=0;
+  int *retPtr=ret->getPointer();
+  for(int i=0;i<nbOfElement;i++)
+    if(!tmp[i])
+      retPtr[j++]=i;
+  return ret;
 }
 
 /*!
@@ -8657,16 +9784,16 @@ DataArrayInt *DataArrayInt::buildComplement(int nbOfElement) const throw(INTERP_
  *  \throw If \a this->getNumberOfComponents() != 1.
  *  \sa DataArrayInt::buildSubstractionOptimized()
  */
-DataArrayInt *DataArrayInt::buildSubstraction(const DataArrayInt *other) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::buildSubstraction(const DataArrayInt *other) const
 {
   if(!other)
     throw INTERP_KERNEL::Exception("DataArrayInt::buildSubstraction : DataArrayInt pointer in input is NULL !");
   checkAllocated();
   other->checkAllocated();
   if(getNumberOfComponents()!=1)
-     throw INTERP_KERNEL::Exception("DataArrayInt::buildSubstraction : only single component allowed !");
+    throw INTERP_KERNEL::Exception("DataArrayInt::buildSubstraction : only single component allowed !");
   if(other->getNumberOfComponents()!=1)
-     throw INTERP_KERNEL::Exception("DataArrayInt::buildSubstraction : only single component allowed for other type !");
+    throw INTERP_KERNEL::Exception("DataArrayInt::buildSubstraction : only single component allowed for other type !");
   const int *pt=getConstPointer();
   int nbOfTuples=getNumberOfTuples();
   std::set<int> s1(pt,pt+nbOfTuples);
@@ -8689,7 +9816,7 @@ DataArrayInt *DataArrayInt::buildSubstraction(const DataArrayInt *other) const t
  * \ret list of ids in \a this but not in \a other.
  * \sa DataArrayInt::buildSubstraction
  */
-DataArrayInt *DataArrayInt::buildSubstractionOptimized(const DataArrayInt *other) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::buildSubstractionOptimized(const DataArrayInt *other) const
 {
   static const char *MSG="DataArrayInt::buildSubstractionOptimized : only single component allowed !";
   if(!other) throw INTERP_KERNEL::Exception("DataArrayInt::buildSubstractionOptimized : NULL input array !");
@@ -8711,7 +9838,7 @@ DataArrayInt *DataArrayInt::buildSubstractionOptimized(const DataArrayInt *other
 
 /*!
  * Returns a new DataArrayInt which contains all elements of \a this and a given
- * one-dimensional not negative arrays. The result array does not contain any duplicates
+ * one-dimensional arrays. The result array does not contain any duplicates
  * and its values are sorted in ascending order.
  *  \param [in] other - an array to unite with \a this one.
  *  \return DataArrayInt * - a new instance of DataArrayInt. The caller is to delete this
@@ -8719,9 +9846,8 @@ DataArrayInt *DataArrayInt::buildSubstractionOptimized(const DataArrayInt *other
  *  \throw If \a this or \a other is not allocated.
  *  \throw If \a this->getNumberOfComponents() != 1.
  *  \throw If \a other->getNumberOfComponents() != 1.
- *  \throw If any value of \a this or \a other is negative.
  */
-DataArrayInt *DataArrayInt::buildUnion(const DataArrayInt *other) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::buildUnion(const DataArrayInt *other) const
 {
   std::vector<const DataArrayInt *>arrs(2);
   arrs[0]=this; arrs[1]=other;
@@ -8731,7 +9857,7 @@ DataArrayInt *DataArrayInt::buildUnion(const DataArrayInt *other) const throw(IN
 
 /*!
  * Returns a new DataArrayInt which contains elements present in both \a this and a given
- * one-dimensional not negative arrays. The result array does not contain any duplicates
+ * one-dimensional arrays. The result array does not contain any duplicates
  * and its values are sorted in ascending order.
  *  \param [in] other - an array to intersect with \a this one.
  *  \return DataArrayInt * - a new instance of DataArrayInt. The caller is to delete this
@@ -8739,9 +9865,8 @@ DataArrayInt *DataArrayInt::buildUnion(const DataArrayInt *other) const throw(IN
  *  \throw If \a this or \a other is not allocated.
  *  \throw If \a this->getNumberOfComponents() != 1.
  *  \throw If \a other->getNumberOfComponents() != 1.
- *  \throw If any value of \a this or \a other is negative.
  */
-DataArrayInt *DataArrayInt::buildIntersection(const DataArrayInt *other) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::buildIntersection(const DataArrayInt *other) const
 {
   std::vector<const DataArrayInt *>arrs(2);
   arrs[0]=this; arrs[1]=other;
@@ -8756,11 +9881,11 @@ DataArrayInt *DataArrayInt::buildIntersection(const DataArrayInt *other) const t
  * \return a newly allocated array that contain the result of the unique operation applied on \a this.
  * \throw if \a this is not allocated or if \a this has not exactly one component.
  */
-DataArrayInt *DataArrayInt::buildUnique() const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::buildUnique() const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
-     throw INTERP_KERNEL::Exception("DataArrayInt::buildUnique : only single component allowed !");
+    throw INTERP_KERNEL::Exception("DataArrayInt::buildUnique : only single component allowed !");
   int nbOfTuples=getNumberOfTuples();
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> tmp=deepCpy();
   int *data=tmp->getPointer();
@@ -8778,6 +9903,7 @@ DataArrayInt *DataArrayInt::buildUnique() const throw(INTERP_KERNEL::Exception)
  * "MEDCouplingUMesh::buildDescendingConnectivity" and
  * \ref ParaMEDMEM::MEDCouplingUMesh::getNodalConnectivityIndex
  * "MEDCouplingUMesh::getNodalConnectivityIndex" etc.
+ * This method preforms the reverse operation of DataArrayInt::computeOffsets2.
  *  \return DataArrayInt * - a new instance of DataArrayInt, whose number of tuples
  *          equals to \a this->getNumberOfComponents() - 1, and number of components is 1.
  *          The caller is to delete this array using decrRef() as it is no more needed. 
@@ -8789,12 +9915,14 @@ DataArrayInt *DataArrayInt::buildUnique() const throw(INTERP_KERNEL::Exception)
  *         - this contains [1,3,6,7,7,9,15]
  *         - result array contains [2,3,1,0,2,6],
  *          where 2 = 3 - 1, 3 = 6 - 3, 1 = 7 - 6 etc.
+ *
+ * \sa DataArrayInt::computeOffsets2
  */
-DataArrayInt *DataArrayInt::deltaShiftIndex() const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::deltaShiftIndex() const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
-     throw INTERP_KERNEL::Exception("DataArrayInt::deltaShiftIndex : only single component allowed !");
+    throw INTERP_KERNEL::Exception("DataArrayInt::deltaShiftIndex : only single component allowed !");
   int nbOfTuples=getNumberOfTuples();
   if(nbOfTuples<2)
     throw INTERP_KERNEL::Exception("DataArrayInt::deltaShiftIndex : 1 tuple at least must be present in 'this' !");
@@ -8823,11 +9951,11 @@ DataArrayInt *DataArrayInt::deltaShiftIndex() const throw(INTERP_KERNEL::Excepti
  *          Note that the last element 19 = 11 + 8 is missing because size of \a this
  *          array is retained and thus there is no space to store the last element.
  */
-void DataArrayInt::computeOffsets() throw(INTERP_KERNEL::Exception)
+void DataArrayInt::computeOffsets()
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
-     throw INTERP_KERNEL::Exception("DataArrayInt::computeOffsets : only single component allowed !");
+    throw INTERP_KERNEL::Exception("DataArrayInt::computeOffsets : only single component allowed !");
   int nbOfTuples=getNumberOfTuples();
   if(nbOfTuples==0)
     return ;
@@ -8851,27 +9979,29 @@ void DataArrayInt::computeOffsets() throw(INTERP_KERNEL::Exception)
  * components remains the same and number of tuples is inceamented by one.<br>
  * This method is useful for allToAllV in MPI with contiguous policy. This method
  * differs from computeOffsets() in that the number of tuples is changed by this one.
+ * This method preforms the reverse operation of DataArrayInt::deltaShiftIndex.
  *  \throw If \a this is not allocated.
  *  \throw If \a this->getNumberOfComponents() != 1.
  *
  *  \b Example: <br>
  *          - Before \a this contains [3,5,1,2,0,8]
  *          - After \a this contains  [0,3,8,9,11,11,19]<br>
+ * \sa DataArrayInt::deltaShiftIndex
  */
-void DataArrayInt::computeOffsets2() throw(INTERP_KERNEL::Exception)
+void DataArrayInt::computeOffsets2()
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
     throw INTERP_KERNEL::Exception("DataArrayInt::computeOffsets2 : only single component allowed !");
   int nbOfTuples=getNumberOfTuples();
-  int *ret=new int[nbOfTuples+1];
+  int *ret=(int *)malloc((nbOfTuples+1)*sizeof(int));
   if(nbOfTuples==0)
     return ;
   const int *work=getConstPointer();
   ret[0]=0;
   for(int i=0;i<nbOfTuples;i++)
     ret[i+1]=work[i]+ret[i];
-  useArray(ret,true,CPP_DEALLOC,nbOfTuples+1,1);
+  useArray(ret,true,C_DEALLOC,nbOfTuples+1,1);
   declareAsNew();
 }
 
@@ -8897,7 +10027,7 @@ void DataArrayInt::computeOffsets2() throw(INTERP_KERNEL::Exception)
  * In this example id 3 in input \a listOfIds is alone so it do not appear in output \a idsInInputListThatFetch.
  * <br>
  */
-void DataArrayInt::searchRangesInListOfIds(const DataArrayInt *listOfIds, DataArrayInt *& rangeIdsFetched, DataArrayInt *& idsInInputListThatFetch) const throw(INTERP_KERNEL::Exception)
+void DataArrayInt::searchRangesInListOfIds(const DataArrayInt *listOfIds, DataArrayInt *& rangeIdsFetched, DataArrayInt *& idsInInputListThatFetch) const
 {
   if(!listOfIds)
     throw INTERP_KERNEL::Exception("DataArrayInt::searchRangesInListOfIds : input list of ids is null !");
@@ -8953,16 +10083,16 @@ void DataArrayInt::searchRangesInListOfIds(const DataArrayInt *listOfIds, DataAr
  *            \c range( \a offsets[ \a this[1] ], offsets[ \a this[1]+1 ]) + 
  *            \c range( \a offsets[ \a this[2] ], offsets[ \a this[2]+1 ])
  */
-DataArrayInt *DataArrayInt::buildExplicitArrByRanges(const DataArrayInt *offsets) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::buildExplicitArrByRanges(const DataArrayInt *offsets) const
 {
   if(!offsets)
     throw INTERP_KERNEL::Exception("DataArrayInt::buildExplicitArrByRanges : DataArrayInt pointer in input is NULL !");
   checkAllocated();
   if(getNumberOfComponents()!=1)
-     throw INTERP_KERNEL::Exception("DataArrayInt::buildExplicitArrByRanges : only single component allowed !");
+    throw INTERP_KERNEL::Exception("DataArrayInt::buildExplicitArrByRanges : only single component allowed !");
   offsets->checkAllocated();
   if(offsets->getNumberOfComponents()!=1)
-     throw INTERP_KERNEL::Exception("DataArrayInt::buildExplicitArrByRanges : input array should have only single component !");
+    throw INTERP_KERNEL::Exception("DataArrayInt::buildExplicitArrByRanges : input array should have only single component !");
   int othNbTuples=offsets->getNumberOfTuples()-1;
   int nbOfTuples=getNumberOfTuples();
   int retNbOftuples=0;
@@ -9004,6 +10134,67 @@ DataArrayInt *DataArrayInt::buildExplicitArrByRanges(const DataArrayInt *offsets
 }
 
 /*!
+ * Returns a new DataArrayInt whose contents is computed using \a this that must be a 
+ * scaled array (monotonically increasing).
+from that of \a this and \a
+ * offsets arrays as follows. \a offsets is a one-dimensional array considered as an
+ * "index" array of a "iota" array, thus, whose each element gives an index of a group
+ * beginning within the "iota" array. And \a this is a one-dimensional array
+ * considered as a selector of groups described by \a offsets to include into the result array.
+ *  \throw If \a  is NULL.
+ *  \throw If \a this is not allocated.
+ *  \throw If \a this->getNumberOfComponents() != 1.
+ *  \throw If \a this->getNumberOfTuples() == 0.
+ *  \throw If \a this is not monotonically increasing.
+ *  \throw If any element of ids in ( \a bg \a stop \a step ) points outside the scale in \a this.
+ *
+ *  \b Example: <br>
+ *          - \a bg , \a stop and \a step : (0,5,2)
+ *          - \a this: [0,3,6,10,14,20]
+ *          - result array: [0,0,0, 2,2,2,2, 4,4,4,4,4,4] == <br>
+ */
+DataArrayInt *DataArrayInt::buildExplicitArrOfSliceOnScaledArr(int bg, int stop, int step) const
+{
+  if(!isAllocated())
+    throw INTERP_KERNEL::Exception("DataArrayInt::buildExplicitArrOfSliceOnScaledArr : not allocated array !");
+  if(getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::buildExplicitArrOfSliceOnScaledArr : number of components is expected to be equal to one !");
+  int nbOfTuples(getNumberOfTuples());
+  if(nbOfTuples==0)
+    throw INTERP_KERNEL::Exception("DataArrayInt::buildExplicitArrOfSliceOnScaledArr : number of tuples must be != 0 !");
+  const int *ids(begin());
+  int nbOfEltsInSlc(GetNumberOfItemGivenBESRelative(bg,stop,step,"DataArrayInt::buildExplicitArrOfSliceOnScaledArr")),sz(0),pos(bg);
+  for(int i=0;i<nbOfEltsInSlc;i++,pos+=step)
+    {
+      if(pos>=0 && pos<nbOfTuples-1)
+        {
+          int delta(ids[pos+1]-ids[pos]);
+          sz+=delta;
+          if(delta<0)
+            {
+              std::ostringstream oss; oss << "DataArrayInt::buildExplicitArrOfSliceOnScaledArr : At pos #" << i << " of input slice, value is " << pos << " and at this pos this is not monotonically increasing !";
+              throw INTERP_KERNEL::Exception(oss.str().c_str());
+            }          
+        }
+      else
+        {
+          std::ostringstream oss; oss << "DataArrayInt::buildExplicitArrOfSliceOnScaledArr : At pos #" << i << " of input slice, value is " << pos << " should be in [0," << nbOfTuples-1 << ") !";  
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
+        }
+    }
+  MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret(DataArrayInt::New()); ret->alloc(sz,1);
+  int *retPtr(ret->getPointer());
+  pos=bg;
+  for(int i=0;i<nbOfEltsInSlc;i++,pos+=step)
+    {
+      int delta(ids[pos+1]-ids[pos]);
+      for(int j=0;j<delta;j++,retPtr++)
+        *retPtr=pos;
+    }
+  return ret.retn();
+}
+
+/*!
  * Given in input ranges \a ranges, it returns a newly allocated DataArrayInt instance having one component and the same number of tuples than \a this.
  * For each tuple at place **i** in \a this it tells which is the first range in \a ranges that contains value \c this->getIJ(i,0) and put the result
  * in tuple **i** of returned DataArrayInt.
@@ -9019,7 +10210,7 @@ DataArrayInt *DataArrayInt::buildExplicitArrByRanges(const DataArrayInt *offsets
  * 
  * \sa DataArrayInt::findIdInRangeForEachTuple
  */
-DataArrayInt *DataArrayInt::findRangeIdForEachTuple(const DataArrayInt *ranges) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::findRangeIdForEachTuple(const DataArrayInt *ranges) const
 {
   if(!ranges)
     throw INTERP_KERNEL::Exception("DataArrayInt::findRangeIdForEachTuple : null input pointer !");
@@ -9068,7 +10259,7 @@ DataArrayInt *DataArrayInt::findRangeIdForEachTuple(const DataArrayInt *ranges) 
  *        is thrown if no ranges in \a ranges contains value in \a this.
  * \sa DataArrayInt::findRangeIdForEachTuple
  */
-DataArrayInt *DataArrayInt::findIdInRangeForEachTuple(const DataArrayInt *ranges) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::findIdInRangeForEachTuple(const DataArrayInt *ranges) const
 {
   if(!ranges)
     throw INTERP_KERNEL::Exception("DataArrayInt::findIdInRangeForEachTuple : null input pointer !");
@@ -9108,7 +10299,7 @@ DataArrayInt *DataArrayInt::findIdInRangeForEachTuple(const DataArrayInt *ranges
  * \return a newly allocated DataArrayInt having one component and number of tuples equal to \a nbTimes * \c this->getNumberOfTuples.
  * \throw if \a this is not allocated or if \a this has not number of components set to one or if \a nbTimes is lower than 1.
  */
-DataArrayInt *DataArrayInt::duplicateEachTupleNTimes(int nbTimes) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::duplicateEachTupleNTimes(int nbTimes) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -9134,7 +10325,7 @@ DataArrayInt *DataArrayInt::duplicateEachTupleNTimes(int nbTimes) const throw(IN
  * But the number of components can be different from one.
  * \return a newly allocated array (that should be dealt by the caller) containing different values in \a this.
  */
-DataArrayInt *DataArrayInt::getDifferentValues() const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::getDifferentValues() const
 {
   checkAllocated();
   std::set<int> ret;
@@ -9152,7 +10343,7 @@ DataArrayInt *DataArrayInt::getDifferentValues() const throw(INTERP_KERNEL::Exce
  * The instances of DataArrayInt in the returned vector have be specially allocated and computed by this method. Each of them should be dealt by the caller of this method.
  * Example : if this is equal to [1,0,1,2,0,2,2,-3,2] -> differentIds=[-3,0,1,2] and returned array will be equal to [[7],[1,4],[0,2],[3,5,6,8]]
  */
-std::vector<DataArrayInt *> DataArrayInt::partitionByDifferentValues(std::vector<int>& differentIds) const throw(INTERP_KERNEL::Exception)
+std::vector<DataArrayInt *> DataArrayInt::partitionByDifferentValues(std::vector<int>& differentIds) const
 {
   checkAllocated();
   if(getNumberOfComponents()!=1)
@@ -9176,6 +10367,41 @@ std::vector<DataArrayInt *> DataArrayInt::partitionByDifferentValues(std::vector
   for(const int *w=begin();w!=end();w++,id++)
     {
       retPtr[m2[*w]][m3[*w]++]=id;
+    }
+  return ret;
+}
+
+/*!
+ * This method split ids in [0, \c this->getNumberOfTuples() ) using \a this array as a field of weight (>=0 each).
+ * The aim of this method is to return a set of \a nbOfSlices chunk of contiguous ids as balanced as possible.
+ *
+ * \param [in] nbOfSlices - number of slices expected.
+ * \return - a vector having a size equal to \a nbOfSlices giving the start (included) and the stop (excluded) of each chunks.
+ * 
+ * \sa DataArray::GetSlice
+ * \throw If \a this is not allocated or not with exactly one component.
+ * \throw If an element in \a this if < 0.
+ */
+std::vector< std::pair<int,int> > DataArrayInt::splitInBalancedSlices(int nbOfSlices) const
+{
+  if(!isAllocated() || getNumberOfComponents()!=1)
+    throw INTERP_KERNEL::Exception("DataArrayInt::splitInBalancedSlices : this array should have number of components equal to one and must be allocated !");
+  if(nbOfSlices<=0)
+    throw INTERP_KERNEL::Exception("DataArrayInt::splitInBalancedSlices : number of slices must be >= 1 !");
+  int sum(accumulate(0)),nbOfTuples(getNumberOfTuples());
+  int sumPerSlc(sum/nbOfSlices),pos(0);
+  const int *w(begin());
+  std::vector< std::pair<int,int> > ret(nbOfSlices);
+  for(int i=0;i<nbOfSlices;i++)
+    {
+      std::pair<int,int> p(pos,-1);
+      int locSum(0);
+      while(locSum<sumPerSlc && pos<nbOfTuples) { pos++; locSum+=*w++; }
+      if(i!=nbOfSlices-1)
+        p.second=pos;
+      else
+        p.second=nbOfTuples;
+      ret[i]=p;
     }
   return ret;
 }
@@ -9205,7 +10431,7 @@ std::vector<DataArrayInt *> DataArrayInt::partitionByDifferentValues(std::vector
  *         \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents() and
  *         none of them has number of tuples or components equal to 1.
  */
-DataArrayInt *DataArrayInt::Add(const DataArrayInt *a1, const DataArrayInt *a2) throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::Add(const DataArrayInt *a1, const DataArrayInt *a2)
 {
   if(!a1 || !a2)
     throw INTERP_KERNEL::Exception("DataArrayInt::Add : input DataArrayInt instance is NULL !");
@@ -9292,7 +10518,7 @@ DataArrayInt *DataArrayInt::Add(const DataArrayInt *a1, const DataArrayInt *a2) 
  *         \a this->getNumberOfComponents() != \a other->getNumberOfComponents() and
  *         \a other has number of both tuples and components not equal to 1.
  */
-void DataArrayInt::addEqual(const DataArrayInt *other) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::addEqual(const DataArrayInt *other)
 {
   if(!other)
     throw INTERP_KERNEL::Exception("DataArrayInt::addEqual : input DataArrayInt instance is NULL !");
@@ -9360,7 +10586,7 @@ void DataArrayInt::addEqual(const DataArrayInt *other) throw(INTERP_KERNEL::Exce
  *         \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents() and
  *         none of them has number of tuples or components equal to 1.
  */
-DataArrayInt *DataArrayInt::Substract(const DataArrayInt *a1, const DataArrayInt *a2) throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::Substract(const DataArrayInt *a1, const DataArrayInt *a2)
 {
   if(!a1 || !a2)
     throw INTERP_KERNEL::Exception("DataArrayInt::Substract : input DataArrayInt instance is NULL !");
@@ -9432,7 +10658,7 @@ DataArrayInt *DataArrayInt::Substract(const DataArrayInt *a1, const DataArrayInt
  *         \a this->getNumberOfComponents() != \a other->getNumberOfComponents() and
  *         \a other has number of both tuples and components not equal to 1.
  */
-void DataArrayInt::substractEqual(const DataArrayInt *other) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::substractEqual(const DataArrayInt *other)
 {
   if(!other)
     throw INTERP_KERNEL::Exception("DataArrayInt::substractEqual : input DataArrayInt instance is NULL !");
@@ -9495,7 +10721,7 @@ void DataArrayInt::substractEqual(const DataArrayInt *other) throw(INTERP_KERNEL
  *         \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents() and
  *         none of them has number of tuples or components equal to 1.
  */
-DataArrayInt *DataArrayInt::Multiply(const DataArrayInt *a1, const DataArrayInt *a2) throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::Multiply(const DataArrayInt *a1, const DataArrayInt *a2)
 {
   if(!a1 || !a2)
     throw INTERP_KERNEL::Exception("DataArrayInt::Multiply : input DataArrayInt instance is NULL !");
@@ -9583,7 +10809,7 @@ DataArrayInt *DataArrayInt::Multiply(const DataArrayInt *a1, const DataArrayInt 
  *         \a this->getNumberOfComponents() != \a other->getNumberOfComponents() and
  *         \a other has number of both tuples and components not equal to 1.
  */
-void DataArrayInt::multiplyEqual(const DataArrayInt *other) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::multiplyEqual(const DataArrayInt *other)
 {
   if(!other)
     throw INTERP_KERNEL::Exception("DataArrayInt::multiplyEqual : input DataArrayInt instance is NULL !");
@@ -9653,7 +10879,7 @@ void DataArrayInt::multiplyEqual(const DataArrayInt *other) throw(INTERP_KERNEL:
  *         \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents() and
  *         none of them has number of tuples or components equal to 1.
  */
-DataArrayInt *DataArrayInt::Divide(const DataArrayInt *a1, const DataArrayInt *a2) throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::Divide(const DataArrayInt *a1, const DataArrayInt *a2)
 {
   if(!a1 || !a2)
     throw INTERP_KERNEL::Exception("DataArrayInt::Divide : input DataArrayInt instance is NULL !");
@@ -9726,7 +10952,7 @@ DataArrayInt *DataArrayInt::Divide(const DataArrayInt *a1, const DataArrayInt *a
  *         \a this->getNumberOfComponents() != \a other->getNumberOfComponents() and
  *         \a other has number of both tuples and components not equal to 1.
  */
-void DataArrayInt::divideEqual(const DataArrayInt *other) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::divideEqual(const DataArrayInt *other)
 {
   if(!other)
     throw INTERP_KERNEL::Exception("DataArrayInt::divideEqual : input DataArrayInt instance is NULL !");
@@ -9796,9 +11022,9 @@ void DataArrayInt::divideEqual(const DataArrayInt *other) throw(INTERP_KERNEL::E
  *         \a a1->getNumberOfComponents() != \a a2->getNumberOfComponents() and
  *         none of them has number of tuples or components equal to 1.
  */
-DataArrayInt *DataArrayInt::Modulus(const DataArrayInt *a1, const DataArrayInt *a2) throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::Modulus(const DataArrayInt *a1, const DataArrayInt *a2)
 {
-    if(!a1 || !a2)
+  if(!a1 || !a2)
     throw INTERP_KERNEL::Exception("DataArrayInt::Modulus : input DataArrayInt instance is NULL !");
   int nbOfTuple1=a1->getNumberOfTuples();
   int nbOfTuple2=a2->getNumberOfTuples();
@@ -9869,7 +11095,7 @@ DataArrayInt *DataArrayInt::Modulus(const DataArrayInt *a1, const DataArrayInt *
  *         \a this->getNumberOfComponents() != \a other->getNumberOfComponents() and
  *         \a other has number of both tuples and components not equal to 1.
  */
-void DataArrayInt::modulusEqual(const DataArrayInt *other) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::modulusEqual(const DataArrayInt *other)
 {
   if(!other)
     throw INTERP_KERNEL::Exception("DataArrayInt::modulusEqual : input DataArrayInt instance is NULL !");
@@ -9926,7 +11152,7 @@ void DataArrayInt::modulusEqual(const DataArrayInt *other) throw(INTERP_KERNEL::
  *  \throw If \a a1->getNumberOfComponents() != 1 or \a a2->getNumberOfComponents() != 1.
  *  \throw If there is a negative value in \a a2.
  */
-DataArrayInt *DataArrayInt::Pow(const DataArrayInt *a1, const DataArrayInt *a2) throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::Pow(const DataArrayInt *a1, const DataArrayInt *a2)
 {
   if(!a1 || !a2)
     throw INTERP_KERNEL::Exception("DataArrayInt::Pow : at least one of input instances is null !");
@@ -9968,7 +11194,7 @@ DataArrayInt *DataArrayInt::Pow(const DataArrayInt *a1, const DataArrayInt *a2) 
  *  \throw If \a this->getNumberOfComponents() != 1 or \a other->getNumberOfComponents() != 1
  *  \throw If there is a negative value in \a other.
  */
-void DataArrayInt::powEqual(const DataArrayInt *other) throw(INTERP_KERNEL::Exception)
+void DataArrayInt::powEqual(const DataArrayInt *other)
 {
   if(!other)
     throw INTERP_KERNEL::Exception("DataArrayInt::powEqual : input instance is null !");
@@ -10016,19 +11242,22 @@ void DataArrayInt::powEqual(const DataArrayInt *other) throw(INTERP_KERNEL::Exce
 int *DataArrayInt::CheckAndPreparePermutation(const int *start, const int *end)
 {
   std::size_t sz=std::distance(start,end);
-  int *ret=new int[sz];
+  int *ret=(int *)malloc(sz*sizeof(int));
   int *work=new int[sz];
   std::copy(start,end,work);
   std::sort(work,work+sz);
   if(std::unique(work,work+sz)!=work+sz)
     {
       delete [] work;
-      delete [] ret;
+      free(ret);
       throw INTERP_KERNEL::Exception("Some elements are equals in the specified array !");
     }
+  std::map<int,int> m;
+  for(int *workPt=work;workPt!=work+sz;workPt++)
+    m[*workPt]=(int)std::distance(work,workPt);
   int *iter2=ret;
   for(const int *iter=start;iter!=end;iter++,iter2++)
-    *iter2=(int)std::distance(work,std::find(work,work+sz,*iter));
+    *iter2=m[*iter];
   delete [] work;
   return ret;
 }
@@ -10047,7 +11276,7 @@ int *DataArrayInt::CheckAndPreparePermutation(const int *start, const int *end)
  *  \throw If \a end < \a begin && \a step > 0.
  *  \throw If \a end > \a begin && \a step < 0.
  */
-DataArrayInt *DataArrayInt::Range(int begin, int end, int step) throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayInt::Range(int begin, int end, int step)
 {
   int nbOfTuples=GetNumberOfItemGivenBESRelative(begin,end,step,"DataArrayInt::Range");
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret=DataArrayInt::New();
@@ -10128,12 +11357,12 @@ bool DataArrayInt::resizeForUnserialization(const std::vector<int>& tinyInfoI)
  */
 void DataArrayInt::finishUnserialization(const std::vector<int>& tinyInfoI, const std::vector<std::string>& tinyInfoS)
 {
-  setName(tinyInfoS[0].c_str());
+  setName(tinyInfoS[0]);
   if(isAllocated())
     {
-      int nbOfCompo=getNumberOfComponents();
+      int nbOfCompo=tinyInfoI[1];
       for(int i=0;i<nbOfCompo;i++)
-        setInfoOnComponent(i,tinyInfoS[i+1].c_str());
+        setInfoOnComponent(i,tinyInfoS[i+1]);
     }
 }
 
@@ -10157,7 +11386,7 @@ DataArrayIntIterator::~DataArrayIntIterator()
     _da->decrRef();
 }
 
-DataArrayIntTuple *DataArrayIntIterator::nextt() throw(INTERP_KERNEL::Exception)
+DataArrayIntTuple *DataArrayIntIterator::nextt()
 {
   if(_tuple_id<_nb_tuple)
     {
@@ -10174,7 +11403,7 @@ DataArrayIntTuple::DataArrayIntTuple(int *pt, int nbOfComp):_pt(pt),_nb_of_compo
 {
 }
 
-std::string DataArrayIntTuple::repr() const throw(INTERP_KERNEL::Exception)
+std::string DataArrayIntTuple::repr() const
 {
   std::ostringstream oss; oss << "(";
   for(int i=0;i<_nb_of_compo-1;i++)
@@ -10183,7 +11412,7 @@ std::string DataArrayIntTuple::repr() const throw(INTERP_KERNEL::Exception)
   return oss.str();
 }
 
-int DataArrayIntTuple::intValue() const throw(INTERP_KERNEL::Exception)
+int DataArrayIntTuple::intValue() const
 {
   if(_nb_of_compo==1)
     return *_pt;
@@ -10196,7 +11425,7 @@ int DataArrayIntTuple::intValue() const throw(INTERP_KERNEL::Exception)
  * This method throws an INTERP_KERNEL::Exception is it is impossible to match sizes of \b this that is too say \b nbOfCompo=this->_nb_of_elem and \bnbOfTuples==1 or
  * \b nbOfCompo=1 and \bnbOfTuples==this->_nb_of_elem.
  */
-DataArrayInt *DataArrayIntTuple::buildDAInt(int nbOfTuples, int nbOfCompo) const throw(INTERP_KERNEL::Exception)
+DataArrayInt *DataArrayIntTuple::buildDAInt(int nbOfTuples, int nbOfCompo) const
 {
   if((_nb_of_compo==nbOfCompo && nbOfTuples==1) || (_nb_of_compo==nbOfTuples && nbOfCompo==1))
     {

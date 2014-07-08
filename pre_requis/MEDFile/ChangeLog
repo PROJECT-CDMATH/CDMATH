@@ -1,4 +1,116 @@
-Modification dans la version 2.3.6 :
+Modifications dans la version 3.0.7 :
+
+- Correction d'un bug de comptage des informations secondaires noms,numéros optionnels dans le cas d'une grille curvilinear (MEDmeshnEntity)
+- Ajout du type polynôme quadratique (MED_POLYGON2)
+- mdump et xmdump sont maintenant des liens sur mdump3 et xmdump3 ds le répertoire d'installation
+- Mise en adéquation de xmdump3 avec les options spécifiques à mdump3 
+- Correction d'un bug renvoyant une erreur ds le cadre des grilles curvilinéaire lorsque l'on demande le nbre de familles et qu'il n'y en a pas.
+- Limitation de l'utilisation mémoire ds l'interface F/C dans le cas du tableau des noms optionnels d'entités
+- Developpement/test/doc de MEDfileObjectsMountById 
+- séparation des headers med par module (depuis med_proto.h)
+- Ajout d'une extraction de H5public.h à l'étape de configuration pour swig
+- Ajout de certains const manquants de l'interface C utiles à swig (~ ne change pas l'API)
+- Corrections diverses sur les tests C
+- Extraction d'informations de configuration de types HDF pour le wrapping python
+- Developpement des différents modules python
+- Ajouts des tests associés aux modules python
+- Finalisation du swiggage des types unsigned char *
+- Séparation des modules fonctionnels MED en module Swig independants
+- Gestion des array MED en python
+- Correction CMake pour Windows
+
+Modifications dans la version 3.0.6 :
+
+- Déclaration d'export pour med.dll (Compaq Fortran)
+- Correction de la présence de double ;; dans des tests
+- Intégration d'un patch pour le portage Windows
+- Suppression des stdcall dans les prototypes (portage windows/cmake)
+- Refactoring des Cmakelists, qui permet de se passer du script de génération (portage windows/cmake)
+- Génération du fichier med_config.h qui était recopié à la main   (portage windows/cmake)
+- Génération des librairies statiques et dynamiques de MED fichier (portage windows/cmake)
+- Compilation et l'execution des tests med file avec cmake (portage windows/cmake)
+- Génération des librairies fortran MED fichier pour Windows (portage windows/cmake)
+- Modification de la présentation de la doc utilisateur
+- Ajout de tests complémentaires suite à la révision de la doc
+- A la configuration, si aucune option --with-hdf5 ou de variable HDF5HOME n'est positionnée, cherche HDF dans /usr
+- Ajout de l'option --disable-api2.3 au ./configure pour supprimer les symboles 2.3 des bibliothèques
+- Correction d'un bug en mode lecture ajout à l'écriture des polyhèdres
+- Extension du nombre de composantes pour les champs resultats
+- Ajout d'une vérification du type d'attribut variable à leur création (éléments de structure)
+- Ajout d'une vérification sur les types des attributs variables dans mdump3
+- Ajout de la possibilité de définir uniquement les noeuds d'un maillage support section (points d'intégrations sur éléments de structure)
+- Ajout de Usescases en Fortran
+
+Modifications dans la version 3.0.5 :
+
+- Optimisation du mécanisme indiquant la version du fichier utilisé
+- Amélioration des performances :
+ - Mécanisme de cache des appels internes
+ - Mécanisme de cache du MEDfieldCheck (check de fichier 2.3 depuis la bibliothèque 3.0)
+ - Activation du nouveau format interne HDF plus efficace (pas d'incidence de compatibilité de fichier)
+- Ajout API fortran E/S //
+- Ajout API fortran des routines avancees d'ecriture/lecture des attributs d'entites de maillage
+- Amélioration de la navigation dans la documentation
+- Acces a l'information sur les connectivites de références dans le guide d'utilisation
+- Mise à jour des macros m4 pour la construction du test parallel Fortran
+- Fusion des macros m4 de detection des compilateurs séquentiels et des compilateurs //
+- Possibilité de débrayer au ./configure la compilation de la partie fortran de la bibliothèque (désactivation des tests fortran aussi)
+- Possibilité de débrayer au ./configure la vérification automatique des champs des fichiers 2.3
+- Corrections dans medimport : erreurs à l'import lorsque l'option --disable-mesgerr est positionnée au ./configure
+- Ajout d'un test fortran parallel
+- Exécution du test // fortran sur n processus
+- Portage BlueGene
+- Corrections mineures concernant le portage windows
+- Correction d'un bug dans UsesCase_MEDstructElement_2.c
+- Correction d'un bug dans le test parallel C : Open Mpi renvoi correctment le code d'erreur de l'executable //
+
+Modifications dans la version 3.0.4 :
+
+-Portage Windows :
+ -Modification du système de construction («makefile»), ajout des fichiers «makefile.cmake» pour la compilation avec l'outil «cmake»
+ -Modification du système de déclaration des fonctions internes à arguments variables pour gérer les incompatibilités du compilateur Visual C avec la norme C99
+
+-Extensionn de l'API:
+ -Ajout des routinesC : MEDmeshGeotypeName, MEDmeshGeotypeParameter, MEDsupportMeshnAxis, MEDsupportMeshnAxisByName
+ -Ajouts des routines FORTRAN : msmfnan, msmfnax
+
+-Améliorations diverses:
+ -Mise à jour des macros d'affichage des entiers «med_int»
+ -Meilleure gestion des types géométriques dynamiques et statiques
+ -Renommage du fichier «src/libmed2.settings.in» en «src/libmed3.settings.in»
+ -Simplification des scripts de tests pour une meilleure portabilité
+ -Mise à jour du mécanisme de versionnement FORTRAN interne
+ -Gestion des localisations des points d'intégration avec les éléments de structure
+
+-Evolutions apportées à l'utilitaire de dump:
+ -Nouvel outil «mdump3» gérant l'ensemble des évolutions concernant : les maillages supports, les éléments de structure, les fonctions d'interpolation, les localisations des points d'intégration sur éléments de structure avec ou sans interpolation géométrique
+ -Réorganisation de l'affichage pour plus de lisibilité
+ - Nouvelle gestion des paramètres en ligne de commande
+
+-Ajout de nouveaux testsde non-régression:
+ -Unittest_MEDstructElement_1, Unittest_MEDstructElement_2,Unittest_MEDstructElement_3, Unittest_MEDstructElement_4,Unittest_MEDstructElement_5, Unittest_MEDstructElement_6,Unittest_MEDstructElement_7, Unittest_MEDstructElement_8,Unittest_MEDstructElement_9 Unittest_MEDstructElement_10,Unittest_MEDstructElement_11,Unittest_MEDlocalization_1,Unittest_MEDlocalization_2,Unittest_MEDlocalization_3,Unittest_MEDprofile_1,Unittest_MEDprofile_2, Unittest_MEDparameter_1, Unittest_MEDparameter_2, Unittest_MEDparameter_3Unittest_MEDsupportMesh_1, Unittest_MEDsupportMesh_2, Unittest_MEDsupportMesh_3,Unittest_MEDlink_1, Unittest_MEDlink_2, Unittest_MEDlink_3,Unittest_MEDfilter_1, Unittest_MEDfilter_2,Unittest_MEDinterp_1, Unittest_MEDinterp_2, Unittest_MEDinterp_3, Unittest_MEDlocalization_1,   Unittest_MEDlocalization_3Unittest_MEDinterp_1,Unittest_MEDfile_1
+
+-Documentation:
+ -Ajout de la documentation relative aux nouvelles routines dans le guide de référence
+
+-Corrections d'anomalies:
+ -Mise à jour des fichiers «include» FORTRAN pour la gestion des types d'attributs variables
+ -Gestion des entiers 64 bits dans la routine MEDmeshGridStructRd
+ -Lecture du nombre d'entité avec la routine MEDmeshnEntity pour une séquence de calcul différente de la séquence de calcul initiale, quand le nombre est égal à zéro
+ -La routine MEDparFileOpen renvoie désormais une erreur quand le fichier ouvert est un fichier MED 2.x (< 3.0)
+ -Outil «medimport»: Création inopportune de séquence de calcul vide pour des champs importés de fichiers med 2.x reposant sur plusieurs maillages
+ -Séparation des routines (efchre, efchrl) des routines (efchie, efchil) dans des fichiers différents pour compilation avec les compilateurs Fortran qui vérifieraient les types des prototypes
+ -Gestion du code retour dans la routine mlnlai
+ -Gestion de la taille d'une chaîne de caractères dans routine mlnlir
+ -Gestion de la taille des valeurs dans la routine msefsaw
+ -«Leak» mémoire dans la routine nmfafofi
+ - «Sigsegv» possible dans nmlnflir
+ -Gestion de la taille des noms des composantes et des noms d'unités dans la routine msmcre
+ -Ecriture incomplète des informations dans la routine MEDstructElementConstAttWr
+ -Interfaçage C/FORTRAN des routines: mmhfsaw, msesaw, msespw, mmhsaw, mmhsar, mlnlai, mlclni, mprpin
+
+
+Modifications dans la version 2.3.6 :
 
 - ID 59 : Support HDF5-1.6.8 ou 1.6 au choix
 

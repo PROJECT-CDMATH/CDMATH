@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -42,14 +42,14 @@ namespace INTERP_KERNEL
     typedef typename std::map<int,std::set<int> > DuplicateFacesType;
   public:
     //! \addtogroup InterpKerGrpIntPlan @{
-    PlanarIntersector(const MyMeshType& meshT, const MyMeshType& meshS, double dimCaracteristic, double precision, double md3DSurf, double medianPlane, bool doRotate, int orientation, int printLevel);
+    PlanarIntersector(const MyMeshType& meshT, const MyMeshType& meshS, double dimCaracteristic, double precision, double md3DSurf, double minDot3DSurf, double medianPlane, bool doRotate, int orientation, int printLevel);
     //! @}
     virtual ~PlanarIntersector();
     void createBoundingBoxes(const MyMeshType& mesh, std::vector<double>& bbox);
     void adjustBoundingBoxes(std::vector<double>& bbox, double surf3DAdjustmentEps, double surf3DAdjustmentEpsAbs);
     inline void getElemBB(double* bb, const MyMeshType& mesh, ConnType iP, ConnType nb_nodes);
-    static int projection(double *Coords_A, double *Coords_B,
-                          int nb_NodesA, int nb_NodesB, double epsilon, double md3DSurf, double median_plane, bool do_rotate);
+    static int Projection(double *Coords_A, double *Coords_B,
+                          int nb_NodesA, int nb_NodesB, double epsilon, double md3DSurf, double minDot3DSurf, double median_plane, bool do_rotate);
     virtual const DuplicateFacesType* getIntersectFaces() const
     {
       return NULL;
@@ -75,6 +75,7 @@ namespace INTERP_KERNEL
     const MyMeshType& _meshS;
     double _dim_caracteristic;
     double _max_distance_3Dsurf_intersect;
+    double _min_dot_btw_3Dsurf_intersect;
     double _precision;
     double _median_plane;
     bool _do_rotate;

@@ -52,6 +52,9 @@ CLEANFILES = \
 ./test1.med\
 ./test20.med\
 ./test20-0.med\
+./test10-med.hdf\
+./test2-med.hdf\
+./test20b.med\
 ./test21.med\
 ./test23.med\
 ./test25.med\

@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -43,15 +43,18 @@ namespace ParaMEDMEM
   /*!
    * \brief Class to write a MEDFileData into a SAUVE format file
    */
-  class MEDLOADER_EXPORT SauvWriter : public ParaMEDMEM::RefCountObject
+  class SauvWriter : public ParaMEDMEM::RefCountObject
   {
   public:
-    static SauvWriter * New();
-    void setMEDFileDS(const MEDFileData* medData, unsigned meshIndex = 0);
-    void write(const char* fileName);
-
+    MEDLOADER_EXPORT static SauvWriter *New();
+    MEDLOADER_EXPORT void setMEDFileDS(const MEDFileData* medData, unsigned meshIndex = 0);
+    MEDLOADER_EXPORT void write(const std::string& fileName);
+    MEDLOADER_EXPORT void setCpyGrpIfOnASingleFamilyStatus(bool status);
+    MEDLOADER_EXPORT bool getCpyGrpIfOnASingleFamilyStatus() const;
   private:
-    std::size_t getHeapMemorySize() const { return 0; }
+    SauvWriter();
+    std::size_t getHeapMemorySizeWithoutChildren() const;
+    std::vector<const BigMemoryObject *> getDirectChildren() const;
     /*!
      * \brief Class representing a GIBI sub-mesh (described in the pile 1 of the SAUVE file).
      * It stands for a named med sub-mesh (family, etc) and contains either cell IDs or other sub-meshes. 
@@ -108,6 +111,7 @@ namespace ParaMEDMEM
     std::vector<SauvUtilities::nameGIBItoMED> _longNames[ LN_NB ];
 
     std::fstream*                             _sauvFile;
+    bool _cpy_grp_if_on_single_family;
   };
 }
 

@@ -19,6 +19,9 @@ Face::Face( void )
 	_groupName="";
 	_numberOfCells = 0 ;
 	_numberOfNodes = 0 ;
+	_xN=0.;
+	_yN=0.;
+	_zN=0.;
 }
 
 //----------------------------------------------------------------------
@@ -33,10 +36,13 @@ Face::Face( const Face& face )
 	_numberOfNodes = face.getNumberOfNodes() ;
 	_nodesId=face.getNodesId();
 	_cellsId=face.getCellsId();
+	_xN=face.getXN();
+	_yN=face.getYN();
+	_zN=face.getZN();
 }
 
 //----------------------------------------------------------------------
-Face::Face( const int numberOfNodes, const int numberOfCells, const double measure, const Point p )
+Face::Face( const int numberOfNodes, const int numberOfCells, const double measure, const Point p, double xN, double yN, double zN )
 //----------------------------------------------------------------------
 {
 	_point        = p ;
@@ -47,6 +53,9 @@ Face::Face( const int numberOfNodes, const int numberOfCells, const double measu
 	_measure = measure ;
 	_region=-1;
 	_groupName="";
+	_xN=xN;
+	_yN=yN;
+	_zN=zN;
 }
 
 //----------------------------------------------------------------------
@@ -59,6 +68,24 @@ int
 Face::getRegion(void) const
 {
 	return _region;
+}
+
+double
+Face::getXN(void) const
+{
+	return _xN;
+}
+
+double
+Face::getYN(void) const
+{
+	return _yN;
+}
+
+double
+Face::getZN(void) const
+{
+	return _zN;
 }
 
 string
@@ -159,14 +186,14 @@ void
 Face::addCellId(const int numCell, const int cellId )
 //----------------------------------------------------------------------
 {
-	_cellsId[numCell] = cellId ;
+	_cellsId(numCell) = cellId ;
 }
 //----------------------------------------------------------------------
 void
 Face::addNodeId(const int numNode, const int nodeId )
 //----------------------------------------------------------------------
 {
-	_nodesId[numNode] = nodeId ;
+	_nodesId(numNode) = nodeId ;
 }
 
 //----------------------------------------------------------------------
@@ -182,5 +209,8 @@ Face::operator= ( const Face& face )
 	_cellsId=face.getCellsId();
 	_groupName=face.getGroupName();
 	_region=face.getRegion();
+	_xN=face.getXN();
+	_yN=face.getYN();
+	_zN=face.getZN();
 	return *this;
 }

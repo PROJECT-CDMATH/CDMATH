@@ -12,3 +12,6 @@ libmisc_la_SOURCES += MEDcheckVersion.c MEDversionedApi.cxx MEDversionedApiC.c
 #noinst_LTLIBRARIES += libmisc23v30.la
 
 #libmisc23v30_la_SOURCES = _MED23v30stringConvert.c
+
+EXTRA_DIST = CMakeLists.txt
+

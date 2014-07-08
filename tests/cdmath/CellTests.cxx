@@ -53,4 +53,13 @@ CellTests::testClassCell( void )
 	CPPUNIT_ASSERT_EQUAL( 21, c2.getNodesId()[1] );
 	CPPUNIT_ASSERT_EQUAL( 22, c2.getNodesId()[2] );
 	CPPUNIT_ASSERT_EQUAL( 23, c2.getNodesId()[3] );
+
+    CPPUNIT_ASSERT_EQUAL( 10, c2.getFacesId()(0) );
+	CPPUNIT_ASSERT_EQUAL( 11, c2.getFacesId()(1) );
+	CPPUNIT_ASSERT_EQUAL( 12, c2.getFacesId()(2) );
+	CPPUNIT_ASSERT_EQUAL( 13, c2.getFacesId()(3) );
+    CPPUNIT_ASSERT_EQUAL( 20, c2.getNodesId()(0) );
+	CPPUNIT_ASSERT_EQUAL( 21, c2.getNodesId()(1) );
+	CPPUNIT_ASSERT_EQUAL( 22, c2.getNodesId()(2) );
+	CPPUNIT_ASSERT_EQUAL( 23, c2.getNodesId()(3) );
 }

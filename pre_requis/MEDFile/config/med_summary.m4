@@ -1,6 +1,6 @@
 dnl  This file is part of MED.
 dnl
-dnl  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+dnl  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
 dnl  MED is free software: you can redistribute it and/or modify
 dnl  it under the terms of the GNU Lesser General Public License as published by
 dnl  the Free Software Foundation, either version 3 of the License, or
@@ -57,6 +57,9 @@ if (./libtool --features | grep '^enable shared libraries' > /dev/null); then
   enable_shared=yes
 else
   enable_shared=no
+dnl Ce n'est pas le meilleur emplacement pour réaliser ce test 
+dnl mais on ne peut pas avoir une version finalisée de ./libtool avant l'appel à med_summary
+  test x"$enable_python" = xyes && AC_MSG_ERROR([Building the python interface require the abilility to build shared library. Either activate --enable-shared or deactivate python interface --disable-python.])
 fi
 
 if (./libtool --features | grep '^enable static libraries' > /dev/null); then

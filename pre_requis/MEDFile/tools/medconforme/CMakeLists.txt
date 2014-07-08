@@ -1,13 +1,14 @@
 INCLUDE_DIRECTORIES(
   ${HDF5_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_BINARY_DIR}/../../include
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../include
+  ${MPI_INCLUDE_DIRS}
+  ${PROJECT_BINARY_DIR}/include
+  ${PROJECT_SOURCE_DIR}/include
 )
 
-SET(medconforme_SOURCES medconforme.c)
+SET(medconforme_SOURCES 
+  medconforme.c)
+
 ADD_EXECUTABLE(medconforme ${medconforme_SOURCES})
-SET(medconforme_COMPILE_CFLAGS ${PLATFORM_CFLAGS})
-SET(medconforme_COMPILE_CFLAGS ${medconforme_COMPILE_CFLAGS} -DMED_MESGERR_FOR_TOOLS ${HDF5_DEFINITIONS})
-MED_SET_COMPILE_FLAGS(medconforme "${medconforme_COMPILE_CFLAGS}")
-TARGET_LINK_LIBRARIES(medconforme medC)
+TARGET_LINK_LIBRARIES(medconforme ${MEDFILE_ENGINE_LIB})
+
 INSTALL(TARGETS medconforme DESTINATION bin)

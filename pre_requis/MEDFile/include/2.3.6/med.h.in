@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -90,7 +90,7 @@ typedef enum {MED_POINT1=1, MED_SEG2=102, MED_SEG3=103, MED_TRIA3=203,
 	      MED_QUAD4=204, MED_TRIA6=206,MED_QUAD8=208, MED_TETRA4=304,
 	      MED_PYRA5=305, MED_PENTA6=306, MED_HEXA8=308, MED_TETRA10=310, 
 	      MED_PYRA13=313, MED_PENTA15=315, MED_HEXA20=320, 
-	      MED_POLYGONE=400, MED_POLYEDRE=500, MED_NONE=0,
+	      MED_POLYGONE=400, MED_POLYGONE2=420, MED_POLYEDRE=500, MED_NONE=0,
               MED_SEG4=104, MED_TRIA7=207,MED_QUAD9=209,MED_OCTA12=312,MED_HEXA27=327
 	     } med_geometrie_element;
 

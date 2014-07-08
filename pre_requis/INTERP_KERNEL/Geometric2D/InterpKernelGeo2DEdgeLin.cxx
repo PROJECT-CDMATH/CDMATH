@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -95,8 +95,8 @@ std::list< IntersectElement > SegSegIntersector::getIntersectionsCharacteristicV
   bool i_2S=_e2.getStartNode()->isEqual(*node);
   bool i_2E=_e2.getEndNode()->isEqual(*node);
   ret.push_back(IntersectElement(_e1.getCharactValue(*node),
-                                 _e2.getCharactValue(*node),
-                                 i_1S,i_1E,i_2S,i_2E,node,_e1,_e2,keepOrder()));
+      _e2.getCharactValue(*node),
+      i_1S,i_1E,i_2S,i_2E,node,_e1,_e2,keepOrder()));
   return ret;
 }
 
@@ -271,6 +271,15 @@ void EdgeLin::getBarycenterOfZone(double *bary) const
   //bary[0]+=(y1-y2)*(x2*x2/3.-(x1*x2+x1*x1)/6.)+y1*(x1*x1-x2*x2)/2.;
   //bary[0]+=(y1-y2)*((x2*x2+x1*x2+x1*x1)/3.-(x2+x1)*x1/2.)+y1*(x1*x1-x2*x2)/2.;
   bary[1]=(x1-x2)*(y1*(y1+y2)+y2*y2)/6.;
+}
+
+/*!
+ * Here \a this is not used (contrary to EdgeArcCircle class).
+ */
+void EdgeLin::getMiddleOfPoints(const double *p1, const double *p2, double *mid) const
+{
+  mid[0]=(p1[0]+p2[0])/2.;
+  mid[1]=(p1[1]+p2[1])/2.;
 }
 
 double EdgeLin::getCurveLength() const

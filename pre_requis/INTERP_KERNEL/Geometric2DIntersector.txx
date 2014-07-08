@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,6 +27,7 @@
 #include "PlanarIntersectorP1P0.txx"
 #include "PlanarIntersectorP1P1.txx"
 #include "PlanarIntersectorP1P0Bary.txx"
+#include "PlanarIntersectorP0P1Bary.txx"
 #include "CellModel.hxx"
 
 #include "InterpKernelGeo2DQuadraticPolygon.hxx"
@@ -41,9 +42,9 @@ namespace INTERP_KERNEL
 {
   INTERSECTOR_TEMPLATE
   GEO2D_INTERSECTOR::Geometric2DIntersector(const MyMeshType& meshT, const MyMeshType& meshS,
-                                            double dimCaracteristic, double md3DSurf, double medianPlane,
+                                            double dimCaracteristic, double md3DSurf, double minDot3DSurf, double medianPlane,
                                             double precision, int orientation):
-    InterpType<MyMeshType,MyMatrix,GEO2D_INTERSECTOR >(meshT,meshS,dimCaracteristic, precision, md3DSurf, medianPlane, true, orientation, 0)
+    InterpType<MyMeshType,MyMatrix,GEO2D_INTERSECTOR >(meshT,meshS,dimCaracteristic, precision, md3DSurf, minDot3DSurf, medianPlane, true, orientation, 0)
   {
     QUADRATIC_PLANAR::_precision=precision;
   }
@@ -62,7 +63,7 @@ namespace INTERP_KERNEL
     QuadraticPolygon *p2=buildPolygonFrom(CoordsS,tS);
     double ret=p1->intersectWithAbs(*p2);
     delete p1; delete p2;
-    return ret;
+    return orientation*ret;
   }
 
   INTERSECTOR_TEMPLATE
@@ -80,7 +81,7 @@ namespace INTERP_KERNEL
     QuadraticPolygon *p2=buildPolygonOfOneEdgeFrom(CoordsS,tS);
     double ret=p1->intersectWithAbs1D(*p2, isColinear);
     delete p1; delete p2;
-    return ret;
+    return orientation*ret;
   }
 
   INTERSECTOR_TEMPLATE

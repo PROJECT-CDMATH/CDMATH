@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -38,6 +38,7 @@ med_err _MEDgetGeometricParameter(const med_entity_type       entitytype,
    1) Filtre sur les indices 2) Création du tableau de filtre à partir de la selection des indices
   */
   if ( geotype    == MED_POLYGON  )   {*nnodes=1;*nndes=1;*entdim=-1;return 0;}
+  if ( geotype    == MED_POLYGON2 )   {*nnodes=1;*nndes=1;*entdim=-1;return 0;}
   if ( geotype    == MED_POLYHEDRON ) {*nnodes=1;*nndes=1;*entdim=-1;return 0;}
 
   *nnodes = geotype % 100;

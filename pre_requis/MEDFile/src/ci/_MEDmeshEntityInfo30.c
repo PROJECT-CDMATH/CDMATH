@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -37,7 +37,7 @@ _MEDmeshEntityInfo30(int dummy, ...) {
   med_sorting_type      _sortingtype=0;
   med_int               _intsortingtype=0;
 
-  int                   _intgeotype = 0;
+  med_int               _intgeotype = 0;
   int                   _num;
   med_bool              _isasupportmesh = MED_FALSE;
 

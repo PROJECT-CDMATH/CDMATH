@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -52,7 +52,7 @@ _MEDmeshnEntity30(int dummy, ...)
   med_bool              _isasoftlink       = MED_FALSE;
   med_bool              _datasetexist      = MED_FALSE;
   med_int               _ntmpmeddatatype   = 1;
-  med_data_type         _tmpmeddatatype[3] = {MED_UNDEF_DATATYPE,MED_UNDEF_DATATYPE,MED_UNDEF_DATATYPE};
+  med_data_type         _tmpmeddatatype[4] = {MED_UNDEF_DATATYPE,MED_UNDEF_DATATYPE,MED_UNDEF_DATATYPE,MED_UNDEF_DATATYPE};
   med_grid_type         _gridtype          = MED_UNDEF_GRID_TYPE;
   med_int               _intgridtype       = 0;
   med_int               _intmeshtype       = 0;
@@ -167,7 +167,7 @@ _MEDmeshnEntity30(int dummy, ...)
   *changement     = (med_bool) _changement;
   *transformation = MED_FALSE;
   /*
-   * Gestion entitytype == MED_NONE
+   * Gestion entitytype == MED_UNDEF_ENTITY_TYPE
    */
   if ( entitytype == MED_UNDEF_ENTITY_TYPE ) {
     _n=0; goto SORTIE;
@@ -224,6 +224,7 @@ _MEDmeshnEntity30(int dummy, ...)
       MED_ERR_(_ret,MED_ERR_COUNT,MED_ERR_DATAGROUP,_datagroupname2);
       goto ERROR;
     }
+    /*Par construction du modèle, le tableau de coordonnées preexiste aux autres */
     if ( ( entitytype == MED_NODE ) && (_n > 0) ) _n=1;
     goto SORTIE;
   }
@@ -278,18 +279,21 @@ _MEDmeshnEntity30(int dummy, ...)
     SSCRUTE(_datagroupname3);SSCRUTE(MED_NOM_CGS);goto ERROR;
   }
 
-  /* 1)
-   * Si un changement est présent sur MED_CONNECTIVITY,MED_COORDINATE
-   *    &&(meddatatype != MED_COORDINATE_AXIS1)&&(meddatatype != MED_COORDINATE_AXIS2)
-   *    &&(meddatatype != MED_COORDINATE_AXIS3) ) {
-   * le flag chgt doit être positionné à vrai si on interroge autre chose
-   * que MED_CONNECTIVITY,MED_COORDINATE
-   *  <=> modification des datasets COO(si NOE)| NOD|DES(si !NOE)
+  /* 1) Lorsque l'utilisateur interroge un <meddatatype> qui est relatif a des coordonnées (famille,....) il faut mettre
+   * le flag chgt à jour par rapport à des modifications potentiellement effectuées sur ces coordonnées
+   * <=>
+   * Si on interroge autre chose que MED_CONNECTIVITY,MED_COORDINATE
+   * et qu'un changement est présent sur MED_CONNECTIVITY,MED_COORDINATE
+   * le flag chgt doit être positionné à vrai
+   * Une demande entitype==MED_NODE && (meddatatype == MED_COORDINATE_AXIS1)||(meddatatype == MED_COORDINATE_AXIS2)
+   *    ||(meddatatype === MED_COORDINATE_AXIS3) est assimilée à une demande concernant des coordonnées
+   * <=>
+   * Y-a-t'il une modification des datasets COO(si NOE)| NOD|DES(si !NOE)
    */
   /* 2)
-   * Positionne un mode de connectivité _cmode si le meddatatype demandé 
-   * est autre chose que des coordonnées ou des connectivités et le cmode non
-   * positionné.
+   * Positionne un mode de connectivité _cmode si le meddatatype demandé
+   * est autre chose que des coordonnées ou des connectivités et que le cmode n'a pas été
+   * spécifié par l'utilisateur.
    * Cette Information est necessaire pour construire le nom du dataset.
    */
   if (    (meddatatype != MED_CONNECTIVITY) && ( meddatatype != MED_COORDINATE )
@@ -301,12 +305,17 @@ _MEDmeshnEntity30(int dummy, ...)
 
     if (entitytype == MED_NODE) {
       if ( ( (med_mesh_type) _intmeshtype ) != MED_UNSTRUCTURED_MESH ) {
-	if (_gridtype == MED_CARTESIAN_GRID ) {
+	if ( (_gridtype == MED_CARTESIAN_GRID) ||
+	     (_gridtype == MED_CURVILINEAR_GRID) ) {
 	  _ntmpmeddatatype=_meshdim;
 	  _tmpmeddatatype[0] = MED_COORDINATE_AXIS1;
 	  _tmpmeddatatype[1] = MED_COORDINATE_AXIS2;
 	  _tmpmeddatatype[2] = MED_COORDINATE_AXIS3;
-      } else {
+	} else  if (_gridtype == MED_CURVILINEAR_GRID ) {
+/*Les grilles curvilinéaires utilisent MED_COORDINATE_AXISx pour stocker la structure et le tableau MED_COORDINATE pour stocker les coordonnées des noeuds */
+	  ++_ntmpmeddatatype;
+	  _tmpmeddatatype[3] = MED_COORDINATE;
+	} else {
 	MED_ERR_(_ret,MED_ERR_RANGE,MED_ERR_GRIDTYPE,MED_ERR_MESH_MSG);
 	SSCRUTE(meshname);ISCRUTE_int(_gridtype);goto ERROR;
 	}

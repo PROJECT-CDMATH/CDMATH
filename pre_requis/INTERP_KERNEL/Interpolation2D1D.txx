@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -46,7 +46,7 @@ namespace INTERP_KERNEL
       *
       */
   template<class MyMeshType, class MatrixType>
-  int Interpolation2D1D::interpolateMeshes(const MyMeshType& myMeshS, const MyMeshType& myMeshT, MatrixType& result, const char *method)
+  int Interpolation2D1D::interpolateMeshes(const MyMeshType& myMeshS, const MyMeshType& myMeshT, MatrixType& result, const std::string& method)
   {
     static const int SPACEDIM=MyMeshType::MY_SPACEDIM;
     typedef typename MyMeshType::MyConnType ConnType;
@@ -80,6 +80,7 @@ namespace INTERP_KERNEL
           case Geometric2D:
             intersector=new Geometric2DIntersector<MyMeshType,MatrixType,Planar2D1DIntersectorP0P0>(myMeshT, myMeshS, _dim_caracteristic,
                                                                                                     InterpolationOptions::getMaxDistance3DSurfIntersect(),
+                                                                                                    InterpolationOptions::getMinDotBtwPlane3DSurfIntersect(),
                                                                                                     InterpolationOptions::getMedianPlane(),
                                                                                                     InterpolationOptions::getPrecision(),
                                                                                                     InterpolationOptions::getOrientation());

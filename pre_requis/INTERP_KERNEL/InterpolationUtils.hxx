@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -34,6 +34,7 @@
 #include <algorithm>
 #include <iostream>
 #include <limits>
+#include <functional>
 
 namespace INTERP_KERNEL
 {
@@ -733,7 +734,7 @@ namespace INTERP_KERNEL
   inline std::vector<double> reconstruct_polygon(const std::vector<double>& V)
   {
 
-    std::size_t taille=V.size();
+    int taille((int)V.size());
 
     //VB : why 6 ?
 
@@ -748,7 +749,7 @@ namespace INTERP_KERNEL
         COS[0]=1.0;
         SIN[0]=0.0;
         //angle[0]=0.0;
-        for(std::size_t i=0; i<taille/2-1;i++)
+        for(int i=0; i<taille/2-1;i++)
           {
             std::vector<double> Trigo=calcul_cos_et_sin(&Bary[0],&V[0],&V[2*(i+1)]);
             COS[i+1]=Trigo[0];
@@ -764,7 +765,7 @@ namespace INTERP_KERNEL
         Pt_ordonne.reserve(taille);
         //        std::multimap<double,int> Ordre;
         std::multimap<std::pair<double,double>,int, AngleLess> CosSin;
-        for(std::size_t i=0;i<taille/2;i++)       
+        for(int i=0;i<taille/2;i++)       
           {
             //  Ordre.insert(std::make_pair(angle[i],i));
             CosSin.insert(std::make_pair(std::make_pair(SIN[i],COS[i]),i));

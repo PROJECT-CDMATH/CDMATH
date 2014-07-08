@@ -10,10 +10,11 @@
 #include "DoubleTab.hxx"
 #include <string.h>
 
+using namespace std;
+
 DoubleTab::~DoubleTab()
 {
 	delete [] _values;
-
 }
 
 DoubleTab::DoubleTab()
@@ -34,6 +35,14 @@ DoubleTab::DoubleTab(const int size, double initialValue)
 	_numberOfElements=size;
 	for (int i=0;i<size;i++)
 		_values[i] = initialValue ;
+}
+
+DoubleTab::DoubleTab(const int size, const double* value)
+{
+	_values = new double [size];
+	_numberOfElements=size;
+	for (int i=0;i<size;i++)
+		_values[i] = value[i] ;
 }
 
 DoubleTab::DoubleTab(const DoubleTab& dt)
@@ -71,6 +80,18 @@ DoubleTab::operator[](int i) const
 	return _values[i];
 }
 
+double&
+DoubleTab::operator()(int i)
+{
+	return _values[i];
+}
+
+const double&
+DoubleTab::operator()(int i) const
+{
+	return _values[i];
+}
+
 int
 DoubleTab::size() const
 {
@@ -81,6 +102,26 @@ double*
 DoubleTab::getValues(void) const
 {
 	return _values;
+}
+
+double
+DoubleTab::max() const
+{
+	double res=_values[0];
+	for (int i=0;i<size();i++)
+		if (_values[i]>res)
+			res=_values[i];
+	return res;
+}
+
+double
+DoubleTab::min() const
+{
+	double res=_values[0];
+	for (int i=0;i<size();i++)
+		if (_values[i]<res)
+			res=_values[i];
+	return res;
 }
 
 double*
@@ -175,7 +216,7 @@ operator*(double value, const DoubleTab& U)
 	int size = U.size();
 	DoubleTab res(size);
 	for(int i=0; i<size; i++)
-		res = U[i] * value;
+		res[i] = U[i] * value;
    return res;
 }
 
@@ -186,7 +227,7 @@ operator*(const DoubleTab& U, double value)
 	int size = U.size();
 	DoubleTab res(size);
 	for(int i=0; i<size; i++)
-		res = U[i] * value;
+		res[i] = U[i] * value;
    return res;
 }
 
@@ -197,6 +238,19 @@ operator/(const DoubleTab& U, double value)
 	int size = U.size();
 	DoubleTab res(size);
 	for(int i=0; i<size; i++)
-		res = U[i] / value;
+		res[i] = U[i] / value;
    return res;
+}
+
+ostream&
+operator<<(ostream& out, const DoubleTab& U)
+{
+	for (int i=0; i<U.size();i++)
+	{
+		out.width(6);
+		out.precision(6);
+		out<<U[i];
+		out<<endl;
+	}
+	return out;
 }

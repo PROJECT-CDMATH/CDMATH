@@ -7,3 +7,6 @@ libcfi_la_SOURCES   = equcf.c fichcf.c intercf.c jntcf.c rescf.c \
 entmaacf.c famcf.c maacf.c procf.c scalairecf.c gausscf.c exitcf.c
 libcfi_la_SOURCES   += famcf231.c famcf232.c
 libcfi_la_SOURCES   += MEDversionedApiF.cxx
+
+EXTRA_DIST = CMakeLists.txt
+

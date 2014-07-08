@@ -42,6 +42,16 @@ NodeTests::testClassNode( void )
 	CPPUNIT_ASSERT_EQUAL( 21, n2.getCellsId()[1] );
 	CPPUNIT_ASSERT_EQUAL( 22, n2.getCellsId()[2] );
 	CPPUNIT_ASSERT_EQUAL( 23, n2.getCellsId()[3] );
+
+    CPPUNIT_ASSERT_EQUAL( 10, n2.getFacesId()(0) );
+	CPPUNIT_ASSERT_EQUAL( 11, n2.getFacesId()(1) );
+	CPPUNIT_ASSERT_EQUAL( 12, n2.getFacesId()(2) );
+	CPPUNIT_ASSERT_EQUAL( 13, n2.getFacesId()(3) );
+    CPPUNIT_ASSERT_EQUAL( 20, n2.getCellsId()(0) );
+	CPPUNIT_ASSERT_EQUAL( 21, n2.getCellsId()(1) );
+	CPPUNIT_ASSERT_EQUAL( 22, n2.getCellsId()(2) );
+	CPPUNIT_ASSERT_EQUAL( 23, n2.getCellsId()(3) );
+
     n2=n;
     CPPUNIT_ASSERT_EQUAL( 0., n.distance(n2) );
 }

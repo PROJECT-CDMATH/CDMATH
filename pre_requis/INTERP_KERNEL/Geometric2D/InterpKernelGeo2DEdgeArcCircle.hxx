@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -31,12 +31,14 @@ namespace INTERP_KERNEL
   public:
     ArcCArcCIntersector(const EdgeArcCircle& e1, const EdgeArcCircle& e2);
     bool haveTheySameDirection() const;
+    bool areColinears() const;
     void getPlacements(Node *start, Node *end, TypeOfLocInEdge& whereStart, TypeOfLocInEdge& whereEnd, MergePoints& commonNode) const;
     void areOverlappedOrOnlyColinears(const Bounds *whereToFind, bool& obviousNoIntersection, bool& areOverlapped);
     std::list< IntersectElement > getIntersectionsCharacteristicVal() const;
   private:
     //! return angle in ]-Pi;Pi[ - 'node' must be on curve of '_e1'
     double getAngle(Node *node) const;
+    static bool internalAreColinears(const EdgeArcCircle& a1, const EdgeArcCircle& a2, double& distBetweenCenters, double& cst, double& radiusL, double centerL[2], double& raduisB, double centerB[2]);
     static bool areArcsOverlapped(const EdgeArcCircle& a1, const EdgeArcCircle& a2);
   private:
     const EdgeArcCircle& getE1() const { return (const EdgeArcCircle&)_e1; }
@@ -50,6 +52,7 @@ namespace INTERP_KERNEL
   public:
     ArcCSegIntersector(const EdgeArcCircle& e1, const EdgeLin& e2, bool reverse=true);
     //virtual overloading
+    bool areColinears() const;
     void getPlacements(Node *start, Node *end, TypeOfLocInEdge& whereStart, TypeOfLocInEdge& whereEnd, MergePoints& commonNode) const;
     void areOverlappedOrOnlyColinears(const Bounds *whereToFind, bool& obviousNoIntersection, bool& areOverlapped);
     std::list< IntersectElement > getIntersectionsCharacteristicVal() const;
@@ -63,7 +66,7 @@ namespace INTERP_KERNEL
     double _cross;
     double _determinant;
   };
-  
+
   class INTERPKERNEL_EXPORT EdgeArcCircle : public Edge
   {
   public:
@@ -79,6 +82,7 @@ namespace INTERP_KERNEL
     double getCurveLength() const;
     void getBarycenter(double *bary) const;
     void getBarycenterOfZone(double *bary) const;
+    void getMiddleOfPoints(const double *p1, const double *p2, double *mid) const;
     bool isIn(double characterVal) const;
     Node *buildRepresentantOfMySelf() const;
     bool isLower(double val1, double val2) const;

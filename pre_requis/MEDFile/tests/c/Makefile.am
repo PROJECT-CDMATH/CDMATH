@@ -114,6 +114,9 @@ CLEANFILES = \
 ./test18.med\
 ./test19.med\
 ./test20-0.med\
+./test20b.med\
+./test10-med.hdf\
+./test2-med.hdf\
 ./test20.med\
 ./test21.med\
 ./test23.med\
@@ -148,3 +151,8 @@ endif
 
 EXTRA_DIST+=CMakeLists.txt
 
+#/local/hdf5-1.8.8_par_openmpi.bin/bin/h5copy -p -i test2.med -o test2-med.hdf -s /INFOS_GENERALES -d /byid2/INFOS_GENERALES
+#/local/hdf5-1.8.8_par_openmpi.bin/bin/h5copy -p -i test2.med -o test2-med.hdf -s /ENS_MAA -d /byid2/ENS_MAA
+
+#/local/hdf5-1.8.8_par_openmpi.bin/bin/h5copy -p -i test10.med -o test10-med.hdf -s /INFOS_GENERALES -d /byid10/INFOS_GENERALES
+#/local/hdf5-1.8.8_par_openmpi.bin/bin/h5copy -p -i test10.med -o test10-med.hdf -s /CHA -d /byid10/CHA

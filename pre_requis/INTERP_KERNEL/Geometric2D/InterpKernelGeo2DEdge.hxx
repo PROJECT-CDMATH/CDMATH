@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,7 +22,6 @@
 #define __INTERPKERNELGEO2DEDGE_HXX__
 
 #include "INTERPKERNELDefines.hxx"
-#include "InterpKernelGeo2DComposedEdge.hxx"
 #include "InterpKernelException.hxx"
 #include "InterpKernelGeo2DBounds.hxx"
 #include "InterpKernelGeo2DNode.hxx"
@@ -35,34 +34,34 @@
 namespace INTERP_KERNEL
 {
   typedef enum
-    {
-      SEG         = 1,
-      ARC_CIRCLE  = 4,
-      ARC_PARABOL = 8
-    } TypeOfFunction;
+  {
+    SEG         = 1,
+    ARC_CIRCLE  = 4,
+    ARC_PARABOL = 8
+  } TypeOfFunction;
 
   typedef enum
-    {
-      CIRCLE  = 0 ,
-      PARABOL = 1
-    } TypeOfMod4QuadEdge;
+  {
+    CIRCLE  = 0 ,
+    PARABOL = 1
+  } TypeOfMod4QuadEdge;
 
   typedef enum
-    {
-      START       = 5,
-      END         = 1,
-      INSIDE      = 2,
-      OUT_BEFORE  = 3,
-      OUT_AFTER   = 4
-    } TypeOfLocInEdge; //see Edge::OFFSET_FOR_TYPEOFLOCINEDGE
-  
+  {
+    START       = 5,
+    END         = 1,
+    INSIDE      = 2,
+    OUT_BEFORE  = 3,
+    OUT_AFTER   = 4
+  } TypeOfLocInEdge; //see Edge::OFFSET_FOR_TYPEOFLOCINEDGE
+
   typedef enum
-    {
-      FULL_IN_1    = 1,
-      FULL_ON_1    = 4,
-      FULL_OUT_1   = 2,
-      FULL_UNKNOWN = 3
-    } TypeOfEdgeLocInPolygon;
+  {
+    FULL_IN_1    = 1,
+    FULL_ON_1    = 4,
+    FULL_OUT_1   = 2,
+    FULL_UNKNOWN = 3
+  } TypeOfEdgeLocInPolygon;
 
   class INTERPKERNEL_EXPORT MergePoints
   {
@@ -83,6 +82,9 @@ namespace INTERP_KERNEL
     bool isEnd2(unsigned rk) const;
     void clear();
     unsigned getNumberOfAssociations() const;
+    void updateMergedNodes(int e1Start, int e1End, int e2Start, int e2End, std::map<int,int>& mergedNodes);
+  private:
+    static void PushInMap(int key, int value, std::map<int,int>& mergedNodes);
   private:
     unsigned _ass1Start1  : 1;
     unsigned _ass1End1    : 1;
@@ -94,6 +96,8 @@ namespace INTERP_KERNEL
     unsigned _ass2End2    : 1;
   };
 
+  class Edge;
+  class ComposedEdge;
   /*!
    * This class is in charge to store an intersection point as result of \b non oververlapping edge intersection.
    * This class manages the cases when intersect element is one of the extrimities of edge1 and/or edge2.
@@ -147,6 +151,7 @@ namespace INTERP_KERNEL
   public:
     virtual ~EdgeIntersector() { }
     virtual bool keepOrder() const = 0;
+    virtual bool areColinears() const = 0;
     //!to call only if 'areOverlapped' have been set to true when areOverlappedOrOnlyColinears was called
     virtual bool haveTheySameDirection() const = 0;
     //!to call only if 'areOverlapped' have been set to true when areOverlappedOrOnlyColinears was called
@@ -190,9 +195,9 @@ namespace INTERP_KERNEL
 
   /*!
    * Deal with an oriented edge of a polygon.
-   * An Edge is definied with a start node a end node and an equation of 1D curve.
+   * An Edge is defined with a start node, an end node and an equation of 1D curve.
    * All other attributes are mutable because they don't impact these 3 invariant attributes.
-   * To be exact start and end node can change (adress) but their location remain
+   * To be exact start and end nodes can change (address) but their location remain
    * the same (at precision).
    */
   class INTERPKERNEL_EXPORT Edge
@@ -207,6 +212,12 @@ namespace INTERP_KERNEL
     void declareOn() const;
     void declareIn() const;
     void declareOut() const;
+    void initHitStatus() const { _hit=false; }
+    bool getHitStatus() const { return _hit; }
+    void hitMeAlone(double xBary, double yBary, double dimChar) { _hit=true; applySimilarity(xBary,yBary,dimChar); }
+    void unHitMeAlone(double xBary, double yBary, double dimChar) { _hit=true; unApplySimilarity(xBary,yBary,dimChar); }
+    void hitMeAfter(double xBary, double yBary, double dimChar) { if(!_hit) hitMeAlone(xBary,yBary,dimChar); }
+    void unHitMeAfter(double xBary, double yBary, double dimChar) { if(!_hit) unHitMeAlone(xBary,yBary,dimChar); }
     const Bounds& getBounds() const { return _bounds; }
     void fillXfigStreamForLoc(std::ostream& stream) const;
     Node *getNode(TypeOfLocInEdge where) const { if(where==START) return _start; else if(where==END) return _end; else return 0; }
@@ -225,6 +236,7 @@ namespace INTERP_KERNEL
     static Edge *BuildEdgeFrom(Node *start, Node *end);
     template<TypeOfMod4QuadEdge type>
     static Edge *BuildEdgeFrom(Node *start, Node *middle, Node *end);
+    static Edge *BuildEdgeFrom3Points(const double *start, const double *middle, const double *end);
     virtual void update(Node *m) = 0;
     //! returns area between this and axe Ox delimited along Ox by _start and _end.
     virtual double getAreaOfZone() const = 0;
@@ -236,6 +248,7 @@ namespace INTERP_KERNEL
     virtual double getCurveLength() const = 0;
     virtual void getBarycenter(double *bary) const = 0;
     virtual void getBarycenterOfZone(double *bary) const = 0;
+    virtual void getMiddleOfPoints(const double *p1, const double *p2, double *mid) const = 0;
     //! Retrieves a point that is owning to this, well placed for IN/OUT detection of this. Typically midlle of this is returned.
     virtual Node *buildRepresentantOfMySelf() const = 0;
     //! Given a magnitude specified by sub-type returns if in or not. See getCharactValue method.
@@ -262,6 +275,7 @@ namespace INTERP_KERNEL
     virtual void dumpInXfigFile(std::ostream& stream, bool direction, int resolution, const Bounds& box) const = 0;
     bool isEqual(const Edge& other) const;
   public:
+    bool sortSubNodesAbs(const double *coo, std::vector<int>& subNodes);
     void sortIdsAbs(const std::vector<INTERP_KERNEL::Node *>& addNodes, const std::map<INTERP_KERNEL::Node *, int>& mapp1, const std::map<INTERP_KERNEL::Node *, int>& mapp2, std::vector<int>& edgesThis);
     virtual void fillGlobalInfoAbs(bool direction, const std::map<INTERP_KERNEL::Node *,int>& mapThis, const std::map<INTERP_KERNEL::Node *,int>& mapOther, int offset1, int offset2, double fact, double baryX, double baryY,
                                    std::vector<int>& edgesThis, std::vector<double>& addCoo, std::map<INTERP_KERNEL::Node *,int> mapAddCoo) const = 0;
@@ -278,6 +292,7 @@ namespace INTERP_KERNEL
     static bool SplitOverlappedEdges(const Edge *e1, const Edge *e2, Node *nS, Node *nE, bool direction, int code,
                                      ComposedEdge& outVal1, ComposedEdge& outVal2);
   protected:
+    mutable bool _hit;
     mutable unsigned char _cnt;
     mutable TypeOfEdgeLocInPolygon _loc;
     Bounds _bounds;

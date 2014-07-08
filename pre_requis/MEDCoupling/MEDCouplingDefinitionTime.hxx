@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -33,32 +33,33 @@ namespace ParaMEDMEM
 {
   class MEDCouplingFieldDouble;
 
-  class MEDCOUPLING_EXPORT MEDCouplingDefinitionTimeSlice : public RefCountObject
+  class MEDCouplingDefinitionTimeSlice : public RefCountObject
   {
   public:
-    static MEDCouplingDefinitionTimeSlice *New(const MEDCouplingFieldDouble *f, int meshId, const std::vector<int>& arrId, int fieldId) throw(INTERP_KERNEL::Exception);
-    static MEDCouplingDefinitionTimeSlice *New(TypeOfTimeDiscretization type, const std::vector<int>& tiI, const std::vector<double>& tiD) throw(INTERP_KERNEL::Exception);
-    int getArrayId() const { return _array_id; }
-    virtual MEDCouplingDefinitionTimeSlice *copy() const = 0;
-    virtual bool isEqual(const MEDCouplingDefinitionTimeSlice& other, double eps) const;
-    virtual void getHotSpotsTime(std::vector<double>& ret) const = 0;
-    virtual void getIdsOnTime(double tm, double eps, int& meshId, int& arrId, int& arrIdInField, int& fieldId) const throw(INTERP_KERNEL::Exception) = 0;
-    virtual bool isContaining(double tmp, double eps) const = 0;
-    virtual int getStartId() const;
-    virtual int getEndId() const;
-    virtual void appendRepr(std::ostream& stream) const;
-    virtual double getStartTime() const = 0;
-    virtual double getEndTime() const = 0;
-    virtual void getTinySerializationInformation(std::vector<int>& tiI, std::vector<double>& tiD) const = 0;
-    virtual TypeOfTimeDiscretization getTimeType() const = 0;
-    std::size_t getHeapMemorySize() const;
-    bool isFullyIncludedInMe(const MEDCouplingDefinitionTimeSlice *other, double eps) const;
-    bool isOverllapingWithMe(const MEDCouplingDefinitionTimeSlice *other, double eps) const;
-    bool isAfterMe(const MEDCouplingDefinitionTimeSlice *other, double eps) const;
-    bool isBeforeMe(const MEDCouplingDefinitionTimeSlice *other, double eps) const;
+    MEDCOUPLING_EXPORT static MEDCouplingDefinitionTimeSlice *New(const MEDCouplingFieldDouble *f, int meshId, const std::vector<int>& arrId, int fieldId);
+    MEDCOUPLING_EXPORT static MEDCouplingDefinitionTimeSlice *New(TypeOfTimeDiscretization type, const std::vector<int>& tiI, const std::vector<double>& tiD);
+    MEDCOUPLING_EXPORT int getArrayId() const { return _array_id; }
+    MEDCOUPLING_EXPORT virtual MEDCouplingDefinitionTimeSlice *copy() const = 0;
+    MEDCOUPLING_EXPORT virtual bool isEqual(const MEDCouplingDefinitionTimeSlice& other, double eps) const;
+    MEDCOUPLING_EXPORT virtual void getHotSpotsTime(std::vector<double>& ret) const = 0;
+    MEDCOUPLING_EXPORT virtual void getIdsOnTime(double tm, double eps, int& meshId, int& arrId, int& arrIdInField, int& fieldId) const = 0;
+    MEDCOUPLING_EXPORT virtual bool isContaining(double tmp, double eps) const = 0;
+    MEDCOUPLING_EXPORT virtual int getStartId() const;
+    MEDCOUPLING_EXPORT virtual int getEndId() const;
+    MEDCOUPLING_EXPORT virtual void appendRepr(std::ostream& stream) const;
+    MEDCOUPLING_EXPORT virtual double getStartTime() const = 0;
+    MEDCOUPLING_EXPORT virtual double getEndTime() const = 0;
+    MEDCOUPLING_EXPORT virtual void getTinySerializationInformation(std::vector<int>& tiI, std::vector<double>& tiD) const = 0;
+    MEDCOUPLING_EXPORT virtual TypeOfTimeDiscretization getTimeType() const = 0;
+    MEDCOUPLING_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
+    MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildren() const;
+    MEDCOUPLING_EXPORT bool isFullyIncludedInMe(const MEDCouplingDefinitionTimeSlice *other, double eps) const;
+    MEDCOUPLING_EXPORT bool isOverllapingWithMe(const MEDCouplingDefinitionTimeSlice *other, double eps) const;
+    MEDCOUPLING_EXPORT bool isAfterMe(const MEDCouplingDefinitionTimeSlice *other, double eps) const;
+    MEDCOUPLING_EXPORT bool isBeforeMe(const MEDCouplingDefinitionTimeSlice *other, double eps) const;
   protected:
-    MEDCouplingDefinitionTimeSlice() { }
-    MEDCouplingDefinitionTimeSlice(const MEDCouplingFieldDouble *f, int meshId, int arrId, int fieldId) throw(INTERP_KERNEL::Exception);
+    MEDCOUPLING_EXPORT MEDCouplingDefinitionTimeSlice() { }
+    MEDCOUPLING_EXPORT MEDCouplingDefinitionTimeSlice(const MEDCouplingFieldDouble *f, int meshId, int arrId, int fieldId);
   protected:
     int _mesh_id;
     int _array_id;
@@ -72,7 +73,7 @@ namespace ParaMEDMEM
     MEDCouplingDefinitionTimeSlice *copy() const;
     bool isEqual(const MEDCouplingDefinitionTimeSlice& other, double eps) const;
     void getHotSpotsTime(std::vector<double>& ret) const;
-    void getIdsOnTime(double tm, double eps, int& meshId, int& arrId, int& arrIdInField, int& fieldId) const throw(INTERP_KERNEL::Exception);
+    void getIdsOnTime(double tm, double eps, int& meshId, int& arrId, int& arrIdInField, int& fieldId) const;
     bool isContaining(double tmp, double eps) const;
     void appendRepr(std::ostream& stream) const;
     double getStartTime() const;
@@ -81,7 +82,7 @@ namespace ParaMEDMEM
     void unserialize(const std::vector<int>& tiI, const std::vector<double>& tiD);
     TypeOfTimeDiscretization getTimeType() const;
   public:
-    MEDCouplingDefinitionTimeSliceInst(const MEDCouplingFieldDouble *f, int meshId, int arrId, int fieldId) throw(INTERP_KERNEL::Exception);
+    MEDCouplingDefinitionTimeSliceInst(const MEDCouplingFieldDouble *f, int meshId, int arrId, int fieldId);
   protected:
     MEDCouplingDefinitionTimeSliceInst() { }
   protected:
@@ -95,7 +96,7 @@ namespace ParaMEDMEM
     MEDCouplingDefinitionTimeSlice *copy() const;
     bool isEqual(const MEDCouplingDefinitionTimeSlice& other, double eps) const;
     void getHotSpotsTime(std::vector<double>& ret) const;
-    void getIdsOnTime(double tm, double eps, int& meshId, int& arrId, int& arrIdInField, int& fieldId) const throw(INTERP_KERNEL::Exception);
+    void getIdsOnTime(double tm, double eps, int& meshId, int& arrId, int& arrIdInField, int& fieldId) const;
     bool isContaining(double tmp, double eps) const;
     void appendRepr(std::ostream& stream) const;
     double getStartTime() const;
@@ -104,14 +105,14 @@ namespace ParaMEDMEM
     void unserialize(const std::vector<int>& tiI, const std::vector<double>& tiD);
     TypeOfTimeDiscretization getTimeType() const;
   public:
-    MEDCouplingDefinitionTimeSliceCstOnTI(const MEDCouplingFieldDouble *f, int meshId, int arrId, int fieldId) throw(INTERP_KERNEL::Exception);
+    MEDCouplingDefinitionTimeSliceCstOnTI(const MEDCouplingFieldDouble *f, int meshId, int arrId, int fieldId);
   protected:
     MEDCouplingDefinitionTimeSliceCstOnTI() { }
   protected:
     double _start;
     double _end;
   };
-  
+
   class MEDCouplingDefinitionTimeSliceLT : public MEDCouplingDefinitionTimeSlice
   {
   public:
@@ -119,7 +120,7 @@ namespace ParaMEDMEM
     MEDCouplingDefinitionTimeSlice *copy() const;
     bool isEqual(const MEDCouplingDefinitionTimeSlice& other, double eps) const;
     void getHotSpotsTime(std::vector<double>& ret) const;
-    void getIdsOnTime(double tm, double eps, int& meshId, int& arrId, int& arrIdInField, int& fieldId) const throw(INTERP_KERNEL::Exception);
+    void getIdsOnTime(double tm, double eps, int& meshId, int& arrId, int& arrIdInField, int& fieldId) const;
     bool isContaining(double tmp, double eps) const;
     void appendRepr(std::ostream& stream) const;
     double getStartTime() const;
@@ -129,7 +130,7 @@ namespace ParaMEDMEM
     void unserialize(const std::vector<int>& tiI, const std::vector<double>& tiD);
     TypeOfTimeDiscretization getTimeType() const;
   public:
-    MEDCouplingDefinitionTimeSliceLT(const MEDCouplingFieldDouble *f, int meshId, int arrId, int arr2Id, int fieldId) throw(INTERP_KERNEL::Exception);
+    MEDCouplingDefinitionTimeSliceLT(const MEDCouplingFieldDouble *f, int meshId, int arrId, int arr2Id, int fieldId);
   protected:
     MEDCouplingDefinitionTimeSliceLT() { }
   protected:
@@ -138,23 +139,24 @@ namespace ParaMEDMEM
     double _end;
   };
 
-  class MEDCOUPLING_EXPORT MEDCouplingDefinitionTime
+  class MEDCouplingDefinitionTime
   {
   public:
-    MEDCouplingDefinitionTime();
-    MEDCouplingDefinitionTime(const std::vector<const MEDCouplingFieldDouble *>& fs, const std::vector<int>& meshRefs, const std::vector<std::vector<int> >& arrRefs) throw(INTERP_KERNEL::Exception);
-    std::size_t getHeapMemorySize() const;
-    void assign(const MEDCouplingDefinitionTime& other);
-    bool isEqual(const MEDCouplingDefinitionTime& other) const;
-    double getTimeResolution() const { return _eps; }
-    void getIdsOnTimeRight(double tm, int& meshId, int& arrId, int& arrIdInField, int& fieldId) const throw(INTERP_KERNEL::Exception);
-    void getIdsOnTimeLeft(double tm, int& meshId, int& arrId, int& arrIdInField, int& fieldId) const throw(INTERP_KERNEL::Exception);
-    void getIdsOnTime(double tm, std::vector<int>& meshIds, std::vector<int>& arrIds, std::vector<int>& arrIdsInField, std::vector<int>& fieldIds) const throw(INTERP_KERNEL::Exception);
-    std::vector<double> getHotSpotsTime() const;
-    void appendRepr(std::ostream& stream) const;
+    MEDCOUPLING_EXPORT MEDCouplingDefinitionTime();
+    MEDCOUPLING_EXPORT MEDCouplingDefinitionTime(const std::vector<const MEDCouplingFieldDouble *>& fs, const std::vector<int>& meshRefs, const std::vector<std::vector<int> >& arrRefs);
+    MEDCOUPLING_EXPORT std::size_t getHeapMemorySizeWithoutChildren() const;
+    MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getDirectChildren() const;
+    MEDCOUPLING_EXPORT void assign(const MEDCouplingDefinitionTime& other);
+    MEDCOUPLING_EXPORT bool isEqual(const MEDCouplingDefinitionTime& other) const;
+    MEDCOUPLING_EXPORT double getTimeResolution() const { return _eps; }
+    MEDCOUPLING_EXPORT void getIdsOnTimeRight(double tm, int& meshId, int& arrId, int& arrIdInField, int& fieldId) const;
+    MEDCOUPLING_EXPORT void getIdsOnTimeLeft(double tm, int& meshId, int& arrId, int& arrIdInField, int& fieldId) const;
+    MEDCOUPLING_EXPORT void getIdsOnTime(double tm, std::vector<int>& meshIds, std::vector<int>& arrIds, std::vector<int>& arrIdsInField, std::vector<int>& fieldIds) const;
+    MEDCOUPLING_EXPORT std::vector<double> getHotSpotsTime() const;
+    MEDCOUPLING_EXPORT void appendRepr(std::ostream& stream) const;
   public:
-    void getTinySerializationInformation(std::vector<int>& tinyInfoI, std::vector<double>& tinyInfoD) const;
-    void unserialize(const std::vector<int>& tinyInfoI, const std::vector<double>& tinyInfoD);
+    MEDCOUPLING_EXPORT void getTinySerializationInformation(std::vector<int>& tinyInfoI, std::vector<double>& tinyInfoD) const;
+    MEDCOUPLING_EXPORT void unserialize(const std::vector<int>& tinyInfoI, const std::vector<double>& tinyInfoD);
   private:
     double _eps;
     std::vector< MEDCouplingAutoRefCountObjectPtr<MEDCouplingDefinitionTimeSlice> > _slices;

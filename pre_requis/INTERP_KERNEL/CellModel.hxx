@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -43,6 +43,7 @@ namespace INTERP_KERNEL
     static void buildUniqueInstance();
   public:
     INTERPKERNEL_EXPORT static const CellModel& GetCellModel(NormalizedCellType type);
+    INTERPKERNEL_EXPORT NormalizedCellType getEnum() const { return _type; }
     INTERPKERNEL_EXPORT const char *getRepr() const;
     INTERPKERNEL_EXPORT bool isExtruded() const { return _is_extruded; }
     INTERPKERNEL_EXPORT bool isDynamic() const { return _dyn; }
@@ -60,6 +61,7 @@ namespace INTERP_KERNEL
     INTERPKERNEL_EXPORT unsigned getNumberOfNodesConstituentTheSon(unsigned sonId) const { return _nb_of_sons_con[sonId]; }
     INTERPKERNEL_EXPORT unsigned getNumberOfNodesConstituentTheSon2(unsigned sonId, const int *nodalConn, int lgth) const;
     INTERPKERNEL_EXPORT NormalizedCellType getExtrudedType() const { return _extruded_type; }
+    INTERPKERNEL_EXPORT NormalizedCellType getCorrespondingPolyType() const;
     INTERPKERNEL_EXPORT NormalizedCellType getReverseExtrudedType() const { return _reverse_extruded_type; }
     INTERPKERNEL_EXPORT NormalizedCellType getLinearType() const { return _linear_type; }
     INTERPKERNEL_EXPORT NormalizedCellType getQuadraticType() const { return _quadratic_type; }

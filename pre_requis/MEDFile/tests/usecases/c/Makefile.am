@@ -51,6 +51,7 @@ UsesCase_MEDfield_12 \
 UsesCase_MEDfield_13 \
 UsesCase_MEDfield_14 \
 UsesCase_MEDfield_15 \
+UsesCase_MEDfield_15b \
 UsesCase_MEDfield_16 \
 UsesCase_MEDfield_17 \
 UsesCase_MEDfield_18 \
@@ -93,6 +94,7 @@ nodist_EXTRA_UsesCase_MEDfield_12_SOURCES = dummy.cxx
 nodist_EXTRA_UsesCase_MEDfield_13_SOURCES = dummy.cxx
 nodist_EXTRA_UsesCase_MEDfield_14_SOURCES = dummy.cxx
 nodist_EXTRA_UsesCase_MEDfield_15_SOURCES = dummy.cxx
+nodist_EXTRA_UsesCase_MEDfield_15b_SOURCES = dummy.cxx
 nodist_EXTRA_UsesCase_MEDfield_16_SOURCES = dummy.cxx
 nodist_EXTRA_UsesCase_MEDfield_17_SOURCES = dummy.cxx
 nodist_EXTRA_UsesCase_MEDfield_18_SOURCES = dummy.cxx
@@ -145,6 +147,7 @@ UsesCase_MEDfield_7.sh \
 UsesCase_MEDfield_10.sh \
 UsesCase_MEDfield_13.sh \
 UsesCase_MEDfield_15.sh \
+UsesCase_MEDfield_15b.sh \
 UsesCase_MEDfield_17.sh \
 UsesCase_MEDinterp_1.sh 
 
@@ -186,6 +189,7 @@ UsesCase_MEDfield_12.sh \
 UsesCase_MEDfield_13.sh \
 UsesCase_MEDfield_14.sh \
 UsesCase_MEDfield_15.sh \
+UsesCase_MEDfield_15b.sh \
 UsesCase_MEDfield_16.sh \
 UsesCase_MEDfield_17.sh \
 UsesCase_MEDfield_18.sh \
@@ -228,6 +232,7 @@ CLEANFILES = \
 ./UsesCase_MEDfield_10.med \
 ./UsesCase_MEDfield_13.med \
 ./UsesCase_MEDfield_15.med \
+./UsesCase_MEDfield_15b.med \
 ./UsesCase_MEDfield_17.med \
 ./UsesCase_MEDstructElement_1.med \
 ./UsesCase_MEDinterp_1.med \
@@ -246,6 +251,7 @@ CLEANFILES = \
 ./UsesCase_MEDfield_13.dump \
 ./UsesCase_MEDfield_14.dump \
 ./UsesCase_MEDfield_15.dump \
+./UsesCase_MEDfield_15b.dump \
 ./UsesCase_MEDfield_17.dump \
 ./UsesCase_MEDstructElement_1.dump \
 ./UsesCase_MEDinterp_1.dump

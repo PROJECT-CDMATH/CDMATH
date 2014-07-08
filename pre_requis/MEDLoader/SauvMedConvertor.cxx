@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -41,10 +41,7 @@
 
 #ifdef WIN32
 #include <io.h>
-#endif
-
-#ifndef WIN32
-#define HAS_XDR
+#else
 #include <unistd.h>
 #endif
 
@@ -54,7 +51,6 @@
 
 using namespace SauvUtilities;
 using namespace ParaMEDMEM;
-using namespace std;
 
 namespace
 {
@@ -103,8 +99,8 @@ namespace
     if ( const int * conn = getGibi2MedQuadraticInterlace( type ))
       {
         Cell* ma = const_cast<Cell*>(&aCell);
-        vector< Node* > new_nodes( ma->_nodes.size() );
-        for ( size_t i = 0; i < new_nodes.size(); ++i )
+        std::vector< Node* > new_nodes( ma->_nodes.size() );
+        for (std:: size_t i = 0; i < new_nodes.size(); ++i )
           new_nodes[ i ] = ma->_nodes[ conn[ i ]];
         ma->_nodes.swap( new_nodes );
       }
@@ -117,7 +113,7 @@ namespace
   //================================================================================
 
   void getReverseVector (const INTERP_KERNEL::NormalizedCellType type,
-                         vector<pair<int,int> > &                swapVec )
+                         std::vector<std::pair<int,int> > &                swapVec )
   {
     swapVec.clear();
 
@@ -125,66 +121,66 @@ namespace
       {
       case NORM_TETRA4:
         swapVec.resize(1);
-        swapVec[0] = make_pair( 1, 2 );
+        swapVec[0] = std::make_pair( 1, 2 );
         break;
       case NORM_PYRA5:
         swapVec.resize(1);
-        swapVec[0] = make_pair( 1, 3 );
+        swapVec[0] = std::make_pair( 1, 3 );
         break;
       case NORM_PENTA6:
         swapVec.resize(2);
-        swapVec[0] = make_pair( 1, 2 );
-        swapVec[1] = make_pair( 4, 5 );
+        swapVec[0] = std::make_pair( 1, 2 );
+        swapVec[1] = std::make_pair( 4, 5 );
         break;
       case NORM_HEXA8:
         swapVec.resize(2);
-        swapVec[0] = make_pair( 1, 3 );
-        swapVec[1] = make_pair( 5, 7 );
+        swapVec[0] = std::make_pair( 1, 3 );
+        swapVec[1] = std::make_pair( 5, 7 );
         break;
       case NORM_TETRA10:
         swapVec.resize(3);
-        swapVec[0] = make_pair( 1, 2 );
-        swapVec[1] = make_pair( 4, 6 );
-        swapVec[2] = make_pair( 8, 9 );
+        swapVec[0] = std::make_pair( 1, 2 );
+        swapVec[1] = std::make_pair( 4, 6 );
+        swapVec[2] = std::make_pair( 8, 9 );
         break;
       case NORM_PYRA13:
         swapVec.resize(4);
-        swapVec[0] = make_pair( 1, 3 );
-        swapVec[1] = make_pair( 5, 8 );
-        swapVec[2] = make_pair( 6, 7 );
-        swapVec[3] = make_pair( 10, 12 );
+        swapVec[0] = std::make_pair( 1, 3 );
+        swapVec[1] = std::make_pair( 5, 8 );
+        swapVec[2] = std::make_pair( 6, 7 );
+        swapVec[3] = std::make_pair( 10, 12 );
         break;
       case NORM_PENTA15:
         swapVec.resize(4);
-        swapVec[0] = make_pair( 1, 2 );
-        swapVec[1] = make_pair( 4, 5 );
-        swapVec[2] = make_pair( 6, 8 );
-        swapVec[3] = make_pair( 9, 11 );
+        swapVec[0] = std::make_pair( 1, 2 );
+        swapVec[1] = std::make_pair( 4, 5 );
+        swapVec[2] = std::make_pair( 6, 8 );
+        swapVec[3] = std::make_pair( 9, 11 );
         break;
       case NORM_HEXA20:
         swapVec.resize(7);
-        swapVec[0] = make_pair( 1, 3 );
-        swapVec[1] = make_pair( 5, 7 );
-        swapVec[2] = make_pair( 8, 11 );
-        swapVec[3] = make_pair( 9, 10 );
-        swapVec[4] = make_pair( 12, 15 );
-        swapVec[5] = make_pair( 13, 14 );
-        swapVec[6] = make_pair( 17, 19 );
+        swapVec[0] = std::make_pair( 1, 3 );
+        swapVec[1] = std::make_pair( 5, 7 );
+        swapVec[2] = std::make_pair( 8, 11 );
+        swapVec[3] = std::make_pair( 9, 10 );
+        swapVec[4] = std::make_pair( 12, 15 );
+        swapVec[5] = std::make_pair( 13, 14 );
+        swapVec[6] = std::make_pair( 17, 19 );
         break;
         //   case NORM_SEG3: no need to reverse edges
         //     swapVec.resize(1);
-        //     swapVec[0] = make_pair( 1, 2 );
+        //     swapVec[0] = std::make_pair( 1, 2 );
         //     break;
       case NORM_TRI6:
         swapVec.resize(2);
-        swapVec[0] = make_pair( 1, 2 );
-        swapVec[1] = make_pair( 3, 5 );
+        swapVec[0] = std::make_pair( 1, 2 );
+        swapVec[1] = std::make_pair( 3, 5 );
         break;
       case NORM_QUAD8:
         swapVec.resize(3);
-        swapVec[0] = make_pair( 1, 3 );
-        swapVec[1] = make_pair( 4, 7 );
-        swapVec[2] = make_pair( 5, 6 );
+        swapVec[0] = std::make_pair( 1, 3 );
+        swapVec[1] = std::make_pair( 4, 7 );
+        swapVec[2] = std::make_pair( 5, 6 );
         break;
       default:;
       }
@@ -196,7 +192,7 @@ namespace
    */
   //================================================================================
 
-  inline void reverse(const Cell & aCell, const vector<pair<int,int> > & swapVec )
+  inline void reverse(const Cell & aCell, const std::vector<std::pair<int,int> > & swapVec )
   {
     Cell* ma = const_cast<Cell*>(&aCell);
     for ( unsigned i = 0; i < swapVec.size(); ++i )
@@ -218,7 +214,7 @@ namespace
       return i1->_number < i2->_number;
     }
   };
-  typedef map< const Cell*, unsigned, TCellByIDCompare > TCellToOrderMap;
+  typedef std::map< const Cell*, unsigned, TCellByIDCompare > TCellToOrderMap;
 
   //================================================================================
   /*!
@@ -246,6 +242,1207 @@ namespace
   }
 }
 
+namespace // define default GAUSS points
+{
+  typedef std::vector<double> TDoubleVector;
+  typedef double*             TCoordSlice;
+  typedef int                 TInt;
+  //---------------------------------------------------------------
+  //! Shape function definitions
+  //---------------------------------------------------------------
+  struct TShapeFun
+  {
+    TInt myDim;
+    TInt myNbRef;
+    TDoubleVector myRefCoord;
+
+    TShapeFun(TInt theDim = 0, TInt theNbRef = 0)
+      :myDim(theDim),myNbRef(theNbRef),myRefCoord(theNbRef*theDim) {}
+
+    TInt GetNbRef() const { return myNbRef; }
+
+    TCoordSlice GetCoord(TInt theRefId) { return &myRefCoord[0] + theRefId * myDim; }
+  };
+  //---------------------------------------------------------------
+  /*!
+   * \brief Description of family of integration points
+   */
+  //---------------------------------------------------------------
+  struct TGaussDef
+  {
+    int           myType;      //!< element geometry (EGeometrieElement or med_geometrie_element)
+    TDoubleVector myRefCoords; //!< description of reference points
+    TDoubleVector myCoords;    //!< coordinates of Gauss points
+    TDoubleVector myWeights;   //!< weights, len(weights)==<nb of gauss points>
+
+    /*!
+     * \brief Creates definition of gauss points family
+     *  \param geomType - element geometry (EGeometrieElement or med_geometrie_element)
+     *  \param nbPoints - nb gauss point
+     *  \param variant - [1-3] to choose the variant of definition
+     * 
+     * Throws in case of invalid parameters
+     * variant == 1 refers to "Fonctions de forme et points d'integration 
+     *              des elements finis" v7.4 by J. PELLET, X. DESROCHES, 15/09/05
+     * variant == 2 refers to the same doc v6.4 by J.P. LEFEBVRE, X. DESROCHES, 03/07/03
+     * variant == 3 refers to the same doc v6.4, second variant for 2D elements
+     */
+    TGaussDef(const int geomType, const int nbPoints, const int variant=1);
+
+    int dim() const { return SauvUtilities::getDimension( NormalizedCellType( myType )); }
+    int nbPoints() const { return myWeights.capacity(); }
+
+  private:
+    void add(const double x, const double weight);
+    void add(const double x, const double y, const double weight);
+    void add(const double x, const double y, const double z, const double weight);
+    void setRefCoords(const TShapeFun& aShapeFun) { myRefCoords = aShapeFun.myRefCoord; }
+  };
+  struct TSeg2a: TShapeFun {
+    TSeg2a();
+  };
+  struct TSeg3a: TShapeFun {
+    TSeg3a();
+  };
+  struct TTria3a: TShapeFun {
+    TTria3a();
+  };
+  struct TTria6a: TShapeFun {
+    TTria6a();
+  };
+  struct TTria3b: TShapeFun {
+    TTria3b();
+  };
+  struct TTria6b: TShapeFun {
+    TTria6b();
+  };
+  struct TQuad4a: TShapeFun {
+    TQuad4a();
+  };
+  struct TQuad8a: TShapeFun {
+    TQuad8a();
+  };
+  struct TQuad4b: TShapeFun {
+    TQuad4b();
+  };
+  struct TQuad8b: TShapeFun {
+    TQuad8b();
+  };
+  struct TTetra4a: TShapeFun {
+    TTetra4a();
+  };
+  struct TTetra10a: TShapeFun {
+    TTetra10a();
+  };
+  struct TTetra4b: TShapeFun {
+    TTetra4b();
+  };
+  struct TTetra10b: TShapeFun {
+    TTetra10b();
+  };
+  struct THexa8a: TShapeFun {
+    THexa8a();
+  };
+  struct THexa20a: TShapeFun {
+    THexa20a(TInt theDim = 3, TInt theNbRef = 20);
+  };
+  struct THexa27a: THexa20a {
+    THexa27a();
+  };
+  struct THexa8b: TShapeFun {
+    THexa8b();
+  };
+  struct THexa20b: TShapeFun {
+    THexa20b(TInt theDim = 3, TInt theNbRef = 20);
+  };
+  struct TPenta6a: TShapeFun {
+    TPenta6a();
+  };
+  struct TPenta6b: TShapeFun {
+    TPenta6b();
+  };
+  struct TPenta15a: TShapeFun {
+    TPenta15a();
+  };
+  struct TPenta15b: TShapeFun {
+    TPenta15b();
+  };
+  struct TPyra5a: TShapeFun {
+    TPyra5a();
+  };
+  struct TPyra5b: TShapeFun {
+    TPyra5b();
+  };
+  struct TPyra13a: TShapeFun {
+    TPyra13a();
+  };
+  struct TPyra13b: TShapeFun {
+    TPyra13b();
+  };
+
+  void TGaussDef::add(const double x, const double weight)
+  {
+    if ( dim() != 1 )
+      THROW_IK_EXCEPTION("TGaussDef: dim() != 1");
+    if ( myWeights.capacity() == myWeights.size() )
+      THROW_IK_EXCEPTION("TGaussDef: Extra gauss point");
+    myCoords.push_back( x );
+    myWeights.push_back( weight );
+  }
+  void TGaussDef::add(const double x, const double y, const double weight)
+  {
+    if ( dim() != 2 )
+      THROW_IK_EXCEPTION("TGaussDef: dim() != 2");
+    if ( myWeights.capacity() == myWeights.size() )
+      THROW_IK_EXCEPTION("TGaussDef: Extra gauss point");
+    myCoords.push_back( x );
+    myCoords.push_back( y );
+    myWeights.push_back( weight );
+  }
+  void TGaussDef::add(const double x, const double y, const double z, const double weight)
+  {
+    if ( dim() != 3 )
+      THROW_IK_EXCEPTION("TGaussDef: dim() != 3");
+    if ( myWeights.capacity() == myWeights.size() )
+      THROW_IK_EXCEPTION("TGaussDef: Extra gauss point");
+    myCoords.push_back( x );
+    myCoords.push_back( y );
+    myCoords.push_back( z );
+    myWeights.push_back( weight );
+  }
+
+  //---------------------------------------------------------------
+  TSeg2a::TSeg2a():TShapeFun(1,2)
+  {
+    TInt aNbRef = GetNbRef();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] = -1.0; break;
+      case  1: aCoord[0] =  1.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TSeg3a::TSeg3a():TShapeFun(1,3)
+  {
+    TInt aNbRef = GetNbRef();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] = -1.0; break;
+      case  1: aCoord[0] =  1.0; break;
+      case  2: aCoord[0] =  0.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TTria3a::TTria3a():
+    TShapeFun(2,3)
+  {
+    TInt aNbRef = GetNbRef();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] = -1.0;  aCoord[1] =  1.0; break;
+      case  1: aCoord[0] = -1.0;  aCoord[1] = -1.0; break;
+      case  2: aCoord[0] =  1.0;  aCoord[1] = -1.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TTria6a::TTria6a():TShapeFun(2,6)
+  {
+    TInt aNbRef = GetNbRef();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] = -1.0;  aCoord[1] =  1.0; break;
+      case  1: aCoord[0] = -1.0;  aCoord[1] = -1.0; break;
+      case  2: aCoord[0] =  1.0;  aCoord[1] = -1.0; break;
+
+      case  3: aCoord[0] = -1.0;  aCoord[1] =  1.0; break;
+      case  4: aCoord[0] =  0.0;  aCoord[1] = -1.0; break;
+      case  5: aCoord[0] =  0.0;  aCoord[1] =  0.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TTria3b::TTria3b():
+    TShapeFun(2,3)
+  {
+    TInt aNbRef = GetNbRef();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] =  0.0;  aCoord[1] =  0.0; break;
+      case  1: aCoord[0] =  1.0;  aCoord[1] =  0.0; break;
+      case  2: aCoord[0] =  0.0;  aCoord[1] =  1.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TTria6b::TTria6b():
+    TShapeFun(2,6)
+  {
+    TInt aNbRef = GetNbRef();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] =  0.0;  aCoord[1] =  0.0; break;
+      case  1: aCoord[0] =  1.0;  aCoord[1] =  0.0; break;
+      case  2: aCoord[0] =  0.0;  aCoord[1] =  1.0; break;
+
+      case  3: aCoord[0] =  0.5;  aCoord[1] =  0.0; break;
+      case  4: aCoord[0] =  0.5;  aCoord[1] =  0.5; break;
+      case  5: aCoord[0] =  0.0;  aCoord[1] =  0.5; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TQuad4a::TQuad4a():
+    TShapeFun(2,4)
+  {
+    TInt aNbRef = GetNbRef();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] = -1.0;  aCoord[1] =  1.0; break;
+      case  1: aCoord[0] = -1.0;  aCoord[1] = -1.0; break;
+      case  2: aCoord[0] =  1.0;  aCoord[1] = -1.0; break;
+      case  3: aCoord[0] =  1.0;  aCoord[1] =  1.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TQuad8a::TQuad8a():
+    TShapeFun(2,8)
+  {
+    TInt aNbRef = GetNbRef();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] = -1.0;  aCoord[1] =  1.0; break;
+      case  1: aCoord[0] = -1.0;  aCoord[1] = -1.0; break;
+      case  2: aCoord[0] =  1.0;  aCoord[1] = -1.0; break;
+      case  3: aCoord[0] =  1.0;  aCoord[1] =  1.0; break;
+
+      case  4: aCoord[0] = -1.0;  aCoord[1] =  0.0; break;
+      case  5: aCoord[0] =  0.0;  aCoord[1] = -1.0; break;
+      case  6: aCoord[0] =  1.0;  aCoord[1] =  0.0; break;
+      case  7: aCoord[0] =  0.0;  aCoord[1] =  1.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TQuad4b::TQuad4b():
+    TShapeFun(2,4)
+  {
+    TInt aNbRef = GetNbRef();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] = -1.0;  aCoord[1] = -1.0; break;
+      case  1: aCoord[0] =  1.0;  aCoord[1] = -1.0; break;
+      case  2: aCoord[0] =  1.0;  aCoord[1] =  1.0; break;
+      case  3: aCoord[0] = -1.0;  aCoord[1] =  1.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TQuad8b::TQuad8b():
+    TShapeFun(2,8)
+  {
+    TInt aNbRef = GetNbRef();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] = -1.0;  aCoord[1] = -1.0; break;
+      case  1: aCoord[0] =  1.0;  aCoord[1] = -1.0; break;
+      case  2: aCoord[0] =  1.0;  aCoord[1] =  1.0; break;
+      case  3: aCoord[0] = -1.0;  aCoord[1] =  1.0; break;
+
+      case  4: aCoord[0] =  0.0;  aCoord[1] = -1.0; break;
+      case  5: aCoord[0] =  1.0;  aCoord[1] =  0.0; break;
+      case  6: aCoord[0] =  0.0;  aCoord[1] =  1.0; break;
+      case  7: aCoord[0] = -1.0;  aCoord[1] =  0.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TTetra4a::TTetra4a():
+    TShapeFun(3,4)
+  {
+    TInt aNbRef = GetNbRef();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] =  0.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case  1: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      case  2: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case  3: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TTetra10a::TTetra10a():
+    TShapeFun(3,10)
+  {
+    TInt aNbRef = GetNbRef();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] =  0.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case  1: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      case  2: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case  3: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+
+      case  4: aCoord[0] =  0.0;  aCoord[1] =  0.5;  aCoord[2] =  0.5; break;
+      case  5: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  0.5; break;
+      case  6: aCoord[0] =  0.0;  aCoord[1] =  0.5;  aCoord[2] =  0.0; break;
+
+      case  7: aCoord[0] =  0.5;  aCoord[1] =  0.5;  aCoord[2] =  0.0; break;
+      case  8: aCoord[0] =  0.5;  aCoord[1] =  0.0;  aCoord[2] =  0.5; break;
+      case  9: aCoord[0] =  0.5;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TTetra4b::TTetra4b():
+    TShapeFun(3,4)
+  {
+    TInt aNbRef = GetNbRef();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] =  0.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case  2: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      case  1: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case  3: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TTetra10b::TTetra10b():
+    TShapeFun(3,10)
+  {
+    TInt aNbRef = GetNbRef();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] =  0.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case  2: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      case  1: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case  3: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+
+      case  6: aCoord[0] =  0.0;  aCoord[1] =  0.5;  aCoord[2] =  0.5; break;
+      case  5: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  0.5; break;
+      case  4: aCoord[0] =  0.0;  aCoord[1] =  0.5;  aCoord[2] =  0.0; break;
+
+      case  7: aCoord[0] =  0.5;  aCoord[1] =  0.5;  aCoord[2] =  0.0; break;
+      case  9: aCoord[0] =  0.5;  aCoord[1] =  0.0;  aCoord[2] =  0.5; break;
+      case  8: aCoord[0] =  0.5;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  THexa8a::THexa8a():
+    TShapeFun(3,8)
+  {
+    TInt aNbRef = GetNbRef();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] = -1.0;  aCoord[1] = -1.0;  aCoord[2] = -1.0; break;
+      case  1: aCoord[0] =  1.0;  aCoord[1] = -1.0;  aCoord[2] = -1.0; break;
+      case  2: aCoord[0] =  1.0;  aCoord[1] =  1.0;  aCoord[2] = -1.0; break;
+      case  3: aCoord[0] = -1.0;  aCoord[1] =  1.0;  aCoord[2] = -1.0; break;
+      case  4: aCoord[0] = -1.0;  aCoord[1] = -1.0;  aCoord[2] =  1.0; break;
+      case  5: aCoord[0] =  1.0;  aCoord[1] = -1.0;  aCoord[2] =  1.0; break;
+      case  6: aCoord[0] =  1.0;  aCoord[1] =  1.0;  aCoord[2] =  1.0; break;
+      case  7: aCoord[0] = -1.0;  aCoord[1] =  1.0;  aCoord[2] =  1.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  THexa20a::THexa20a(TInt theDim, TInt theNbRef):
+    TShapeFun(theDim,theNbRef)
+  {
+    TInt aNbRef = myRefCoord.size();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] = -1.0;  aCoord[1] = -1.0;  aCoord[2] = -1.0; break;
+      case  1: aCoord[0] =  1.0;  aCoord[1] = -1.0;  aCoord[2] = -1.0; break;
+      case  2: aCoord[0] =  1.0;  aCoord[1] =  1.0;  aCoord[2] = -1.0; break;
+      case  3: aCoord[0] = -1.0;  aCoord[1] =  1.0;  aCoord[2] = -1.0; break;
+      case  4: aCoord[0] = -1.0;  aCoord[1] = -1.0;  aCoord[2] =  1.0; break;
+      case  5: aCoord[0] =  1.0;  aCoord[1] = -1.0;  aCoord[2] =  1.0; break;
+      case  6: aCoord[0] =  1.0;  aCoord[1] =  1.0;  aCoord[2] =  1.0; break;
+      case  7: aCoord[0] = -1.0;  aCoord[1] =  1.0;  aCoord[2] =  1.0; break;
+
+      case  8: aCoord[0] =  0.0;  aCoord[1] = -1.0;  aCoord[2] = -1.0; break;
+      case  9: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] = -1.0; break;
+      case 10: aCoord[0] =  0.0;  aCoord[1] =  1.0;  aCoord[2] = -1.0; break;
+      case 11: aCoord[0] = -1.0;  aCoord[1] =  0.0;  aCoord[2] = -1.0; break;
+      case 12: aCoord[0] = -1.0;  aCoord[1] = -1.0;  aCoord[2] =  0.0; break;
+      case 13: aCoord[0] =  1.0;  aCoord[1] = -1.0;  aCoord[2] =  0.0; break;
+      case 14: aCoord[0] =  1.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case 15: aCoord[0] = -1.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case 16: aCoord[0] =  0.0;  aCoord[1] = -1.0;  aCoord[2] =  1.0; break;
+      case 17: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      case 18: aCoord[0] =  0.0;  aCoord[1] =  1.0;  aCoord[2] =  1.0; break;
+      case 19: aCoord[0] = -1.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  THexa27a::THexa27a():
+    THexa20a(3,27)
+  {
+    TInt aNbRef = myRefCoord.size();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case 20: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] = -1.0; break;
+      case 21: aCoord[0] =  0.0;  aCoord[1] = -1.0;  aCoord[2] =  0.0; break;
+      case 22: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case 23: aCoord[0] =  0.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case 24: aCoord[0] = -1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case 25: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      case 26: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  THexa8b::THexa8b():
+    TShapeFun(3,8)
+  {
+    TInt aNbRef = GetNbRef();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] = -1.0;  aCoord[1] = -1.0;  aCoord[2] = -1.0; break;
+      case  3: aCoord[0] =  1.0;  aCoord[1] = -1.0;  aCoord[2] = -1.0; break;
+      case  2: aCoord[0] =  1.0;  aCoord[1] =  1.0;  aCoord[2] = -1.0; break;
+      case  1: aCoord[0] = -1.0;  aCoord[1] =  1.0;  aCoord[2] = -1.0; break;
+      case  4: aCoord[0] = -1.0;  aCoord[1] = -1.0;  aCoord[2] =  1.0; break;
+      case  7: aCoord[0] =  1.0;  aCoord[1] = -1.0;  aCoord[2] =  1.0; break;
+      case  6: aCoord[0] =  1.0;  aCoord[1] =  1.0;  aCoord[2] =  1.0; break;
+      case  5: aCoord[0] = -1.0;  aCoord[1] =  1.0;  aCoord[2] =  1.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  THexa20b::THexa20b(TInt theDim, TInt theNbRef):
+    TShapeFun(theDim,theNbRef)
+  {
+    TInt aNbRef = myRefCoord.size();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] = -1.0;  aCoord[1] = -1.0;  aCoord[2] = -1.0; break;
+      case  3: aCoord[0] =  1.0;  aCoord[1] = -1.0;  aCoord[2] = -1.0; break;
+      case  2: aCoord[0] =  1.0;  aCoord[1] =  1.0;  aCoord[2] = -1.0; break;
+      case  1: aCoord[0] = -1.0;  aCoord[1] =  1.0;  aCoord[2] = -1.0; break;
+      case  4: aCoord[0] = -1.0;  aCoord[1] = -1.0;  aCoord[2] =  1.0; break;
+      case  7: aCoord[0] =  1.0;  aCoord[1] = -1.0;  aCoord[2] =  1.0; break;
+      case  6: aCoord[0] =  1.0;  aCoord[1] =  1.0;  aCoord[2] =  1.0; break;
+      case  5: aCoord[0] = -1.0;  aCoord[1] =  1.0;  aCoord[2] =  1.0; break;
+
+      case 11: aCoord[0] =  0.0;  aCoord[1] = -1.0;  aCoord[2] = -1.0; break;
+      case 10: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] = -1.0; break;
+      case  9: aCoord[0] =  0.0;  aCoord[1] =  1.0;  aCoord[2] = -1.0; break;
+      case  8: aCoord[0] = -1.0;  aCoord[1] =  0.0;  aCoord[2] = -1.0; break;
+      case 16: aCoord[0] = -1.0;  aCoord[1] = -1.0;  aCoord[2] =  0.0; break;
+      case 19: aCoord[0] =  1.0;  aCoord[1] = -1.0;  aCoord[2] =  0.0; break;
+      case 18: aCoord[0] =  1.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case 17: aCoord[0] = -1.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case 15: aCoord[0] =  0.0;  aCoord[1] = -1.0;  aCoord[2] =  1.0; break;
+      case 14: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      case 13: aCoord[0] =  0.0;  aCoord[1] =  1.0;  aCoord[2] =  1.0; break;
+      case 12: aCoord[0] = -1.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TPenta6a::TPenta6a():
+    TShapeFun(3,6)
+  {
+    TInt aNbRef = myRefCoord.size();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] = -1.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case  1: aCoord[0] = -1.0;  aCoord[1] = -0.0;  aCoord[2] =  1.0; break;
+      case  2: aCoord[0] = -1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case  3: aCoord[0] =  1.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case  4: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      case  5: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TPenta6b::TPenta6b():
+    TShapeFun(3,6)
+  {
+    TInt aNbRef = myRefCoord.size();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] = -1.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case  2: aCoord[0] = -1.0;  aCoord[1] = -0.0;  aCoord[2] =  1.0; break;
+      case  1: aCoord[0] = -1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case  3: aCoord[0] =  1.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case  5: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      case  4: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TPenta15a::TPenta15a():
+    TShapeFun(3,15)
+  {
+    TInt aNbRef = myRefCoord.size();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] = -1.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case  1: aCoord[0] = -1.0;  aCoord[1] = -0.0;  aCoord[2] =  1.0; break;
+      case  2: aCoord[0] = -1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case  3: aCoord[0] =  1.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case  4: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      case  5: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+
+      case  6: aCoord[0] = -1.0;  aCoord[1] =  0.5;  aCoord[2] =  0.5; break;
+      case  7: aCoord[0] = -1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.5; break;
+      case  8: aCoord[0] = -1.0;  aCoord[1] =  0.5;  aCoord[2] =  0.0; break;
+      case  9: aCoord[0] =  0.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case 10: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      case 11: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case 12: aCoord[0] =  1.0;  aCoord[1] =  0.5;  aCoord[2] =  0.5; break;
+      case 13: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.5; break;
+      case 14: aCoord[0] =  1.0;  aCoord[1] =  0.5;  aCoord[2] =  0.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TPenta15b::TPenta15b():
+    TShapeFun(3,15)
+  {
+    TInt aNbRef = myRefCoord.size();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] = -1.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case  2: aCoord[0] = -1.0;  aCoord[1] = -0.0;  aCoord[2] =  1.0; break;
+      case  1: aCoord[0] = -1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case  3: aCoord[0] =  1.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case  5: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      case  4: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+
+      case  8: aCoord[0] = -1.0;  aCoord[1] =  0.5;  aCoord[2] =  0.5; break;
+      case  7: aCoord[0] = -1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.5; break;
+      case  6: aCoord[0] = -1.0;  aCoord[1] =  0.5;  aCoord[2] =  0.0; break;
+      case 12: aCoord[0] =  0.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case 14: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      case 13: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case 11: aCoord[0] =  1.0;  aCoord[1] =  0.5;  aCoord[2] =  0.5; break;
+      case 10: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.5; break;
+      case  9: aCoord[0] =  1.0;  aCoord[1] =  0.5;  aCoord[2] =  0.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TPyra5a::TPyra5a():
+    TShapeFun(3,5)
+  {
+    TInt aNbRef = myRefCoord.size();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case  1: aCoord[0] =  0.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case  2: aCoord[0] = -1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case  3: aCoord[0] =  0.0;  aCoord[1] = -1.0;  aCoord[2] =  0.0; break;
+      case  4: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TPyra5b::TPyra5b():
+    TShapeFun(3,5)
+  {
+    TInt aNbRef = myRefCoord.size();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){        
+      case  0: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case  3: aCoord[0] =  0.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case  2: aCoord[0] = -1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case  1: aCoord[0] =  0.0;  aCoord[1] = -1.0;  aCoord[2] =  0.0; break;
+      case  4: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TPyra13a::TPyra13a():
+    TShapeFun(3,13)
+  {
+    TInt aNbRef = myRefCoord.size();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case  1: aCoord[0] =  0.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case  2: aCoord[0] = -1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case  3: aCoord[0] =  0.0;  aCoord[1] = -1.0;  aCoord[2] =  0.0; break;
+      case  4: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+
+      case  5: aCoord[0] =  0.5;  aCoord[1] =  0.5;  aCoord[2] =  0.0; break;
+      case  6: aCoord[0] = -0.5;  aCoord[1] =  0.5;  aCoord[2] =  0.0; break;
+      case  7: aCoord[0] = -0.5;  aCoord[1] = -0.5;  aCoord[2] =  0.0; break;
+      case  8: aCoord[0] =  0.5;  aCoord[1] = -0.5;  aCoord[2] =  0.0; break;
+      case  9: aCoord[0] =  0.5;  aCoord[1] =  0.0;  aCoord[2] =  0.5; break;
+      case 10: aCoord[0] =  0.0;  aCoord[1] =  0.5;  aCoord[2] =  0.5; break;
+      case 11: aCoord[0] = -0.5;  aCoord[1] =  0.0;  aCoord[2] =  0.5; break;
+      case 12: aCoord[0] =  0.0;  aCoord[1] = -0.5;  aCoord[2] =  0.5; break;
+      }
+    }
+  }
+  //---------------------------------------------------------------
+  TPyra13b::TPyra13b():
+    TShapeFun(3,13)
+  {
+    TInt aNbRef = myRefCoord.size();
+    for(TInt aRefId = 0; aRefId < aNbRef; aRefId++){
+      TCoordSlice aCoord = GetCoord(aRefId);
+      switch(aRefId){
+      case  0: aCoord[0] =  1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case  3: aCoord[0] =  0.0;  aCoord[1] =  1.0;  aCoord[2] =  0.0; break;
+      case  2: aCoord[0] = -1.0;  aCoord[1] =  0.0;  aCoord[2] =  0.0; break;
+      case  1: aCoord[0] =  0.0;  aCoord[1] = -1.0;  aCoord[2] =  0.0; break;
+      case  4: aCoord[0] =  0.0;  aCoord[1] =  0.0;  aCoord[2] =  1.0; break;
+
+      case  8: aCoord[0] =  0.5;  aCoord[1] =  0.5;  aCoord[2] =  0.0; break;
+      case  7: aCoord[0] = -0.5;  aCoord[1] =  0.5;  aCoord[2] =  0.0; break;
+      case  6: aCoord[0] = -0.5;  aCoord[1] = -0.5;  aCoord[2] =  0.0; break;
+      case  5: aCoord[0] =  0.5;  aCoord[1] = -0.5;  aCoord[2] =  0.0; break;
+      case  9: aCoord[0] =  0.5;  aCoord[1] =  0.0;  aCoord[2] =  0.5; break;
+      case 12: aCoord[0] =  0.0;  aCoord[1] =  0.5;  aCoord[2] =  0.5; break;
+      case 11: aCoord[0] = -0.5;  aCoord[1] =  0.0;  aCoord[2] =  0.5; break;
+      case 10: aCoord[0] =  0.0;  aCoord[1] = -0.5;  aCoord[2] =  0.5; break;
+      }
+    }
+  }
+  /*!
+   * \brief Fill definition of gauss points family
+   */
+
+  TGaussDef::TGaussDef(const int geom, const int nbGauss, const int variant)
+  {
+    myType = geom;
+    myCoords .reserve( nbGauss * dim() );
+    myWeights.reserve( nbGauss );
+
+    switch ( geom ) {
+
+    case NORM_SEG2:
+    case NORM_SEG3:
+      if (geom == NORM_SEG2) setRefCoords( TSeg2a() );
+      else                   setRefCoords( TSeg3a() );
+      switch ( nbGauss ) {
+      case 1: {
+        add( 0.0, 2.0 ); break;
+      }
+      case 2: {
+        const double a = 0.577350269189626;
+        add(  a,  1.0 );
+        add( -a,  1.0 ); break;
+      }
+      case 3: {
+        const double a = 0.774596669241;
+        const double P1 = 1./1.8;
+        const double P2 = 1./1.125;
+        add( -a,  P1 );
+        add(  0,  P2 ); 
+        add(  a,  P1 ); break;
+      }
+      case 4: {
+        const double a  = 0.339981043584856, b  = 0.861136311594053;
+        const double P1 = 0.652145154862546, P2 = 0.347854845137454 ;
+        add(  a,  P1 );
+        add( -a,  P1 );
+        add(  b,  P2 ); 
+        add( -b,  P2 ); break;
+      }
+      default:
+        THROW_IK_EXCEPTION("TGaussDef: Invalid nb of gauss points for SEG"<<nbGauss);
+      }
+      break;
+
+    case NORM_TRI3:
+    case NORM_TRI6:
+      if ( variant == 1 ) {
+        if (geom == NORM_TRI3) setRefCoords( TTria3b() );
+        else                   setRefCoords( TTria6b() );
+        switch ( nbGauss ) {
+        case 1: { // FPG1
+          add( 1/3., 1/3., 1/2. ); break;
+        }
+        case 3: { // FPG3
+          // what about COT3 ???
+          add( 1/6., 1/6., 1/6. );
+          add( 2/3., 1/6., 1/6. );
+          add( 1/6., 2/3., 1/6. ); break;
+        }
+        case 4: { // FPG4
+          add( 1/5., 1/5.,  25/(24*4.) );
+          add( 3/5., 1/5.,  25/(24*4.) );
+          add( 1/5., 3/5.,  25/(24*4.) );
+          add( 1/3., 1/3., -27/(24*4.) ); break;
+        }
+        case 6: { // FPG6
+          const double P1 = 0.11169079483905, P2 = 0.0549758718227661;
+          const double a  = 0.445948490915965, b = 0.091576213509771;
+          add(     b,     b, P2 ); 
+          add( 1-2*b,     b, P2 );
+          add(     b, 1-2*b, P2 );
+          add(     a, 1-2*a, P1 );
+          add(     a,     a, P1 ); 
+          add( 1-2*a,     a, P1 ); break;
+        }
+        case 7: { // FPG7
+          const double A  = 0.470142064105115;
+          const double B  = 0.101286507323456;
+          const double P1 = 0.066197076394253;
+          const double P2 = 0.062969590272413;
+          add(  1/3.,  1/3., 9/80. ); 
+          add(     A,     A, P1 ); 
+          add( 1-2*A,     A, P1 );
+          add(     A, 1-2*A, P1 );
+          add(     B,     B, P2 ); 
+          add( 1-2*B,     B, P2 );
+          add(     B, 1-2*B, P2 ); break;
+        }
+        case 12: { // FPG12
+          const double A  = 0.063089014491502;
+          const double B  = 0.249286745170910;
+          const double C  = 0.310352451033785;
+          const double D  = 0.053145049844816;
+          const double P1 = 0.025422453185103;
+          const double P2 = 0.058393137863189;
+          const double P3 = 0.041425537809187;
+          add(     A,     A, P1 ); 
+          add( 1-2*A,     A, P1 );
+          add(     A, 1-2*A, P1 );
+          add(     B,     B, P2 ); 
+          add( 1-2*B,     B, P2 );
+          add(     B, 1-2*B, P2 );
+          add(     C,     D, P3 );
+          add(     D,     C, P3 );
+          add( 1-C-D,     C, P3 );
+          add( 1-C-D,     D, P3 );
+          add(     C, 1-C-D, P3 );
+          add(     D, 1-C-D, P3 ); break;
+        }
+        default:
+          THROW_IK_EXCEPTION("TGaussDef: Invalid nb of gauss points for TRIA, variant 1: "
+                     <<nbGauss);
+        }
+      }
+      else if ( variant == 2 ) {
+        if (geom == NORM_TRI3) setRefCoords( TTria3a() );
+        else                   setRefCoords( TTria6a() );
+        switch ( nbGauss ) {
+        case 1: {
+          add( -1/3., -1/3., 2. ); break;
+        }
+        case 3: {
+          add( -2/3.,  1/3., 2/3. );
+          add( -2/3., -2/3., 2/3. );
+          add(  1/3., -2/3., 2/3. ); break;
+        }
+        case 6: {
+          const double P1 = 0.11169079483905, P2 = 0.0549758718227661;
+          const double A  = 0.445948490915965, B = 0.091576213509771;
+          add( 2*B-1, 1-4*B, 4*P2 ); 
+          add( 2*B-1, 2*B-1, 4*P2 );
+          add( 1-4*B, 2*B-1, 4*P2 );
+          add( 1-4*A, 2*A-1, 4*P1 );
+          add( 2*A-1, 1-4*A, 4*P1 ); 
+          add( 2*A-1, 2*A-1, 4*P1 ); break;
+        }
+        default:
+          THROW_IK_EXCEPTION("TGaussDef: Invalid nb of gauss points for TRIA, variant 2: "
+                     <<nbGauss);
+        }
+      }
+      else if ( variant == 3 ) {
+        if (geom == NORM_TRI3) setRefCoords( TTria3b() );
+        else                   setRefCoords( TTria6b() );
+        switch ( nbGauss ) {
+        case 4: {
+          add( 1/3., 1/3., -27/96 );
+          add( 0.2 , 0.2 ,  25/96 );
+          add( 0.6 , 0.2 ,  25/96 );
+          add( 0.2 , 0.6 ,  25/96 ); break;
+        }
+        default:
+          THROW_IK_EXCEPTION("TGaussDef: Invalid nb of gauss points for TRIA, variant 3: "
+                     <<nbGauss);
+        }
+      }
+      break;
+
+    case NORM_QUAD4:
+    case NORM_QUAD8:
+      if ( variant == 1 ) {
+        if (geom == NORM_QUAD4) setRefCoords( TQuad4b() );
+        else                    setRefCoords( TQuad8b() );
+        switch ( nbGauss ) {
+        case 1: { // FPG1
+          add(  0,  0,  4 ); break;
+        }
+        case 4: { // FPG4
+          const double a = 1/sqrt(3.);
+          add( -a, -a,  1 );
+          add(  a, -a,  1 );
+          add(  a,  a,  1 );
+          add( -a,  a,  1 ); break;
+        }
+        case 5: { // out from the 3 specs
+          const double a = 0.774596669241483;
+          add( -a, -a,  0.5 );
+          add(  a, -a,  0.5 );
+          add(  a,  a,  0.5 );
+          add( -a,  a,  0.5 );
+          add(  0,  0,  2.0 ); break;
+        }
+        case 9: { // FPG9
+          const double a = 0.774596669241483;
+          add( -a, -a,  25/81. );
+          add(  a, -a,  25/81. );
+          add(  a,  a,  25/81. );
+          add( -a,  a,  25/81. );
+          add( 0., -a,  40/81. );
+          add(  a, 0.,  40/81. );
+          add( 0.,  a,  40/81. );
+          add( -a, 0.,  40/81. );
+          add( 0., 0.,  64/81. ); break;
+        }
+        default:
+          THROW_IK_EXCEPTION("TGaussDef: Invalid nb of gauss points for QUAD, variant 1: "
+                     <<nbGauss);
+        }
+      }
+      else if ( variant == 2 ) {
+        if (geom == NORM_QUAD4) setRefCoords( TQuad4a() );
+        else                    setRefCoords( TQuad8a() );
+        switch ( nbGauss ) {
+        case 4: {
+          const double a = 1/sqrt(3.);
+          add( -a,  a,  1 );
+          add( -a, -a,  1 );
+          add(  a, -a,  1 );
+          add(  a,  a,  1 ); break;
+        }
+        case 9: {
+          const double a = 0.774596669241483;
+          add( -a,  a,  25/81. );
+          add( -a, -a,  25/81. );
+          add(  a, -a,  25/81. );
+          add(  a,  a,  25/81. );
+          add( -a, 0.,  40/81. );
+          add( 0., -a,  40/81. );
+          add(  a, 0.,  40/81. );
+          add( 0.,  a,  40/81. );
+          add( 0., 0.,  64/81. ); break;
+        }
+        default:
+          THROW_IK_EXCEPTION("TGaussDef: Invalid nb of gauss points for QUAD, variant 1: "
+                     <<nbGauss);
+        }
+      }
+      else if ( variant == 3 ) {
+        if (geom == NORM_QUAD4) setRefCoords( TQuad4b() );
+        else                    setRefCoords( TQuad8b() );
+        switch ( nbGauss ) {
+        case 4: {
+          const double a = 3/sqrt(3.);
+          add( -a, -a,  1 );
+          add( -a,  a,  1 );
+          add(  a, -a,  1 );
+          add(  a,  a,  1 ); break;
+        }
+        case 9: {
+          const double a = sqrt(3/5.), c1 = 5/9., c2 = 8/9.;
+          const double c12 = c1*c2, c22 = c2*c2, c1c2 = c1*c2;
+          add( -a, -a,  c12  );
+          add( -a, 0.,  c1c2 );
+          add( -a,  a,  c12  );
+          add( 0., -a,  c1c2 );
+          add( 0., 0.,  c22  );
+          add( 0.,  a,  c1c2 );
+          add(  a, -a,  c12  );
+          add(  a, 0.,  c1c2 );
+          add(  a,  a,  c12  ); break;
+        }
+        default:
+          THROW_IK_EXCEPTION("TGaussDef: Invalid nb of gauss points for QUAD, variant 3: "
+                     <<nbGauss);
+        }
+      }
+      break;
+
+    case NORM_TETRA4:
+    case NORM_TETRA10:
+      if (geom == NORM_TETRA4) setRefCoords( TTetra4a() );
+      else                 setRefCoords( TTetra10a() );
+      switch ( nbGauss ) {
+      case 4: { // FPG4
+        const double a = (5 - sqrt(5.))/20., b = (5 + 3*sqrt(5.))/20.;
+        add(  a,  a,  a,  1/24. );
+        add(  a,  a,  b,  1/24. );
+        add(  a,  b,  a,  1/24. );
+        add(  b,  a,  a,  1/24. ); break;
+      }
+      case 5: { // FPG5
+        const double a = 0.25, b = 1/6., c = 0.5;
+        add(  a,  a,  a, -2/15. );
+        add(  b,  b,  b,  3/40. );
+        add(  b,  b,  c,  3/40. );
+        add(  b,  c,  b,  3/40. );
+        add(  c,  b,  b,  3/40. ); break;
+      }
+      case 15: { // FPG15
+        const double a = 0.25;
+        const double b1 = (7 + sqrt(15.))/34., c1 = (13 + 3*sqrt(15.))/34., d = (5 - sqrt(15.))/20.;
+        const double b2 = (7 - sqrt(15.))/34., c2 = (13 - 3*sqrt(15.))/34., e = (5 + sqrt(15.))/20.;
+        const double P1 = (2665 - 14*sqrt(15.))/226800.;
+        const double P2 = (2665 + 14*sqrt(15.))/226800.;
+        add(  a,  a,  a,  8/405.);//_____
+        add( b1, b1, b1,  P1    );
+        add( b1, b1, c1,  P1    );
+        add( b1, c1, b1,  P1    );
+        add( c1, b1, b1,  P1    );//_____
+        add( b2, b2, b2,  P2    );
+        add( b2, b2, c2,  P2    );
+        add( b2, c2, b2,  P2    );
+        add( c2, b2, b2,  P2    );//_____
+        add(  d,  d,  e,  5/567.);
+        add(  d,  e,  d,  5/567.);
+        add(  e,  d,  d,  5/567.);
+        add(  d,  e,  e,  5/567.);
+        add(  e,  d,  e,  5/567.);
+        add(  e,  e,  d,  5/567.);
+        break;
+      }
+      default:
+        THROW_IK_EXCEPTION("TGaussDef: Invalid nb of gauss points for TETRA: "<<nbGauss);
+      }
+      break;
+
+    case NORM_PYRA5:
+    case NORM_PYRA13:
+      if (geom == NORM_PYRA5) setRefCoords( TPyra5a() );
+      else                setRefCoords( TPyra13a() );
+      switch ( nbGauss ) {
+      case 5: { // FPG5
+        const double h1 = 0.1531754163448146;
+        const double h2 = 0.6372983346207416;
+        add(  .5,  0.,  h1,  2/15. );
+        add(  0.,  .5,  h1,  2/15. );
+        add( -.5,  0.,  h1,  2/15. );
+        add(  0., -.5,  h1,  2/15. );
+        add(  0.,  0.,  h2,  2/15. ); break;
+      }
+      case 6: { // FPG6
+        const double p1 = 0.1024890634400000 ;
+        const double p2 = 0.1100000000000000 ;
+        const double p3 = 0.1467104129066667 ;
+        const double a  = 0.5702963741068025 ;
+        const double h1 = 0.1666666666666666 ;
+        const double h2 = 0.08063183038464675;
+        const double h3 = 0.6098484849057127 ;
+        add(  a, 0.,  h1,  p1 );
+        add( 0.,  a,  h1,  p1 );
+        add( -a, 0.,  h1,  p1 );
+        add( 0., -a,  h1,  p1 );
+        add( 0., 0.,  h2,  p2 );
+        add( 0., 0.,  h3,  p3 ); break;
+      }
+      case 27: { // FPG27
+        const double a1  = 0.788073483; 
+        const double b6  = 0.499369002; 
+        const double b1  = 0.848418011; 
+        const double c8  = 0.478508449; 
+        const double c1  = 0.652816472; 
+        const double d12 = 0.032303742; 
+        const double d1  = 1.106412899;
+        double z = 1/2., fz = b1/2*(1 - z);
+        add(  0.,  0.,   z,  a1 ); // 1
+        add(  fz,  fz,   z,  b6 ); // 2
+        add( -fz,  fz,   z,  b6 ); // 3
+        add( -fz, -fz,   z,  b6 ); // 4
+        add(  fz, -fz,   z,  b6 ); // 5
+        z = (1 - b1)/2.;
+        add(  0.,  0.,   z,  b6 ); // 6
+        z = (1 + b1)/2.;
+        add(  0.,  0.,   z,  b6 ); // 7
+        z = (1 - c1)/2.; fz = c1*(1 - z);
+        add(  fz,  0.,   z,  c8 ); // 8
+        add(  0.,  fz,   z,  c8 ); // 9
+        add( -fz,  0.,   z,  c8 ); // 10
+        add(  0., -fz,   z,  c8 ); // 11
+        z = (1 + c1)/2.; fz = c1*(1 - z);
+        add(  fz,  0.,   z,  c8 ); // 12
+        add(  0.,  fz,   z,  c8 ); // 13
+        add( -fz,  0.,   z,  c8 ); // 14
+        add(  0., -fz,   z,  c8 ); // 15
+        z = (1 - d1)/2., fz = d1/2*(1 - z);
+        add(  fz,  fz,   z,  d12); // 16
+        add( -fz,  fz,   z,  d12); // 17
+        add( -fz, -fz,   z,  d12); // 18
+        add(  fz, -fz,   z,  d12); // 19
+        z = 1/2.; fz = d1*(1 - z);
+        add(  fz,  0.,   z,  d12); // 20
+        add(  0.,  fz,   z,  d12); // 21
+        add( -fz,  0.,   z,  d12); // 22
+        add(  0., -fz,   z,  d12); // 23
+        z = (1 + d1)/2., fz = d1/2*(1 - z);
+        add(  fz,  fz,   z,  d12); // 24
+        add( -fz,  fz,   z,  d12); // 25
+        add( -fz, -fz,   z,  d12); // 26
+        add(  fz, -fz,   z,  d12); // 27
+        break;
+      }
+      default:
+        THROW_IK_EXCEPTION("TGaussDef: Invalid nb of gauss points for PYRA: "<<nbGauss);
+      }
+      break;
+    case NORM_PENTA6:
+    case NORM_PENTA15:
+      if (geom == NORM_PENTA6) setRefCoords( TPenta6a() );
+      else                 setRefCoords( TPenta15a() );
+      switch ( nbGauss ) {
+      case 6: { // FPG6
+        const double a = sqrt(3.)/3.;
+        add( -a, .5, .5,  1/6. );
+        add( -a, 0., .5,  1/6. );
+        add( -a, .5, 0.,  1/6. );
+        add(  a, .5, .5,  1/6. );
+        add(  a, 0., .5,  1/6. );
+        add(  a, .5, 0.,  1/6. ); break;
+      }
+      case 8: { // FPG8
+        const double a = 0.577350269189626;
+        add( -a, 1/3., 1/3., -27/96. );
+        add( -a,  0.6,  0.2,  25/96. );
+        add( -a,  0.2,  0.6,  25/96. );
+        add( -a,  0.2,  0.2,  25/96. );
+        add( +a, 1/3., 1/3., -27/96. );
+        add( +a,  0.6,  0.2,  25/96. );
+        add( +a,  0.2,  0.6,  25/96. );
+        add( +a,  0.2,  0.2,  25/96. ); break;
+      }
+      case 21: { // FPG21
+        const double d = sqrt(3/5.), c1 = 5/9., c2 = 8/9.; // d <=> alfa
+        const double a = (6 + sqrt(15.))/21.;
+        const double b = (6 - sqrt(15.))/21.;
+        const double P1 = (155 + sqrt(15.))/2400.;
+        const double P2 = (155 - sqrt(15.))/2400.;  //___
+        add( -d,  1/3.,  1/3., c1*9/80. );//___
+        add( -d,     a,     a, c1*P1    );
+        add( -d, 1-2*a,     a, c1*P1    );
+        add( -d,     a, 1-2*a, c1*P1    );//___
+        add( -d,     b,     b, c1*P2    );
+        add( -d, 1-2*b,     b, c1*P2    );
+        add( -d,     b, 1-2*b, c1*P2    );//___
+        add( 0.,  1/3.,  1/3., c2*9/80. );//___
+        add( 0.,     a,     a, c2*P1    );
+        add( 0., 1-2*a,     a, c2*P1    );
+        add( 0.,     a, 1-2*a, c2*P1    );//___
+        add( 0.,     b,     b, c2*P2    );
+        add( 0., 1-2*b,     b, c2*P2    );
+        add( 0.,     b, 1-2*b, c2*P2    );//___
+        add(  d,  1/3.,  1/3., c1*9/80. );//___
+        add(  d,     a,     a, c1*P1    );
+        add(  d, 1-2*a,     a, c1*P1    );
+        add(  d,     a, 1-2*a, c1*P1    );//___
+        add(  d,     b,     b, c1*P2    );
+        add(  d, 1-2*b,     b, c1*P2    );
+        add(  d,     b, 1-2*b, c1*P2    );//___
+        break;
+      }
+      default:
+        THROW_IK_EXCEPTION("TGaussDef: Invalid nb of gauss points for PENTA: " <<nbGauss);
+      }
+      break;
+
+    case NORM_HEXA8:
+    case NORM_HEXA20:
+      if (geom == NORM_HEXA8) setRefCoords( THexa8a() );
+      else                    setRefCoords( THexa20a() );
+      switch ( nbGauss ) {
+      case 8: { // FPG8
+        const double a = sqrt(3.)/3.;
+        add( -a, -a, -a,  1. );
+        add( -a, -a,  a,  1. );
+        add( -a,  a, -a,  1. );
+        add( -a,  a,  a,  1. );
+        add(  a, -a, -a,  1. );
+        add(  a, -a,  a,  1. );
+        add(  a,  a, -a,  1. );
+        add(  a,  a,  a,  1. ); break;
+      }
+      case 27: { // FPG27
+        const double a = sqrt(3/5.), c1 = 5/9., c2 = 8/9.;
+        const double c12 = c1*c1, c13 = c1*c1*c1;
+        const double c22 = c2*c2, c23 = c2*c2*c2;
+        add( -a, -a, -a,   c13  ); // 1
+        add( -a, -a, 0., c12*c2 ); // 2
+        add( -a, -a,  a,   c13  ); // 3
+        add( -a, 0., -a, c12*c2 ); // 4
+        add( -a, 0., 0., c1*c22 ); // 5
+        add( -a, 0.,  a, c12*c2 ); // 6
+        add( -a,  a, -a,   c13  ); // 7
+        add( -a,  a, 0., c12*c2 ); // 8
+        add( -a,  a,  a,   c13  ); // 9
+        add( 0., -a, -a, c12*c2 ); // 10
+        add( 0., -a, 0., c1*c22 ); // 11
+        add( 0., -a,  a, c12*c2 ); // 12
+        add( 0., 0., -a, c1*c22 ); // 13
+        add( 0., 0., 0.,   c23  ); // 14
+        add( 0., 0.,  a, c1*c22 ); // 15
+        add( 0.,  a, -a, c12*c2 ); // 16
+        add( 0.,  a, 0., c1*c22 ); // 17
+        add( 0.,  a,  a, c12*c2 ); // 18
+        add(  a, -a, -a,   c13  ); // 19
+        add(  a, -a, 0., c12*c2 ); // 20
+        add(  a, -a,  a,   c13  ); // 21
+        add(  a, 0., -a, c12*c2 ); // 22
+        add(  a, 0., 0., c1*c22 ); // 23
+        add(  a, 0.,  a, c12*c2 ); // 24
+        add(  a,  a, -a,   c13  ); // 25
+        add(  a,  a, 0., c12*c2 ); // 26
+        add(  a,  a,  a,   c13  ); // 27
+        break;
+      }
+      default:
+        THROW_IK_EXCEPTION("TGaussDef: Invalid nb of gauss points for PENTA: " <<nbGauss);
+      }
+      break;
+
+    default:
+      THROW_IK_EXCEPTION("TGaussDef: unexpected EGeometrieElement: "<< geom);
+    }
+
+    if ( myWeights.capacity() != myWeights.size() )
+      THROW_IK_EXCEPTION("TGaussDef: Not all gauss points defined");
+  }
+}
+  
 //================================================================================
 /*!
  * \brief Return dimension for the given cell type
@@ -266,7 +1463,7 @@ unsigned SauvUtilities::getDimension( INTERP_KERNEL::NormalizedCellType type )
 
 const int * SauvUtilities::getGibi2MedQuadraticInterlace( INTERP_KERNEL::NormalizedCellType type )
 {
-  static vector<const int*> conn;
+  static std::vector<const int*> conn;
   static const int hexa20 [] = {0,6,4,2, 12,18,16,14, 7,5,3,1, 19,17,15,13, 8,11,10,9};
   static const int penta15[] = {0,2,4, 9,11,13, 1,3,5, 10,12,14, 6,8,7};
   static const int pyra13 [] = {0,2,4,6, 12, 1,3,5,7, 8,9,10,11};
@@ -314,9 +1511,9 @@ SauvUtilities::Link Cell::link(int i) const
 {
   int i2 = ( i + 1 ) % _nodes.size();
   if ( _reverse )
-    return make_pair( _nodes[i2]->_number, _nodes[i]->_number );
+    return std::make_pair( _nodes[i2]->_number, _nodes[i]->_number );
   else
-    return make_pair( _nodes[i]->_number, _nodes[i2]->_number );
+    return std::make_pair( _nodes[i]->_number, _nodes[i2]->_number );
 }
 
 //================================================================================
@@ -790,12 +1987,12 @@ double ASCIIReader::getDouble() const
  */
 //================================================================================
 
-string ASCIIReader::getName() const
+std::string ASCIIReader::getName() const
 {
   int len = _width;
   while (( _curPos[len-1] == ' ' || _curPos[len-1] == 0) && len > 0 )
     len--;
-  return string( _curPos, len );
+  return std::string( _curPos, len );
 }
 
 //================================================================================
@@ -848,7 +2045,11 @@ bool XDRReader::open()
 {
   bool xdr_ok = false;
 #ifdef HAS_XDR
+#ifdef WIN32
+  if ((_xdrs_file = ::fopen(_fileName.c_str(), "rb")))
+#else 
   if ((_xdrs_file = ::fopen(_fileName.c_str(), "r")))
+#endif
     {
       _xdrs = (XDR *)malloc(sizeof(XDR));
       xdrstdio_create((XDR*)_xdrs, _xdrs_file, XDR_DECODE);
@@ -896,8 +2097,8 @@ void XDRReader::init( int nbToRead, int width/*=0*/ )
 {
   if(_iRead < _nbToRead)
     {
-      cout << "_iRead, _nbToRead : " << _iRead << " " << _nbToRead << endl;
-      cout << "Unfinished iteration before new one !" << endl;
+      std::cout << "_iRead, _nbToRead : " << _iRead << " " << _nbToRead << std::endl;
+      std::cout << "Unfinished iteration before new one !" << std::endl;
       THROW_IK_EXCEPTION("SauvUtilities::XDRReader::init(): Unfinished iteration before new one !");
     }
   _iRead    = 0;
@@ -1074,7 +2275,7 @@ std::string XDRReader::getName() const
   char* s = _xdr_cvals + _iRead*_width;
   while (( s[len-1] == ' ' || s[len-1] == 0) && len > 0 )
     len--;
-  return string( s, len );
+  return std::string( s, len );
 }
 
 //================================================================================
@@ -1083,7 +2284,7 @@ std::string XDRReader::getName() const
  */
 //================================================================================
 
-void IntermediateMED::checkDataAvailability() const throw(INTERP_KERNEL::Exception)
+void IntermediateMED::checkDataAvailability() const
 {
   if ( _spaceDim == 0 )
     THROW_IK_EXCEPTION("Wrong file format"); // it is the first record in the sauve file
@@ -1103,13 +2304,83 @@ void IntermediateMED::checkDataAvailability() const throw(INTERP_KERNEL::Excepti
 
 //================================================================================
 /*!
- * \brief Makes ParaMEDMEM::MEDFileData from self
+ * \brief Safely adds a new Group
  */
 //================================================================================
 
-ParaMEDMEM::MEDFileData* IntermediateMED::convertInMEDFileDS()
+Group* IntermediateMED::addNewGroup(std::vector<SauvUtilities::Group*>* groupsToFix)
 {
-  MEDCouplingAutoRefCountObjectPtr< MEDFileUMesh >  mesh   = makeMEDFileMesh();
+  if ( _groups.size() == _groups.capacity() ) // re-allocation would occure
+    {
+      std::vector<Group> newGroups( _groups.size() );
+      newGroups.push_back( Group() );
+
+      for ( size_t i = 0; i < _groups.size(); ++i )
+        {
+          // avoid copying _cells
+          std::vector<const Cell*> cells;
+          cells.swap( _groups[i]._cells );
+          newGroups[i] = _groups[i];
+          newGroups[i]._cells.swap( cells );
+
+          // correct pointers to sub-groups
+          for ( size_t j = 0; j < _groups[i]._groups.size(); ++j )
+            {
+              int iG = _groups[i]._groups[j] - &_groups[0];
+              newGroups[i]._groups[j] = & newGroups[ iG ];
+            }
+        }
+
+      // fix given groups
+      if ( groupsToFix )
+        for ( size_t i = 0; i < groupsToFix->size(); ++i )
+          if ( (*groupsToFix)[i] )
+            {
+              int iG = (*groupsToFix)[i] - &_groups[0];
+              (*groupsToFix)[i] = & newGroups[ iG ];
+            }
+
+      // fix field supports
+      for ( int isNode = 0; isNode < 2; ++isNode )
+        {
+          std::vector<DoubleField* >& fields = isNode ? _nodeFields : _cellFields;
+          for ( size_t i = 0; i < fields.size(); ++i )
+            {
+              if ( !fields[i] ) continue;
+              for ( size_t j = 0; j < fields[i]->_sub.size(); ++j )
+                if ( fields[i]->_sub[j]._support )
+                  {
+                    int iG = fields[i]->_sub[j]._support - &_groups[0];
+                    fields[i]->_sub[j]._support = & newGroups[ iG ];
+                  }
+              if ( fields[i]->_group )
+                {
+                  int iG = fields[i]->_group - &_groups[0];
+                  fields[i]->_group = & newGroups[ iG ];
+                }
+            }
+        }
+
+      _groups.swap( newGroups );
+    }
+  else
+    {
+      _groups.push_back( Group() );
+    }
+  return &_groups.back();
+}
+
+//================================================================================
+/*!
+ * \brief Makes ParaMEDMEM::MEDFileData from self
+ *  \param [in] fix2DOri - to fix or not orientation of faces in 3D space
+ *  \return ParaMEDMEM::MEDFileData* - conversion result
+ */
+//================================================================================
+
+ParaMEDMEM::MEDFileData* IntermediateMED::convertInMEDFileDS(bool fix2DOri)
+{
+  MEDCouplingAutoRefCountObjectPtr< MEDFileUMesh >  mesh   = makeMEDFileMesh(fix2DOri);
   MEDCouplingAutoRefCountObjectPtr< MEDFileFields > fields = makeMEDFileFields(mesh);
 
   MEDCouplingAutoRefCountObjectPtr< MEDFileMeshes > meshes = MEDFileMeshes::New();
@@ -1127,7 +2398,7 @@ ParaMEDMEM::MEDFileData* IntermediateMED::convertInMEDFileDS()
  */
 //================================================================================
 
-ParaMEDMEM::MEDFileUMesh* IntermediateMED::makeMEDFileMesh()
+ParaMEDMEM::MEDFileUMesh* IntermediateMED::makeMEDFileMesh(bool fix2DOri)
 {
   // check if all needed piles are present
   checkDataAvailability();
@@ -1139,7 +2410,7 @@ ParaMEDMEM::MEDFileUMesh* IntermediateMED::makeMEDFileMesh()
   if ( _spaceDim == 2 || _spaceDim == 1 )
     orientElements2D();
   else if ( _spaceDim == 3 )
-    orientElements3D();
+    orientElements3D( fix2DOri );
 
   // process groups
   decreaseHierarchicalDepthOfSubgroups();
@@ -1160,7 +2431,7 @@ ParaMEDMEM::MEDFileUMesh* IntermediateMED::makeMEDFileMesh()
 
   coords->decrRef();
 
-  if ( !mesh->getName() || strlen( mesh->getName() ) == 0 )
+  if ( !mesh->getName().c_str() || strlen( mesh->getName().c_str() ) == 0 )
     mesh->setName( "MESH" );
 
   return mesh;
@@ -1177,9 +2448,9 @@ void IntermediateMED::setGroupLongNames()
   // IMP 0020434: mapping GIBI names to MED names
   // set med names to objects (mesh, fields, support, group or other)
 
-  set<int> treatedGroups;
+  std::set<int> treatedGroups;
 
-  list<nameGIBItoMED>::iterator itGIBItoMED = _listGIBItoMED_mail.begin();
+  std::list<nameGIBItoMED>::iterator itGIBItoMED = _listGIBItoMED_mail.begin();
   for (; itGIBItoMED != _listGIBItoMED_mail.end(); itGIBItoMED++)
     {
       if ( (int)_groups.size() < itGIBItoMED->gibi_id ) continue;
@@ -1212,9 +2483,9 @@ void IntermediateMED::setGroupLongNames()
  */
 //================================================================================
 
-void IntermediateMED::setFieldLongNames(set< string >& usedNames)
+void IntermediateMED::setFieldLongNames(std::set< std::string >& usedNames)
 {
-  list<nameGIBItoMED>::iterator itGIBItoMED = _listGIBItoMED_cham.begin();
+  std::list<nameGIBItoMED>::iterator itGIBItoMED = _listGIBItoMED_cham.begin();
   for (; itGIBItoMED != _listGIBItoMED_cham.end(); itGIBItoMED++)
     {
       if (itGIBItoMED->gibi_pile == PILE_FIELD)
@@ -1229,25 +2500,25 @@ void IntermediateMED::setFieldLongNames(set< string >& usedNames)
 
   for (itGIBItoMED =_listGIBItoMED_comp.begin(); itGIBItoMED != _listGIBItoMED_comp.end(); itGIBItoMED++)
     {
-      string medName  = _mapStrings[itGIBItoMED->med_id];
-      string gibiName = _mapStrings[itGIBItoMED->gibi_id];
+      std::string medName  = _mapStrings[itGIBItoMED->med_id];
+      std::string gibiName = _mapStrings[itGIBItoMED->gibi_id];
 
       bool name_found = false;
       for ( int isNodal = 0; isNodal < 2 && !name_found; ++isNodal )
         {
-          vector<DoubleField* > & fields = isNodal ? _nodeFields : _cellFields;
+          std::vector<DoubleField* > & fields = isNodal ? _nodeFields : _cellFields;
           for ( size_t ifi = 0; ifi < fields.size() && !name_found; ifi++)
             {
               if (medName.find( fields[ifi]->_name + "." ) == 0 )
                 {
-                  vector<DoubleField::_Sub_data>& aSubDs = fields[ifi]->_sub;
+                  std::vector<DoubleField::_Sub_data>& aSubDs = fields[ifi]->_sub;
                   int nbSub = aSubDs.size();
                   for (int isu = 0; isu < nbSub; isu++)
                     for (int ico = 0; ico < aSubDs[isu].nbComponents(); ico++)
                       {
                         if (aSubDs[isu].compName(ico) == gibiName)
                           {
-                            string medNameCompo = medName.substr( fields[ifi]->_name.size() + 1 );
+                            std::string medNameCompo = medName.substr( fields[ifi]->_name.size() + 1 );
                             fields[ifi]->_sub[isu].compName(ico) = medNameCompo;
                           }
                       }
@@ -1285,7 +2556,7 @@ void IntermediateMED::decreaseHierarchicalDepthOfSubgroups()
       }
     }
     // remove empty sub-_groups
-    vector< Group* > newSubGroups;
+    std::vector< Group* > newSubGroups;
     newSubGroups.reserve( grp._groups.size() );
     for (size_t j = 0; j < grp._groups.size(); ++j )
       if ( !grp._groups[j]->empty() )
@@ -1367,7 +2638,7 @@ void IntermediateMED::detectMixDimGroups()
         grp._cells.clear();
         grp._groups.clear();
         if ( !grp._name.empty() )
-          cout << "Erase a group with elements of different dim |" << grp._name << "|"<< endl;
+          std::cout << "Erase a group with elements of different dim |" << grp._name << "|"<< std::endl;
         break;
       }
     }
@@ -1382,13 +2653,13 @@ void IntermediateMED::detectMixDimGroups()
 
 void IntermediateMED::orientElements2D()
 {
-  set<Cell>::const_iterator elemIt, elemEnd;
-  vector< pair<int,int> > swapVec;
+  std::set<Cell>::const_iterator elemIt, elemEnd;
+  std::vector< std::pair<int,int> > swapVec;
 
   // ------------------------------------
   // fix connectivity of quadratic edges
   // ------------------------------------
-  set<Cell>& quadEdges = _cellsByType[ INTERP_KERNEL::NORM_SEG3 ];
+  std::set<Cell>& quadEdges = _cellsByType[ INTERP_KERNEL::NORM_SEG3 ];
   if ( !quadEdges.empty() )
     {
       elemIt = quadEdges.begin(), elemEnd = quadEdges.end();
@@ -1397,7 +2668,7 @@ void IntermediateMED::orientElements2D()
     }
 
   CellsByDimIterator faceIt( *this, 2 );
-  while ( const set<Cell > * faces = faceIt.nextType() )
+  while ( const std::set<Cell > * faces = faceIt.nextType() )
     {
       TCellType cellType = faceIt.type();
       bool isQuadratic = getGibi2MedQuadraticInterlace( cellType );
@@ -1459,22 +2730,23 @@ void IntermediateMED::orientElements2D()
  */
 //================================================================================
 
-void IntermediateMED::orientElements3D()
+void IntermediateMED::orientElements3D(bool fix2DOri)
 {
   // set _reverse flags of faces
-  orientFaces3D();
+  if ( fix2DOri )
+    orientFaces3D();
 
   // -----------------
   // fix connectivity
   // -----------------
 
-  set<Cell>::const_iterator elemIt, elemEnd;
-  vector< pair<int,int> > swapVec;
+  std::set<Cell>::const_iterator elemIt, elemEnd;
+  std::vector< std::pair<int,int> > swapVec;
 
   for ( int dim = 1; dim <= 3; ++dim )
   {
     CellsByDimIterator cellsIt( *this, dim );
-    while ( const set<Cell > * elems = cellsIt.nextType() )
+    while ( const std::set<Cell > * elems = cellsIt.nextType() )
     {
       TCellType cellType = cellsIt.type();
       bool isQuadratic = getGibi2MedQuadraticInterlace( cellType );
@@ -1506,10 +2778,10 @@ void IntermediateMED::orientElements3D()
 void IntermediateMED::orientFaces3D()
 {
   // fill map of links and their faces
-  set<const Cell*> faces;
-  map<const Cell*, Group*> fgm;
-  map<Link, list<const Cell*> > linkFacesMap;
-  map<Link, list<const Cell*> >::iterator lfIt, lfIt2;
+  std::set<const Cell*> faces;
+  std::map<const Cell*, Group*> fgm;
+  std::map<Link, std::list<const Cell*> > linkFacesMap;
+  std::map<Link, std::list<const Cell*> >::iterator lfIt, lfIt2;
 
   for (size_t i=0; i!=_groups.size(); ++i)
     {
@@ -1520,21 +2792,21 @@ void IntermediateMED::orientFaces3D()
             {
               for ( size_t k = 0; k < grp._cells[j]->_nodes.size(); ++k )
                 linkFacesMap[ grp._cells[j]->link( k ) ].push_back( grp._cells[j] );
-              fgm.insert( make_pair( grp._cells[j], &grp ));
+              fgm.insert( std::make_pair( grp._cells[j], &grp ));
             }
     }
   // dump linkFacesMap
   //     for ( lfIt = linkFacesMap.begin(); lfIt!=linkFacesMap.end(); lfIt++) {
-  //       cout<< "LINK: " << lfIt->first.first << "-" << lfIt->first.second << endl;
-  //       list<const Cell*> & fList = lfIt->second;
-  //       list<const Cell*>::iterator fIt = fList.begin();
+  //       cout<< "LINK: " << lfIt->first.first << "-" << lfIt->first.second << std::endl;
+  //       std::list<const Cell*> & fList = lfIt->second;
+  //       std::list<const Cell*>::iterator fIt = fList.begin();
   //       for ( ; fIt != fList.end(); fIt++ )
-  //         cout << "\t" << **fIt << fgm[*fIt]->nom << endl;
+  //         cout << "\t" << **fIt << fgm[*fIt]->nom << std::endl;
   //     }
 
   // Each oriented link must appear in one face only, else a face is reversed.
 
-  queue<const Cell*> faceQueue; /* the queue contains well oriented faces
+  std::queue<const Cell*> faceQueue; /* the queue contains well oriented faces
                                      whose neighbors orientation is to be checked */
   bool manifold = true;
   while ( !linkFacesMap.empty() )
@@ -1556,11 +2828,11 @@ void IntermediateMED::orientFaces3D()
               // find the neighbor faces
               lfIt = linkFacesMap.find( link );
               int nbFaceByLink = 0;
-              list< const Cell* > ml;
+              std::list< const Cell* > ml;
               if ( lfIt != linkFacesMap.end() )
                 {
-                  list<const Cell*> & fList = lfIt->second;
-                  list<const Cell*>::iterator fIt = fList.begin();
+                  std::list<const Cell*> & fList = lfIt->second;
+                  std::list<const Cell*>::iterator fIt = fList.begin();
                   assert( fIt != fList.end() );
                   for ( ; fIt != fList.end(); fIt++, nbFaceByLink++ )
                     {
@@ -1576,8 +2848,8 @@ void IntermediateMED::orientFaces3D()
                               lfIt2 = linkFacesMap.find( badlink );
                               if ( lfIt2 != linkFacesMap.end() )
                                 {
-                                  list<const Cell*> & ff = lfIt2->second;
-                                  list<const Cell*>::iterator lfIt3 = find( ff.begin(), ff.end(), badFace );
+                                  std::list<const Cell*> & ff = lfIt2->second;
+                                  std::list<const Cell*>::iterator lfIt3 = find( ff.begin(), ff.end(), badFace );
                                   // check if badFace has been found,
                                   // else we can't erase it
                                   // case of degenerated face in edge
@@ -1601,8 +2873,8 @@ void IntermediateMED::orientFaces3D()
               lfIt = linkFacesMap.find( revLink );
               if ( lfIt != linkFacesMap.end() )
                 {
-                  list<const Cell*> & fList = lfIt->second;
-                  list<const Cell*>::iterator fIt = fList.begin();
+                  std::list<const Cell*> & fList = lfIt->second;
+                  std::list<const Cell*>::iterator fIt = fList.begin();
                   for ( ; fIt != fList.end(); fIt++, nbFaceByLink++ )
                     {
                       ml.push_back( *fIt );
@@ -1615,10 +2887,10 @@ void IntermediateMED::orientFaces3D()
                 {
                   if ( manifold )
                     {
-                      list<const Cell*>::iterator ii = ml.begin();
-                      cout << nbFaceByLink << " faces by 1 link:" << endl;
+                      std::list<const Cell*>::iterator ii = ml.begin();
+                      std::cout << nbFaceByLink << " faces by 1 link:" << std::endl;
                       for( ; ii!= ml.end(); ii++ )
-                        cout << "in sub-mesh <" << fgm[ *ii ]->_name << "> " << **ii << endl;
+                        std::cout << "in sub-mesh <" << fgm[ *ii ]->_name << "> " << **ii << std::endl;
                     }
                   manifold = false;
                 }
@@ -1627,7 +2899,7 @@ void IntermediateMED::orientFaces3D()
     } // while ( !linkFacesMap.empty() )
 
   if ( !manifold )
-    cout << " -> Non manifold mesh, faces orientation may be incorrect" << endl;
+    std::cout << " -> Non manifold mesh, faces orientation may be incorrect" << std::endl;
 }
 
 //================================================================================
@@ -1639,11 +2911,11 @@ void IntermediateMED::orientFaces3D()
 
 void IntermediateMED::orientVolumes()
 {
-  set<Cell>::const_iterator elemIt, elemEnd;
-  vector< pair<int,int> > swapVec;
+  std::set<Cell>::const_iterator elemIt, elemEnd;
+  std::vector< std::pair<int,int> > swapVec;
 
   CellsByDimIterator cellsIt( *this, 3 );
-  while ( const set<Cell > * elems = cellsIt.nextType() )
+  while ( const std::set<Cell > * elems = cellsIt.nextType() )
     {
       TCellType cellType = cellsIt.type();
       elemIt = elems->begin(), elemEnd = elems->end();
@@ -1692,7 +2964,7 @@ void IntermediateMED::orientVolumes()
               vec03[0] = n3[0] - n[0][0];
               vec03[1] = n3[1] - n[0][1];
               vec03[2] = n3[2] - n[0][2];
-              if ( fabs( normal[0]+normal[1]+normal[2] ) <= numeric_limits<double>::max() ) // vec01 || vec02
+              if ( fabs( normal[0]+normal[1]+normal[2] ) <= std::numeric_limits<double>::max() ) // vec01 || vec02
                 {
                   normal[0] = vec01[1] * vec03[2] - vec01[2] * vec03[1]; // vec01 ^ vec03
                   normal[1] = vec01[2] * vec03[0] - vec01[0] * vec03[2];
@@ -1754,11 +3026,11 @@ int NodeContainer::numberNodes()
 
 void IntermediateMED::numberElements()
 {
-  set<Cell>::const_iterator elemIt, elemEnd;
+  std::set<Cell>::const_iterator elemIt, elemEnd;
 
   // numbering _cells of type NORM_POINT1 by node number
   {
-    const set<Cell>& points = _cellsByType[ INTERP_KERNEL::NORM_POINT1 ];
+    const std::set<Cell>& points = _cellsByType[ INTERP_KERNEL::NORM_POINT1 ];
     elemIt = points.begin(), elemEnd = points.end();
     for ( ; elemIt != elemEnd; ++elemIt )
       elemIt->_number = elemIt->_nodes[0]->_number;
@@ -1771,7 +3043,7 @@ void IntermediateMED::numberElements()
       bool ok = true, renumEntity = false;
       CellsByDimIterator cellsIt( *this, dim );
       int prevNbElems = 0;
-      while ( const set<Cell> * typeCells = cellsIt.nextType() )
+      while ( const std::set<Cell> * typeCells = cellsIt.nextType() )
         {
           TID minNumber = std::numeric_limits<TID>::max(), maxNumber = 0;
           for ( elemIt = typeCells->begin(), elemEnd = typeCells->end(); elemIt!=elemEnd; ++elemIt)
@@ -1795,7 +3067,7 @@ void IntermediateMED::numberElements()
         {
           cellsIt.init( dim );
           prevNbElems = cellsIt.nextType()->size(); // no need to renumber the first type
-          while ( const set<Cell> * typeCells = cellsIt.nextType() )
+          while ( const std::set<Cell> * typeCells = cellsIt.nextType() )
             {
               for ( elemIt = typeCells->begin(), elemEnd = typeCells->end(); elemIt!=elemEnd; ++elemIt)
                 elemIt->_number += prevNbElems;
@@ -1806,7 +3078,7 @@ void IntermediateMED::numberElements()
         {
           int cellID=1;
           cellsIt.init( dim );
-          while ( const set<Cell> * typeCells = cellsIt.nextType() )
+          while ( const std::set<Cell> * typeCells = cellsIt.nextType() )
             for ( elemIt = typeCells->begin(), elemEnd = typeCells->end(); elemIt!=elemEnd; ++elemIt)
               elemIt->_number = cellID++;
         }
@@ -1852,7 +3124,7 @@ void IntermediateMED::setConnectivity( ParaMEDMEM::MEDFileUMesh*    mesh,
 
   mesh->setCoords( coords );
 
-  set<Cell>::const_iterator elemIt, elemEnd;
+  std::set<Cell>::const_iterator elemIt, elemEnd;
   for ( int dim = 3; dim > 0; --dim )
   {
     CellsByDimIterator dimCells( *this, dim );
@@ -1876,7 +3148,7 @@ void IntermediateMED::setConnectivity( ParaMEDMEM::MEDFileUMesh*    mesh,
       {
         // fill connectivity array to take into account order of elements in the sauv file
         const int nbCellNodes = cells->begin()->_nodes.size();
-        vector< TID > connectivity( cells->size() * nbCellNodes );
+        std::vector< TID > connectivity( cells->size() * nbCellNodes );
         int * nodalConnOfCell;
         for ( elemIt = cells->begin(), elemEnd = cells->end(); elemIt != elemEnd; ++elemIt )
           {
@@ -1919,8 +3191,8 @@ void IntermediateMED::setGroups( ParaMEDMEM::MEDFileUMesh* mesh )
     {
       const int meshDimRelToMaxExt = ( dim == 0 ? 1 : dim - meshDim );
 
-      vector<const DataArrayInt *> medGroups;
-      vector<MEDCouplingAutoRefCountObjectPtr<DataArrayInt> > refGroups;
+      std::vector<const DataArrayInt *> medGroups;
+      std::vector<MEDCouplingAutoRefCountObjectPtr<DataArrayInt> > refGroups;
       for ( size_t i = 0; i < _groups.size(); ++i )
         {
           Group& grp = _groups[i];
@@ -1935,7 +3207,7 @@ void IntermediateMED::setGroups( ParaMEDMEM::MEDFileUMesh* mesh )
           // sort cells by ID and remember their initial order in the group
           TCellToOrderMap cell2order;
           unsigned orderInGroup = 0;
-          vector< Group* > groupVec;
+          std::vector< Group* > groupVec;
           if ( grp._groups.empty() ) groupVec.push_back( & grp );
           else                       groupVec = grp._groups;
           for ( size_t iG = 0; iG < groupVec.size(); ++iG )
@@ -1944,17 +3216,17 @@ void IntermediateMED::setGroups( ParaMEDMEM::MEDFileUMesh* mesh )
               if ( (int)getDim( aG ) != dim )
                 continue;
               for ( size_t iC = 0; iC < aG->_cells.size(); ++iC )
-                cell2order.insert( cell2order.end(), make_pair( aG->_cells[iC], orderInGroup++ ));
+                cell2order.insert( cell2order.end(), std::make_pair( aG->_cells[iC], orderInGroup++ ));
             }
           if ( cell2order.empty() )
             continue;
           bool isSelfIntersect = ( orderInGroup != cell2order.size() );
           if ( isSelfIntersect ) // self intersecting group
             {
-              ostringstream msg;
+              std::ostringstream msg;
               msg << "Self intersecting sub-mesh: id = " << i+1
-                  << ", name = |" << grp._name << "|" << endl
-                  << " nb unique elements = " << cell2order.size() << endl
+                  << ", name = |" << grp._name << "|" << std::endl
+                  << " nb unique elements = " << cell2order.size() << std::endl
                   << " total nb elements  = " << orderInGroup;
               if ( grp._isProfile )
                 {
@@ -1962,17 +3234,17 @@ void IntermediateMED::setGroups( ParaMEDMEM::MEDFileUMesh* mesh )
                 }
               else
                 {
-                  cout << msg.str() << endl;
+                  std::cout << msg.str() << std::endl;
                 }
             }
           // create a med group
           grp._medGroup = DataArrayInt::New();
           grp._medGroup->setName( grp._name.c_str() );
           grp._medGroup->alloc( cell2order.size(), /*nbOfCompo=*/1 );
-          int * idsPrt = grp._medGroup->getPointer();
+          int * idsPtr = grp._medGroup->getPointer();
           TCellToOrderMap::iterator cell2orderIt, cell2orderEnd = cell2order.end();
           for ( cell2orderIt = cell2order.begin(); cell2orderIt != cell2orderEnd; ++cell2orderIt )
-            *idsPrt++ = (*cell2orderIt).first->_number - 1;
+            *idsPtr++ = (*cell2orderIt).first->_number - 1;
 
           // try to set the mesh name
           if ( !isMeshNameSet &&
@@ -2016,16 +3288,17 @@ bool IntermediateMED::isOnAll( const Group* grp, int & dimRel ) const
   int dim = getDim( grp );
 
   int nbElems = 0;
-  CellsByDimIterator dimCells( *this, dim );
-  while ( const set<Cell > * cells = dimCells.nextType() )
-    nbElems += cells->size();
-
-  const bool onAll = ( nbElems == grp->size() );
-
   if ( dim == 0 )
-    dimRel = 0;
+    {
+      nbElems = _nbNodes;
+      dimRel  = 0;
+    }
   else
     {
+      CellsByDimIterator dimCells( *this, dim );
+      while ( const std::set<Cell > * cells = dimCells.nextType() )
+        nbElems += cells->size();
+
       int meshDim = 3;
       for ( ; meshDim > 0; --meshDim )
         {
@@ -2035,6 +3308,8 @@ bool IntermediateMED::isOnAll( const Group* grp, int & dimRel ) const
         }
       dimRel = dim - meshDim;
     }
+
+  bool onAll = ( nbElems == grp->size() );
   return onAll;
 }
 
@@ -2049,7 +3324,7 @@ ParaMEDMEM::MEDFileFields * IntermediateMED::makeMEDFileFields(ParaMEDMEM::MEDFi
   if ( _nodeFields.empty() && _cellFields.empty() ) return 0;
 
   // set long names
-  set< string > usedFieldNames;
+  std::set< std::string > usedFieldNames;
   setFieldLongNames(usedFieldNames);
 
   MEDFileFields* fields = MEDFileFields::New();
@@ -2073,19 +3348,23 @@ void IntermediateMED::setFields( SauvUtilities::DoubleField* fld,
                                  ParaMEDMEM::MEDFileFields*  medFields,
                                  ParaMEDMEM::MEDFileUMesh*   mesh,
                                  const TID                   castemID,
-                                 set< string >&              usedFieldNames)
+                                 std::set< std::string >&    usedFieldNames)
 {
-  if ( !fld || !fld->isMedCompatible() ) return;
+  bool sameNbGauss = true;
+  if ( !fld || !fld->isMedCompatible( sameNbGauss )) return;
+
+  if ( !sameNbGauss )
+    fld->splitSubWithDiffNbGauss();
 
   // if ( !fld->hasCommonSupport() ):
   //     each sub makes MEDFileFieldMultiTS
   // else:
   //     unite several subs into a MEDCouplingFieldDouble
 
-  const bool uniteSubs = fld->hasCommonSupport();
+  const bool uniteSubs = fld->hasCommonSupport() && sameNbGauss;
   if ( !uniteSubs )
-    cout << "Castem field #" << castemID << " " << fld->_name
-         << " is incompatible with MED format, so we split it into several fields" << endl;
+    std::cout << "Castem field #" << castemID << " <" << fld->_name
+              << "> is incompatible with MED format, so we split it into several fields:" << std::endl;
 
   for ( size_t iSub = 0; iSub < fld->_sub.size(); )
     {
@@ -2102,14 +3381,19 @@ void IntermediateMED::setFields( SauvUtilities::DoubleField* fld,
       if ( uniteSubs )
         {
           int nbElems = fld->_group->size();
-          for ( int elemShift = 0; elemShift < nbElems; )
+          for ( int elemShift = 0; elemShift < nbElems && iSub < fld->_sub.size(); )
             elemShift += fld->setValues( valPtr, iSub++, elemShift );
           setTS( fld, values, medFields, mesh );
         }
       else
         {
-          fld->setValues( valPtr, iSub++ );
-          setTS( fld, values, medFields, mesh, iSub );
+          fld->setValues( valPtr, iSub );
+          setTS( fld, values, medFields, mesh, iSub++ );
+
+          std::cout << fld->_name << " with compoments";
+          for ( size_t i = 0; i < (size_t)fld->_sub[iSub-1].nbComponents(); ++i )
+            std::cout << " " << fld->_sub[iSub-1]._comp_names[ i ];
+          std::cout << std::endl;
         }
     }
 }
@@ -2126,8 +3410,8 @@ void IntermediateMED::setTS( SauvUtilities::DoubleField*  fld,
                              ParaMEDMEM::MEDFileUMesh*    mesh,
                              const int                    iSub)
 {
-  // analyze a field support
-  const Group* support = fld->getSupport();
+  // treat a field support
+  const Group* support = fld->getSupport( iSub );
   int dimRel;
   const bool onAll = isOnAll( support, dimRel );
   if ( !onAll && support->_name.empty() )
@@ -2136,18 +3420,53 @@ void IntermediateMED::setTS( SauvUtilities::DoubleField*  fld,
       support->_medGroup->setName( support->_name.c_str() );
     }
 
-  // make a time-stamp
-  MEDCouplingFieldDouble * timeStamp = MEDCouplingFieldDouble::New( fld->getMedType(),
+  // make and fill a time-stamp
+
+  MEDCouplingFieldDouble * timeStamp = MEDCouplingFieldDouble::New( fld->getMedType( iSub ),
                                                                     fld->getMedTimeDisc() );
   timeStamp->setName( fld->_name.c_str() );
   timeStamp->setDescription( fld->_description.c_str() );
-  MEDCouplingAutoRefCountObjectPtr< MEDCouplingUMesh > dimMesh = mesh->getMeshAtLevel( dimRel );
-  timeStamp->setMesh( dimMesh );
+  // set the mesh
+  if ( onAll )
+    {
+      MEDCouplingAutoRefCountObjectPtr
+        < MEDCouplingUMesh > dimMesh = mesh->getMeshAtLevel( dimRel );
+      timeStamp->setMesh( dimMesh );
+    }
+  else if ( timeStamp->getTypeOfField() == ParaMEDMEM::ON_NODES )
+    {
+      DataArrayDouble * coo = mesh->getCoords();
+      MEDCouplingAutoRefCountObjectPtr
+        <DataArrayDouble> subCoo = coo->selectByTupleId(support->_medGroup->begin(),
+                                                        support->_medGroup->end());
+      MEDCouplingAutoRefCountObjectPtr< MEDCouplingUMesh > nodeSubMesh =
+        MEDCouplingUMesh::Build0DMeshFromCoords( subCoo );
+      timeStamp->setMesh( nodeSubMesh );
+    }
+  else
+    {
+      MEDCouplingAutoRefCountObjectPtr
+        < MEDCouplingUMesh > dimMesh = mesh->getMeshAtLevel( dimRel );
+      MEDCouplingAutoRefCountObjectPtr
+        <MEDCouplingMesh> subMesh = dimMesh->buildPart(support->_medGroup->begin(),
+                                                       support->_medGroup->end());
+      timeStamp->setMesh( subMesh);
+    }
+  // set values
   for ( size_t i = 0; i < (size_t)fld->_sub[iSub].nbComponents(); ++i )
     values->setInfoOnComponent( i, fld->_sub[iSub]._comp_names[ i ].c_str() );
   timeStamp->setArray( values );
   values->decrRef();
-
+  // set gauss points
+  if ( timeStamp->getTypeOfField() == ParaMEDMEM::ON_GAUSS_PT )
+    {
+      TGaussDef gaussDef( fld->_sub[iSub]._support->_cellType,
+                          fld->_sub[iSub].nbGauss() );
+      timeStamp->setGaussLocalizationOnType( fld->_sub[iSub]._support->_cellType,
+                                             gaussDef.myRefCoords,
+                                             gaussDef.myCoords,
+                                             gaussDef.myWeights );
+    }
   // get a field to add the time-stamp
   bool isNewMedField = false;
   if ( !fld->_curMedField || fld->_name != fld->_curMedField->getName() )
@@ -2157,9 +3476,12 @@ void IntermediateMED::setTS( SauvUtilities::DoubleField*  fld,
     }
 
   // set an order
-  timeStamp->setOrder( fld->_curMedField->getNumberOfTS() );
+  const int nbTS = fld->_curMedField->getNumberOfTS();
+  if ( nbTS > 0 )
+    timeStamp->setOrder( nbTS );
 
   // add the time-stamp
+  timeStamp->checkCoherency();
   if ( onAll )
     fld->_curMedField->appendFieldNoProfileSBT( timeStamp );
   else
@@ -2181,15 +3503,15 @@ void IntermediateMED::setTS( SauvUtilities::DoubleField*  fld,
 void IntermediateMED::makeFieldNewName(std::set< std::string >&    usedNames,
                                        SauvUtilities::DoubleField* fld )
 {
-  string base = fld->_name;
+  std::string base = fld->_name;
   if ( base.empty() )
     {
       base = "F_";
     }
   else
     {
-      string::size_type pos = base.rfind('_');
-      if ( pos != string::npos )
+      std::string::size_type pos = base.rfind('_');
+      if ( pos != std::string::npos )
         base = base.substr( 0, pos+1 );
       else
         base += '_';
@@ -2201,6 +3523,35 @@ void IntermediateMED::makeFieldNewName(std::set< std::string >&    usedNames,
       fld->_name = base + SauvUtilities::toString( i++ );
     }
   while( !usedNames.insert( fld->_name ).second );
+}
+
+//================================================================================
+/*!
+ * \brief Split sub-components with different nb of gauss points into several sub-components
+ *  \param [in,out] fld - a field to split if necessary
+ */
+//================================================================================
+
+void DoubleField::splitSubWithDiffNbGauss()
+{
+  for ( size_t iSub = 0; iSub < _sub.size(); ++iSub )
+    {
+      if ( _sub[iSub].isSameNbGauss() ) continue;
+
+      _sub.insert( _sub.begin() + iSub + 1, 1, _Sub_data() );
+      _Sub_data & subToSplit = _sub[iSub];
+      _Sub_data & subNew     = _sub[iSub+1];
+      size_t iDiff = 1;
+      while ( subToSplit._nb_gauss[ 0 ] == subToSplit._nb_gauss[ iDiff ] )
+        ++iDiff;
+      subNew._support = subToSplit._support;
+      subNew._comp_names.assign( subToSplit._comp_names.begin() + iDiff,
+                                 subToSplit._comp_names.end() );
+      subNew._nb_gauss.assign  ( subToSplit._nb_gauss.begin() + iDiff,
+                                 subToSplit._nb_gauss.end() );
+      subToSplit._comp_names.resize( iDiff );
+      subToSplit._nb_gauss.resize  ( iDiff );
+    }
 }
 
 //================================================================================
@@ -2245,9 +3596,9 @@ bool DoubleField::isMultiTimeStamps() const
   if ( _sub.size() < 2 )
     return false;
   bool sameSupports = true;
-  Group* grp1 = _sub[0]._support;
+  Group* grpp1 = _sub[0]._support;// grpp NOT grp because XDR under Windows defines grp...
   for ( size_t i = 1; i < _sub.size() && sameSupports; ++i )
-    sameSupports = ( grp1 == _sub[i]._support );
+    sameSupports = ( grpp1 == _sub[i]._support );
 
   return sameSupports;
 }
@@ -2258,22 +3609,21 @@ bool DoubleField::isMultiTimeStamps() const
  */
 //================================================================================
 
-bool DoubleField::isMedCompatible() const
+bool DoubleField::isMedCompatible(bool& sameNbGauss) const
 {
   for ( size_t iSub = 0; iSub < _sub.size(); ++iSub )
     {
       if ( !getSupport(iSub) || !getSupport(iSub)->_medGroup )
         THROW_IK_EXCEPTION("SauvReader INTERNAL ERROR: NULL field support");
 
-      if ( !_sub[iSub].isValidNbGauss() )
+      sameNbGauss = true;
+      if ( !_sub[iSub].isSameNbGauss() )
         {
-          cout << "Skip field <" << _name << "> : different nb of gauss points in components" <<endl;
-          return false;
+          std::cout << "Field <" << _name << "> : different nb of gauss points in components" << std::endl;
+          sameNbGauss = false;
+          //return false;
         }
     }
-  // check if there are no gauss or nbGauss() == nbCellNodes,
-  // else we lack info on gauss point localization
-  // TODO?
   return true;
 }
 
@@ -2285,7 +3635,7 @@ bool DoubleField::isMedCompatible() const
 
 bool DoubleField::hasSameComponentsBySupport() const
 {
-  vector< _Sub_data >::const_iterator sub_data = _sub.begin();
+  std::vector< _Sub_data >::const_iterator sub_data = _sub.begin();
   const _Sub_data& first_sub_data = *sub_data;
   for ( ++sub_data ; sub_data != _sub.end(); ++sub_data )
   {
@@ -2365,37 +3715,49 @@ int DoubleField::setValues( double * valPtr, const int iSub, const int elemShift
   int iComp = 0;
   for ( int iS = 0; iS < iSub; ++iS )
     iComp += _sub[iS].nbComponents();
-  const vector< double > * compValues = &_comp_values[ iComp ];
-
-  const vector< unsigned >& relocTable = getSupport( iSub )->_relocTable;
+  const std::vector< double > * compValues = &_comp_values[ iComp ];
 
   // Set values
+
+  const std::vector< unsigned >& relocTable = getSupport( iSub )->_relocTable;
 
   const int nbElems      = _sub[iSub]._support->size();
   const int nbGauss      = _sub[iSub].nbGauss();
   const int nbComponents = _sub[iSub].nbComponents();
   const int nbValsByElem = nbComponents * nbGauss;
+
   // check nb values
   int nbVals = 0;
   for ( iComp = 0; iComp < nbComponents; ++iComp )
     nbVals += compValues[iComp].size();
-  if ( nbVals != nbElems * nbValsByElem )
+  const bool isConstField = ( nbVals == nbComponents ); // one value per component (issue 22321)
+  if ( !isConstField && nbVals != nbElems * nbValsByElem )
     THROW_IK_EXCEPTION("SauvMedConvertor.cxx: support size mismatches field size");
+
   // compute nb values in previous subs
   int valsShift = 0;
   for ( int iS = iSub-1, shift = elemShift; shift > 0; --iS)
-  {
-    int nbE = _sub[iS]._support->size();
-    shift -= nbE;
-    valsShift += nbE * _sub[iS].nbComponents() * _sub[iS].nbGauss();
-  }
-  for ( int iE = 0; iE < nbElems; ++iE )
     {
-      int iMed = valsShift + nbValsByElem * ( relocTable.empty() ? iE : relocTable[iE+elemShift]-elemShift );
-      for ( iComp = 0; iComp < nbComponents; ++iComp )
-        for ( int iG = 0; iG < nbGauss; ++iG )
-          valPtr[ iMed + iG * nbComponents + iComp ] = compValues[iComp][ iE * nbGauss + iG ];
+      int nbE = _sub[iS]._support->size();
+      shift -= nbE;
+      valsShift += nbE * _sub[iS].nbComponents() * _sub[iS].nbGauss();
     }
+
+  if ( isConstField )
+    for ( int iE = 0; iE < nbElems; ++iE )
+      {
+        int iMed = valsShift + nbValsByElem * ( relocTable.empty() ? iE : relocTable[iE+elemShift]-elemShift );
+        for ( iComp = 0; iComp < nbComponents; ++iComp )
+          valPtr[ iMed + iComp ] = compValues[iComp][ 0 ];
+      }
+  else
+    for ( int iE = 0; iE < nbElems; ++iE )
+      {
+        int iMed = valsShift + nbValsByElem * ( relocTable.empty() ? iE : relocTable[iE+elemShift]-elemShift );
+        for ( iComp = 0; iComp < nbComponents; ++iComp )
+          for ( int iG = 0; iG < nbGauss; ++iG )
+            valPtr[ iMed + iG * nbComponents + iComp ] = compValues[iComp][ iE * nbGauss + iG ];
+      }
   return nbElems;
 }
 

@@ -30,7 +30,5 @@ libmedVV_la_LIBADD  = ci/libci23v30.la
 # misc/libmisc23v30.la
 libmedVV_la_SOURCES  = foo3.c 
 
-#EXTRA_DIST = Makefile.am.cmake
-#CLEANFILES = 
-
+EXTRA_DIST = CMakeLists.txt
 

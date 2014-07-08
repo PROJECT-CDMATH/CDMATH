@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -263,6 +263,10 @@ int MEDimport(char * filein, char *  fileout) {
   }
 
   if (MAJ_236_300) {
+    /* Le système de cache de version a été developper à partir de la 3.0*/
+    /* Initialise la cache sur une 2.3.6 (cas d'absence d'INFO)*/
+    _MEDfileVersion(fid);
+
     /* Mise a jour des champs */
     fprintf(stdout,"- Lancement de la mise à jour des champs de résultats ... \n");
     MAJ_236_300_champs(fid);

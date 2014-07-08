@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,32 +23,35 @@
 
 #include "MEDCoupling.hxx"
 
+#include <set>
+#include <vector>
+#include <string>
 #include <cstddef>
 
 namespace ParaMEDMEM
 {
   typedef enum
-    {
-      C_DEALLOC = 2,
-      CPP_DEALLOC = 3
-    } DeallocType;
+  {
+    C_DEALLOC = 2,
+    CPP_DEALLOC = 3
+  } DeallocType;
 
   typedef enum
-    {
-      ON_CELLS = 0,
-      ON_NODES = 1,
-      ON_GAUSS_PT = 2,
-      ON_GAUSS_NE = 3,
-      ON_NODES_KR = 4
-    } TypeOfField;
+  {
+    ON_CELLS = 0,
+    ON_NODES = 1,
+    ON_GAUSS_PT = 2,
+    ON_GAUSS_NE = 3,
+    ON_NODES_KR = 4
+  } TypeOfField;
 
   typedef enum
-    {
-      NO_TIME = 4,
-      ONE_TIME = 5,
-      LINEAR_TIME = 6,
-      CONST_ON_TIME_INTERVAL = 7
-    } TypeOfTimeDiscretization;
+  {
+    NO_TIME = 4,
+    ONE_TIME = 5,
+    LINEAR_TIME = 6,
+    CONST_ON_TIME_INTERVAL = 7
+  } TypeOfTimeDiscretization;
 
   typedef bool (*FunctionToEvaluate)(const double *pos, double *res);
 
@@ -56,20 +59,46 @@ namespace ParaMEDMEM
   MEDCOUPLING_EXPORT int MEDCouplingVersion();
   MEDCOUPLING_EXPORT void MEDCouplingVersionMajMinRel(int& maj, int& minor, int& releas);
   MEDCOUPLING_EXPORT int MEDCouplingSizeOfVoidStar();
+  MEDCOUPLING_EXPORT bool MEDCouplingByteOrder();
+  MEDCOUPLING_EXPORT const char *MEDCouplingByteOrderStr();
 
-  class MEDCOUPLING_EXPORT RefCountObject
+  class BigMemoryObject
+  {
+  public:
+    MEDCOUPLING_EXPORT std::size_t getHeapMemorySize() const;
+    MEDCOUPLING_EXPORT std::string getHeapMemorySizeStr() const;
+    MEDCOUPLING_EXPORT std::vector<const BigMemoryObject *> getAllTheProgeny() const;
+    MEDCOUPLING_EXPORT bool isObjectInTheProgeny(const BigMemoryObject *obj) const;
+    MEDCOUPLING_EXPORT static std::size_t GetHeapMemorySizeOfObjs(const std::vector<const BigMemoryObject *>& objs);
+    MEDCOUPLING_EXPORT virtual std::size_t getHeapMemorySizeWithoutChildren() const = 0;
+    MEDCOUPLING_EXPORT virtual std::vector<const BigMemoryObject *> getDirectChildren() const = 0;
+    MEDCOUPLING_EXPORT virtual ~BigMemoryObject();
+  private:
+    static std::size_t GetHeapMemoryOfSet(std::set<const BigMemoryObject *>& s1, std::set<const BigMemoryObject *>& s2);
+  };
+
+  class RefCountObjectOnly
   {
   protected:
-    RefCountObject();
-    RefCountObject(const RefCountObject& other);
+    MEDCOUPLING_EXPORT RefCountObjectOnly();
+    MEDCOUPLING_EXPORT RefCountObjectOnly(const RefCountObjectOnly& other);
   public:
-    bool decrRef() const;
-    void incrRef() const;
-    virtual std::size_t getHeapMemorySize() const = 0;
+    MEDCOUPLING_EXPORT bool decrRef() const;
+    MEDCOUPLING_EXPORT void incrRef() const;
+    MEDCOUPLING_EXPORT int getRCValue() const;
+    MEDCOUPLING_EXPORT RefCountObjectOnly& operator=(const RefCountObjectOnly& other);
   protected:
-    virtual ~RefCountObject();
+    virtual ~RefCountObjectOnly();
   private:
     mutable int _cnt;
+  };
+
+  class RefCountObject : public RefCountObjectOnly, public BigMemoryObject
+  {
+  protected:
+    MEDCOUPLING_EXPORT RefCountObject();
+    MEDCOUPLING_EXPORT RefCountObject(const RefCountObject& other);
+    MEDCOUPLING_EXPORT virtual ~RefCountObject();
   };
 }
 

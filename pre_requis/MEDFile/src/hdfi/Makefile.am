@@ -74,3 +74,6 @@ MEDmodeErreurVerrouiller.c \
 MEDfichierMonter.c \
 MEDfichierDemonter.c \
 MEDobjetsOuverts.c
+
+EXTRA_DIST = CMakeLists.txt
+

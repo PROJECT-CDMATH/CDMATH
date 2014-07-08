@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,10 +16,9 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// Author : Anthony Geay (CEA/DEN)
 
 %module MEDCoupling
-
-#define MEDCOUPLING_EXPORT
 
 %include std_vector.i
 %include std_string.i
@@ -29,7 +28,9 @@
 #include "MEDCouplingUMesh.hxx"
 #include "MEDCouplingExtrudedMesh.hxx"
 #include "MEDCouplingCMesh.hxx"
+#include "MEDCouplingIMesh.hxx"
 #include "MEDCouplingCurveLinearMesh.hxx"
+#include "MEDCoupling1GTUMesh.hxx"
 #include "MEDCouplingField.hxx"
 #include "MEDCouplingFieldDouble.hxx"
 #include "MEDCouplingFieldTemplate.hxx"
@@ -39,9 +40,13 @@
 #include "MEDCouplingFieldOverTime.hxx"
 #include "MEDCouplingDefinitionTime.hxx"
 #include "MEDCouplingFieldDiscretization.hxx"
+#include "MEDCouplingCartesianAMRMesh.hxx"
+#include "MEDCouplingAMRAttribute.hxx"
+#include "MEDCouplingMatrix.hxx"
 #include "MEDCouplingTypemaps.i"
 
 #include "InterpKernelAutoPtr.hxx"
+#include "BoxSplittingOptions.hxx"
 
 using namespace ParaMEDMEM;
 using namespace INTERP_KERNEL;
@@ -52,35 +57,98 @@ using namespace INTERP_KERNEL;
 %template(dvec) std::vector<double>;
 %template(svec) std::vector<std::string>;
 
+////////////////////
 %typemap(out) ParaMEDMEM::MEDCouplingMesh*
 {
   $result=convertMesh($1,$owner);
 }
 
+%typemap(out) MEDCouplingMesh*
+{
+  $result=convertMesh($1,$owner);
+}
+//$$$$$$$$$$$$$$$$$$
+
+////////////////////
 %typemap(out) ParaMEDMEM::MEDCouplingPointSet*
 {
   $result=convertMesh($1,$owner);
 }
 
+%typemap(out) MEDCouplingPointSet*
+{
+  $result=convertMesh($1,$owner);
+}
+//$$$$$$$$$$$$$$$$$$
+
+////////////////////
+%typemap(out) MEDCouplingCartesianAMRPatchGen*
+{
+  $result=convertCartesianAMRPatch($1,$owner);
+}
+//$$$$$$$$$$$$$$$$$$
+
+////////////////////
+%typemap(out) MEDCouplingCartesianAMRMeshGen*
+{
+  $result=convertCartesianAMRMesh($1,$owner);
+}
+//$$$$$$$$$$$$$$$$$$
+
+////////////////////
+%typemap(out) MEDCouplingDataForGodFather*
+{
+  $result=convertDataForGodFather($1,$owner);
+}
+//$$$$$$$$$$$$$$$$$$
+
+////////////////////
+%typemap(out) ParaMEDMEM::MEDCoupling1GTUMesh*
+{
+  $result=convertMesh($1,$owner);
+}
+
+%typemap(out) MEDCoupling1GTUMesh*
+{
+  $result=convertMesh($1,$owner);
+}
+//$$$$$$$$$$$$$$$$$$
+
+////////////////////
 %typemap(out) ParaMEDMEM::MEDCouplingStructuredMesh*
 {
   $result=convertMesh($1,$owner);
 }
 
+%typemap(out) MEDCouplingStructuredMesh*
+{
+  $result=convertMesh($1,$owner);
+}
+//$$$$$$$$$$$$$$$$$$
+
+////////////////////
 %typemap(out) ParaMEDMEM::MEDCouplingFieldDiscretization*
 {
   $result=convertFieldDiscretization($1,$owner);
 }
 
+%typemap(out) MEDCouplingFieldDiscretization*
+{
+  $result=convertFieldDiscretization($1,$owner);
+}
+//$$$$$$$$$$$$$$$$$$
+
+////////////////////
 %typemap(out) ParaMEDMEM::MEDCouplingMultiFields*
 {
   $result=convertMultiFields($1,$owner);
 }
 
-%typemap(out) ParaMEDMEM::DataArrayChar*
+%typemap(out) MEDCouplingMultiFields*
 {
-  $result=convertDataArrayChar($1,$owner);
+  $result=convertMultiFields($1,$owner);
 }
+//$$$$$$$$$$$$$$$$$$
 
 #ifdef WITH_NUMPY
 %init %{ import_array(); %}
@@ -89,17 +157,6 @@ using namespace INTERP_KERNEL;
 %feature("autodoc", "1");
 %feature("docstring");
 
-%newobject ParaMEDMEM::MEDCouplingFieldDiscretization::getOffsetArr;
-%newobject ParaMEDMEM::MEDCouplingFieldDiscretization::deepCpy;
-%newobject ParaMEDMEM::MEDCouplingFieldDiscretization::clone;
-%newobject ParaMEDMEM::MEDCouplingFieldDiscretization::clonePart;
-%newobject ParaMEDMEM::MEDCouplingFieldDiscretization::clonePartRange;
-%newobject ParaMEDMEM::MEDCouplingFieldDiscretization::getMeasureField;
-%newobject ParaMEDMEM::MEDCouplingFieldDiscretization::getOffsetArr;
-%newobject ParaMEDMEM::MEDCouplingFieldDiscretization::getLocalizationOfDiscValues;
-%newobject ParaMEDMEM::MEDCouplingFieldDiscretization::getValueOnMulti;
-%newobject ParaMEDMEM::MEDCouplingFieldDiscretization::computeTupleIdsToSelectFromCellIds;
-%newobject ParaMEDMEM::MEDCouplingFieldDiscretization::buildSubMeshData;
 %newobject ParaMEDMEM::MEDCouplingField::buildMeasureField;
 %newobject ParaMEDMEM::MEDCouplingField::getLocalizationOfDiscr;
 %newobject ParaMEDMEM::MEDCouplingField::computeTupleIdsToSelectFromCellIds;
@@ -150,158 +207,16 @@ using namespace INTERP_KERNEL;
 %newobject ParaMEDMEM::MEDCouplingFieldDouble::cloneWithMesh;
 %newobject ParaMEDMEM::MEDCouplingFieldDouble::deepCpy;
 %newobject ParaMEDMEM::MEDCouplingFieldDouble::buildNewTimeReprFromThis;
+%newobject ParaMEDMEM::MEDCouplingFieldDouble::nodeToCellDiscretization;
+%newobject ParaMEDMEM::MEDCouplingFieldDouble::cellToNodeDiscretization;
 %newobject ParaMEDMEM::MEDCouplingFieldDouble::getValueOnMulti;
 %newobject ParaMEDMEM::MEDCouplingFieldTemplate::New;
-%newobject ParaMEDMEM::DataArrayInt::New;
-%newobject ParaMEDMEM::DataArrayInt::__iter__;
-%newobject ParaMEDMEM::DataArrayInt::convertToDblArr;
-%newobject ParaMEDMEM::DataArrayInt::deepCpy;
-%newobject ParaMEDMEM::DataArrayInt::performCpy;
-%newobject ParaMEDMEM::DataArrayInt::substr;
-%newobject ParaMEDMEM::DataArrayInt::changeNbOfComponents;
-%newobject ParaMEDMEM::DataArrayInt::keepSelectedComponents;
-%newobject ParaMEDMEM::DataArrayInt::selectByTupleId;
-%newobject ParaMEDMEM::DataArrayInt::selectByTupleIdSafe;
-%newobject ParaMEDMEM::DataArrayInt::selectByTupleId2;
-%newobject ParaMEDMEM::DataArrayInt::selectByTupleRanges;
-%newobject ParaMEDMEM::DataArrayInt::checkAndPreparePermutation;
-%newobject ParaMEDMEM::DataArrayInt::transformWithIndArrR;
-%newobject ParaMEDMEM::DataArrayInt::renumber;
-%newobject ParaMEDMEM::DataArrayInt::renumberR;
-%newobject ParaMEDMEM::DataArrayInt::renumberAndReduce;
-%newobject ParaMEDMEM::DataArrayInt::invertArrayO2N2N2O;
-%newobject ParaMEDMEM::DataArrayInt::invertArrayN2O2O2N;
-%newobject ParaMEDMEM::DataArrayInt::invertArrayO2N2N2OBis;
-%newobject ParaMEDMEM::DataArrayInt::getIdsEqual;
-%newobject ParaMEDMEM::DataArrayInt::getIdsNotEqual;
-%newobject ParaMEDMEM::DataArrayInt::getIdsEqualList;
-%newobject ParaMEDMEM::DataArrayInt::getIdsNotEqualList;
-%newobject ParaMEDMEM::DataArrayInt::negate;
-%newobject ParaMEDMEM::DataArrayInt::getIdsInRange;
-%newobject ParaMEDMEM::DataArrayInt::Aggregate;
-%newobject ParaMEDMEM::DataArrayInt::Meld;
-%newobject ParaMEDMEM::DataArrayInt::Add;
-%newobject ParaMEDMEM::DataArrayInt::Substract;
-%newobject ParaMEDMEM::DataArrayInt::Multiply;
-%newobject ParaMEDMEM::DataArrayInt::Divide;
-%newobject ParaMEDMEM::DataArrayInt::Pow;
-%newobject ParaMEDMEM::DataArrayInt::BuildUnion;
-%newobject ParaMEDMEM::DataArrayInt::BuildIntersection;
-%newobject ParaMEDMEM::DataArrayInt::Range;
-%newobject ParaMEDMEM::DataArrayInt::fromNoInterlace;
-%newobject ParaMEDMEM::DataArrayInt::toNoInterlace;
-%newobject ParaMEDMEM::DataArrayInt::buildComplement;
-%newobject ParaMEDMEM::DataArrayInt::buildUnion;
-%newobject ParaMEDMEM::DataArrayInt::buildSubstraction;
-%newobject ParaMEDMEM::DataArrayInt::buildSubstractionOptimized;
-%newobject ParaMEDMEM::DataArrayInt::buildIntersection;
-%newobject ParaMEDMEM::DataArrayInt::buildUnique;
-%newobject ParaMEDMEM::DataArrayInt::deltaShiftIndex;
-%newobject ParaMEDMEM::DataArrayInt::buildExplicitArrByRanges;
-%newobject ParaMEDMEM::DataArrayInt::findRangeIdForEachTuple;
-%newobject ParaMEDMEM::DataArrayInt::findIdInRangeForEachTuple;
-%newobject ParaMEDMEM::DataArrayInt::duplicateEachTupleNTimes;
-%newobject ParaMEDMEM::DataArrayInt::buildPermutationArr;
-%newobject ParaMEDMEM::DataArrayInt::buildPermArrPerLevel;
-%newobject ParaMEDMEM::DataArrayInt::getDifferentValues;
-%newobject ParaMEDMEM::DataArrayInt::__neg__;
-%newobject ParaMEDMEM::DataArrayInt::__add__;
-%newobject ParaMEDMEM::DataArrayInt::__radd__;
-%newobject ParaMEDMEM::DataArrayInt::__sub__;
-%newobject ParaMEDMEM::DataArrayInt::__rsub__;
-%newobject ParaMEDMEM::DataArrayInt::__mul__;
-%newobject ParaMEDMEM::DataArrayInt::__rmul__;
-%newobject ParaMEDMEM::DataArrayInt::__div__;
-%newobject ParaMEDMEM::DataArrayInt::__rdiv__;
-%newobject ParaMEDMEM::DataArrayInt::__mod__;
-%newobject ParaMEDMEM::DataArrayInt::__rmod__;
-%newobject ParaMEDMEM::DataArrayInt::__pow__;
-%newobject ParaMEDMEM::DataArrayInt::__rpow__;
-%newobject ParaMEDMEM::DataArrayIntTuple::buildDAInt;
-%newobject ParaMEDMEM::DataArrayChar::convertToIntArr;
-%newobject ParaMEDMEM::DataArrayChar::renumber;
-%newobject ParaMEDMEM::DataArrayChar::renumberR;
-%newobject ParaMEDMEM::DataArrayChar::renumberAndReduce;
-%newobject ParaMEDMEM::DataArrayChar::selectByTupleIdSafe;
-%newobject ParaMEDMEM::DataArrayChar::selectByTupleId2;
-%newobject ParaMEDMEM::DataArrayChar::changeNbOfComponents;
-%newobject ParaMEDMEM::DataArrayChar::keepSelectedComponents;
-%newobject ParaMEDMEM::DataArrayChar::getIdsEqual;
-%newobject ParaMEDMEM::DataArrayChar::getIdsNotEqual;
-%newobject ParaMEDMEM::DataArrayChar::Aggregate;
-%newobject ParaMEDMEM::DataArrayChar::Meld;
-%newobject ParaMEDMEM::DataArrayByte::New;
-%newobject ParaMEDMEM::DataArrayByte::__iter__;
-%newobject ParaMEDMEM::DataArrayByte::deepCpy;
-%newobject ParaMEDMEM::DataArrayByte::performCpy;
-%newobject ParaMEDMEM::DataArrayByteTuple::buildDAByte;
-%newobject ParaMEDMEM::DataArrayChar::substr;
-%newobject ParaMEDMEM::DataArrayAsciiChar::New;
-%newobject ParaMEDMEM::DataArrayAsciiChar::__iter__;
-%newobject ParaMEDMEM::DataArrayAsciiChar::deepCpy;
-%newobject ParaMEDMEM::DataArrayAsciiChar::performCpy;
-%newobject ParaMEDMEM::DataArrayAsciiCharTuple::buildDAAsciiChar;
-%newobject ParaMEDMEM::DataArrayDouble::New;
-%newobject ParaMEDMEM::DataArrayDouble::__iter__;
-%newobject ParaMEDMEM::DataArrayDouble::convertToIntArr;
-%newobject ParaMEDMEM::DataArrayDouble::deepCpy;
-%newobject ParaMEDMEM::DataArrayDouble::performCpy;
-%newobject ParaMEDMEM::DataArrayDouble::Aggregate;
-%newobject ParaMEDMEM::DataArrayDouble::Meld;
-%newobject ParaMEDMEM::DataArrayDouble::Dot;
-%newobject ParaMEDMEM::DataArrayDouble::CrossProduct;
-%newobject ParaMEDMEM::DataArrayDouble::Add;
-%newobject ParaMEDMEM::DataArrayDouble::Substract;
-%newobject ParaMEDMEM::DataArrayDouble::Multiply;
-%newobject ParaMEDMEM::DataArrayDouble::Divide;
-%newobject ParaMEDMEM::DataArrayDouble::Pow;
-%newobject ParaMEDMEM::DataArrayDouble::substr;
-%newobject ParaMEDMEM::DataArrayDouble::changeNbOfComponents;
-%newobject ParaMEDMEM::DataArrayDouble::keepSelectedComponents;
-%newobject ParaMEDMEM::DataArrayDouble::getIdsInRange;
-%newobject ParaMEDMEM::DataArrayDouble::selectByTupleId;
-%newobject ParaMEDMEM::DataArrayDouble::selectByTupleIdSafe;
-%newobject ParaMEDMEM::DataArrayDouble::selectByTupleId2;
-%newobject ParaMEDMEM::DataArrayDouble::selectByTupleRanges;
-%newobject ParaMEDMEM::DataArrayDouble::negate;
-%newobject ParaMEDMEM::DataArrayDouble::applyFunc;
-%newobject ParaMEDMEM::DataArrayDouble::applyFunc2;
-%newobject ParaMEDMEM::DataArrayDouble::applyFunc3;
-%newobject ParaMEDMEM::DataArrayDouble::doublyContractedProduct;
-%newobject ParaMEDMEM::DataArrayDouble::determinant;
-%newobject ParaMEDMEM::DataArrayDouble::eigenValues;
-%newobject ParaMEDMEM::DataArrayDouble::eigenVectors;
-%newobject ParaMEDMEM::DataArrayDouble::inverse;
-%newobject ParaMEDMEM::DataArrayDouble::trace;
-%newobject ParaMEDMEM::DataArrayDouble::deviator;
-%newobject ParaMEDMEM::DataArrayDouble::magnitude;
-%newobject ParaMEDMEM::DataArrayDouble::maxPerTuple;
-%newobject ParaMEDMEM::DataArrayDouble::computeBBoxPerTuple;
-%newobject ParaMEDMEM::DataArrayDouble::buildEuclidianDistanceDenseMatrix;
-%newobject ParaMEDMEM::DataArrayDouble::buildEuclidianDistanceDenseMatrixWith;
-%newobject ParaMEDMEM::DataArrayDouble::renumber;
-%newobject ParaMEDMEM::DataArrayDouble::renumberR;
-%newobject ParaMEDMEM::DataArrayDouble::renumberAndReduce;
-%newobject ParaMEDMEM::DataArrayDouble::fromNoInterlace;
-%newobject ParaMEDMEM::DataArrayDouble::toNoInterlace;
-%newobject ParaMEDMEM::DataArrayDouble::fromPolarToCart;
-%newobject ParaMEDMEM::DataArrayDouble::fromCylToCart;
-%newobject ParaMEDMEM::DataArrayDouble::fromSpherToCart;
-%newobject ParaMEDMEM::DataArrayDouble::getDifferentValues;
-%newobject ParaMEDMEM::DataArrayDouble::findClosestTupleId;
-%newobject ParaMEDMEM::DataArrayDouble::duplicateEachTupleNTimes;
-%newobject ParaMEDMEM::DataArrayDouble::__neg__;
-%newobject ParaMEDMEM::DataArrayDouble::__radd__;
-%newobject ParaMEDMEM::DataArrayDouble::__rsub__;
-%newobject ParaMEDMEM::DataArrayDouble::__rmul__;
-%newobject ParaMEDMEM::DataArrayDouble::__rdiv__;
-%newobject ParaMEDMEM::DataArrayDouble::__pow__;
-%newobject ParaMEDMEM::DataArrayDouble::__rpow__;
-%newobject ParaMEDMEM::DataArrayDoubleTuple::buildDADouble;
 %newobject ParaMEDMEM::MEDCouplingMesh::deepCpy;
 %newobject ParaMEDMEM::MEDCouplingMesh::checkDeepEquivalOnSameNodesWith;
 %newobject ParaMEDMEM::MEDCouplingMesh::checkTypeConsistencyAndContig;
 %newobject ParaMEDMEM::MEDCouplingMesh::computeNbOfNodesPerCell;
+%newobject ParaMEDMEM::MEDCouplingMesh::computeNbOfFacesPerCell;
+%newobject ParaMEDMEM::MEDCouplingMesh::computeEffectiveNbOfNodesPerCell;
 %newobject ParaMEDMEM::MEDCouplingMesh::buildPartRange;
 %newobject ParaMEDMEM::MEDCouplingMesh::giveCellsWithType;
 %newobject ParaMEDMEM::MEDCouplingMesh::getCoordinatesAndOwner;
@@ -324,14 +239,20 @@ using namespace INTERP_KERNEL;
 %newobject ParaMEDMEM::MEDCouplingPointSet::MergeNodesArray;
 %newobject ParaMEDMEM::MEDCouplingPointSet::buildPartOfMySelf2;
 %newobject ParaMEDMEM::MEDCouplingPointSet::BuildInstanceFromMeshType;
+%newobject ParaMEDMEM::MEDCouplingPointSet::zipConnectivityTraducer;
+%newobject ParaMEDMEM::MEDCouplingPointSet::mergeMyselfWithOnSameCoords;
+%newobject ParaMEDMEM::MEDCouplingPointSet::fillCellIdsToKeepFromNodeIds;
+%newobject ParaMEDMEM::MEDCouplingPointSet::getCellIdsLyingOnNodes;
+%newobject ParaMEDMEM::MEDCouplingPointSet::deepCpyConnectivityOnly;
+%newobject ParaMEDMEM::MEDCouplingPointSet::getBoundingBoxForBBTree;
+%newobject ParaMEDMEM::MEDCouplingPointSet::ComputeNbOfInteractionsWithSrcCells;
+%newobject ParaMEDMEM::MEDCouplingPointSet::__getitem__;
 %newobject ParaMEDMEM::MEDCouplingUMesh::New;
 %newobject ParaMEDMEM::MEDCouplingUMesh::getNodalConnectivity;
 %newobject ParaMEDMEM::MEDCouplingUMesh::getNodalConnectivityIndex;
 %newobject ParaMEDMEM::MEDCouplingUMesh::clone;
 %newobject ParaMEDMEM::MEDCouplingUMesh::__iter__;
-%newobject ParaMEDMEM::MEDCouplingUMesh::__getitem__;
 %newobject ParaMEDMEM::MEDCouplingUMesh::cellsByType;
-%newobject ParaMEDMEM::MEDCouplingUMesh::zipConnectivityTraducer;
 %newobject ParaMEDMEM::MEDCouplingUMesh::buildDescendingConnectivity;
 %newobject ParaMEDMEM::MEDCouplingUMesh::buildDescendingConnectivity2;
 %newobject ParaMEDMEM::MEDCouplingUMesh::explode3DMeshTo1D;
@@ -342,8 +263,11 @@ using namespace INTERP_KERNEL;
 %newobject ParaMEDMEM::MEDCouplingUMesh::ComputeSpreadZoneGradually;
 %newobject ParaMEDMEM::MEDCouplingUMesh::ComputeSpreadZoneGraduallyFromSeed;
 %newobject ParaMEDMEM::MEDCouplingUMesh::buildNewNumberingFromCommNodesFrmt;
+%newobject ParaMEDMEM::MEDCouplingUMesh::conformize2D;
+%newobject ParaMEDMEM::MEDCouplingUMesh::colinearize2D;
 %newobject ParaMEDMEM::MEDCouplingUMesh::rearrange2ConsecutiveCellTypes;
 %newobject ParaMEDMEM::MEDCouplingUMesh::sortCellsInMEDFileFrmt;
+%newobject ParaMEDMEM::MEDCouplingUMesh::getRenumArrForMEDFileFrmt;
 %newobject ParaMEDMEM::MEDCouplingUMesh::convertCellArrayPerGeoType;
 %newobject ParaMEDMEM::MEDCouplingUMesh::computeFetchedNodeIds;
 %newobject ParaMEDMEM::MEDCouplingUMesh::getRenumArrForConsecutiveCellTypesSpec;
@@ -354,43 +278,113 @@ using namespace INTERP_KERNEL;
 %newobject ParaMEDMEM::MEDCouplingUMesh::getWarpField;
 %newobject ParaMEDMEM::MEDCouplingUMesh::getSkewField;
 %newobject ParaMEDMEM::MEDCouplingUMesh::getPartBarycenterAndOwner;
+%newobject ParaMEDMEM::MEDCouplingUMesh::computePlaneEquationOf3DFaces;
 %newobject ParaMEDMEM::MEDCouplingUMesh::getPartMeasureField;
 %newobject ParaMEDMEM::MEDCouplingUMesh::buildPartOrthogonalField;
 %newobject ParaMEDMEM::MEDCouplingUMesh::keepCellIdsByType;
 %newobject ParaMEDMEM::MEDCouplingUMesh::Build0DMeshFromCoords;
 %newobject ParaMEDMEM::MEDCouplingUMesh::findAndCorrectBadOriented3DExtrudedCells;
 %newobject ParaMEDMEM::MEDCouplingUMesh::findAndCorrectBadOriented3DCells;
+%newobject ParaMEDMEM::MEDCouplingUMesh::convertIntoSingleGeoTypeMesh;
+%newobject ParaMEDMEM::MEDCouplingUMesh::convertNodalConnectivityToStaticGeoTypeMesh;
 %newobject ParaMEDMEM::MEDCouplingUMesh::findCellIdsOnBoundary;
 %newobject ParaMEDMEM::MEDCouplingUMesh::computeSkin;
-%newobject ParaMEDMEM::MEDCouplingUMesh::getCellIdsLyingOnNodes;
 %newobject ParaMEDMEM::MEDCouplingUMesh::buildSetInstanceFromThis;
 %newobject ParaMEDMEM::MEDCouplingUMesh::getCellIdsCrossingPlane;
 %newobject ParaMEDMEM::MEDCouplingUMesh::convexEnvelop2D;
 %newobject ParaMEDMEM::MEDCouplingUMesh::ComputeRangesFromTypeDistribution;
+%newobject ParaMEDMEM::MEDCouplingUMesh::buildUnionOf2DMesh;
+%newobject ParaMEDMEM::MEDCouplingUMesh::buildUnionOf3DMesh;
+%newobject ParaMEDMEM::MEDCouplingUMesh::orderConsecutiveCells1D;
+%newobject ParaMEDMEM::MEDCouplingUMesh::getBoundingBoxForBBTreeFast;
+%newobject ParaMEDMEM::MEDCouplingUMesh::getBoundingBoxForBBTree2DQuadratic;
+%newobject ParaMEDMEM::MEDCouplingUMesh::getBoundingBoxForBBTree1DQuadratic;
 %newobject ParaMEDMEM::MEDCouplingUMeshCellByTypeEntry::__iter__;
 %newobject ParaMEDMEM::MEDCouplingUMeshCellEntry::__iter__;
+%newobject ParaMEDMEM::MEDCoupling1GTUMesh::New;
+%newobject ParaMEDMEM::MEDCoupling1GTUMesh::getNodalConnectivity;
+%newobject ParaMEDMEM::MEDCoupling1GTUMesh::AggregateOnSameCoordsToUMesh;
+%newobject ParaMEDMEM::MEDCoupling1SGTUMesh::New;
+%newobject ParaMEDMEM::MEDCoupling1SGTUMesh::buildSetInstanceFromThis;
+%newobject ParaMEDMEM::MEDCoupling1SGTUMesh::computeDualMesh;
+%newobject ParaMEDMEM::MEDCoupling1SGTUMesh::explodeEachHexa8To6Quad4;
+%newobject ParaMEDMEM::MEDCoupling1SGTUMesh::sortHexa8EachOther;
+%newobject ParaMEDMEM::MEDCoupling1SGTUMesh::Merge1SGTUMeshes;
+%newobject ParaMEDMEM::MEDCoupling1SGTUMesh::Merge1SGTUMeshesOnSameCoords;
+%newobject ParaMEDMEM::MEDCoupling1DGTUMesh::New;
+%newobject ParaMEDMEM::MEDCoupling1DGTUMesh::getNodalConnectivityIndex;
+%newobject ParaMEDMEM::MEDCoupling1DGTUMesh::buildSetInstanceFromThis;
+%newobject ParaMEDMEM::MEDCoupling1DGTUMesh::Merge1DGTUMeshes;
+%newobject ParaMEDMEM::MEDCoupling1DGTUMesh::Merge1DGTUMeshesOnSameCoords;
 %newobject ParaMEDMEM::MEDCouplingExtrudedMesh::New;
 %newobject ParaMEDMEM::MEDCouplingExtrudedMesh::build3DUnstructuredMesh;
+%newobject ParaMEDMEM::MEDCouplingStructuredMesh::buildStructuredSubPart;
+%newobject ParaMEDMEM::MEDCouplingStructuredMesh::build1SGTUnstructured;
+%newobject ParaMEDMEM::MEDCouplingStructuredMesh::build1SGTSubLevelMesh;
+%newobject ParaMEDMEM::MEDCouplingStructuredMesh::BuildExplicitIdsFrom;
+%newobject ParaMEDMEM::MEDCouplingStructuredMesh::ExtractFieldOfDoubleFrom;
+%newobject ParaMEDMEM::MEDCouplingStructuredMesh::Build1GTNodalConnectivity;
+%newobject ParaMEDMEM::MEDCouplingStructuredMesh::Build1GTNodalConnectivityOfSubLevelMesh;
+%newobject ParaMEDMEM::MEDCouplingStructuredMesh::ComputeCornersGhost;
 %newobject ParaMEDMEM::MEDCouplingCMesh::New;
 %newobject ParaMEDMEM::MEDCouplingCMesh::clone;
 %newobject ParaMEDMEM::MEDCouplingCMesh::getCoordsAt;
+%newobject ParaMEDMEM::MEDCouplingIMesh::New;
+%newobject ParaMEDMEM::MEDCouplingIMesh::asSingleCell;
+%newobject ParaMEDMEM::MEDCouplingIMesh::buildWithGhost;
+%newobject ParaMEDMEM::MEDCouplingIMesh::convertToCartesian;
 %newobject ParaMEDMEM::MEDCouplingCurveLinearMesh::New;
 %newobject ParaMEDMEM::MEDCouplingCurveLinearMesh::clone;
 %newobject ParaMEDMEM::MEDCouplingCurveLinearMesh::getCoords;
 %newobject ParaMEDMEM::MEDCouplingMultiFields::New;
 %newobject ParaMEDMEM::MEDCouplingMultiFields::deepCpy;
 %newobject ParaMEDMEM::MEDCouplingFieldOverTime::New;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRPatchGen::getMesh;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRPatchGen::__getitem__;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRMeshGen::deepCpy;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRMeshGen::buildUnstructured;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRMeshGen::extractGhostFrom;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRMeshGen::buildMeshFromPatchEnvelop;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRMeshGen::buildMeshOfDirectChildrenOnly;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRMeshGen::getImageMesh;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRMeshGen::getGodFather;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRMeshGen::getFather;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRMeshGen::getPatch;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRMeshGen::createCellFieldOnPatch;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRMeshGen::findPatchesInTheNeighborhoodOf;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRMeshGen::getPatchAtPosition;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRMeshGen::getMeshAtPosition;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRMeshGen::__getitem__;
+%newobject ParaMEDMEM::MEDCouplingCartesianAMRMesh::New;
+%newobject ParaMEDMEM::MEDCouplingDataForGodFather::getMyGodFather;
+%newobject ParaMEDMEM::MEDCouplingAMRAttribute::New;
+%newobject ParaMEDMEM::MEDCouplingAMRAttribute::deepCpy;
+%newobject ParaMEDMEM::MEDCouplingAMRAttribute::deepCpyWithoutGodFather;
+%newobject ParaMEDMEM::MEDCouplingAMRAttribute::getFieldOn;
+%newobject ParaMEDMEM::MEDCouplingAMRAttribute::projectTo;
+%newobject ParaMEDMEM::MEDCouplingAMRAttribute::buildCellFieldOnRecurseWithoutOverlapWithoutGhost;
+%newobject ParaMEDMEM::MEDCouplingAMRAttribute::buildCellFieldOnWithGhost;
+%newobject ParaMEDMEM::MEDCouplingAMRAttribute::buildCellFieldOnWithoutGhost;
+%newobject ParaMEDMEM::DenseMatrix::New;
+%newobject ParaMEDMEM::DenseMatrix::deepCpy;
+%newobject ParaMEDMEM::DenseMatrix::shallowCpy;
+%newobject ParaMEDMEM::DenseMatrix::getData;
+%newobject ParaMEDMEM::DenseMatrix::matVecMult;
+%newobject ParaMEDMEM::DenseMatrix::MatVecMult;
+%newobject ParaMEDMEM::DenseMatrix::__add__;
+%newobject ParaMEDMEM::DenseMatrix::__sub__;
+%newobject ParaMEDMEM::DenseMatrix::__mul__;
 
-%feature("unref") DataArray "$this->decrRef();"
-%feature("unref") DataArrayDouble "$this->decrRef();"
 %feature("unref") MEDCouplingPointSet "$this->decrRef();"
 %feature("unref") MEDCouplingMesh "$this->decrRef();"
 %feature("unref") MEDCouplingUMesh "$this->decrRef();"
+%feature("unref") MEDCoupling1GTUMesh "$this->decrRef();"
+%feature("unref") MEDCoupling1SGTUMesh "$this->decrRef();"
+%feature("unref") MEDCoupling1DGTUMesh "$this->decrRef();"
 %feature("unref") MEDCouplingExtrudedMesh "$this->decrRef();"
 %feature("unref") MEDCouplingCMesh "$this->decrRef();"
-%feature("unref") DataArrayInt "$this->decrRef();"
-%feature("unref") DataArrayAsciiChar "$this->decrRef();"
-%feature("unref") DataArrayByte "$this->decrRef();"
+%feature("unref") MEDCouplingIMesh "$this->decrRef();"
+%feature("unref") MEDCouplingCurveLinearMesh "$this->decrRef();"
 %feature("unref") MEDCouplingField "$this->decrRef();"
 %feature("unref") MEDCouplingFieldDiscretizationP0 "$this->decrRef();"
 %feature("unref") MEDCouplingFieldDiscretizationP1 "$this->decrRef();"
@@ -401,10 +395,17 @@ using namespace INTERP_KERNEL;
 %feature("unref") MEDCouplingMultiFields "$this->decrRef();"
 %feature("unref") MEDCouplingFieldTemplate "$this->decrRef();"
 %feature("unref") MEDCouplingMultiFields "$this->decrRef();"
+%feature("unref") MEDCouplingCartesianAMRMeshGen "$this->decrRef();"
+%feature("unref") MEDCouplingCartesianAMRMesh "$this->decrRef();"
+%feature("unref") MEDCouplingCartesianAMRMeshSub "$this->decrRef();"
+%feature("unref") MEDCouplingCartesianAMRPatchGen "$this->decrRef();"
+%feature("unref") MEDCouplingCartesianAMRPatchGF "$this->decrRef();"
+%feature("unref") MEDCouplingCartesianAMRPatch "$this->decrRef();"
+%feature("unref") MEDCouplingDataForGodFather "$this->decrRef();"
+%feature("unref") MEDCouplingAMRAttribute "$this->decrRef();"
+%feature("unref") DenseMatrix "$this->decrRef();"
 
 %rename(assign) *::operator=;
-%ignore ParaMEDMEM::MEDCouplingVersionMajMinRel;
-%ignore ParaMEDMEM::RefCountObject::decrRef;
 %ignore ParaMEDMEM::MEDCouplingGaussLocalization::pushTinySerializationIntInfo;
 %ignore ParaMEDMEM::MEDCouplingGaussLocalization::pushTinySerializationDblInfo;
 %ignore ParaMEDMEM::MEDCouplingGaussLocalization::fillWithValues;
@@ -414,34 +415,44 @@ using namespace INTERP_KERNEL;
 
 %rename (InterpKernelException) INTERP_KERNEL::Exception;
 
+%include "MEDCouplingRefCountObject.i"
+%include "MEDCouplingMemArray.i"
+
 namespace INTERP_KERNEL
-{
-  class Exception
+{ 
+  /*!
+   * \class BoxSplittingOptions
+   * Class defining the options for box splitting used for AMR algorithm like creation of patches following a criterion.
+   */
+  class BoxSplittingOptions
   {
   public:
-    Exception(const char* what);
-    ~Exception() throw ();
-    const char *what() const throw ();
+    BoxSplittingOptions();
+    void init() throw(INTERP_KERNEL::Exception);
+    double getEfficiencyGoal() const throw(INTERP_KERNEL::Exception);
+    void setEfficiencyGoal(double efficiency) throw(INTERP_KERNEL::Exception);
+    double getEfficiencyThreshold() const throw(INTERP_KERNEL::Exception);
+    void setEfficiencyThreshold(double efficiencyThreshold) throw(INTERP_KERNEL::Exception);
+    int getMinimumPatchLength() const throw(INTERP_KERNEL::Exception);
+    void setMinimumPatchLength(int minPatchLength) throw(INTERP_KERNEL::Exception);
+    int getMaximumPatchLength() const throw(INTERP_KERNEL::Exception);
+    void setMaximumPatchLength(int maxPatchLength) throw(INTERP_KERNEL::Exception);
+    int getMaximumNbOfCellsInPatch() const throw(INTERP_KERNEL::Exception);
+    void setMaximumNbOfCellsInPatch(int maxNbCellsInPatch) throw(INTERP_KERNEL::Exception);
+    void copyOptions(const BoxSplittingOptions & other) throw(INTERP_KERNEL::Exception);
+    std::string printOptions() const throw(INTERP_KERNEL::Exception);
     %extend
     {
-      std::string __str__() const
-        {
-          return std::string(self->what());
-        }
+      std::string __str__() const throw(INTERP_KERNEL::Exception)
+      {
+        return self->printOptions();
+      }
     }
   };
 }
 
-%include "MEDCouplingTimeLabel.hxx"
-
 namespace ParaMEDMEM
 {
-  typedef enum
-    {
-      C_DEALLOC = 2,
-      CPP_DEALLOC = 3
-    } DeallocType;
-
   typedef enum
     {
       ON_CELLS = 0,
@@ -459,56 +470,15 @@ namespace ParaMEDMEM
       CONST_ON_TIME_INTERVAL = 7
     } TypeOfTimeDiscretization;
 
-  const char *MEDCouplingVersionStr();
-  int MEDCouplingVersion();
-  int MEDCouplingSizeOfVoidStar();
-  PyObject *MEDCouplingVersionMajMinRel()
-  {
-    int tmp0=0,tmp1=0,tmp2=0;
-    MEDCouplingVersionMajMinRel(tmp0,tmp1,tmp2);
-    PyObject *res = PyList_New(3);
-    PyList_SetItem(res,0,SWIG_From_int(tmp0));
-    PyList_SetItem(res,1,SWIG_From_int(tmp1));
-    PyList_SetItem(res,2,SWIG_From_int(tmp2));
-    return res;
-  }
-
-  class RefCountObject
-  {
-  protected:
-    RefCountObject();
-    RefCountObject(const RefCountObject& other);
-    ~RefCountObject();
-  public:
-    bool decrRef() const;
-    void incrRef() const;
-    virtual std::size_t getHeapMemorySize() const;
-  };
-}
-
-%inline
-{
-  bool MEDCouplingHasNumpyBindings()
-  {
-#ifdef WITH_NUMPY
-    return true;
-#else
-    return false;
-#endif
-  }
-}
-
-%include "MEDCouplingMemArray.i"
-
-namespace ParaMEDMEM
-{
   typedef enum
     {
       UNSTRUCTURED = 5,
-      UNSTRUCTURED_DESC = 6,
       CARTESIAN = 7,
       EXTRUDED = 8,
-      CURVE_LINEAR = 9
+      CURVE_LINEAR = 9,
+      SINGLE_STATIC_GEO_TYPE_UNSTRUCTURED = 10,
+      SINGLE_DYNAMIC_GEO_TYPE_UNSTRUCTURED = 11,
+      IMAGE_GRID = 12
     } MEDCouplingMeshType;
 
   class DataArrayInt;
@@ -540,21 +510,24 @@ namespace ParaMEDMEM
     }
   }
 
+  //== MEDCouplingMesh
+  
   class MEDCouplingMesh : public RefCountObject, public TimeLabel
   {
   public:
-    void setName(const char *name);
-    const char *getName() const;
-    void setDescription(const char *descr);
-    const char *getDescription() const;
+    void setName(const std::string& name);
+    std::string getName() const;
+    void setDescription(const std::string& descr);
+    std::string getDescription() const;
     void setTime(double val, int iteration, int order);
-    void setTimeUnit(const char *unit);
-    const char *getTimeUnit() const;
+    void setTimeUnit(const std::string& unit);
+    std::string getTimeUnit() const;
     virtual MEDCouplingMeshType getType() const throw(INTERP_KERNEL::Exception);
     bool isStructured() const throw(INTERP_KERNEL::Exception);
     virtual MEDCouplingMesh *deepCpy() const;
     virtual bool isEqual(const MEDCouplingMesh *other, double prec) const throw(INTERP_KERNEL::Exception);
     virtual bool isEqualWithoutConsideringStr(const MEDCouplingMesh *other, double prec) const throw(INTERP_KERNEL::Exception);
+    virtual void checkFastEquivalWith(const MEDCouplingMesh *other, double prec) const throw(INTERP_KERNEL::Exception);
     virtual void copyTinyStringsFrom(const MEDCouplingMesh *other) throw(INTERP_KERNEL::Exception);
     virtual void copyTinyInfoFrom(const MEDCouplingMesh *other) throw(INTERP_KERNEL::Exception);
     virtual void checkCoherency() const throw(INTERP_KERNEL::Exception);
@@ -569,24 +542,32 @@ namespace ParaMEDMEM
     virtual DataArrayDouble *computeIsoBarycenterOfNodesPerCell() const throw(INTERP_KERNEL::Exception);
     virtual DataArrayInt *giveCellsWithType(INTERP_KERNEL::NormalizedCellType type) const throw(INTERP_KERNEL::Exception);
     virtual DataArrayInt *computeNbOfNodesPerCell() const throw(INTERP_KERNEL::Exception);
+    virtual DataArrayInt *computeNbOfFacesPerCell() const throw(INTERP_KERNEL::Exception);
+    virtual DataArrayInt *computeEffectiveNbOfNodesPerCell() const throw(INTERP_KERNEL::Exception);
     virtual MEDCouplingMesh *buildPartRange(int beginCellIds, int endCellIds, int stepCellIds) const throw(INTERP_KERNEL::Exception);
     virtual int getNumberOfCellsWithType(INTERP_KERNEL::NormalizedCellType type) const throw(INTERP_KERNEL::Exception);
     virtual INTERP_KERNEL::NormalizedCellType getTypeOfCell(int cellId) const throw(INTERP_KERNEL::Exception);
     virtual std::string simpleRepr() const throw(INTERP_KERNEL::Exception);
     virtual std::string advancedRepr() const throw(INTERP_KERNEL::Exception);
-    void writeVTK(const char *fileName) const throw(INTERP_KERNEL::Exception);
+    std::string writeVTK(const std::string& fileName, bool isBinary=true) const throw(INTERP_KERNEL::Exception);
+    virtual std::string getVTKFileExtension() const;
+    std::string getVTKFileNameOf(const std::string& fileName) const;
     // tools
     virtual MEDCouplingFieldDouble *getMeasureField(bool isAbs) const throw(INTERP_KERNEL::Exception);
     virtual MEDCouplingFieldDouble *getMeasureFieldOnNode(bool isAbs) const throw(INTERP_KERNEL::Exception);
-    virtual MEDCouplingFieldDouble *fillFromAnalytic(TypeOfField t, int nbOfComp, const char *func) const throw(INTERP_KERNEL::Exception);
-    virtual MEDCouplingFieldDouble *fillFromAnalytic2(TypeOfField t, int nbOfComp, const char *func) const throw(INTERP_KERNEL::Exception);
-    virtual MEDCouplingFieldDouble *fillFromAnalytic3(TypeOfField t, int nbOfComp, const std::vector<std::string>& varsOrder, const char *func) const throw(INTERP_KERNEL::Exception);
+    virtual MEDCouplingFieldDouble *fillFromAnalytic(TypeOfField t, int nbOfComp, const std::string& func) const throw(INTERP_KERNEL::Exception);
+    virtual MEDCouplingFieldDouble *fillFromAnalytic2(TypeOfField t, int nbOfComp, const std::string& func) const throw(INTERP_KERNEL::Exception);
+    virtual MEDCouplingFieldDouble *fillFromAnalytic3(TypeOfField t, int nbOfComp, const std::vector<std::string>& varsOrder, const std::string& func) const throw(INTERP_KERNEL::Exception);
     virtual MEDCouplingFieldDouble *buildOrthogonalField() const throw(INTERP_KERNEL::Exception);
     virtual MEDCouplingUMesh *buildUnstructured() const throw(INTERP_KERNEL::Exception);
     virtual MEDCouplingMesh *mergeMyselfWith(const MEDCouplingMesh *other) const throw(INTERP_KERNEL::Exception);
     virtual bool areCompatibleForMerge(const MEDCouplingMesh *other) const throw(INTERP_KERNEL::Exception);
     virtual DataArrayInt *simplexize(int policy) throw(INTERP_KERNEL::Exception);
     static MEDCouplingMesh *MergeMeshes(const MEDCouplingMesh *mesh1, const MEDCouplingMesh *mesh2) throw(INTERP_KERNEL::Exception);
+    static bool IsStaticGeometricType(INTERP_KERNEL::NormalizedCellType type) throw(INTERP_KERNEL::Exception);
+    static bool IsLinearGeometricType(INTERP_KERNEL::NormalizedCellType type) throw(INTERP_KERNEL::Exception);
+    static INTERP_KERNEL::NormalizedCellType GetCorrespondingPolyType(INTERP_KERNEL::NormalizedCellType type) throw(INTERP_KERNEL::Exception);
+    static int GetNumberOfNodesOfGeometricType(INTERP_KERNEL::NormalizedCellType type) throw(INTERP_KERNEL::Exception);
     static int GetDimensionOfGeometricType(INTERP_KERNEL::NormalizedCellType type) throw(INTERP_KERNEL::Exception);
     static const char *GetReprOfGeometricType(INTERP_KERNEL::NormalizedCellType type) throw(INTERP_KERNEL::Exception);
     %extend
@@ -630,30 +611,24 @@ namespace ParaMEDMEM
            int spaceDim=self->getSpaceDimension();
            const char msg[]="Python wrap of MEDCouplingMesh::getCellsContainingPoint : ";
            const double *pos=convertObjToPossibleCpp5_Safe(p,sw,val,a,aa,bb,msg,nbOfPoints,spaceDim,true);
-           std::vector<int> elts,eltsIndex;
+           MEDCouplingAutoRefCountObjectPtr<DataArrayInt> elts,eltsIndex;
            self->getCellsContainingPoints(pos,nbOfPoints,eps,elts,eltsIndex);
-           MEDCouplingAutoRefCountObjectPtr<DataArrayInt> d0=DataArrayInt::New();
-           MEDCouplingAutoRefCountObjectPtr<DataArrayInt> d1=DataArrayInt::New();
-           d0->alloc(elts.size(),1);
-           d1->alloc(eltsIndex.size(),1);
-           std::copy(elts.begin(),elts.end(),d0->getPointer());
-           std::copy(eltsIndex.begin(),eltsIndex.end(),d1->getPointer());
            PyObject *ret=PyTuple_New(2);
-           PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(d0.retn()),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-           PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(d1.retn()),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+           PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(elts.retn()),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+           PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(eltsIndex.retn()),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
            return ret;
          }
 
          PyObject *getCellsContainingPoints(PyObject *p, double eps) const throw(INTERP_KERNEL::Exception)
          {
-           std::vector<int> elts,eltsIndex;
+           MEDCouplingAutoRefCountObjectPtr<DataArrayInt> elts,eltsIndex;
            int spaceDim=self->getSpaceDimension();
            void *da=0;
            int res1=SWIG_ConvertPtr(p,&da,SWIGTYPE_p_ParaMEDMEM__DataArrayDouble, 0 |  0 );
            if (!SWIG_IsOK(res1))
              {
                int size;
-               INTERP_KERNEL::AutoPtr<double> tmp=convertPyToNewDblArr2(p,&size);
+               INTERP_KERNEL::AutoCPtr<double> tmp=convertPyToNewDblArr2(p,&size);
                int nbOfPoints=size/spaceDim;
                if(size%spaceDim!=0)
                  {
@@ -675,15 +650,9 @@ namespace ParaMEDMEM
                  }
                self->getCellsContainingPoints(da2->getConstPointer(),size,eps,elts,eltsIndex);
              }
-           MEDCouplingAutoRefCountObjectPtr<DataArrayInt> d0=DataArrayInt::New();
-           MEDCouplingAutoRefCountObjectPtr<DataArrayInt> d1=DataArrayInt::New();
-           d0->alloc(elts.size(),1);
-           d1->alloc(eltsIndex.size(),1);
-           std::copy(elts.begin(),elts.end(),d0->getPointer());
-           std::copy(eltsIndex.begin(),eltsIndex.end(),d1->getPointer());
            PyObject *ret=PyTuple_New(2);
-           PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(d0.retn()),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-           PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(d1.retn()),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+           PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(elts.retn()),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+           PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(eltsIndex.retn()),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
            return ret;
          }
 
@@ -705,24 +674,23 @@ namespace ParaMEDMEM
            return SWIG_NewPointerObj(SWIG_as_voidptr(ret),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 );
          }
          
+         virtual PyObject *getReverseNodalConnectivity() const throw(INTERP_KERNEL::Exception)
+         {
+           MEDCouplingAutoRefCountObjectPtr<DataArrayInt> d0=DataArrayInt::New();
+           MEDCouplingAutoRefCountObjectPtr<DataArrayInt> d1=DataArrayInt::New();
+           self->getReverseNodalConnectivity(d0,d1);
+           PyObject *ret=PyTuple_New(2);
+           PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(d0.retn()),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+           PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(d1.retn()),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+           return ret;
+         }
+         
          void renumberCells(PyObject *li, bool check=true) throw(INTERP_KERNEL::Exception)
          {
-           void *da=0;
-           int res1=SWIG_ConvertPtr(li,&da,SWIGTYPE_p_ParaMEDMEM__DataArrayInt, 0 |  0 );
-           if (!SWIG_IsOK(res1))
-             {
-               int size;
-               INTERP_KERNEL::AutoPtr<int> tmp=convertPyToNewIntArr2(li,&size);
-               self->renumberCells(tmp,check);
-             }
-           else
-             {
-               DataArrayInt *da2=reinterpret_cast< DataArrayInt * >(da);
-               if(!da2)
-                   throw INTERP_KERNEL::Exception("Not null DataArrayInt instance expected !");
-               da2->checkAllocated();
-               self->renumberCells(da2->getConstPointer(),check);
-             }
+           int sw,sz(-1);
+           int v0; std::vector<int> v1;
+           const int *ids(convertObjToPossibleCpp1_Safe(li,sw,sz,v0,v1));
+           self->renumberCells(ids,check);
          }
 
          PyObject *checkGeoEquivalWith(const MEDCouplingMesh *other, int levOfCheck, double prec) const throw(INTERP_KERNEL::Exception)
@@ -880,6 +848,8 @@ namespace ParaMEDMEM
         PyObject *getDistributionOfTypes() const throw(INTERP_KERNEL::Exception)
         {
           std::vector<int> vals=self->getDistributionOfTypes();
+          if(vals.size()%3!=0)
+            throw INTERP_KERNEL::Exception("Internal Error detected in wrap python ! code returned by MEDCouplingMesh::getDistributionOfTypes is not so that %3==0 !");
           PyObject *ret=PyList_New((int)vals.size()/3);
           for(int j=0;j<(int)vals.size()/3;j++)
              {
@@ -908,7 +878,20 @@ namespace ParaMEDMEM
           std::vector<DataArrayInt *> idsPerType;
           self->splitProfilePerType(profile,code,idsInPflPerType,idsPerType);
           PyObject *ret=PyTuple_New(3);
-          PyTuple_SetItem(ret,0,convertIntArrToPyList2(code));
+          //
+          if(code.size()%3!=0)
+            throw INTERP_KERNEL::Exception("Internal Error detected in wrap python ! code returned by MEDCouplingMesh::splitProfilePerType is not so that %3==0 !");
+          PyObject *ret0=PyList_New((int)code.size()/3);
+          for(int j=0;j<(int)code.size()/3;j++)
+             {
+               PyObject *ret00=PyList_New(3);
+               PyList_SetItem(ret00,0,SWIG_From_int(code[3*j]));
+               PyList_SetItem(ret00,1,SWIG_From_int(code[3*j+1]));
+               PyList_SetItem(ret00,2,SWIG_From_int(code[3*j+2]));
+               PyList_SetItem(ret0,j,ret00);
+             }
+          PyTuple_SetItem(ret,0,ret0);
+          //
           PyObject *ret1=PyList_New(idsInPflPerType.size());
           for(std::size_t j=0;j<idsInPflPerType.size();j++)
             PyList_SetItem(ret1,j,SWIG_NewPointerObj(SWIG_as_voidptr(idsInPflPerType[j]),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
@@ -950,14 +933,14 @@ namespace ParaMEDMEM
          void rotate(PyObject *center, PyObject *vector, double alpha) throw(INTERP_KERNEL::Exception)
          {
            const char msg[]="Python wrap of MEDCouplingPointSet::rotate : ";
-           double val;
-           DataArrayDouble *a;
-           DataArrayDoubleTuple *aa;
-           std::vector<double> bb;
+           double val,val2;
+           DataArrayDouble *a,*a2;
+           DataArrayDoubleTuple *aa,*aa2;
+           std::vector<double> bb,bb2;
            int sw;
            int spaceDim=self->getSpaceDimension();
            const double *centerPtr=convertObjToPossibleCpp5_Safe(center,sw,val,a,aa,bb,msg,1,spaceDim,true);
-           const double *vectorPtr=convertObjToPossibleCpp5_Safe(vector,sw,val,a,aa,bb,msg,1,spaceDim,false);
+           const double *vectorPtr=convertObjToPossibleCpp5_Safe(vector,sw,val2,a2,aa2,bb2,msg,1,spaceDim,false);//vectorPtr can be null in case of space dim 2
            self->rotate(centerPtr,vectorPtr,alpha);
          }
 
@@ -981,22 +964,68 @@ namespace ParaMEDMEM
   };
 }
 
-%include "NormalizedUnstructuredMesh.hxx"
-%include "MEDCouplingNatureOfField.hxx"
-%include "MEDCouplingTimeDiscretization.hxx"
-%include "MEDCouplingGaussLocalization.hxx"
-%include "MEDCouplingFieldDiscretization.hxx"
+//== MEDCouplingMesh End
 
-%ignore ParaMEDMEM::MEDCouplingFieldDiscretization::clonePart;
-%ignore ParaMEDMEM::MEDCouplingFieldDiscretization::buildSubMeshDataRange;
-%ignore ParaMEDMEM::MEDCouplingFieldDiscretizationPerCell::getArrayOfDiscIds;
+%include "NormalizedGeometricTypes"
+%include "MEDCouplingNatureOfFieldEnum"
+//
+namespace ParaMEDMEM
+{
+  class MEDCouplingNatureOfField
+  {
+  public:
+    static const char *GetRepr(NatureOfField nat) throw(INTERP_KERNEL::Exception);
+    static std::string GetReprNoThrow(NatureOfField nat);
+    static std::string GetAllPossibilitiesStr();
+  };
+}
+
+// the MEDCouplingTimeDiscretization classes are not swigged : in case the file can help
+// include "MEDCouplingTimeDiscretization.i"
+
+namespace ParaMEDMEM
+{
+  class MEDCouplingGaussLocalization
+  {
+  public:
+    MEDCouplingGaussLocalization(INTERP_KERNEL::NormalizedCellType type, const std::vector<double>& refCoo,
+                                 const std::vector<double>& gsCoo, const std::vector<double>& w) throw(INTERP_KERNEL::Exception);
+    MEDCouplingGaussLocalization(INTERP_KERNEL::NormalizedCellType typ) throw(INTERP_KERNEL::Exception);
+    INTERP_KERNEL::NormalizedCellType getType() const throw(INTERP_KERNEL::Exception);
+    void setType(INTERP_KERNEL::NormalizedCellType typ) throw(INTERP_KERNEL::Exception);
+    int getNumberOfGaussPt() const throw(INTERP_KERNEL::Exception);
+    int getDimension() const throw(INTERP_KERNEL::Exception);
+    int getNumberOfPtsInRefCell() const throw(INTERP_KERNEL::Exception);
+    std::string getStringRepr() const throw(INTERP_KERNEL::Exception);
+    void checkCoherency() const throw(INTERP_KERNEL::Exception);
+    bool isEqual(const MEDCouplingGaussLocalization& other, double eps) const throw(INTERP_KERNEL::Exception);
+    //
+    const std::vector<double>& getRefCoords() const throw(INTERP_KERNEL::Exception);
+    double getRefCoord(int ptIdInCell, int comp) const throw(INTERP_KERNEL::Exception);
+    const std::vector<double>& getGaussCoords() const throw(INTERP_KERNEL::Exception);
+    double getGaussCoord(int gaussPtIdInCell, int comp) const throw(INTERP_KERNEL::Exception);
+    const std::vector<double>& getWeights() const throw(INTERP_KERNEL::Exception);
+    double getWeight(int gaussPtIdInCell, double newVal) const throw(INTERP_KERNEL::Exception);
+    void setRefCoord(int ptIdInCell, int comp, double newVal) throw(INTERP_KERNEL::Exception);
+    void setGaussCoord(int gaussPtIdInCell, int comp, double newVal) throw(INTERP_KERNEL::Exception);
+    void setWeight(int gaussPtIdInCell, double newVal) throw(INTERP_KERNEL::Exception);
+    void setRefCoords(const std::vector<double>& refCoo) throw(INTERP_KERNEL::Exception);
+    void setGaussCoords(const std::vector<double>& gsCoo) throw(INTERP_KERNEL::Exception);
+    void setWeights(const std::vector<double>& w) throw(INTERP_KERNEL::Exception);
+    //
+    static bool AreAlmostEqual(const std::vector<double>& v1, const std::vector<double>& v2, double eps);
+  };
+}
+
+%include "MEDCouplingFieldDiscretization.i"
+
+//== MEDCouplingPointSet
 
 namespace ParaMEDMEM
 {
   class MEDCouplingPointSet : public ParaMEDMEM::MEDCouplingMesh
     {
     public:
-      void updateTime() const;
       void setCoords(const DataArrayDouble *coords) throw(INTERP_KERNEL::Exception);
       DataArrayDouble *getCoordinatesAndOwner() const throw(INTERP_KERNEL::Exception);
       bool areCoordsEqual(const MEDCouplingPointSet& other, double prec) const throw(INTERP_KERNEL::Exception);
@@ -1005,15 +1034,23 @@ namespace ParaMEDMEM
       void recenterForMaxPrecision(double eps) throw(INTERP_KERNEL::Exception);
       void changeSpaceDimension(int newSpaceDim, double dftVal=0.) throw(INTERP_KERNEL::Exception);
       void tryToShareSameCoords(const MEDCouplingPointSet& other, double epsilon) throw(INTERP_KERNEL::Exception);
+      virtual void shallowCopyConnectivityFrom(const MEDCouplingPointSet *other) throw(INTERP_KERNEL::Exception);
       virtual MEDCouplingPointSet *buildPartOfMySelf2(int start, int end, int step) const throw(INTERP_KERNEL::Exception);
       virtual void tryToShareSameCoordsPermute(const MEDCouplingPointSet& other, double epsilon) throw(INTERP_KERNEL::Exception);
       static DataArrayDouble *MergeNodesArray(const MEDCouplingPointSet *m1, const MEDCouplingPointSet *m2) throw(INTERP_KERNEL::Exception);
       static MEDCouplingPointSet *BuildInstanceFromMeshType(MEDCouplingMeshType type) throw(INTERP_KERNEL::Exception);
+      static DataArrayInt *ComputeNbOfInteractionsWithSrcCells(const MEDCouplingPointSet *srcMesh, const MEDCouplingPointSet *trgMesh, double eps) throw(INTERP_KERNEL::Exception);
+      virtual int getNumberOfNodesInCell(int cellId) const throw(INTERP_KERNEL::Exception);
       virtual MEDCouplingPointSet *buildBoundaryMesh(bool keepCoords) const throw(INTERP_KERNEL::Exception);
-      virtual bool isEmptyMesh(const std::vector<int>& tinyInfo) const throw(INTERP_KERNEL::Exception);
       virtual DataArrayInt *getCellsInBoundingBox(const INTERP_KERNEL::DirectedBoundingBox& bbox, double eps) throw(INTERP_KERNEL::Exception);
       virtual DataArrayInt *zipCoordsTraducer() throw(INTERP_KERNEL::Exception);
       virtual DataArrayInt *findBoundaryNodes() const;
+      virtual DataArrayInt *zipConnectivityTraducer(int compType, int startCellId=0) throw(INTERP_KERNEL::Exception);
+      virtual MEDCouplingPointSet *mergeMyselfWithOnSameCoords(const MEDCouplingPointSet *other) const throw(INTERP_KERNEL::Exception);
+      virtual void checkFullyDefined() const throw(INTERP_KERNEL::Exception);
+      virtual bool isEmptyMesh(const std::vector<int>& tinyInfo) const throw(INTERP_KERNEL::Exception);
+      virtual MEDCouplingPointSet *deepCpyConnectivityOnly() const throw(INTERP_KERNEL::Exception);
+      virtual DataArrayDouble *getBoundingBoxForBBTree(double arcDetEps=1e-12) const throw(INTERP_KERNEL::Exception);
       %extend 
          {
            std::string __str__() const throw(INTERP_KERNEL::Exception)
@@ -1080,6 +1117,29 @@ namespace ParaMEDMEM
                  if(!name.empty())
                    ret->setName(name.c_str());
                }
+             return convertMesh(ret, SWIG_POINTER_OWN | 0 );
+           }
+
+           virtual PyObject *buildPartOfMySelfKeepCoords(PyObject *li) const throw(INTERP_KERNEL::Exception)
+           {
+             int szArr,sw,iTypppArr;
+             std::vector<int> stdvecTyyppArr;
+             const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+             MEDCouplingPointSet *ret=self->buildPartOfMySelfKeepCoords(tmp,tmp+szArr);
+             if(sw==3)//DataArrayInt
+               { 
+                 void *argp; SWIG_ConvertPtr(li,&argp,SWIGTYPE_p_ParaMEDMEM__DataArrayInt,0|0);
+                 DataArrayInt *argpt=reinterpret_cast< ParaMEDMEM::DataArrayInt * >(argp);
+                 std::string name=argpt->getName();
+                 if(!name.empty())
+                   ret->setName(name.c_str());
+               }
+             return convertMesh(ret, SWIG_POINTER_OWN | 0 );
+           }
+
+           virtual PyObject *buildPartOfMySelfKeepCoords2(int start, int end, int step) const throw(INTERP_KERNEL::Exception)
+           {
+             MEDCouplingPointSet *ret=self->buildPartOfMySelfKeepCoords2(start,end,step);
              return convertMesh(ret, SWIG_POINTER_OWN | 0 );
            }
 
@@ -1243,11 +1303,163 @@ namespace ParaMEDMEM
                }
            }
 
+           virtual PyObject *findCommonCells(int compType, int startCellId=0) const throw(INTERP_KERNEL::Exception)
+           {
+             DataArrayInt *v0=0,*v1=0;
+             self->findCommonCells(compType,startCellId,v0,v1);
+             PyObject *res = PyList_New(2);
+             PyList_SetItem(res,0,SWIG_NewPointerObj(SWIG_as_voidptr(v0),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+             PyList_SetItem(res,1,SWIG_NewPointerObj(SWIG_as_voidptr(v1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+             return res;
+           }
+
+      
+           virtual void renumberNodesInConn(PyObject *li) throw(INTERP_KERNEL::Exception)
+           {
+             void *da=0;
+             int res1=SWIG_ConvertPtr(li,&da,SWIGTYPE_p_ParaMEDMEM__DataArrayInt, 0 | 0 );
+             if (!SWIG_IsOK(res1))
+               {
+                 int size;
+                 INTERP_KERNEL::AutoPtr<int> tmp=convertPyToNewIntArr2(li,&size);
+                 self->renumberNodesInConn(tmp);
+               }
+             else
+               {
+                 DataArrayInt *da2=reinterpret_cast< DataArrayInt * >(da);
+                 if(!da2)
+                   throw INTERP_KERNEL::Exception("Not null DataArrayInt instance expected !");
+                 da2->checkAllocated();
+                 self->renumberNodesInConn(da2->getConstPointer());
+               }
+           }
+
+           virtual PyObject *getNodeIdsInUse() const throw(INTERP_KERNEL::Exception)
+           {
+             int ret1=-1;
+             DataArrayInt *ret0=self->getNodeIdsInUse(ret1);
+             PyObject *ret=PyTuple_New(2);
+             PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+             PyTuple_SetItem(ret,1,PyInt_FromLong(ret1));
+             return ret;
+           }
+
+           virtual DataArrayInt *fillCellIdsToKeepFromNodeIds(PyObject *li, bool fullyIn) const
+           {
+             DataArrayInt *ret=0;
+             //
+             int szArr,sw,iTypppArr;
+             std::vector<int> stdvecTyyppArr;
+             const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+             self->fillCellIdsToKeepFromNodeIds(tmp,tmp+szArr,fullyIn,ret);
+             return ret;
+           }
+
+           virtual PyObject *mergeNodes(double precision) throw(INTERP_KERNEL::Exception)
+           {
+             bool ret1;
+             int ret2;
+             DataArrayInt *ret0=self->mergeNodes(precision,ret1,ret2);
+             PyObject *res = PyList_New(3);
+             PyList_SetItem(res,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+             PyList_SetItem(res,1,SWIG_From_bool(ret1));
+             PyList_SetItem(res,2,SWIG_From_int(ret2));
+             return res;
+           }
+           
+           virtual PyObject *mergeNodes2(double precision) throw(INTERP_KERNEL::Exception)
+           {
+             bool ret1;
+             int ret2;
+             DataArrayInt *ret0=self->mergeNodes2(precision,ret1,ret2);
+             PyObject *res = PyList_New(3);
+             PyList_SetItem(res,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+             PyList_SetItem(res,1,SWIG_From_bool(ret1));
+             PyList_SetItem(res,2,SWIG_From_int(ret2));
+             return res;
+           }
+           
+           DataArrayInt *getCellIdsLyingOnNodes(PyObject *li, bool fullyIn) const throw(INTERP_KERNEL::Exception)
+           {
+             void *da=0;
+             int res1=SWIG_ConvertPtr(li,&da,SWIGTYPE_p_ParaMEDMEM__DataArrayInt, 0 |  0 );
+             if (!SWIG_IsOK(res1))
+               {
+                 int size;
+                 INTERP_KERNEL::AutoPtr<int> tmp=convertPyToNewIntArr2(li,&size);
+                 return self->getCellIdsLyingOnNodes(tmp,((const int *)tmp)+size,fullyIn);
+               }
+             else
+               {
+                 DataArrayInt *da2=reinterpret_cast< DataArrayInt * >(da);
+                 if(!da2)
+                   throw INTERP_KERNEL::Exception("Not null DataArrayInt instance expected !");
+                 da2->checkAllocated();
+                 return self->getCellIdsLyingOnNodes(da2->getConstPointer(),da2->getConstPointer()+da2->getNbOfElems(),fullyIn);
+               }
+           }
+
+           MEDCouplingPointSet *__getitem__(PyObject *listOrDataArrI) throw(INTERP_KERNEL::Exception)
+           {
+             int sw;
+             int singleVal;
+             std::vector<int> multiVal;
+             std::pair<int, std::pair<int,int> > slic;
+             ParaMEDMEM::DataArrayInt *daIntTyypp=0;
+             int nbc=self->getNumberOfCells();
+             convertObjToPossibleCpp2(listOrDataArrI,nbc,sw,singleVal,multiVal,slic,daIntTyypp);
+             switch(sw)
+               {
+               case 1:
+                 {
+                   if(singleVal>=nbc)
+                     {
+                       std::ostringstream oss;
+                       oss << "Requesting for cell id " << singleVal << " having only " << nbc << " cells !";
+                       throw INTERP_KERNEL::Exception(oss.str().c_str());
+                     }
+                   if(singleVal>=0)
+                     return self->buildPartOfMySelf(&singleVal,&singleVal+1,true);
+                   else
+                     {
+                       if(nbc+singleVal>0)
+                         {
+                           int tmp=nbc+singleVal;
+                           return self->buildPartOfMySelf(&tmp,&tmp+1,true);
+                         }
+                       else
+                         {
+                           std::ostringstream oss;
+                           oss << "Requesting for cell id " << singleVal << " having only " << nbc << " cells !";
+                           throw INTERP_KERNEL::Exception(oss.str().c_str());
+                         }
+                     }
+                 }
+               case 2:
+                 {
+                   return static_cast<MEDCouplingPointSet *>(self->buildPartOfMySelf(&multiVal[0],&multiVal[0]+multiVal.size(),true));
+                 }
+               case 3:
+                 {
+                   return self->buildPartOfMySelf2(slic.first,slic.second.first,slic.second.second,true);
+                 }
+               case 4:
+                 {
+                   if(!daIntTyypp)
+                     throw INTERP_KERNEL::Exception("MEDCouplingUMesh::__getitem__ : null instance has been given in input !");
+                   daIntTyypp->checkAllocated();
+                   return self->buildPartOfMySelf(daIntTyypp->begin(),daIntTyypp->end(),true);
+                 }
+               default:
+                 throw INTERP_KERNEL::Exception("MEDCouplingUMesh::__getitem__ : unrecognized type in input ! Possibilities are : int, list or tuple of int DataArrayInt instance !");
+               }
+           }
+           
            static void Rotate2DAlg(PyObject *center, double angle, int nbNodes, PyObject *coords) throw(INTERP_KERNEL::Exception)
            {
              int sz;
-             INTERP_KERNEL::AutoPtr<double> c=convertPyToNewDblArr2(center,&sz);
-             INTERP_KERNEL::AutoPtr<double> coo=convertPyToNewDblArr2(coords,&sz);
+             INTERP_KERNEL::AutoCPtr<double> c=convertPyToNewDblArr2(center,&sz);
+             INTERP_KERNEL::AutoCPtr<double> coo=convertPyToNewDblArr2(coords,&sz);
              ParaMEDMEM::MEDCouplingPointSet::Rotate2DAlg(c,angle,nbNodes,coo);
              for(int i=0;i<sz;i++)
                PyList_SetItem(coords,i,PyFloat_FromDouble(coo[i]));
@@ -1256,7 +1468,7 @@ namespace ParaMEDMEM
            static void Rotate2DAlg(PyObject *center, double angle, PyObject *coords) throw(INTERP_KERNEL::Exception)
            {
              int sz;
-             INTERP_KERNEL::AutoPtr<double> c=convertPyToNewDblArr2(center,&sz);
+             INTERP_KERNEL::AutoCPtr<double> c=convertPyToNewDblArr2(center,&sz);
              int sw,nbNodes=0;
              double val0;  ParaMEDMEM::DataArrayDouble *val1=0; ParaMEDMEM::DataArrayDoubleTuple *val2=0;
              std::vector<double> val3;
@@ -1270,9 +1482,9 @@ namespace ParaMEDMEM
            static void Rotate3DAlg(PyObject *center, PyObject *vect, double angle, int nbNodes, PyObject *coords) throw(INTERP_KERNEL::Exception)
            {
              int sz,sz2;
-             INTERP_KERNEL::AutoPtr<double> c=convertPyToNewDblArr2(center,&sz);
-             INTERP_KERNEL::AutoPtr<double> coo=convertPyToNewDblArr2(coords,&sz);
-             INTERP_KERNEL::AutoPtr<double> v=convertPyToNewDblArr2(vect,&sz2);
+             INTERP_KERNEL::AutoCPtr<double> c=convertPyToNewDblArr2(center,&sz);
+             INTERP_KERNEL::AutoCPtr<double> coo=convertPyToNewDblArr2(coords,&sz);
+             INTERP_KERNEL::AutoCPtr<double> v=convertPyToNewDblArr2(vect,&sz2);
              ParaMEDMEM::MEDCouplingPointSet::Rotate3DAlg(c,v,angle,nbNodes,coo);
              for(int i=0;i<sz;i++)
                PyList_SetItem(coords,i,PyFloat_FromDouble(coo[i]));
@@ -1281,7 +1493,7 @@ namespace ParaMEDMEM
            static void Rotate3DAlg(PyObject *center, PyObject *vect, double angle, PyObject *coords) throw(INTERP_KERNEL::Exception)
            {
              int sz,sz2;
-             INTERP_KERNEL::AutoPtr<double> c=convertPyToNewDblArr2(center,&sz);
+             INTERP_KERNEL::AutoCPtr<double> c=convertPyToNewDblArr2(center,&sz);
              int sw,nbNodes=0;
              double val0;  ParaMEDMEM::DataArrayDouble *val1=0; ParaMEDMEM::DataArrayDoubleTuple *val2=0;
              std::vector<double> val3;
@@ -1289,11 +1501,13 @@ namespace ParaMEDMEM
                                                             "Rotate3DAlg",3,true,nbNodes);
              if(sw!=2 && sw!=3)
                throw INTERP_KERNEL::Exception("Invalid call to MEDCouplingPointSet::Rotate3DAlg : try another overload method !");
-             INTERP_KERNEL::AutoPtr<double> v=convertPyToNewDblArr2(vect,&sz2);
+             INTERP_KERNEL::AutoCPtr<double> v=convertPyToNewDblArr2(vect,&sz2);
              ParaMEDMEM::MEDCouplingPointSet::Rotate3DAlg(c,v,angle,nbNodes,const_cast<double *>(coo));
            }
          }
     };
+
+  //== MEDCouplingPointSet End
 
   class MEDCouplingUMeshCell
   {
@@ -1384,13 +1598,14 @@ namespace ParaMEDMEM
       }
   };
   
+  //== MEDCouplingUMesh
+
   class MEDCouplingUMesh : public ParaMEDMEM::MEDCouplingPointSet
   {
   public:
     static MEDCouplingUMesh *New() throw(INTERP_KERNEL::Exception);
     static MEDCouplingUMesh *New(const char *meshName, int meshDim) throw(INTERP_KERNEL::Exception);
     MEDCouplingUMesh *clone(bool recDeepCpy) const;
-    void updateTime() const;
     void checkCoherency() const throw(INTERP_KERNEL::Exception);
     void setMeshDimension(int meshDim) throw(INTERP_KERNEL::Exception);
     void allocateCells(int nbOfCells=0) throw(INTERP_KERNEL::Exception);
@@ -1399,12 +1614,13 @@ namespace ParaMEDMEM
     void setConnectivity(DataArrayInt *conn, DataArrayInt *connIndex, bool isComputingTypes=true) throw(INTERP_KERNEL::Exception);
     INTERP_KERNEL::NormalizedCellType getTypeOfCell(int cellId) const throw(INTERP_KERNEL::Exception);
     void setPartOfMySelf2(int start, int end, int step, const MEDCouplingUMesh& otherOnSameCoordsThanThis) throw(INTERP_KERNEL::Exception);
-    int getNumberOfNodesInCell(int cellId) const throw(INTERP_KERNEL::Exception);
     int getMeshLength() const throw(INTERP_KERNEL::Exception);
     void computeTypes() throw(INTERP_KERNEL::Exception);
     std::string reprConnectivityOfThis() const throw(INTERP_KERNEL::Exception);
     MEDCouplingUMesh *buildSetInstanceFromThis(int spaceDim) const throw(INTERP_KERNEL::Exception);
     //tools
+    DataArrayInt *conformize2D(double eps) throw(INTERP_KERNEL::Exception);
+    DataArrayInt *colinearize2D(double eps) throw(INTERP_KERNEL::Exception);
     void shiftNodeNumbersInConn(int delta) throw(INTERP_KERNEL::Exception);
     std::vector<bool> getQuadraticStatus() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *findCellIdsOnBoundary() const throw(INTERP_KERNEL::Exception);
@@ -1413,14 +1629,15 @@ namespace ParaMEDMEM
     bool checkConsecutiveCellTypesForMEDFileFrmt() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *rearrange2ConsecutiveCellTypes() throw(INTERP_KERNEL::Exception);
     DataArrayInt *sortCellsInMEDFileFrmt() throw(INTERP_KERNEL::Exception);
+    DataArrayInt *getRenumArrForMEDFileFrmt() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *convertCellArrayPerGeoType(const DataArrayInt *da) const throw(INTERP_KERNEL::Exception);
     DataArrayInt *computeFetchedNodeIds() const throw(INTERP_KERNEL::Exception);
-    DataArrayInt *zipConnectivityTraducer(int compType, int startCellId=0) throw(INTERP_KERNEL::Exception);
     MEDCouplingUMesh *buildDescendingConnectivity(DataArrayInt *desc, DataArrayInt *descIndx, DataArrayInt *revDesc, DataArrayInt *revDescIndx) const throw(INTERP_KERNEL::Exception);
     MEDCouplingUMesh *buildDescendingConnectivity2(DataArrayInt *desc, DataArrayInt *descIndx, DataArrayInt *revDesc, DataArrayInt *revDescIndx) const throw(INTERP_KERNEL::Exception);
     MEDCouplingUMesh *explode3DMeshTo1D(DataArrayInt *desc, DataArrayInt *descIndx, DataArrayInt *revDesc, DataArrayInt *revDescIndx) const throw(INTERP_KERNEL::Exception);
     void orientCorrectlyPolyhedrons() throw(INTERP_KERNEL::Exception);
     bool isPresenceOfQuadratic() const throw(INTERP_KERNEL::Exception);
+    bool isFullyQuadratic() const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *buildDirectionVectorField() const throw(INTERP_KERNEL::Exception);
     bool isContiguous1D() const throw(INTERP_KERNEL::Exception);
     void tessellate2D(double eps) throw(INTERP_KERNEL::Exception);
@@ -1433,10 +1650,20 @@ namespace ParaMEDMEM
     MEDCouplingFieldDouble *getAspectRatioField() const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *getWarpField() const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *getSkewField() const throw(INTERP_KERNEL::Exception);
+    DataArrayDouble *computePlaneEquationOf3DFaces() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *convexEnvelop2D() throw(INTERP_KERNEL::Exception);
     std::string cppRepr() const throw(INTERP_KERNEL::Exception);
     DataArrayInt *findAndCorrectBadOriented3DExtrudedCells() throw(INTERP_KERNEL::Exception);
     DataArrayInt *findAndCorrectBadOriented3DCells() throw(INTERP_KERNEL::Exception);
+    ParaMEDMEM::MEDCoupling1GTUMesh *convertIntoSingleGeoTypeMesh() const throw(INTERP_KERNEL::Exception);
+    DataArrayInt *convertNodalConnectivityToStaticGeoTypeMesh() const throw(INTERP_KERNEL::Exception);
+    DataArrayInt *buildUnionOf2DMesh() const throw(INTERP_KERNEL::Exception);
+    DataArrayInt *buildUnionOf3DMesh() const throw(INTERP_KERNEL::Exception);
+    DataArrayInt *orderConsecutiveCells1D() const throw(INTERP_KERNEL::Exception);
+    DataArrayDouble *getBoundingBoxForBBTreeFast() const throw(INTERP_KERNEL::Exception);
+    DataArrayDouble *getBoundingBoxForBBTree2DQuadratic(double arcDetEps=1e-12) const throw(INTERP_KERNEL::Exception);
+    DataArrayDouble *getBoundingBoxForBBTree1DQuadratic(double arcDetEps=1e-12) const throw(INTERP_KERNEL::Exception);
+    int split2DCells(const DataArrayInt *desc, const DataArrayInt *descI, const DataArrayInt *subNodesInSeg, const DataArrayInt *subNodesInSegI, const DataArrayInt *midOpt=0, const DataArrayInt *midOptI=0) throw(INTERP_KERNEL::Exception);
     static MEDCouplingUMesh *Build0DMeshFromCoords(DataArrayDouble *da) throw(INTERP_KERNEL::Exception);
     static MEDCouplingUMesh *MergeUMeshes(const MEDCouplingUMesh *mesh1, const MEDCouplingUMesh *mesh2) throw(INTERP_KERNEL::Exception);
     static MEDCouplingUMesh *MergeUMeshesOnSameCoords(const MEDCouplingUMesh *mesh1, const MEDCouplingUMesh *mesh2) throw(INTERP_KERNEL::Exception);
@@ -1470,60 +1697,14 @@ namespace ParaMEDMEM
         return self->cellIterator();
       }
 
-      MEDCouplingPointSet *__getitem__(PyObject *listOrDataArrI) throw(INTERP_KERNEL::Exception)
+      PyObject *getAllGeoTypesSorted() const throw(INTERP_KERNEL::Exception)
       {
-        int sw;
-        int singleVal;
-        std::vector<int> multiVal;
-        std::pair<int, std::pair<int,int> > slic;
-        ParaMEDMEM::DataArrayInt *daIntTyypp=0;
-        int nbc=self->getNumberOfCells();
-        convertObjToPossibleCpp2(listOrDataArrI,nbc,sw,singleVal,multiVal,slic,daIntTyypp);
-        switch(sw)
-          {
-          case 1:
-            {
-              if(singleVal>=nbc)
-                {
-                  std::ostringstream oss;
-                  oss << "Requesting for cell id " << singleVal << " having only " << nbc << " cells !";
-                  throw INTERP_KERNEL::Exception(oss.str().c_str());
-                }
-              if(singleVal>=0)
-                return self->buildPartOfMySelf(&singleVal,&singleVal+1,true);
-              else
-                {
-                  if(nbc+singleVal>0)
-                    {
-                      int tmp=nbc+singleVal;
-                      return self->buildPartOfMySelf(&tmp,&tmp+1,true);
-                    }
-                  else
-                    {
-                      std::ostringstream oss;
-                      oss << "Requesting for cell id " << singleVal << " having only " << nbc << " cells !";
-                      throw INTERP_KERNEL::Exception(oss.str().c_str());
-                    }
-                }
-            }
-          case 2:
-            {
-              return static_cast<MEDCouplingUMesh *>(self->buildPartOfMySelf(&multiVal[0],&multiVal[0]+multiVal.size(),true));
-            }
-          case 3:
-            {
-              return self->buildPartOfMySelf2(slic.first,slic.second.first,slic.second.second,true);
-            }
-          case 4:
-            {
-              if(!daIntTyypp)
-                throw INTERP_KERNEL::Exception("MEDCouplingUMesh::__getitem__ : null instance has been given in input !");
-              daIntTyypp->checkAllocated();
-              return self->buildPartOfMySelf(daIntTyypp->begin(),daIntTyypp->end(),true);
-            }
-          default:
-            throw INTERP_KERNEL::Exception("MEDCouplingUMesh::__getitem__ : unrecognized type in input ! Possibilities are : int, list or tuple of int DataArrayInt instance !");
-          }
+        std::vector<INTERP_KERNEL::NormalizedCellType> result=self->getAllGeoTypesSorted();
+        std::vector<INTERP_KERNEL::NormalizedCellType>::const_iterator iL=result.begin();
+        PyObject *res=PyList_New(result.size());
+        for(int i=0;iL!=result.end(); i++, iL++)
+          PyList_SetItem(res,i,PyInt_FromLong(*iL));
+        return res;
       }
       
       void setPartOfMySelf(PyObject *li, const MEDCouplingUMesh& otherOnSameCoordsThanThis) throw(INTERP_KERNEL::Exception)
@@ -1682,15 +1863,6 @@ namespace ParaMEDMEM
           ret->incrRef();
         return ret;
       }
-      PyObject *getAllTypes() const throw(INTERP_KERNEL::Exception)
-      {
-        std::set<INTERP_KERNEL::NormalizedCellType> result=self->getAllTypes();
-        std::set<INTERP_KERNEL::NormalizedCellType>::const_iterator iL=result.begin();
-        PyObject *res = PyList_New(result.size());
-        for (int i=0;iL!=result.end(); i++, iL++)
-          PyList_SetItem(res,i,PyInt_FromLong(*iL));
-        return res;
-      }
       
       static PyObject *ComputeSpreadZoneGraduallyFromSeed(PyObject *seed, const DataArrayInt *arrIn, const DataArrayInt *arrIndxIn, int nbOfDepthPeeling=-1) throw(INTERP_KERNEL::Exception)
       {
@@ -1702,16 +1874,6 @@ namespace ParaMEDMEM
         PyObject *res=PyTuple_New(2);
         PyTuple_SetItem(res,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         PyTuple_SetItem(res,1,PyInt_FromLong(nbOfDepthPeelingPerformed));
-        return res;
-      }
-
-      PyObject *findCommonCells(int compType, int startCellId=0) const throw(INTERP_KERNEL::Exception)
-      {
-        DataArrayInt *v0=0,*v1=0;
-        self->findCommonCells(compType,startCellId,v0,v1);
-        PyObject *res = PyList_New(2);
-        PyList_SetItem(res,0,SWIG_NewPointerObj(SWIG_as_voidptr(v0),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        PyList_SetItem(res,1,SWIG_NewPointerObj(SWIG_as_voidptr(v1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         return res;
       }
 
@@ -1735,37 +1897,36 @@ namespace ParaMEDMEM
         int nbOfCompo=self->getSpaceDimension();
         const double *pt=convertObjToPossibleCpp5_Safe(point,sw,val,a,aa,bb,"Python wrap of MEDCouplingUMesh::distanceToPoint",1,nbOfCompo,true);
         //
-        int cellId=-1,nodeId=-1;
-        double ret0=self->distanceToPoint(pt,pt+nbOfCompo,cellId,nodeId);
-        PyObject *ret=PyTuple_New(3);
+        int cellId=-1;
+        double ret0=self->distanceToPoint(pt,pt+nbOfCompo,cellId);
+        PyObject *ret=PyTuple_New(2);
         PyTuple_SetItem(ret,0,PyFloat_FromDouble(ret0));
         PyTuple_SetItem(ret,1,PyInt_FromLong(cellId));
-        PyTuple_SetItem(ret,2,PyInt_FromLong(nodeId));
         return ret;
       }
 
-      PyObject *mergeNodes(double precision) throw(INTERP_KERNEL::Exception)
+      PyObject *distanceToPoints(const DataArrayDouble *pts) const throw(INTERP_KERNEL::Exception)
       {
-        bool ret1;
-        int ret2;
-        DataArrayInt *ret0=self->mergeNodes(precision,ret1,ret2);
-        PyObject *res = PyList_New(3);
-        PyList_SetItem(res,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        PyList_SetItem(res,1,SWIG_From_bool(ret1));
-        PyList_SetItem(res,2,SWIG_From_int(ret2));
-        return res;
+        DataArrayInt *ret1=0;
+        DataArrayDouble *ret0=self->distanceToPoints(pts,ret1);
+        PyObject *ret=PyTuple_New(2);
+        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        return ret;
       }
-      PyObject *mergeNodes2(double precision) throw(INTERP_KERNEL::Exception)
+
+      PyObject *tetrahedrize(int policy) throw(INTERP_KERNEL::Exception)
       {
-        bool ret1;
-        int ret2;
-        DataArrayInt *ret0=self->mergeNodes2(precision,ret1,ret2);
-        PyObject *res = PyList_New(3);
-        PyList_SetItem(res,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        PyList_SetItem(res,1,SWIG_From_bool(ret1));
-        PyList_SetItem(res,2,SWIG_From_int(ret2));
-        return res;
+        int ret2(-1);
+        DataArrayInt *ret1(0);
+        MEDCoupling1SGTUMesh *ret0(self->tetrahedrize(policy,ret1,ret2));
+        PyObject *ret=PyTuple_New(3);
+        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__MEDCoupling1SGTUMesh, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,2,PyInt_FromLong(ret2));
+        return ret;
       }
+      
       PyObject *checkButterflyCells(double eps=1e-12) throw(INTERP_KERNEL::Exception)
       {
         std::vector<int> cells;
@@ -1883,26 +2044,6 @@ namespace ParaMEDMEM
           }
       }
 
-      void renumberNodesInConn(PyObject *li) throw(INTERP_KERNEL::Exception)
-      {
-        void *da=0;
-        int res1=SWIG_ConvertPtr(li,&da,SWIGTYPE_p_ParaMEDMEM__DataArrayInt, 0 | 0 );
-        if (!SWIG_IsOK(res1))
-          {
-            int size;
-            INTERP_KERNEL::AutoPtr<int> tmp=convertPyToNewIntArr2(li,&size);
-            self->renumberNodesInConn(tmp);
-          }
-        else
-          {
-            DataArrayInt *da2=reinterpret_cast< DataArrayInt * >(da);
-            if(!da2)
-              throw INTERP_KERNEL::Exception("Not null DataArrayInt instance expected !");
-            da2->checkAllocated();
-            self->renumberNodesInConn(da2->getConstPointer());
-          }
-      }
-
       PyObject *getLevArrPerCellTypes(PyObject *li) const throw(INTERP_KERNEL::Exception)
       {
         int sz;
@@ -1912,6 +2053,16 @@ namespace ParaMEDMEM
         PyObject *ret=PyTuple_New(2);
         PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(tmp0),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(tmp1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        return ret;
+      }
+
+      PyObject *convertNodalConnectivityToDynamicGeoTypeMesh() const throw(INTERP_KERNEL::Exception)
+      {
+        DataArrayInt *ret0=0,*ret1=0;
+        self->convertNodalConnectivityToDynamicGeoTypeMesh(ret0,ret1);
+        PyObject *ret=PyTuple_New(2);
+        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         return ret;
       }
 
@@ -2021,6 +2172,36 @@ namespace ParaMEDMEM
           default:
             throw INTERP_KERNEL::Exception("MEDCouplingUMesh::ExtractFromIndexedArrays : unrecognized type entered, expected list of int, tuple of int or DataArrayInt !");
           }
+        PyObject *ret=PyTuple_New(2);
+        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(arrOut),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(arrIndexOut),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        return ret;
+      }
+
+      static PyObject *ExtractFromIndexedArrays2(int strt, int stp, int step, const DataArrayInt *arrIn, const DataArrayInt *arrIndxIn) throw(INTERP_KERNEL::Exception)
+      {
+        DataArrayInt *arrOut=0,*arrIndexOut=0;
+        MEDCouplingUMesh::ExtractFromIndexedArrays2(strt,stp,step,arrIn,arrIndxIn,arrOut,arrIndexOut);
+        PyObject *ret=PyTuple_New(2);
+        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(arrOut),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(arrIndexOut),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        return ret;
+      }
+
+      static PyObject *ExtractFromIndexedArrays2(PyObject *slic, const DataArrayInt *arrIn, const DataArrayInt *arrIndxIn) throw(INTERP_KERNEL::Exception)
+      {
+        if(!PySlice_Check(slic))
+          throw INTERP_KERNEL::Exception("ExtractFromIndexedArrays2 (wrap) : the first param is not a pyslice !");
+        Py_ssize_t strt=2,stp=2,step=2;
+        PySliceObject *sliC=reinterpret_cast<PySliceObject *>(slic);
+        if(!arrIndxIn)
+          throw INTERP_KERNEL::Exception("ExtractFromIndexedArrays2 (wrap) : last array is null !");
+        arrIndxIn->checkAllocated();
+        if(arrIndxIn->getNumberOfComponents()!=1)
+          throw INTERP_KERNEL::Exception("ExtractFromIndexedArrays2 (wrap) : number of components of last argument must be equal to one !");
+        GetIndicesOfSlice(sliC,arrIndxIn->getNumberOfTuples(),&strt,&stp,&step,"ExtractFromIndexedArrays2 (wrap) : Invalid slice regarding nb of elements !");
+        DataArrayInt *arrOut=0,*arrIndexOut=0;
+        MEDCouplingUMesh::ExtractFromIndexedArrays2(strt,stp,step,arrIn,arrIndxIn,arrOut,arrIndexOut);
         PyObject *ret=PyTuple_New(2);
         PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(arrOut),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(arrIndexOut),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
@@ -2241,6 +2422,16 @@ namespace ParaMEDMEM
         return ret;
       }
 
+      PyObject *computeNeighborsOfNodes() const throw(INTERP_KERNEL::Exception)
+      {
+        DataArrayInt *neighbors=0,*neighborsIdx=0;
+        self->computeNeighborsOfNodes(neighbors,neighborsIdx);
+        PyObject *ret=PyTuple_New(2);
+        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(neighbors),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(neighborsIdx),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        return ret;
+      }
+
       static PyObject *ComputeNeighborsOfCellsAdv(const DataArrayInt *desc, const DataArrayInt *descI, const DataArrayInt *revDesc, const DataArrayInt *revDescI) throw(INTERP_KERNEL::Exception)
       {
         DataArrayInt *neighbors=0,*neighborsIdx=0;
@@ -2265,17 +2456,6 @@ namespace ParaMEDMEM
         PyTuple_SetItem(ret,4,SWIG_NewPointerObj(SWIG_as_voidptr(d3),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         PyTuple_SetItem(ret,5,SWIG_NewPointerObj(SWIG_as_voidptr(d4),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         PyTuple_SetItem(ret,6,SWIG_NewPointerObj(SWIG_as_voidptr(dd5),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        return ret;
-      }
-
-      PyObject *getReverseNodalConnectivity() const throw(INTERP_KERNEL::Exception)
-      {
-        MEDCouplingAutoRefCountObjectPtr<DataArrayInt> d0=DataArrayInt::New();
-        MEDCouplingAutoRefCountObjectPtr<DataArrayInt> d1=DataArrayInt::New();
-        self->getReverseNodalConnectivity(d0,d1);
-        PyObject *ret=PyTuple_New(2);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(d0.retn()),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(d1.retn()),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         return ret;
       }
 
@@ -2326,36 +2506,6 @@ namespace ParaMEDMEM
         return ret;
       }
 
-      DataArrayInt *getCellIdsLyingOnNodes(PyObject *li, bool fullyIn) const throw(INTERP_KERNEL::Exception)
-      {
-        void *da=0;
-        int res1=SWIG_ConvertPtr(li,&da,SWIGTYPE_p_ParaMEDMEM__DataArrayInt, 0 |  0 );
-        if (!SWIG_IsOK(res1))
-          {
-            int size;
-            INTERP_KERNEL::AutoPtr<int> tmp=convertPyToNewIntArr2(li,&size);
-            return self->getCellIdsLyingOnNodes(tmp,((const int *)tmp)+size,fullyIn);
-          }
-        else
-          {
-            DataArrayInt *da2=reinterpret_cast< DataArrayInt * >(da);
-            if(!da2)
-              throw INTERP_KERNEL::Exception("Not null DataArrayInt instance expected !");
-            da2->checkAllocated();
-            return self->getCellIdsLyingOnNodes(da2->getConstPointer(),da2->getConstPointer()+da2->getNbOfElems(),fullyIn);
-          }
-      }
-
-      PyObject *getNodeIdsInUse() const throw(INTERP_KERNEL::Exception)
-      {
-        int ret1=-1;
-        DataArrayInt *ret0=self->getNodeIdsInUse(ret1);
-        PyObject *ret=PyTuple_New(2);
-        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        PyTuple_SetItem(ret,1,PyInt_FromLong(ret1));
-        return ret;
-      }
-
       static PyObject *Intersect2DMeshes(const MEDCouplingUMesh *m1, const MEDCouplingUMesh *m2, double eps) throw(INTERP_KERNEL::Exception)
       {
         DataArrayInt *cellNb1=0,*cellNb2=0;
@@ -2364,6 +2514,19 @@ namespace ParaMEDMEM
         PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(mret),SWIGTYPE_p_ParaMEDMEM__MEDCouplingUMesh, SWIG_POINTER_OWN | 0 ));
         PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(cellNb1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         PyTuple_SetItem(ret,2,SWIG_NewPointerObj(SWIG_as_voidptr(cellNb2),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        return ret;
+      }
+
+      static PyObject *Intersect2DMeshWith1DLine(const MEDCouplingUMesh *mesh2D, const MEDCouplingUMesh *mesh1D, double eps) throw(INTERP_KERNEL::Exception)
+      {
+        MEDCouplingUMesh *splitMesh2D(0),*splitMesh1D(0);
+        DataArrayInt *cellIdInMesh2D(0),*cellIdInMesh1D(0);
+        MEDCouplingUMesh::Intersect2DMeshWith1DLine(mesh2D,mesh1D,eps,splitMesh2D,splitMesh1D,cellIdInMesh2D,cellIdInMesh1D);
+        PyObject *ret(PyTuple_New(4));
+        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(splitMesh2D),SWIGTYPE_p_ParaMEDMEM__MEDCouplingUMesh, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(splitMesh1D),SWIGTYPE_p_ParaMEDMEM__MEDCouplingUMesh, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,2,SWIG_NewPointerObj(SWIG_as_voidptr(cellIdInMesh2D),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,3,SWIG_NewPointerObj(SWIG_as_voidptr(cellIdInMesh1D),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
         return ret;
       }
 
@@ -2470,12 +2633,15 @@ namespace ParaMEDMEM
     MEDCouplingUMesh *buildExtrudedMesh(const MEDCouplingUMesh *mesh1D, int policy) throw(INTERP_KERNEL::Exception);
   };
 
+  //== MEDCouplingUMesh End
+
+  //== MEDCouplingExtrudedMesh
+
   class MEDCouplingExtrudedMesh : public ParaMEDMEM::MEDCouplingMesh
   {
   public:
     static MEDCouplingExtrudedMesh *New(const MEDCouplingUMesh *mesh3D, const MEDCouplingUMesh *mesh2D, int cell2DId) throw(INTERP_KERNEL::Exception);
     MEDCouplingUMesh *build3DUnstructuredMesh() const throw(INTERP_KERNEL::Exception);
-    void updateTime() const throw(INTERP_KERNEL::Exception);
     %extend {
       MEDCouplingExtrudedMesh(const MEDCouplingUMesh *mesh3D, const MEDCouplingUMesh *mesh2D, int cell2DId) throw(INTERP_KERNEL::Exception)
       {
@@ -2518,30 +2684,469 @@ namespace ParaMEDMEM
     }
   };
 
+  //== MEDCouplingExtrudedMesh End
+
+  class MEDCoupling1GTUMesh : public ParaMEDMEM::MEDCouplingPointSet
+  {
+  public:
+    static MEDCoupling1GTUMesh *New(const std::string& name, INTERP_KERNEL::NormalizedCellType type) throw(INTERP_KERNEL::Exception);
+    static MEDCoupling1GTUMesh *New(const MEDCouplingUMesh *m) throw(INTERP_KERNEL::Exception);
+    INTERP_KERNEL::NormalizedCellType getCellModelEnum() const throw(INTERP_KERNEL::Exception);
+    int getNodalConnectivityLength() const throw(INTERP_KERNEL::Exception);
+    virtual void allocateCells(int nbOfCells=0) throw(INTERP_KERNEL::Exception);
+    virtual void checkCoherencyOfConnectivity() const throw(INTERP_KERNEL::Exception);
+    %extend
+    {
+      virtual void insertNextCell(PyObject *li) throw(INTERP_KERNEL::Exception)
+      {
+        int szArr,sw,iTypppArr;
+        std::vector<int> stdvecTyyppArr;
+        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        self->insertNextCell(tmp,tmp+szArr);
+      }
+
+      virtual DataArrayInt *getNodalConnectivity() const throw(INTERP_KERNEL::Exception)
+      {
+        DataArrayInt *ret=self->getNodalConnectivity();
+        if(ret) ret->incrRef();
+        return ret;
+      }
+      
+      static MEDCouplingUMesh *AggregateOnSameCoordsToUMesh(PyObject *li) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< const MEDCoupling1GTUMesh *> parts;
+        convertFromPyObjVectorOfObj<const ParaMEDMEM::MEDCoupling1GTUMesh *>(li,SWIGTYPE_p_ParaMEDMEM__MEDCoupling1GTUMesh,"MEDCoupling1GTUMesh",parts);
+        return MEDCoupling1GTUMesh::AggregateOnSameCoordsToUMesh(parts);
+      }
+    }
+  };
+
+  //== MEDCoupling1SGTUMesh
+
+  class MEDCoupling1SGTUMesh : public ParaMEDMEM::MEDCoupling1GTUMesh
+  {
+  public:
+    static MEDCoupling1SGTUMesh *New(const std::string& name, INTERP_KERNEL::NormalizedCellType type) throw(INTERP_KERNEL::Exception);
+    static MEDCoupling1SGTUMesh *New(const MEDCouplingUMesh *m) throw(INTERP_KERNEL::Exception);
+    void setNodalConnectivity(DataArrayInt *nodalConn) throw(INTERP_KERNEL::Exception);
+    int getNumberOfNodesPerCell() const throw(INTERP_KERNEL::Exception);
+    static MEDCoupling1SGTUMesh *Merge1SGTUMeshes(const MEDCoupling1SGTUMesh *mesh1, const MEDCoupling1SGTUMesh *mesh2) throw(INTERP_KERNEL::Exception);
+    MEDCoupling1SGTUMesh *buildSetInstanceFromThis(int spaceDim) const throw(INTERP_KERNEL::Exception);
+    MEDCoupling1GTUMesh *computeDualMesh() const throw(INTERP_KERNEL::Exception);
+    MEDCoupling1SGTUMesh *explodeEachHexa8To6Quad4() const throw(INTERP_KERNEL::Exception);
+    DataArrayInt *sortHexa8EachOther() throw(INTERP_KERNEL::Exception);
+    %extend
+    {
+      MEDCoupling1SGTUMesh(const std::string& name, INTERP_KERNEL::NormalizedCellType type) throw(INTERP_KERNEL::Exception)
+      {
+        return MEDCoupling1SGTUMesh::New(name,type);
+      }
+
+      MEDCoupling1SGTUMesh(const MEDCouplingUMesh *m) throw(INTERP_KERNEL::Exception)
+      {
+        return MEDCoupling1SGTUMesh::New(m);
+      }
+
+      std::string __str__() const throw(INTERP_KERNEL::Exception)
+      {
+        return self->simpleRepr();
+      }
+      
+      std::string __repr__() const throw(INTERP_KERNEL::Exception)
+      {
+        std::ostringstream oss;
+        self->reprQuickOverview(oss);
+        return oss.str();
+      }
+
+      PyObject *structurizeMe(double eps=1e-12) const throw(INTERP_KERNEL::Exception)
+      {
+        DataArrayInt *cellPerm(0),*nodePerm(0);
+        MEDCouplingCMesh *retCpp(self->structurizeMe(cellPerm,nodePerm,eps));
+        PyObject *ret(PyTuple_New(3));
+        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(retCpp),SWIGTYPE_p_ParaMEDMEM__MEDCouplingCMesh, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(cellPerm),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,2,SWIG_NewPointerObj(SWIG_as_voidptr(nodePerm),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        return ret;
+      }
+
+      static MEDCoupling1SGTUMesh *Merge1SGTUMeshes(PyObject *li) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector<const ParaMEDMEM::MEDCoupling1SGTUMesh *> tmp;
+        convertFromPyObjVectorOfObj<const ParaMEDMEM::MEDCoupling1SGTUMesh *>(li,SWIGTYPE_p_ParaMEDMEM__MEDCoupling1SGTUMesh,"MEDCoupling1SGTUMesh",tmp);
+        return MEDCoupling1SGTUMesh::Merge1SGTUMeshes(tmp);
+      }
+      
+      static MEDCoupling1SGTUMesh *Merge1SGTUMeshesOnSameCoords(PyObject *li) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector<const ParaMEDMEM::MEDCoupling1SGTUMesh *> tmp;
+        convertFromPyObjVectorOfObj<const ParaMEDMEM::MEDCoupling1SGTUMesh *>(li,SWIGTYPE_p_ParaMEDMEM__MEDCoupling1SGTUMesh,"MEDCoupling1SGTUMesh",tmp);
+        return MEDCoupling1SGTUMesh::Merge1SGTUMeshesOnSameCoords(tmp);
+      }
+    }
+  };
+  
+  //== MEDCoupling1SGTUMesh End
+
+  //== MEDCoupling1DGTUMesh
+
+  class MEDCoupling1DGTUMesh : public ParaMEDMEM::MEDCoupling1GTUMesh
+  {
+  public:
+    static MEDCoupling1DGTUMesh *New(const std::string& name, INTERP_KERNEL::NormalizedCellType type) throw(INTERP_KERNEL::Exception);
+    static MEDCoupling1DGTUMesh *New(const MEDCouplingUMesh *m) throw(INTERP_KERNEL::Exception);
+    void setNodalConnectivity(DataArrayInt *nodalConn, DataArrayInt *nodalConnIndex) throw(INTERP_KERNEL::Exception);
+    MEDCoupling1DGTUMesh *buildSetInstanceFromThis(int spaceDim) const throw(INTERP_KERNEL::Exception);
+    bool isPacked() const throw(INTERP_KERNEL::Exception);
+    %extend
+    {
+      MEDCoupling1DGTUMesh(const std::string& name, INTERP_KERNEL::NormalizedCellType type) throw(INTERP_KERNEL::Exception)
+      {
+        return MEDCoupling1DGTUMesh::New(name,type);
+      }
+
+      MEDCoupling1DGTUMesh(const MEDCouplingUMesh *m) throw(INTERP_KERNEL::Exception)
+      {
+        return MEDCoupling1DGTUMesh::New(m);
+      }
+
+      std::string __str__() const throw(INTERP_KERNEL::Exception)
+      {
+        return self->simpleRepr();
+      }
+      
+      std::string __repr__() const throw(INTERP_KERNEL::Exception)
+      {
+        std::ostringstream oss;
+        self->reprQuickOverview(oss);
+        return oss.str();
+      }
+
+      DataArrayInt *getNodalConnectivityIndex() const throw(INTERP_KERNEL::Exception)
+      {
+        DataArrayInt *ret=self->getNodalConnectivityIndex();
+        if(ret) ret->incrRef();
+        return ret;
+      }
+
+      PyObject *retrievePackedNodalConnectivity() const throw(INTERP_KERNEL::Exception)
+      {
+        DataArrayInt *ret1=0,*ret2=0;
+        bool ret0=self->retrievePackedNodalConnectivity(ret1,ret2);
+        PyObject *ret0Py=ret0?Py_True:Py_False;
+        Py_XINCREF(ret0Py);
+        PyObject *ret=PyTuple_New(3);
+        PyTuple_SetItem(ret,0,ret0Py);
+        PyTuple_SetItem(ret,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,2,SWIG_NewPointerObj(SWIG_as_voidptr(ret2),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
+        return ret;
+      }
+      
+      PyObject *copyWithNodalConnectivityPacked() const throw(INTERP_KERNEL::Exception)
+      {
+        bool ret1;
+        MEDCoupling1DGTUMesh *ret0=self->copyWithNodalConnectivityPacked(ret1);
+        PyObject *ret=PyTuple_New(2);
+        PyObject *ret1Py=ret1?Py_True:Py_False; Py_XINCREF(ret1Py);
+        PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__MEDCoupling1DGTUMesh, SWIG_POINTER_OWN | 0 ));
+        PyTuple_SetItem(ret,1,ret1Py);
+        return ret;
+      }
+
+      static MEDCoupling1DGTUMesh *Merge1DGTUMeshes(PyObject *li) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector<const ParaMEDMEM::MEDCoupling1DGTUMesh *> tmp;
+        convertFromPyObjVectorOfObj<const ParaMEDMEM::MEDCoupling1DGTUMesh *>(li,SWIGTYPE_p_ParaMEDMEM__MEDCoupling1DGTUMesh,"MEDCoupling1DGTUMesh",tmp);
+        return MEDCoupling1DGTUMesh::Merge1DGTUMeshes(tmp);
+      }
+      
+      static MEDCoupling1DGTUMesh *Merge1DGTUMeshesOnSameCoords(PyObject *li) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector<const ParaMEDMEM::MEDCoupling1DGTUMesh *> tmp;
+        convertFromPyObjVectorOfObj<const ParaMEDMEM::MEDCoupling1DGTUMesh *>(li,SWIGTYPE_p_ParaMEDMEM__MEDCoupling1DGTUMesh,"MEDCoupling1DGTUMesh",tmp);
+        return MEDCoupling1DGTUMesh::Merge1DGTUMeshesOnSameCoords(tmp);
+      }
+      
+      static DataArrayInt *AggregateNodalConnAndShiftNodeIds(PyObject *li, const std::vector<int>& offsetInNodeIdsPerElt) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector<const ParaMEDMEM::DataArrayInt *> tmp;
+        convertFromPyObjVectorOfObj<const ParaMEDMEM::DataArrayInt *>(li,SWIGTYPE_p_ParaMEDMEM__DataArrayInt,"DataArrayInt",tmp);
+        return MEDCoupling1DGTUMesh::AggregateNodalConnAndShiftNodeIds(tmp,offsetInNodeIdsPerElt);
+      }
+    }
+  };
+
+  //== MEDCoupling1DGTUMeshEnd
+
   class MEDCouplingStructuredMesh : public ParaMEDMEM::MEDCouplingMesh
   {
   public:
-    void updateTime() const throw(INTERP_KERNEL::Exception);
     int getCellIdFromPos(int i, int j, int k) const throw(INTERP_KERNEL::Exception);
     int getNodeIdFromPos(int i, int j, int k) const throw(INTERP_KERNEL::Exception);
+    int getNumberOfCellsOfSubLevelMesh() const throw(INTERP_KERNEL::Exception);
+    int getSpaceDimensionOnNodeStruct() const throw(INTERP_KERNEL::Exception);
+    double computeSquareness() const throw(INTERP_KERNEL::Exception);
+    virtual std::vector<int> getNodeGridStructure() const throw(INTERP_KERNEL::Exception);
+    std::vector<int> getCellGridStructure() const throw(INTERP_KERNEL::Exception);
+    MEDCoupling1SGTUMesh *build1SGTUnstructured() const throw(INTERP_KERNEL::Exception);
+    static INTERP_KERNEL::NormalizedCellType GetGeoTypeGivenMeshDimension(int meshDim) throw(INTERP_KERNEL::Exception);
+    MEDCoupling1SGTUMesh *build1SGTSubLevelMesh() const throw(INTERP_KERNEL::Exception);
+    static int DeduceNumberOfGivenStructure(const std::vector<int>& st) throw(INTERP_KERNEL::Exception);
+    static DataArrayInt *ComputeCornersGhost(const std::vector<int>& st, int ghostLev) throw(INTERP_KERNEL::Exception);
+    static std::vector<int> GetSplitVectFromStruct(const std::vector<int>& strct) throw(INTERP_KERNEL::Exception);
+    %extend
+    {
+      virtual MEDCouplingStructuredMesh *buildStructuredSubPart(PyObject *cellPart) const throw(INTERP_KERNEL::Exception)
+      {
+        int tmpp1=-1,tmpp2=-1;
+        std::vector<int> tmp=fillArrayWithPyListInt2(cellPart,tmpp1,tmpp2);
+        std::vector< std::pair<int,int> > inp;
+        if(tmpp2==2)
+          {
+            inp.resize(tmpp1);
+            for(int i=0;i<tmpp1;i++)
+              { inp[i].first=tmp[2*i]; inp[i].second=tmp[2*i+1]; }
+          }
+        else if(tmpp2==1)
+          {
+            if(tmpp1%2!=0)
+              throw INTERP_KERNEL::Exception("Wrap of MEDCouplingStructuredMesh.buildStructuredSubPart : invalid input size ! Must be even size !");
+            inp.resize(tmpp1/2);
+            for(int i=0;i<tmpp1/2;i++)
+              { inp[i].first=tmp[2*i]; inp[i].second=tmp[2*i+1]; }
+          }
+        else
+          throw INTERP_KERNEL::Exception("Wrap of MEDCouplingStructuredMesh.buildStructuredSubPart : invalid input size !");
+        return self->buildStructuredSubPart(inp);
+      }
+
+      static DataArrayInt *BuildExplicitIdsFrom(PyObject *st, PyObject *part) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > inp;
+        convertPyToVectorPairInt(part,inp);
+        //
+        int szArr,sw,iTypppArr;
+        std::vector<int> stdvecTyyppArr;
+        const int *tmp4=convertObjToPossibleCpp1_Safe(st,sw,szArr,iTypppArr,stdvecTyyppArr);
+        std::vector<int> tmp5(tmp4,tmp4+szArr);
+        //
+        return MEDCouplingStructuredMesh::BuildExplicitIdsFrom(tmp5,inp);
+      }
+
+      static void MultiplyPartOf(const std::vector<int>& st, PyObject *part, double factor, DataArrayDouble *da) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > inp;
+        convertPyToVectorPairInt(part,inp);
+        MEDCouplingStructuredMesh::MultiplyPartOf(st,inp,factor,da);
+      }
+
+      static void MultiplyPartOfByGhost(const std::vector<int>& st, PyObject *part, int ghostSize, double factor, DataArrayDouble *da) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > inp;
+        convertPyToVectorPairInt(part,inp);
+        MEDCouplingStructuredMesh::MultiplyPartOfByGhost(st,inp,ghostSize,factor,da);
+      }
+
+      static PyObject *PutInGhostFormat(int ghostSize, const std::vector<int>& st, PyObject *part) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > inp;
+        convertPyToVectorPairInt(part,inp);
+        std::vector<int> stWithGhost;
+        std::vector< std::pair<int,int> > partWithGhost;
+        MEDCouplingStructuredMesh::PutInGhostFormat(ghostSize,st,inp,stWithGhost,partWithGhost);
+        PyObject *ret(PyTuple_New(2));
+        PyTuple_SetItem(ret,0,convertIntArrToPyList2(stWithGhost));
+        PyTuple_SetItem(ret,1,convertFromVectorPairInt(partWithGhost));
+        return ret;
+      }
+
+      static DataArrayDouble *ExtractFieldOfDoubleFrom(const std::vector<int>& st, const DataArrayDouble *fieldOfDbl, PyObject *partCompactFormat) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > inp;
+        convertPyToVectorPairInt(partCompactFormat,inp);
+        return MEDCouplingStructuredMesh::ExtractFieldOfDoubleFrom(st,fieldOfDbl,inp);
+      }
+
+      static void AssignPartOfFieldOfDoubleUsing(const std::vector<int>& st, DataArrayDouble *fieldOfDbl, PyObject *partCompactFormat, const DataArrayDouble *other) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > inp;
+        convertPyToVectorPairInt(partCompactFormat,inp);
+        MEDCouplingStructuredMesh::AssignPartOfFieldOfDoubleUsing(st,fieldOfDbl,inp,other);
+      }
+
+      static int DeduceNumberOfGivenRangeInCompactFrmt(PyObject *part) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > inp;
+        convertPyToVectorPairInt(part,inp);
+        return MEDCouplingStructuredMesh::DeduceNumberOfGivenRangeInCompactFrmt(inp);
+      }
+
+      static DataArrayInt *Build1GTNodalConnectivity(PyObject *li) throw(INTERP_KERNEL::Exception)
+      {
+        int szArr,sw,iTypppArr;
+        std::vector<int> stdvecTyyppArr;
+        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        return MEDCouplingStructuredMesh::Build1GTNodalConnectivity(tmp,tmp+szArr);
+      }
+
+      static DataArrayInt *Build1GTNodalConnectivityOfSubLevelMesh(PyObject *li) throw(INTERP_KERNEL::Exception)
+      {
+        int szArr,sw,iTypppArr;
+        std::vector<int> stdvecTyyppArr;
+        const int *tmp(convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr));
+        return MEDCouplingStructuredMesh::Build1GTNodalConnectivityOfSubLevelMesh(tmp,tmp+szArr);
+      }
+
+      static std::vector<int> GetDimensionsFromCompactFrmt(PyObject *partCompactFormat) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > inp;
+        convertPyToVectorPairInt(partCompactFormat,inp);
+        return MEDCouplingStructuredMesh::GetDimensionsFromCompactFrmt(inp);
+      }
+
+      static PyObject *GetCompactFrmtFromDimensions(const std::vector<int>& dims) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > ret(MEDCouplingStructuredMesh::GetCompactFrmtFromDimensions(dims));
+        PyObject *retPy=PyList_New(ret.size());
+        for(std::size_t i=0;i<ret.size();i++)
+          {
+            PyObject *tmp=PyTuple_New(2);
+            PyTuple_SetItem(tmp,0,PyInt_FromLong(ret[i].first));
+            PyTuple_SetItem(tmp,1,PyInt_FromLong(ret[i].second));
+            PyList_SetItem(retPy,i,tmp);
+          }
+        return retPy;
+      }
+
+      static PyObject *IntersectRanges(PyObject *r1, PyObject *r2) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > r1Cpp,r2Cpp;
+        convertPyToVectorPairInt(r1,r1Cpp);
+        convertPyToVectorPairInt(r2,r2Cpp);
+        std::vector< std::pair<int,int> > ret(MEDCouplingStructuredMesh::IntersectRanges(r1Cpp,r2Cpp));
+        PyObject *retPy=PyList_New(ret.size());
+        for(std::size_t i=0;i<ret.size();i++)
+          {
+            PyObject *tmp=PyTuple_New(2);
+            PyTuple_SetItem(tmp,0,PyInt_FromLong(ret[i].first));
+            PyTuple_SetItem(tmp,1,PyInt_FromLong(ret[i].second));
+            PyList_SetItem(retPy,i,tmp);
+          }
+        return retPy;
+      }
+
+      static bool AreRangesIntersect(PyObject *r1, PyObject *r2)
+      {
+        std::vector< std::pair<int,int> > r1Cpp,r2Cpp;
+        convertPyToVectorPairInt(r1,r1Cpp);
+        convertPyToVectorPairInt(r2,r2Cpp);
+        return MEDCouplingStructuredMesh::AreRangesIntersect(r1Cpp,r2Cpp);
+      }
+
+      static PyObject *IsPartStructured(PyObject *li, PyObject *st) throw(INTERP_KERNEL::Exception)
+      {
+        int szArr,sw,iTypppArr;
+        std::vector<int> stdvecTyyppArr;
+        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        int szArr2,sw2,iTypppArr2;
+        std::vector<int> stdvecTyyppArr2;
+        const int *tmp2=convertObjToPossibleCpp1_Safe(st,sw2,szArr2,iTypppArr2,stdvecTyyppArr2);
+        std::vector<int> tmp3(tmp2,tmp2+szArr2);
+        std::vector< std::pair<int,int> > partCompactFormat;
+        bool ret0=MEDCouplingStructuredMesh::IsPartStructured(tmp,tmp+szArr,tmp3,partCompactFormat);
+        PyObject *ret=PyTuple_New(2);
+        PyObject *ret0Py=ret0?Py_True:Py_False; Py_XINCREF(ret0Py);
+        PyTuple_SetItem(ret,0,ret0Py);
+        PyObject *ret1Py=PyList_New(partCompactFormat.size());
+        for(std::size_t i=0;i<partCompactFormat.size();i++)
+          {
+            PyObject *tmp4=PyTuple_New(2);
+            PyTuple_SetItem(tmp4,0,PyInt_FromLong(partCompactFormat[i].first));
+            PyTuple_SetItem(tmp4,1,PyInt_FromLong(partCompactFormat[i].second));
+            PyList_SetItem(ret1Py,i,tmp4);
+          }
+        PyTuple_SetItem(ret,1,ret1Py);
+        return ret;
+      }
+
+      static PyObject *ChangeReferenceFromGlobalOfCompactFrmt(PyObject *bigInAbs, PyObject *partOfBigInAbs, bool check=true) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > param0,param1,ret;
+        convertPyToVectorPairInt(bigInAbs,param0);
+        convertPyToVectorPairInt(partOfBigInAbs,param1);
+        MEDCouplingStructuredMesh::ChangeReferenceFromGlobalOfCompactFrmt(param0,param1,ret,check);
+        PyObject *retPy(PyList_New(ret.size()));
+        for(std::size_t i=0;i<ret.size();i++)
+          {
+            PyObject *tmp(PyTuple_New(2));
+            PyTuple_SetItem(tmp,0,PyInt_FromLong(ret[i].first));
+            PyTuple_SetItem(tmp,1,PyInt_FromLong(ret[i].second));
+            PyList_SetItem(retPy,i,tmp);
+          }
+        return retPy;
+      }
+
+      static PyObject *TranslateCompactFrmt(PyObject *part, const std::vector<int>& translation) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > param0;
+        convertPyToVectorPairInt(part,param0);
+        std::vector< std::pair<int,int> > ret(MEDCouplingStructuredMesh::TranslateCompactFrmt(param0,translation));
+        PyObject *retPy(PyList_New(ret.size()));
+        for(std::size_t i=0;i<ret.size();i++)
+          {
+            PyObject *tmp(PyTuple_New(2));
+            PyTuple_SetItem(tmp,0,PyInt_FromLong(ret[i].first));
+            PyTuple_SetItem(tmp,1,PyInt_FromLong(ret[i].second));
+            PyList_SetItem(retPy,i,tmp);
+          }
+        return retPy;
+      }
+
+      static std::vector<int> FindTranslationFrom(PyObject *startingFrom, PyObject *goingTo) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > param0,param1;
+        convertPyToVectorPairInt(startingFrom,param0);
+        convertPyToVectorPairInt(goingTo,param1);
+        return  MEDCouplingStructuredMesh::FindTranslationFrom(param0,param1);
+      }
+
+      static PyObject *ChangeReferenceToGlobalOfCompactFrmt(PyObject *bigInAbs, PyObject *partOfBigRelativeToBig, bool check=true) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > param0,param1,ret;
+        convertPyToVectorPairInt(bigInAbs,param0);
+        convertPyToVectorPairInt(partOfBigRelativeToBig,param1);
+        MEDCouplingStructuredMesh::ChangeReferenceToGlobalOfCompactFrmt(param0,param1,ret,check);
+        PyObject *retPy(PyList_New(ret.size()));
+        for(std::size_t i=0;i<ret.size();i++)
+          {
+            PyObject *tmp(PyTuple_New(2));
+            PyTuple_SetItem(tmp,0,PyInt_FromLong(ret[i].first));
+            PyTuple_SetItem(tmp,1,PyInt_FromLong(ret[i].second));
+            PyList_SetItem(retPy,i,tmp);
+          }
+        return retPy;
+      }
+    }
   };
 
+  //== MEDCouplingCMesh
+  
   class MEDCouplingCMesh : public ParaMEDMEM::MEDCouplingStructuredMesh
   {
   public:
-    static MEDCouplingCMesh *New();
-    static MEDCouplingCMesh *New(const char *meshName);
+    static MEDCouplingCMesh *New() throw(INTERP_KERNEL::Exception);
+    static MEDCouplingCMesh *New(const std::string& meshName) throw(INTERP_KERNEL::Exception);
     MEDCouplingCMesh *clone(bool recDeepCpy) const;
     void setCoords(const DataArrayDouble *coordsX,
                    const DataArrayDouble *coordsY=0,
                    const DataArrayDouble *coordsZ=0) throw(INTERP_KERNEL::Exception);
     void setCoordsAt(int i, const DataArrayDouble *arr) throw(INTERP_KERNEL::Exception);
     %extend {
-      MEDCouplingCMesh()
+      MEDCouplingCMesh() throw(INTERP_KERNEL::Exception)
       {
         return MEDCouplingCMesh::New();
       }
-      MEDCouplingCMesh(const char *meshName)
+      MEDCouplingCMesh(const std::string& meshName) throw(INTERP_KERNEL::Exception)
       {
         return MEDCouplingCMesh::New(meshName);
       }
@@ -2565,20 +3170,23 @@ namespace ParaMEDMEM
     }
   };
 
+  //== MEDCouplingCMesh End
+
+  //== MEDCouplingCurveLinearMesh
+
   class MEDCouplingCurveLinearMesh : public ParaMEDMEM::MEDCouplingStructuredMesh
   {
   public:
-    static MEDCouplingCurveLinearMesh *New();
-    static MEDCouplingCurveLinearMesh *New(const char *meshName);
+    static MEDCouplingCurveLinearMesh *New() throw(INTERP_KERNEL::Exception);
+    static MEDCouplingCurveLinearMesh *New(const std::string& meshName) throw(INTERP_KERNEL::Exception);
     MEDCouplingCurveLinearMesh *clone(bool recDeepCpy) const;
     void setCoords(const DataArrayDouble *coords) throw(INTERP_KERNEL::Exception);
-    std::vector<int> getNodeGridStructure() const throw(INTERP_KERNEL::Exception);
     %extend {
-      MEDCouplingCurveLinearMesh()
+      MEDCouplingCurveLinearMesh() throw(INTERP_KERNEL::Exception)
       {
         return MEDCouplingCurveLinearMesh::New();
       }
-      MEDCouplingCurveLinearMesh(const char *meshName)
+      MEDCouplingCurveLinearMesh(const std::string& meshName) throw(INTERP_KERNEL::Exception)
       {
         return MEDCouplingCurveLinearMesh::New(meshName);
       }
@@ -2608,116 +3216,139 @@ namespace ParaMEDMEM
       }
     }
   };
-  
-}
 
-%extend ParaMEDMEM::MEDCouplingFieldDiscretization
-{
-  MEDCouplingFieldDiscretization *clonePart(PyObject *li)
-  {
-    int sz=0,sw=-1,val1=-1;
-    std::vector<int> val2;
-    const int *inp=convertObjToPossibleCpp1_Safe(li,sw,sz,val1,val2);
-    return self->clonePart(inp,inp+sz);
-  }
+  //== MEDCouplingCurveLinearMesh End
 
-  PyObject *buildSubMeshDataRange(const MEDCouplingMesh *mesh, int beginCellIds, int endCellIds, int stepCellIds, int& beginOut, int& endOut, int& stepOut, DataArrayInt *&di) const throw(INTERP_KERNEL::Exception)
+  //== MEDCouplingIMesh
+
+  class MEDCouplingIMesh : public ParaMEDMEM::MEDCouplingStructuredMesh
   {
-    DataArrayInt *ret1=0;
-    int bb,ee,ss;
-    MEDCouplingMesh *ret0=self->buildSubMeshDataRange(mesh,begin,end,step,bb,ee,ss,ret1);
-    PyObject *res=PyTuple_New(2);
-    PyTuple_SetItem(res,0,convertMesh(ret0, SWIG_POINTER_OWN | 0 ));
-    if(ret1)
-      PyTuple_SetItem(res,1,SWIG_NewPointerObj((void*)ret1,SWIGTYPE_p_ParaMEDMEM__DataArrayInt,SWIG_POINTER_OWN | 0));
-    else
+  public:
+    static MEDCouplingIMesh *New() throw(INTERP_KERNEL::Exception);
+    //
+    void setSpaceDimension(int spaceDim) throw(INTERP_KERNEL::Exception);
+    std::vector<int> getNodeStruct() const throw(INTERP_KERNEL::Exception);
+    std::vector<double> getOrigin() const throw(INTERP_KERNEL::Exception);
+    std::vector<double> getDXYZ() const throw(INTERP_KERNEL::Exception);
+    void setAxisUnit(const std::string& unitName) throw(INTERP_KERNEL::Exception);
+    std::string getAxisUnit() const throw(INTERP_KERNEL::Exception);
+    double getMeasureOfAnyCell() const throw(INTERP_KERNEL::Exception);
+    MEDCouplingCMesh *convertToCartesian() const throw(INTERP_KERNEL::Exception);
+    void refineWithFactor(const std::vector<int>& factors) throw(INTERP_KERNEL::Exception);
+    MEDCouplingIMesh *asSingleCell() const throw(INTERP_KERNEL::Exception);
+    MEDCouplingIMesh *buildWithGhost(int ghostLev) const throw(INTERP_KERNEL::Exception);
+    %extend
+    {
+      MEDCouplingIMesh()
       {
-        PyObject *res1=PySlice_New(PyInt_FromLong(bb),PyInt_FromLong(ee),PyInt_FromLong(ss));
-        PyTuple_SetItem(res,1,res1);
+        return MEDCouplingIMesh::New();
       }
-    return res;
-  }
-  
-  PyObject *computeMeshRestrictionFromTupleIds(const MEDCouplingMesh *mesh, PyObject *tupleIds) const throw(INTERP_KERNEL::Exception)
-  {
-    std::vector<int> vVal; int iVal=-1;
-    int sz=-1,sw=0;
-    const int *tupleIdsBg=convertObjToPossibleCpp1_Safe(tupleIds,sw,sz,iVal,vVal);
-    if(sw==0)
-      throw INTERP_KERNEL::Exception("MEDCouplingFieldDiscretization::computeMeshRestrictionFromTupleIds : none parameter in input !");
-    DataArrayInt *ret0=0,*ret1=0;
-    self->computeMeshRestrictionFromTupleIds(mesh,tupleIdsBg,tupleIdsBg+sz,ret0,ret1);
-    PyObject *pyRet=PyTuple_New(2);
-    PyTuple_SetItem(pyRet,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-    PyTuple_SetItem(pyRet,1,SWIG_NewPointerObj(SWIG_as_voidptr(ret1),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-    return pyRet;
-  }
-}
-
-%extend ParaMEDMEM::MEDCouplingFieldDiscretizationP0
-{
-  PyObject *computeMeshRestrictionFromTupleIds(const MEDCouplingMesh *mesh, PyObject *tupleIds) const throw(INTERP_KERNEL::Exception)
-  { return ParaMEDMEM_MEDCouplingFieldDiscretization_computeMeshRestrictionFromTupleIds__SWIG_1(self,mesh,tupleIds); }
-}
-
-%extend ParaMEDMEM::MEDCouplingFieldDiscretizationOnNodes
-{
-  PyObject *computeMeshRestrictionFromTupleIds(const MEDCouplingMesh *mesh, PyObject *tupleIds) const throw(INTERP_KERNEL::Exception)
-  { return ParaMEDMEM_MEDCouplingFieldDiscretization_computeMeshRestrictionFromTupleIds__SWIG_1(self,mesh,tupleIds); }
-}
-
-%extend ParaMEDMEM::MEDCouplingFieldDiscretizationGauss
-{
-  PyObject *computeMeshRestrictionFromTupleIds(const MEDCouplingMesh *mesh, PyObject *tupleIds) const throw(INTERP_KERNEL::Exception)
-  { return ParaMEDMEM_MEDCouplingFieldDiscretization_computeMeshRestrictionFromTupleIds__SWIG_1(self,mesh,tupleIds); }
-}
-
-%extend ParaMEDMEM::MEDCouplingFieldDiscretizationGaussNE
-{
-  PyObject *computeMeshRestrictionFromTupleIds(const MEDCouplingMesh *mesh, PyObject *tupleIds) const throw(INTERP_KERNEL::Exception)
-  { return ParaMEDMEM_MEDCouplingFieldDiscretization_computeMeshRestrictionFromTupleIds__SWIG_1(self,mesh,tupleIds); }
-}
-
-%extend ParaMEDMEM::MEDCouplingFieldDiscretizationPerCell
-{
-  PyObject *getArrayOfDiscIds() const
-  {
-    DataArrayInt *ret=const_cast<DataArrayInt *>(self->getArrayOfDiscIds());
-    if(ret)
-      ret->incrRef();
-    return SWIG_NewPointerObj(SWIG_as_voidptr(ret),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 );
-  }
-
-  PyObject *splitIntoSingleGaussDicrPerCellType() const throw(INTERP_KERNEL::Exception)
-  {
-    std::vector<int> ret1;
-    std::vector<DataArrayInt *> ret0=self->splitIntoSingleGaussDicrPerCellType(ret1);
-    std::size_t sz=ret0.size();
-    PyObject *pyRet=PyTuple_New(2);
-    PyObject *pyRet0=PyList_New((int)sz);
-    PyObject *pyRet1=PyList_New((int)sz);
-    for(std::size_t i=0;i<sz;i++)
+      static MEDCouplingIMesh *New(const std::string& meshName, int spaceDim, PyObject *nodeStrct, PyObject *origin, PyObject *dxyz) throw(INTERP_KERNEL::Exception)
       {
-        PyList_SetItem(pyRet0,i,SWIG_NewPointerObj(SWIG_as_voidptr(ret0[i]),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 ));
-        PyList_SetItem(pyRet1,i,PyInt_FromLong(ret1[i]));
+        static const char msg0[]="MEDCouplingIMesh::New : error on 'origin' parameter !";
+        static const char msg1[]="MEDCouplingIMesh::New : error on 'dxyz' parameter !";
+        const int *nodeStrctPtr(0);
+        const double *originPtr(0),*dxyzPtr(0);
+        int sw,sz,val0;
+        std::vector<int> bb0;
+        nodeStrctPtr=convertObjToPossibleCpp1_Safe(nodeStrct,sw,sz,val0,bb0);
+        //
+        double val,val2;
+        std::vector<double> bb,bb2;
+        int sz1,sz2;
+        originPtr=convertObjToPossibleCpp5_SingleCompo(origin,sw,val,bb,msg0,false,sz1);
+        dxyzPtr=convertObjToPossibleCpp5_SingleCompo(dxyz,sw,val2,bb2,msg1,false,sz2);
+        //
+        return MEDCouplingIMesh::New(meshName,spaceDim,nodeStrctPtr,nodeStrctPtr+sz,originPtr,originPtr+sz1,dxyzPtr,dxyzPtr+sz2);
       }
-    PyTuple_SetItem(pyRet,0,pyRet0);
-    PyTuple_SetItem(pyRet,1,pyRet1);
-    return pyRet;
-  }
-}
 
-%extend ParaMEDMEM::MEDCouplingFieldDiscretizationKriging
-{
-  PyObject *computeVectorOfCoefficients(const MEDCouplingMesh *mesh, const DataArrayDouble *arr) const
-  {
-    int ret1;
-    DataArrayDouble *ret0=self->computeVectorOfCoefficients(mesh,arr,ret1);
-    PyObject *ret=PyTuple_New(2);
-    PyTuple_SetItem(ret,0,SWIG_NewPointerObj(SWIG_as_voidptr(ret0),SWIGTYPE_p_ParaMEDMEM__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
-    PyTuple_SetItem(ret,1,PyInt_FromLong(ret1));
-    return ret;
-  }
+      MEDCouplingIMesh(const std::string& meshName, int spaceDim, PyObject *nodeStrct, PyObject *origin, PyObject *dxyz) throw(INTERP_KERNEL::Exception)
+      {
+        return ParaMEDMEM_MEDCouplingIMesh_New__SWIG_1(meshName,spaceDim,nodeStrct,origin,dxyz);
+      }
+
+      void setNodeStruct(PyObject *nodeStrct) throw(INTERP_KERNEL::Exception)
+      {
+        int sw,sz,val0;
+        std::vector<int> bb0;
+        const int *nodeStrctPtr(convertObjToPossibleCpp1_Safe(nodeStrct,sw,sz,val0,bb0));
+        self->setNodeStruct(nodeStrctPtr,nodeStrctPtr+sz);
+      }
+
+      void setOrigin(PyObject *origin) throw(INTERP_KERNEL::Exception)
+      {
+        static const char msg[]="MEDCouplingIMesh::setOrigin : invalid input 'origin' parameter ! integer, float, list/tuple of float, DataArrayDouble or DataArrayDoubleTuple supported !";
+        double val;
+        DataArrayDouble *a;
+        DataArrayDoubleTuple *aa;
+        std::vector<double> bb;
+        int sw,nbTuples;
+        const double *originPtr(convertObjToPossibleCpp5_SingleCompo(origin,sw,val,bb,msg,false,nbTuples));
+        self->setOrigin(originPtr,originPtr+nbTuples);
+      }
+      
+      void setDXYZ(PyObject *dxyz) throw(INTERP_KERNEL::Exception)
+      {
+        static const char msg[]="MEDCouplingIMesh::setDXYZ : invalid input 'dxyz' parameter ! integer, float, list/tuple of float, DataArrayDouble or DataArrayDoubleTuple supported !";
+        double val;
+        DataArrayDouble *a;
+        DataArrayDoubleTuple *aa;
+        std::vector<double> bb;
+        int sw,nbTuples;
+        const double *originPtr(convertObjToPossibleCpp5_SingleCompo(dxyz,sw,val,bb,msg,false,nbTuples));
+        self->setDXYZ(originPtr,originPtr+nbTuples);
+      }
+
+      static void CondenseFineToCoarse(const std::vector<int>& coarseSt, const DataArrayDouble *fineDA, PyObject *fineLocInCoarse, const std::vector<int>& facts, DataArrayDouble *coarseDA) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > inp;
+        convertPyToVectorPairInt(fineLocInCoarse,inp);
+        MEDCouplingIMesh::CondenseFineToCoarse(coarseSt,fineDA,inp,facts,coarseDA);
+      }
+
+      static void CondenseFineToCoarseGhost(const std::vector<int>& coarseSt, const DataArrayDouble *fineDA, PyObject *fineLocInCoarse, const std::vector<int>& facts, DataArrayDouble *coarseDA, int ghostSize) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > inp;
+        convertPyToVectorPairInt(fineLocInCoarse,inp);
+        MEDCouplingIMesh::CondenseFineToCoarseGhost(coarseSt,fineDA,inp,facts,coarseDA,ghostSize);
+      }
+
+      static void SpreadCoarseToFine(const DataArrayDouble *coarseDA, const std::vector<int>& coarseSt, DataArrayDouble *fineDA, PyObject *fineLocInCoarse, const std::vector<int>& facts) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > inp;
+        convertPyToVectorPairInt(fineLocInCoarse,inp);
+        MEDCouplingIMesh::SpreadCoarseToFine(coarseDA,coarseSt,fineDA,inp,facts);
+      }
+
+      static void SpreadCoarseToFineGhost(const DataArrayDouble *coarseDA, const std::vector<int>& coarseSt, DataArrayDouble *fineDA, PyObject *fineLocInCoarse, const std::vector<int>& facts, int ghostSize) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > inp;
+        convertPyToVectorPairInt(fineLocInCoarse,inp);
+        MEDCouplingIMesh::SpreadCoarseToFineGhost(coarseDA,coarseSt,fineDA,inp,facts,ghostSize);
+      }
+
+      static void SpreadCoarseToFineGhostZone(const DataArrayDouble *coarseDA, const std::vector<int>& coarseSt, DataArrayDouble *fineDA, PyObject *fineLocInCoarse, const std::vector<int>& facts, int ghostSize) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > inp;
+        convertPyToVectorPairInt(fineLocInCoarse,inp);
+        MEDCouplingIMesh::SpreadCoarseToFineGhostZone(coarseDA,coarseSt,fineDA,inp,facts,ghostSize);
+      }
+
+      std::string __str__() const throw(INTERP_KERNEL::Exception)
+      {
+        return self->simpleRepr();
+      }
+      std::string __repr__() const throw(INTERP_KERNEL::Exception)
+      {
+        std::ostringstream oss;
+        self->reprQuickOverview(oss);
+        return oss.str();
+      }
+    }
+  };
+
+  //== MEDCouplingIMesh End
+
 }
 
 namespace ParaMEDMEM
@@ -2732,9 +3363,9 @@ namespace ParaMEDMEM
     virtual void copyTinyStringsFrom(const MEDCouplingField *other) throw(INTERP_KERNEL::Exception);
     void setMesh(const ParaMEDMEM::MEDCouplingMesh *mesh) throw(INTERP_KERNEL::Exception);
     void setName(const char *name) throw(INTERP_KERNEL::Exception);
-    const char *getDescription() const throw(INTERP_KERNEL::Exception);
+    std::string getDescription() const throw(INTERP_KERNEL::Exception);
     void setDescription(const char *desc) throw(INTERP_KERNEL::Exception);
-    const char *getName() const throw(INTERP_KERNEL::Exception);
+    std::string getName() const throw(INTERP_KERNEL::Exception);
     TypeOfField getTypeOfField() const throw(INTERP_KERNEL::Exception);
     NatureOfField getNature() const throw(INTERP_KERNEL::Exception);
     virtual void setNature(NatureOfField nat) throw(INTERP_KERNEL::Exception);
@@ -2829,31 +3460,12 @@ namespace ParaMEDMEM
         return res;
       }
 
-      DataArrayInt *computeTupleIdsToSelectFromCellIds(PyObject *li) const
+      DataArrayInt *computeTupleIdsToSelectFromCellIds(PyObject *cellIds) const
       {
-        int sw;
-        int pos1;
-        std::vector<int> pos2;
-        DataArrayInt *pos3=0;
-        DataArrayIntTuple *pos4=0;
-        convertObjToPossibleCpp1(li,sw,pos1,pos2,pos3,pos4);
-        switch(sw)
-          {
-          case 1:
-            {
-              return self->computeTupleIdsToSelectFromCellIds(&pos1,&pos1+1);
-            }
-          case 2:
-            {
-              return self->computeTupleIdsToSelectFromCellIds(&pos2[0],&pos2[0]+pos2.size());
-            }
-          case 3:
-            {
-              return self->computeTupleIdsToSelectFromCellIds(pos3->begin(),pos3->end());
-            }
-          default:
-            throw INTERP_KERNEL::Exception("MEDCouplingField::computeTupleIdsToSelectFromCellIds : unexpected input array type recognized !");
-          }
+        int sw,sz(-1);
+        int v0; std::vector<int> v1;
+        const int *cellIdsBg(convertObjToPossibleCpp1_Safe(cellIds,sw,sz,v0,v1));
+        return self->computeTupleIdsToSelectFromCellIds(cellIdsBg,cellIdsBg+sz);
       }
 
       void setGaussLocalizationOnCells(PyObject *li, const std::vector<double>& refCoo,
@@ -2886,6 +3498,15 @@ namespace ParaMEDMEM
         std::copy(tmp.begin(),tmp.end(),ret->getPointer());
         return SWIG_NewPointerObj(SWIG_as_voidptr(ret),SWIGTYPE_p_ParaMEDMEM__DataArrayInt, SWIG_POINTER_OWN | 0 );
       }
+      
+      int getNumberOfTuplesExpectedRegardingCode(PyObject *code, PyObject *idsPerType) const throw(INTERP_KERNEL::Exception)
+      {
+        std::vector<int> inp0;
+        convertPyToNewIntArr4(code,1,3,inp0);
+        std::vector<const DataArrayInt *> inp1;
+        convertFromPyObjVectorOfObj<const ParaMEDMEM::DataArrayInt *>(idsPerType,SWIGTYPE_p_ParaMEDMEM__DataArrayInt,"DataArrayInt",inp1);
+        return self->getNumberOfTuplesExpectedRegardingCode(inp0,inp1);
+      }
     }
   };
   
@@ -2896,7 +3517,6 @@ namespace ParaMEDMEM
     static MEDCouplingFieldTemplate *New(TypeOfField type);
     std::string simpleRepr() const throw(INTERP_KERNEL::Exception);
     std::string advancedRepr() const throw(INTERP_KERNEL::Exception);
-    void updateTime() const;
     %extend
        {
          MEDCouplingFieldTemplate(const MEDCouplingFieldDouble& f) throw(INTERP_KERNEL::Exception)
@@ -2928,18 +3548,20 @@ namespace ParaMEDMEM
   public:
     static MEDCouplingFieldDouble *New(TypeOfField type, TypeOfTimeDiscretization td=ONE_TIME);
     static MEDCouplingFieldDouble *New(const MEDCouplingFieldTemplate& ft, TypeOfTimeDiscretization td=ONE_TIME);
-    void setTimeUnit(const char *unit);
-    const char *getTimeUnit() const;
+    void setTimeUnit(const std::string& unit);
+    std::string getTimeUnit() const;
     void synchronizeTimeWithSupport() throw(INTERP_KERNEL::Exception);
     void copyTinyAttrFrom(const MEDCouplingFieldDouble *other) throw(INTERP_KERNEL::Exception);
     void copyAllTinyAttrFrom(const MEDCouplingFieldDouble *other) throw(INTERP_KERNEL::Exception);
     std::string simpleRepr() const throw(INTERP_KERNEL::Exception);
     std::string advancedRepr() const throw(INTERP_KERNEL::Exception);
-    void writeVTK(const char *fileName) const throw(INTERP_KERNEL::Exception);
+    std::string  writeVTK(const std::string& fileName, bool isBinary=true) const throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble *clone(bool recDeepCpy) const;
     MEDCouplingFieldDouble *cloneWithMesh(bool recDeepCpy) const;
     MEDCouplingFieldDouble *deepCpy() const;
     MEDCouplingFieldDouble *buildNewTimeReprFromThis(TypeOfTimeDiscretization td, bool deepCpy) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldDouble *nodeToCellDiscretization() const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldDouble *cellToNodeDiscretization() const throw(INTERP_KERNEL::Exception);
     TypeOfTimeDiscretization getTimeDiscretization() const throw(INTERP_KERNEL::Exception);
     double getIJ(int tupleId, int compoId) const throw(INTERP_KERNEL::Exception);
     double getIJK(int cellId, int nodeIdInCell, int compoId) const throw(INTERP_KERNEL::Exception);
@@ -2950,6 +3572,7 @@ namespace ParaMEDMEM
     void setStartTime(double val, int iteration, int order) throw(INTERP_KERNEL::Exception);
     void setEndTime(double val, int iteration, int order) throw(INTERP_KERNEL::Exception);
     void applyLin(double a, double b, int compoId) throw(INTERP_KERNEL::Exception);
+    void applyLin(double a, double b) throw(INTERP_KERNEL::Exception);
     int getNumberOfComponents() const throw(INTERP_KERNEL::Exception);
     int getNumberOfTuples() const throw(INTERP_KERNEL::Exception);
     int getNumberOfValues() const throw(INTERP_KERNEL::Exception);
@@ -2961,7 +3584,6 @@ namespace ParaMEDMEM
     void setEndOrder(int order) throw(INTERP_KERNEL::Exception);
     void setTimeValue(double val) throw(INTERP_KERNEL::Exception);
     void setEndTimeValue(double val) throw(INTERP_KERNEL::Exception);
-    void updateTime() const throw(INTERP_KERNEL::Exception);
     void changeUnderlyingMesh(const MEDCouplingMesh *other, int levOfCheck, double precOnMesh, double eps=1e-15) throw(INTERP_KERNEL::Exception);
     void substractInPlaceDM(const MEDCouplingFieldDouble *f, int levOfCheck, double precOnMesh, double eps=1e-15) throw(INTERP_KERNEL::Exception);
     bool mergeNodes(double eps, double epsOnVals=1e-15) throw(INTERP_KERNEL::Exception);
@@ -2981,16 +3603,16 @@ namespace ParaMEDMEM
     void changeNbOfComponents(int newNbOfComp, double dftValue=0.) throw(INTERP_KERNEL::Exception);
     void sortPerTuple(bool asc) throw(INTERP_KERNEL::Exception);
     MEDCouplingFieldDouble &operator=(double value) throw(INTERP_KERNEL::Exception);
-    void fillFromAnalytic(int nbOfComp, const char *func) throw(INTERP_KERNEL::Exception);
-    void fillFromAnalytic2(int nbOfComp, const char *func) throw(INTERP_KERNEL::Exception);
-    void fillFromAnalytic3(int nbOfComp, const std::vector<std::string>& varsOrder, const char *func) throw(INTERP_KERNEL::Exception);
-    void applyFunc(int nbOfComp, const char *func) throw(INTERP_KERNEL::Exception);
-    void applyFunc2(int nbOfComp, const char *func) throw(INTERP_KERNEL::Exception);
-    void applyFunc3(int nbOfComp, const std::vector<std::string>& varsOrder, const char *func) throw(INTERP_KERNEL::Exception);
+    void fillFromAnalytic(int nbOfComp, const std::string& func) throw(INTERP_KERNEL::Exception);
+    void fillFromAnalytic2(int nbOfComp, const std::string& func) throw(INTERP_KERNEL::Exception);
+    void fillFromAnalytic3(int nbOfComp, const std::vector<std::string>& varsOrder, const std::string& func) throw(INTERP_KERNEL::Exception);
+    void applyFunc(int nbOfComp, const std::string& func) throw(INTERP_KERNEL::Exception);
+    void applyFunc2(int nbOfComp, const std::string& func) throw(INTERP_KERNEL::Exception);
+    void applyFunc3(int nbOfComp, const std::vector<std::string>& varsOrder, const std::string& func) throw(INTERP_KERNEL::Exception);
     void applyFunc(int nbOfComp, double val) throw(INTERP_KERNEL::Exception);
-    void applyFunc(const char *func) throw(INTERP_KERNEL::Exception);
-    void applyFuncFast32(const char *func) throw(INTERP_KERNEL::Exception);
-    void applyFuncFast64(const char *func) throw(INTERP_KERNEL::Exception);
+    void applyFunc(const std::string& func) throw(INTERP_KERNEL::Exception);
+    void applyFuncFast32(const std::string& func) throw(INTERP_KERNEL::Exception);
+    void applyFuncFast64(const std::string& func) throw(INTERP_KERNEL::Exception);
     double accumulate(int compId) const throw(INTERP_KERNEL::Exception);
     double getMaxValue() const throw(INTERP_KERNEL::Exception);
     double getMinValue() const throw(INTERP_KERNEL::Exception);
@@ -3115,42 +3737,17 @@ namespace ParaMEDMEM
          return convertDblArrToPyList(res,sz);
        }
 
-      DataArrayDouble *getValueOnMulti(PyObject *li) const throw(INTERP_KERNEL::Exception)
+      DataArrayDouble *getValueOnMulti(PyObject *locs) const throw(INTERP_KERNEL::Exception)
       {
-        void *da=0;
-        int res1=SWIG_ConvertPtr(li,&da,SWIGTYPE_p_ParaMEDMEM__DataArrayDouble, 0 |  0 );
-        if (!SWIG_IsOK(res1))
-          {
-            int size;
-            INTERP_KERNEL::AutoPtr<double> tmp=convertPyToNewDblArr2(li,&size);
-            const MEDCouplingMesh *mesh=self->getMesh();
-            if(!mesh)
-              throw INTERP_KERNEL::Exception("Python wrap MEDCouplingFieldDouble::getValueOnMulti : lying on a null mesh !");
-            int spaceDim=mesh->getSpaceDimension();
-            int nbOfPoints=size/spaceDim;
-            if(size%spaceDim!=0)
-              {
-                throw INTERP_KERNEL::Exception("Invalid list length ! Must be a multiple of self.getMesh().getSpaceDimension() !");
-              }
-            return self->getValueOnMulti(tmp,nbOfPoints);
-          }
-        else
-          {
-            DataArrayDouble *da2=reinterpret_cast< DataArrayDouble * >(da);
-            if(!da2)
-              throw INTERP_KERNEL::Exception("Not null DataArrayDouble instance expected !");
-            da2->checkAllocated();
-            int size=da2->getNumberOfTuples();
-            int nbOfCompo=da2->getNumberOfComponents();
-            const MEDCouplingMesh *mesh=self->getMesh();
-            if(!mesh)
-              throw INTERP_KERNEL::Exception("Python wrap MEDCouplingFieldDouble::getValueOnMulti : lying on a null mesh !");
-            if(nbOfCompo!=mesh->getSpaceDimension())
-              {
-                throw INTERP_KERNEL::Exception("Invalid DataArrayDouble nb of components ! Expected same as self.getMesh().getSpaceDimension() !");
-              }
-            return self->getValueOnMulti(da2->getConstPointer(),size);
-          }
+        const MEDCouplingMesh *mesh(self->getMesh());
+        if(!mesh)
+          throw INTERP_KERNEL::Exception("Python wrap MEDCouplingFieldDouble::getValueOnMulti : lying on a null mesh !");
+        //
+        int sw,nbPts;
+        double v0; ParaMEDMEM::DataArrayDouble *v1(0); ParaMEDMEM::DataArrayDoubleTuple *v2(0); std::vector<double> v3;
+        const double *inp=convertObjToPossibleCpp5_Safe2(locs,sw,v0,v1,v2,v3,"wrap of MEDCouplingFieldDouble::getValueOnMulti",
+                                                         mesh->getSpaceDimension(),true,nbPts);
+        return self->getValueOnMulti(inp,nbPts);
       }
 
       PyObject *getValueOn(PyObject *sl, double time) const throw(INTERP_KERNEL::Exception)
@@ -3174,18 +3771,16 @@ namespace ParaMEDMEM
         return convertDblArrToPyList(res,sz);
       }
 
-      void setValues(PyObject *li) throw(INTERP_KERNEL::Exception)
+      void setValues(PyObject *li, PyObject *nbOfTuples=0, PyObject *nbOfComp=0) throw(INTERP_KERNEL::Exception)
       {
         if(self->getArray()!=0)
-          {
-            int sz;
-            double *tmp=convertPyToNewDblArr2(li,&sz);
-            int nbTuples=self->getArray()->getNumberOfTuples();
-            int nbOfCompo=self->getArray()->getNumberOfComponents();
-            self->getArray()->useArray(tmp,true,CPP_DEALLOC,nbTuples,nbOfCompo);
-          }
+          ParaMEDMEM_DataArrayDouble_setValues__SWIG_0(self->getArray(),li,nbOfTuples,nbOfComp);
         else
-          throw INTERP_KERNEL::Exception("setValuesCpy : field must contain an array behind");
+          {
+            MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> arr=DataArrayDouble::New();
+            ParaMEDMEM_DataArrayDouble_setValues__SWIG_0(arr,li,nbOfTuples,nbOfComp);
+            self->setArray(arr);
+          }
       }
       
       PyObject *getTime() throw(INTERP_KERNEL::Exception)
@@ -3257,41 +3852,34 @@ namespace ParaMEDMEM
       }
       void renumberCells(PyObject *li, bool check=true) throw(INTERP_KERNEL::Exception)
       {
-        void *da=0;
-        int res1=SWIG_ConvertPtr(li,&da,SWIGTYPE_p_ParaMEDMEM__DataArrayInt, 0 |  0 );
-        if (!SWIG_IsOK(res1))
-          {
-            int size;
-            INTERP_KERNEL::AutoPtr<int> tmp=convertPyToNewIntArr2(li,&size);
-            self->renumberCells(tmp,check);
-          }
-        else
-          {
-            DataArrayInt *da2=reinterpret_cast< DataArrayInt * >(da);
-            if(!da2)
-              throw INTERP_KERNEL::Exception("Not null DataArrayInt instance expected !");
-            da2->checkAllocated();
-            self->renumberCells(da2->getConstPointer(),check);
-          }
+        int szArr,sw,iTypppArr;
+        std::vector<int> stdvecTyyppArr;
+        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        self->renumberCells(tmp,check);
       }
+      
+      void renumberCellsWithoutMesh(PyObject *li, bool check=true) throw(INTERP_KERNEL::Exception)
+      {
+        int szArr,sw,iTypppArr;
+        std::vector<int> stdvecTyyppArr;
+        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        self->renumberCellsWithoutMesh(tmp,check);
+      }
+      
       void renumberNodes(PyObject *li, double eps=1e-15) throw(INTERP_KERNEL::Exception)
       {
-        void *da=0;
-        int res1=SWIG_ConvertPtr(li,&da,SWIGTYPE_p_ParaMEDMEM__DataArrayInt, 0 |  0 );
-        if (!SWIG_IsOK(res1))
-          {
-            int size;
-            INTERP_KERNEL::AutoPtr<int> tmp=convertPyToNewIntArr2(li,&size);
-            self->renumberNodes(tmp,eps);
-          }
-        else
-          {
-            DataArrayInt *da2=reinterpret_cast< DataArrayInt * >(da);
-            if(!da2)
-              throw INTERP_KERNEL::Exception("Not null DataArrayInt instance expected !");
-            da2->checkAllocated();
-            self->renumberNodes(da2->getConstPointer(),eps);
-          }
+        int szArr,sw,iTypppArr;
+        std::vector<int> stdvecTyyppArr;
+        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        self->renumberNodes(tmp,eps);
+      }
+
+      void renumberNodesWithoutMesh(PyObject *li, int newNbOfNodes, double eps=1e-15) throw(INTERP_KERNEL::Exception)
+      {
+        int szArr,sw,iTypppArr;
+        std::vector<int> stdvecTyyppArr;
+        const int *tmp=convertObjToPossibleCpp1_Safe(li,sw,szArr,iTypppArr,stdvecTyyppArr);
+        self->renumberNodesWithoutMesh(tmp,newNbOfNodes,eps);
       }
 
       MEDCouplingFieldDouble *buildSubPart(PyObject *li) const throw(INTERP_KERNEL::Exception)
@@ -3382,13 +3970,13 @@ namespace ParaMEDMEM
               case 1:
                 {
                   std::vector<int> v2(1,singleVal);
-                  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> aarr=ret0Arr->keepSelectedComponents(v2);
+                  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> aarr=static_cast<DataArrayDouble *>(ret0Arr->keepSelectedComponents(v2));
                   ret0->setArray(aarr);
                   return ret0.retn();
                 }
               case 2:
                 {
-                  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> aarr=ret0Arr->keepSelectedComponents(multiVal);
+                  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> aarr=static_cast<DataArrayDouble *>(ret0Arr->keepSelectedComponents(multiVal));
                   ret0->setArray(aarr);
                   return ret0.retn();
                 }
@@ -3398,7 +3986,7 @@ namespace ParaMEDMEM
                   std::vector<int> v2(nbOfComp);
                   for(int i=0;i<nbOfComp;i++)
                     v2[i]=slic.first+i*slic.second.second;
-                  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> aarr=ret0Arr->keepSelectedComponents(v2);
+                  MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> aarr=static_cast<DataArrayDouble *>(ret0Arr->keepSelectedComponents(v2));
                   ret0->setArray(aarr);
                   return ret0.retn();
                 }
@@ -4038,11 +4626,11 @@ namespace ParaMEDMEM
         return MEDCouplingFieldDouble::MergeFields(tmp);
       }
 
-      static void WriteVTK(const char *fileName, PyObject *li) throw(INTERP_KERNEL::Exception)
+      static std::string WriteVTK(const char *fileName, PyObject *li, bool isBinary=true) throw(INTERP_KERNEL::Exception)
       {
         std::vector<const MEDCouplingFieldDouble *> tmp;
         convertFromPyObjVectorOfObj<const ParaMEDMEM::MEDCouplingFieldDouble *>(li,SWIGTYPE_p_ParaMEDMEM__MEDCouplingFieldDouble,"MEDCouplingFieldDouble",tmp);
-        MEDCouplingFieldDouble::WriteVTK(fileName,tmp);
+        return MEDCouplingFieldDouble::WriteVTK(fileName,tmp,isBinary);
       }
     }
   };
@@ -4057,7 +4645,6 @@ namespace ParaMEDMEM
     virtual bool isEqual(const MEDCouplingMultiFields *other, double meshPrec, double valsPrec) const;
     virtual bool isEqualWithoutConsideringStr(const MEDCouplingMultiFields *other, double meshPrec, double valsPrec) const;
     virtual void checkCoherency() const throw(INTERP_KERNEL::Exception);
-    void updateTime() const throw(INTERP_KERNEL::Exception);
     %extend
        {
          std::string __str__() const throw(INTERP_KERNEL::Exception)
@@ -4281,6 +4868,523 @@ namespace ParaMEDMEM
            return MEDCouplingFieldOverTime::New(fs);
          }
       }
+  };
+
+  class MEDCouplingCartesianAMRMesh;
+  
+  class MEDCouplingCartesianAMRPatchGen : public RefCountObject
+  {
+  public:
+    int getNumberOfCellsRecursiveWithOverlap() const throw(INTERP_KERNEL::Exception);
+    int getNumberOfCellsRecursiveWithoutOverlap() const throw(INTERP_KERNEL::Exception);
+    int getMaxNumberOfLevelsRelativeToThis() const throw(INTERP_KERNEL::Exception);
+    %extend
+    {
+      MEDCouplingCartesianAMRMeshGen *getMesh() const throw(INTERP_KERNEL::Exception)
+      {
+        MEDCouplingCartesianAMRMeshGen *ret(const_cast<MEDCouplingCartesianAMRMeshGen *>(self->getMesh()));
+        if(ret)
+          ret->incrRef();
+        return ret;
+      }
+    }
+  };
+
+  class MEDCouplingCartesianAMRPatch : public MEDCouplingCartesianAMRPatchGen
+  {
+  public:
+    int getNumberOfOverlapedCellsForFather() const throw(INTERP_KERNEL::Exception);
+    bool isInMyNeighborhood(const MEDCouplingCartesianAMRPatch *other, int ghostLev) const throw(INTERP_KERNEL::Exception);
+    std::vector<int> computeCellGridSt() const throw(INTERP_KERNEL::Exception);
+    %extend
+    {
+      PyObject *getBLTRRange() const throw(INTERP_KERNEL::Exception)
+      {
+        const std::vector< std::pair<int,int> >& ret(self->getBLTRRange());
+        return convertFromVectorPairInt(ret);
+      }
+
+      PyObject *getBLTRRangeRelativeToGF() const throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > ret(self->getBLTRRangeRelativeToGF());
+        return convertFromVectorPairInt(ret);
+      }
+
+      void addPatch(PyObject *bottomLeftTopRight, const std::vector<int>& factors) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > inp;
+        convertPyToVectorPairInt(bottomLeftTopRight,inp);
+        self->addPatch(inp,factors);
+      }
+
+      MEDCouplingCartesianAMRPatch *__getitem__(int patchId) const throw(INTERP_KERNEL::Exception)
+      {
+        const MEDCouplingCartesianAMRMeshGen *mesh(self->getMesh());
+        if(!mesh)
+          throw INTERP_KERNEL::Exception("wrap MEDCouplingCartesianAMRPatchGen.__getitem__ : no underlying mesh !");
+        if(patchId==mesh->getNumberOfPatches())
+          {
+            std::ostringstream oss;
+            oss << "Requesting for patchId " << patchId << " having only " << mesh->getNumberOfPatches() << " patches !";
+            PyErr_SetString(PyExc_StopIteration,oss.str().c_str());
+            return 0;
+          }
+        MEDCouplingCartesianAMRPatch *ret(const_cast<MEDCouplingCartesianAMRPatch *>(mesh->getPatch(patchId)));
+        if(ret)
+          ret->incrRef();
+        return ret;
+      }
+
+      void __delitem__(int patchId) throw(INTERP_KERNEL::Exception)
+      {
+        MEDCouplingCartesianAMRMeshGen *mesh(const_cast<MEDCouplingCartesianAMRMeshGen *>(self->getMesh()));
+        if(!mesh)
+          throw INTERP_KERNEL::Exception("wrap MEDCouplingCartesianAMRPatch.__delitem__ : no underlying mesh !");
+        mesh->removePatch(patchId);
+      }
+
+      int __len__() const throw(INTERP_KERNEL::Exception)
+      {
+        const MEDCouplingCartesianAMRMeshGen *mesh(self->getMesh());
+        if(!mesh)
+          throw INTERP_KERNEL::Exception("wrap MEDCouplingCartesianAMRPatch.__len__ : no underlying mesh !");
+        return mesh->getNumberOfPatches();
+      }
+    }
+  };
+
+  class MEDCouplingCartesianAMRPatchGF : public MEDCouplingCartesianAMRPatchGen
+  {
+  };
+  
+  class MEDCouplingCartesianAMRMeshGen : public RefCountObject, public TimeLabel
+  {
+  public:
+    int getAbsoluteLevel() const throw(INTERP_KERNEL::Exception);
+    int getAbsoluteLevelRelativeTo(const MEDCouplingCartesianAMRMeshGen *ref) const throw(INTERP_KERNEL::Exception);
+    std::vector<int> getPositionRelativeTo(const MEDCouplingCartesianAMRMeshGen *ref) const throw(INTERP_KERNEL::Exception);
+    int getSpaceDimension() const throw(INTERP_KERNEL::Exception);
+    const std::vector<int>& getFactors() const throw(INTERP_KERNEL::Exception);
+    void setFactors(const std::vector<int>& newFactors) throw(INTERP_KERNEL::Exception);
+    int getMaxNumberOfLevelsRelativeToThis() const throw(INTERP_KERNEL::Exception);
+    int getNumberOfCellsAtCurrentLevel() const throw(INTERP_KERNEL::Exception);
+    int getNumberOfCellsAtCurrentLevelGhost(int ghostLev) const throw(INTERP_KERNEL::Exception);
+    int getNumberOfCellsRecursiveWithOverlap() const throw(INTERP_KERNEL::Exception);
+    int getNumberOfCellsRecursiveWithoutOverlap() const throw(INTERP_KERNEL::Exception);
+    bool isPatchInNeighborhoodOf(int patchId1, int patchId2, int ghostLev) const throw(INTERP_KERNEL::Exception);
+   virtual void detachFromFather() throw(INTERP_KERNEL::Exception);
+    //
+    int getNumberOfPatches() const throw(INTERP_KERNEL::Exception);
+    int getPatchIdFromChildMesh(const MEDCouplingCartesianAMRMeshGen *mesh) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingUMesh *buildUnstructured() const throw(INTERP_KERNEL::Exception);
+    DataArrayDouble *extractGhostFrom(int ghostSz, const DataArrayDouble *arr) const throw(INTERP_KERNEL::Exception);
+    std::vector<int> getPatchIdsInTheNeighborhoodOf(int patchId, int ghostLev) const throw(INTERP_KERNEL::Exception);
+    MEDCoupling1SGTUMesh *buildMeshFromPatchEnvelop() const throw(INTERP_KERNEL::Exception);
+    MEDCoupling1SGTUMesh *buildMeshOfDirectChildrenOnly() const throw(INTERP_KERNEL::Exception);
+    void removeAllPatches() throw(INTERP_KERNEL::Exception);
+    void removePatch(int patchId) throw(INTERP_KERNEL::Exception);
+    void createPatchesFromCriterion(const INTERP_KERNEL::BoxSplittingOptions& bso, const DataArrayByte *criterion, const std::vector<int>& factors) throw(INTERP_KERNEL::Exception);
+    void createPatchesFromCriterion(const INTERP_KERNEL::BoxSplittingOptions& bso, const DataArrayDouble *criterion, const std::vector<int>& factors, double eps) throw(INTERP_KERNEL::Exception);
+    DataArrayDouble *createCellFieldOnPatch(int patchId, const DataArrayDouble *cellFieldOnThis) const throw(INTERP_KERNEL::Exception);
+    void fillCellFieldOnPatch(int patchId, const DataArrayDouble *cellFieldOnThis, DataArrayDouble *cellFieldOnPatch, bool isConservative=true) const throw(INTERP_KERNEL::Exception);
+    void fillCellFieldOnPatchGhost(int patchId, const DataArrayDouble *cellFieldOnThis, DataArrayDouble *cellFieldOnPatch, int ghostLev, bool isConservative=true) const throw(INTERP_KERNEL::Exception);
+    void fillCellFieldOnPatchOnlyOnGhostZone(int patchId, const DataArrayDouble *cellFieldOnThis, DataArrayDouble *cellFieldOnPatch, int ghostLev) const throw(INTERP_KERNEL::Exception);
+    void fillCellFieldOnPatchOnlyOnGhostZoneWith(int ghostLev, const MEDCouplingCartesianAMRPatch *patchToBeModified, const MEDCouplingCartesianAMRPatch *neighborPatch, DataArrayDouble *cellFieldOnPatch, const DataArrayDouble *cellFieldNeighbor) const;
+    void fillCellFieldComingFromPatch(int patchId, const DataArrayDouble *cellFieldOnPatch, DataArrayDouble *cellFieldOnThis, bool isConservative=true) const throw(INTERP_KERNEL::Exception);
+    void fillCellFieldComingFromPatchGhost(int patchId, const DataArrayDouble *cellFieldOnPatch, DataArrayDouble *cellFieldOnThis, int ghostLev, bool isConservative=true) const throw(INTERP_KERNEL::Exception);
+    DataArrayInt *findPatchesInTheNeighborhoodOf(int patchId, int ghostLev) const throw(INTERP_KERNEL::Exception);
+    std::string buildPythonDumpOfThis() const throw(INTERP_KERNEL::Exception);
+    %extend
+    {
+      void addPatch(PyObject *bottomLeftTopRight, const std::vector<int>& factors) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<int,int> > inp;
+        convertPyToVectorPairInt(bottomLeftTopRight,inp);
+        self->addPatch(inp,factors);
+      }
+
+      PyObject *getPatches() const throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< const MEDCouplingCartesianAMRPatch *> ps(self->getPatches());
+        int sz(ps.size());
+        PyObject *ret = PyList_New(sz);
+        for(int i=0;i<sz;i++)
+          {
+            MEDCouplingCartesianAMRPatch *elt(const_cast<MEDCouplingCartesianAMRPatch *>(ps[i]));
+            if(elt)
+              elt->incrRef();
+            PyList_SetItem(ret,i,convertCartesianAMRPatch(elt, SWIG_POINTER_OWN | 0 ));
+          }
+        return ret;
+      }
+
+      // agy : don't know why typemap fails here ??? let it in the extend section
+      PyObject *deepCpy(MEDCouplingCartesianAMRMeshGen *father) const throw(INTERP_KERNEL::Exception)
+      {
+        return convertCartesianAMRMesh(self->deepCpy(father), SWIG_POINTER_OWN | 0 );
+      }
+
+      MEDCouplingCartesianAMRPatch *getPatchAtPosition(const std::vector<int>& pos) const throw(INTERP_KERNEL::Exception)
+      {
+        const MEDCouplingCartesianAMRPatch *ret(self->getPatchAtPosition(pos));
+        MEDCouplingCartesianAMRPatch *ret2(const_cast<MEDCouplingCartesianAMRPatch *>(ret));
+        if(ret2)
+          ret2->incrRef();
+        return ret2;
+      }
+
+      MEDCouplingCartesianAMRMeshGen *getMeshAtPosition(const std::vector<int>& pos) const throw(INTERP_KERNEL::Exception)
+      {
+        const MEDCouplingCartesianAMRMeshGen *ret(self->getMeshAtPosition(pos));
+        MEDCouplingCartesianAMRMeshGen *ret2(const_cast<MEDCouplingCartesianAMRMeshGen *>(ret));
+        if(ret2)
+          ret2->incrRef();
+        return ret2;
+      }
+
+      virtual PyObject *positionRelativeToGodFather() const throw(INTERP_KERNEL::Exception)
+      {
+        std::vector<int> out1;
+        std::vector< std::pair<int,int> > out0(self->positionRelativeToGodFather(out1));
+        PyObject *ret(PyTuple_New(2));
+        PyTuple_SetItem(ret,0,convertFromVectorPairInt(out0));
+        PyTuple_SetItem(ret,1,convertIntArrToPyList2(out1));
+        return ret;
+      }
+
+      virtual PyObject *retrieveGridsAt(int absoluteLev) const throw(INTERP_KERNEL::Exception)
+      {
+        std::vector<MEDCouplingCartesianAMRPatchGen *> ps(self->retrieveGridsAt(absoluteLev));
+        int sz(ps.size());
+        PyObject *ret = PyList_New(sz);
+        for(int i=0;i<sz;i++)
+          PyList_SetItem(ret,i,convertCartesianAMRPatch(ps[i], SWIG_POINTER_OWN | 0 ));
+        return ret;
+      }
+
+      MEDCouplingFieldDouble *buildCellFieldOnRecurseWithoutOverlapWithoutGhost(int ghostSz, PyObject *recurseArrs) const
+      {
+        std::vector<const DataArrayDouble *> inp;
+        convertFromPyObjVectorOfObj<const ParaMEDMEM::DataArrayDouble *>(recurseArrs,SWIGTYPE_p_ParaMEDMEM__DataArrayDouble,"DataArrayDouble",inp);
+        return self->buildCellFieldOnRecurseWithoutOverlapWithoutGhost(ghostSz,inp);
+      }
+
+      virtual MEDCouplingCartesianAMRMeshGen *getFather() const throw(INTERP_KERNEL::Exception)
+      {
+        MEDCouplingCartesianAMRMeshGen *ret(const_cast<MEDCouplingCartesianAMRMeshGen *>(self->getFather()));
+        if(ret)
+          ret->incrRef();
+        return ret;
+      }
+      
+      virtual MEDCouplingCartesianAMRMeshGen *getGodFather() const throw(INTERP_KERNEL::Exception)
+      {
+        MEDCouplingCartesianAMRMeshGen *ret(const_cast<MEDCouplingCartesianAMRMeshGen *>(self->getGodFather()));
+        if(ret)
+          ret->incrRef();
+        return ret;
+      }
+
+      MEDCouplingCartesianAMRPatch *getPatch(int patchId) const throw(INTERP_KERNEL::Exception)
+      {
+        MEDCouplingCartesianAMRPatch *ret(const_cast<MEDCouplingCartesianAMRPatch *>(self->getPatch(patchId)));
+        if(ret)
+          ret->incrRef();
+        return ret;
+      }
+
+      MEDCouplingIMesh *getImageMesh() const throw(INTERP_KERNEL::Exception)
+      {
+        const MEDCouplingIMesh *ret(self->getImageMesh());
+        if(ret)
+          ret->incrRef();
+        return const_cast<MEDCouplingIMesh *>(ret);
+      }
+
+      MEDCouplingCartesianAMRPatch *__getitem__(int patchId) const throw(INTERP_KERNEL::Exception)
+      {
+        if(patchId==self->getNumberOfPatches())
+          {
+            std::ostringstream oss;
+            oss << "Requesting for patchId " << patchId << " having only " << self->getNumberOfPatches() << " patches !";
+            PyErr_SetString(PyExc_StopIteration,oss.str().c_str());
+            return 0;
+          }
+        MEDCouplingCartesianAMRPatch *ret(const_cast<MEDCouplingCartesianAMRPatch *>(self->getPatch(patchId)));
+        if(ret)
+          ret->incrRef();
+        return ret;
+      }
+
+      void fillCellFieldOnPatchGhostAdv(int patchId, const DataArrayDouble *cellFieldOnThis, int ghostLev, PyObject *arrsOnPatches, bool isConservative=true) const throw(INTERP_KERNEL::Exception)
+      {
+        std::vector<const ParaMEDMEM::DataArrayDouble *> arrsOnPatches2;
+        convertFromPyObjVectorOfObj<const ParaMEDMEM::DataArrayDouble *>(arrsOnPatches,SWIGTYPE_p_ParaMEDMEM__DataArrayDouble,"DataArrayDouble",arrsOnPatches2);
+        self->fillCellFieldOnPatchGhostAdv(patchId,cellFieldOnThis,ghostLev,arrsOnPatches2,isConservative);
+      }
+
+      void fillCellFieldOnPatchOnlyGhostAdv(int patchId, int ghostLev, PyObject *arrsOnPatches) const
+      {
+        std::vector<const ParaMEDMEM::DataArrayDouble *> arrsOnPatches2;
+        convertFromPyObjVectorOfObj<const ParaMEDMEM::DataArrayDouble *>(arrsOnPatches,SWIGTYPE_p_ParaMEDMEM__DataArrayDouble,"DataArrayDouble",arrsOnPatches2);
+        self->fillCellFieldOnPatchOnlyGhostAdv(patchId,ghostLev,arrsOnPatches2);
+      }
+
+      void __delitem__(int patchId) throw(INTERP_KERNEL::Exception)
+      {
+        self->removePatch(patchId);
+      }
+
+      int __len__() const throw(INTERP_KERNEL::Exception)
+      {
+        return self->getNumberOfPatches();
+      }
+    }
+  };
+
+  class MEDCouplingCartesianAMRMeshSub : public MEDCouplingCartesianAMRMeshGen
+  {
+  };
+
+  class MEDCouplingCartesianAMRMesh : public MEDCouplingCartesianAMRMeshGen
+  {
+  public:
+    static MEDCouplingCartesianAMRMesh *New(MEDCouplingIMesh *mesh) throw(INTERP_KERNEL::Exception);
+    %extend
+    {
+      static MEDCouplingCartesianAMRMesh *New(const std::string& meshName, int spaceDim, PyObject *nodeStrct, PyObject *origin, PyObject *dxyz) throw(INTERP_KERNEL::Exception)
+      {
+        static const char msg0[]="MEDCouplingCartesianAMRMesh::New : error on 'origin' parameter !";
+        static const char msg1[]="MEDCouplingCartesianAMRMesh::New : error on 'dxyz' parameter !";
+        const int *nodeStrctPtr(0);
+        const double *originPtr(0),*dxyzPtr(0);
+        int sw,sz,val0;
+        std::vector<int> bb0;
+        nodeStrctPtr=convertObjToPossibleCpp1_Safe(nodeStrct,sw,sz,val0,bb0);
+        //
+        double val,val2;
+        std::vector<double> bb,bb2;
+        int sz1,sz2;
+        originPtr=convertObjToPossibleCpp5_SingleCompo(origin,sw,val,bb,msg0,false,sz1);
+        dxyzPtr=convertObjToPossibleCpp5_SingleCompo(dxyz,sw,val2,bb2,msg1,false,sz2);
+        //
+        return MEDCouplingCartesianAMRMesh::New(meshName,spaceDim,nodeStrctPtr,nodeStrctPtr+sz,originPtr,originPtr+sz1,dxyzPtr,dxyzPtr+sz2);
+      }
+
+      void createPatchesFromCriterionML(PyObject *bso, const DataArrayDouble *criterion, PyObject *factors, double eps) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector<const INTERP_KERNEL::BoxSplittingOptions *> inp0;
+        convertFromPyObjVectorOfObj<const INTERP_KERNEL::BoxSplittingOptions *>(bso,SWIGTYPE_p_INTERP_KERNEL__BoxSplittingOptions,"BoxSplittingOptions",inp0);
+        std::vector< std::vector<int> > inp2;
+        convertPyToVectorOfVectorOfInt(factors,inp2);
+        self->createPatchesFromCriterionML(inp0,criterion,inp2,eps);
+      }
+
+      MEDCouplingCartesianAMRMesh(const std::string& meshName, int spaceDim, PyObject *nodeStrct, PyObject *origin, PyObject *dxyz) throw(INTERP_KERNEL::Exception)
+      {
+        return ParaMEDMEM_MEDCouplingCartesianAMRMesh_New__SWIG_1(meshName,spaceDim,nodeStrct,origin,dxyz);
+      }
+
+      MEDCouplingCartesianAMRMesh(MEDCouplingIMesh *mesh) throw(INTERP_KERNEL::Exception)
+      {
+        return MEDCouplingCartesianAMRMesh::New(mesh);
+      }
+    }
+  };
+
+  class MEDCouplingDataForGodFather : public RefCountObject
+  {
+  public:
+    virtual void synchronizeFineToCoarse() throw(INTERP_KERNEL::Exception);
+    virtual void synchronizeFineToCoarseBetween(int fromLev, int toLev) throw(INTERP_KERNEL::Exception);
+    virtual void synchronizeCoarseToFine() throw(INTERP_KERNEL::Exception);
+    virtual void synchronizeCoarseToFineBetween(int fromLev, int toLev) throw(INTERP_KERNEL::Exception);
+    virtual void synchronizeAllGhostZones() throw(INTERP_KERNEL::Exception);
+    virtual void synchronizeAllGhostZonesOfDirectChidrenOf(const MEDCouplingCartesianAMRMeshGen *mesh) throw(INTERP_KERNEL::Exception);
+    virtual void synchronizeAllGhostZonesAtASpecifiedLevel(int level) throw(INTERP_KERNEL::Exception);
+    virtual void synchronizeAllGhostZonesAtASpecifiedLevelUsingOnlyFather(int level) throw(INTERP_KERNEL::Exception);
+    virtual void alloc() throw(INTERP_KERNEL::Exception);
+    virtual void dealloc() throw(INTERP_KERNEL::Exception);
+    %extend
+    {
+      MEDCouplingCartesianAMRMesh *getMyGodFather() throw(INTERP_KERNEL::Exception)
+      {
+        MEDCouplingCartesianAMRMesh *ret(self->getMyGodFather());
+        if(ret)
+          ret->incrRef();
+        return ret;
+      }
+    }
+  };
+  
+  class MEDCouplingAMRAttribute : public MEDCouplingDataForGodFather, public TimeLabel
+  {
+  public:
+    int getNumberOfLevels() const throw(INTERP_KERNEL::Exception);
+    MEDCouplingAMRAttribute *deepCpy() const throw(INTERP_KERNEL::Exception);
+    MEDCouplingAMRAttribute *deepCpyWithoutGodFather() const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldDouble *buildCellFieldOnRecurseWithoutOverlapWithoutGhost(MEDCouplingCartesianAMRMeshGen *mesh, const std::string& fieldName) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldDouble *buildCellFieldOnWithGhost(MEDCouplingCartesianAMRMeshGen *mesh, const std::string& fieldName) const throw(INTERP_KERNEL::Exception);
+    MEDCouplingFieldDouble *buildCellFieldOnWithoutGhost(MEDCouplingCartesianAMRMeshGen *mesh, const std::string& fieldName) const throw(INTERP_KERNEL::Exception);
+    bool changeGodFather(MEDCouplingCartesianAMRMesh *gf) throw(INTERP_KERNEL::Exception);
+    MEDCouplingAMRAttribute *projectTo(MEDCouplingCartesianAMRMesh *targetGF) const throw(INTERP_KERNEL::Exception);
+    std::string writeVTHB(const std::string& fileName) const throw(INTERP_KERNEL::Exception);
+    %extend
+    {
+      static MEDCouplingAMRAttribute *New(MEDCouplingCartesianAMRMesh *gf, PyObject *fieldNames, int ghostLev) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::pair<std::string,int> > fieldNamesCpp0;
+        std::vector< std::pair<std::string, std::vector<std::string> > > fieldNamesCpp1;
+        MEDCouplingAMRAttribute *ret(0);
+        try
+          {
+            convertPyToVectorPairStringInt(fieldNames,fieldNamesCpp0);
+            ret=MEDCouplingAMRAttribute::New(gf,fieldNamesCpp0,ghostLev);
+          }
+        catch(INTERP_KERNEL::Exception&)
+          {
+            convertPyToVectorPairStringVecString(fieldNames,fieldNamesCpp1);
+            ret=MEDCouplingAMRAttribute::New(gf,fieldNamesCpp1,ghostLev);
+          }
+        return ret;
+      }
+
+      MEDCouplingAMRAttribute(MEDCouplingCartesianAMRMesh *gf, PyObject *fieldNames, int ghostLev) throw(INTERP_KERNEL::Exception)
+      {
+        return ParaMEDMEM_MEDCouplingAMRAttribute_New(gf,fieldNames,ghostLev);
+      }
+
+      DataArrayDouble *getFieldOn(MEDCouplingCartesianAMRMeshGen *mesh, const std::string& fieldName) const throw(INTERP_KERNEL::Exception)
+      {
+        const DataArrayDouble *ret(self->getFieldOn(mesh,fieldName));
+        DataArrayDouble *ret2(const_cast<DataArrayDouble *>(ret));
+        if(ret2)
+          ret2->incrRef();
+        return ret2;
+      }
+
+      void spillInfoOnComponents(PyObject *compNames) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector< std::vector<std::string> > compNamesCpp;
+        convertPyToVectorOfVectorOfString(compNames,compNamesCpp);
+        self->spillInfoOnComponents(compNamesCpp);
+      }
+
+      void spillNatures(PyObject *nfs) throw(INTERP_KERNEL::Exception)
+      {
+        std::vector<int> inp0;
+        if(!fillIntVector(nfs,inp0))
+          throw INTERP_KERNEL::Exception("wrap of MEDCouplingAMRAttribute::spillNatures : vector of NatureOfField enum expected !");
+        std::size_t sz(inp0.size());
+        std::vector<NatureOfField> inp00(sz);
+        for(std::size_t i=0;i<sz;i++)
+          inp00[i]=(NatureOfField)inp0[i];
+        self->spillNatures(inp00);
+      }
+      
+      PyObject *retrieveFieldsOn(MEDCouplingCartesianAMRMeshGen *mesh) const throw(INTERP_KERNEL::Exception)
+      {
+        std::vector<DataArrayDouble *> ret(self->retrieveFieldsOn(mesh));
+        int sz((int)ret.size());
+        PyObject *retPy(PyList_New(sz));
+        for(int i=0;i<sz;i++)
+          PyList_SetItem(retPy,i,SWIG_NewPointerObj(SWIG_as_voidptr(ret[i]),SWIGTYPE_p_ParaMEDMEM__DataArrayDouble, SWIG_POINTER_OWN | 0 ));
+        return retPy;
+      }
+    }
+  };
+
+  class DenseMatrix : public RefCountObject, public TimeLabel
+  {
+  public:
+    static DenseMatrix *New(int nbRows, int nbCols) throw(INTERP_KERNEL::Exception);
+    static DenseMatrix *New(DataArrayDouble *array, int nbRows, int nbCols) throw(INTERP_KERNEL::Exception);
+    DenseMatrix *deepCpy() const throw(INTERP_KERNEL::Exception);
+    DenseMatrix *shallowCpy() const throw(INTERP_KERNEL::Exception);
+    //
+    int getNumberOfRows() const throw(INTERP_KERNEL::Exception);
+    int getNumberOfCols() const throw(INTERP_KERNEL::Exception);
+    int getNbOfElems() const throw(INTERP_KERNEL::Exception);
+    void reBuild(DataArrayDouble *array, int nbRows=-1, int nbCols=-1) throw(INTERP_KERNEL::Exception);
+    void reShape(int nbRows, int nbCols) throw(INTERP_KERNEL::Exception);
+    void transpose() throw(INTERP_KERNEL::Exception);
+    //
+    bool isEqual(const DenseMatrix& other, double eps) const throw(INTERP_KERNEL::Exception);
+    DataArrayDouble *matVecMult(const DataArrayDouble *vec) const throw(INTERP_KERNEL::Exception);
+    static DataArrayDouble *MatVecMult(const DenseMatrix *mat, const DataArrayDouble *vec) throw(INTERP_KERNEL::Exception);
+    %extend
+    {
+      DenseMatrix(int nbRows, int nbCols) throw(INTERP_KERNEL::Exception)
+      {
+        return DenseMatrix::New(nbRows,nbCols);
+      }
+
+      DenseMatrix(DataArrayDouble *array, int nbRows, int nbCols) throw(INTERP_KERNEL::Exception)
+      {
+        return DenseMatrix::New(array,nbRows,nbCols);
+      }
+
+      PyObject *isEqualIfNotWhy(const DenseMatrix& other, double eps) const throw(INTERP_KERNEL::Exception)
+      {
+        std::string ret1;
+        bool ret0=self->isEqualIfNotWhy(other,eps,ret1);
+        PyObject *ret=PyTuple_New(2);
+        PyObject *ret0Py=ret0?Py_True:Py_False;
+        Py_XINCREF(ret0Py);
+        PyTuple_SetItem(ret,0,ret0Py);
+        PyTuple_SetItem(ret,1,PyString_FromString(ret1.c_str()));
+        return ret;
+      }
+
+      DataArrayDouble *getData() throw(INTERP_KERNEL::Exception)
+      {
+        DataArrayDouble *ret(self->getData());
+        if(ret)
+          ret->incrRef();
+        return ret;
+      }
+
+      DenseMatrix *__add__(const DenseMatrix *other) throw(INTERP_KERNEL::Exception)
+      {
+        return ParaMEDMEM::DenseMatrix::Add(self,other);
+      }
+
+      DenseMatrix *__sub__(const DenseMatrix *other) throw(INTERP_KERNEL::Exception)
+      {
+        return ParaMEDMEM::DenseMatrix::Substract(self,other);
+      }
+
+      DenseMatrix *__mul__(const DenseMatrix *other) throw(INTERP_KERNEL::Exception)
+      {
+        return ParaMEDMEM::DenseMatrix::Multiply(self,other);
+      }
+
+      DenseMatrix *__mul__(const DataArrayDouble *other) throw(INTERP_KERNEL::Exception)
+      {
+        return ParaMEDMEM::DenseMatrix::Multiply(self,other);
+      }
+
+      PyObject *___iadd___(PyObject *trueSelf, const DenseMatrix *other) throw(INTERP_KERNEL::Exception)
+      {
+        self->addEqual(other);
+        Py_XINCREF(trueSelf);
+        return trueSelf;
+      }
+
+      PyObject *___isub___(PyObject *trueSelf, const DenseMatrix *other) throw(INTERP_KERNEL::Exception)
+      {
+        self->substractEqual(other);
+        Py_XINCREF(trueSelf);
+        return trueSelf;
+      }
+#ifdef WITH_NUMPY
+      PyObject *toNumPyMatrix() throw(INTERP_KERNEL::Exception) // not const. It is not a bug !
+      {
+        PyObject *obj(ToNumPyArrayUnderground<DataArrayDouble,double>(self->getData(),NPY_DOUBLE,"DataArrayDouble",self->getNumberOfRows(),self->getNumberOfCols()));
+        return obj;
+      }
+#endif
+    }
   };
 }
 

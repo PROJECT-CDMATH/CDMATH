@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -19,7 +19,7 @@
  * - Nom du fichier : test28.c
  *
  * - Description : lecture d'un maillage structure (grille cartesienne |
- *                 grille polaire) dans le fichier test27.med
+ *                 grille curvilinéaire) dans le fichier test27.med
  *
  *****************************************************************************/
 

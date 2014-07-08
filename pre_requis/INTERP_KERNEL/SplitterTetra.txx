@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -36,32 +36,10 @@
 #include <sstream>
 #include <vector>
 
-/// Smallest volume of the intersecting elements in the transformed space that will be returned as non-zero. 
-/// Since the scale is always the same in the transformed space (the target tetrahedron is unitary), this number is independent of the scale of the meshes.
-#define SPARSE_TRUNCATION_LIMIT 1.0e-14
-
 namespace INTERP_KERNEL
 {
-  
-  /**
-   * Constructor creating object from target cell global number 
-   * 
-   * @param srcMesh     mesh containing the source elements
-   * @param targetMesh  mesh containing the target elements
-   * @param targetCell  global number of the target cell
-   *
-   */
-  /*template<class MyMeshType>
-  SplitterTetra<MyMeshType>::SplitterTetra(const MyMeshType& srcMesh, const MyMeshType& targetMesh, typename MyMeshType::MyConnType targetCell)
-    : _src_mesh(srcMesh), _t(0)
-  {   
-    // get array of corners of target tetraedron
-    const double* tetraCorners[4];
-    for(int i = 0 ; i < 4 ; ++i)
-      tetraCorners[i] = getCoordsOfNode(i, targetCell, targetMesh);
-    // create the affine transform
-    createAffineTransform(tetraCorners);
-    }*/
+  template<class MyMeshType> 
+  const double SplitterTetra<MyMeshType>::SPARSE_TRUNCATION_LIMIT=1.0e-14;
 
   /*!
    * output is expected to be allocated with 24*sizeof(void*) in order to store the 24 tetras.
@@ -81,6 +59,13 @@ namespace INTERP_KERNEL
   }
 
   /**
+   * SplitterTetra class computes for a list of cell ids of a given mesh \a srcMesh (badly named) the intersection with a 
+   * single TETRA4 cell given by \a tetraCorners (of length 4) and \a nodesId (of length 4 too). \a nodedIds is given only to establish
+   * if a partial computation of a triangle has already been performed (to increase performance).
+   *
+   * The \a srcMesh can contain polyhedron cells.
+   * 
+   * 
    * Constructor creating object from the four corners of the tetrahedron.
    *
    * @param srcMesh       mesh containing the source elements
@@ -97,23 +82,35 @@ namespace INTERP_KERNEL
     _coords[6]=tetraCorners[2][0]; _coords[7]=tetraCorners[2][1]; _coords[8]=tetraCorners[2][2];
     _coords[9]=tetraCorners[3][0]; _coords[10]=tetraCorners[3][1]; _coords[11]=tetraCorners[3][2];
     // create the affine transform
-    createAffineTransform(tetraCorners);
+    _t=new TetraAffineTransform(_coords);
   }
 
-  /*!
-   * This contructor is used to build part of 1/24th dual cell of tetraCorners.
-   * @param i is in 0..23 included.
-   * @param nodeId is the id of first node of this in target mesh in C mode.
+  /**
+   * SplitterTetra class computes for a list of cell ids of a given mesh \a srcMesh (badly named) the intersection with a 
+   * single TETRA4 cell given by \a tetraCorners (of length 4) and \a nodesId (of length 4 too). \a nodedIds is given only to establish
+   * if a partial computation of a triangle has already been performed (to increase performance).
+   *
+   * The \a srcMesh can contain polyhedron cells.
+   * 
+   * 
+   * Constructor creating object from the four corners of the tetrahedron.
+   *
+   * \param [in] srcMesh       mesh containing the source elements
+   * \param [in] tetraCorners  array 4*3 doubles containing corners of input tetrahedron (P0X,P0Y,P0Y,P1X,P1Y,P1Z,P2X,P2Y,P2Z,P3X,P3Y,P3Z).
    */
-  /*template<class MyMeshType>
-  SplitterTetra<MyMeshType>::SplitterTetra(const MyMeshType& srcMesh, const double** tetraCorners, int i, typename MyMeshType::MyConnType nodeId)
-    : _t(0), _src_mesh(srcMesh), _conn(nodeId)
+  template<class MyMeshType>
+  SplitterTetra<MyMeshType>::SplitterTetra(const MyMeshType& srcMesh, const double tetraCorners[12], const int *conn): _t(0),_src_mesh(srcMesh)
   {
-    double *newCoords[4];
-    splitMySelfForDual(tetraCorners,newCoords,i);
-    createAffineTransform(newCoords);
-    }*/
-
+    if(!conn)
+      { _conn[0]=0; _conn[1]=1; _conn[2]=2; _conn[3]=3; }
+    else
+      { _conn[0]=conn[0]; _conn[1]=conn[1]; _conn[2]=conn[2]; _conn[3]=conn[3]; }
+    _coords[0]=tetraCorners[0]; _coords[1]=tetraCorners[1]; _coords[2]=tetraCorners[2]; _coords[3]=tetraCorners[3]; _coords[4]=tetraCorners[4]; _coords[5]=tetraCorners[5];
+    _coords[6]=tetraCorners[6]; _coords[7]=tetraCorners[7]; _coords[8]=tetraCorners[8]; _coords[9]=tetraCorners[9]; _coords[10]=tetraCorners[10]; _coords[11]=tetraCorners[11];
+    // create the affine transform
+    _t=new TetraAffineTransform(_coords);
+  }
+  
   /**
    * Destructor
    *
@@ -213,8 +210,7 @@ namespace INTERP_KERNEL
             //std::cout << std::endl << "*** " << globalNodeNum << std::endl;
             calculateNode(globalNodeNum);
           }
-
-        checkIsOutside(_nodes[globalNodeNum], isOutside);       
+        CheckIsOutside(_nodes[globalNodeNum], isOutside);       
       }
 
     // halfspace filtering check
@@ -566,10 +562,7 @@ namespace INTERP_KERNEL
               counter++;
             }
         }
-      if (counter == 3)
-        return true;
-      else
-        return false;
+      return counter == 3;
   }
 
   /**
@@ -588,7 +581,6 @@ namespace INTERP_KERNEL
    * @param polyType type of the polygon source face
    * @param polyNodesNbr number of the nodes of the polygon source face
    * @param polyNodes numbers of the nodes of the polygon source face
-   * @param polyCoords coordinates of the nodes of the polygon source face
    * @param polyCoords coordinates of the nodes of the polygon source face
    * @param dimCaracteristic characteristic size of the meshes containing the triangles
    * @param precision precision for double float data used for comparison
@@ -629,14 +621,11 @@ namespace INTERP_KERNEL
         const int globalNodeNum = polyNodes[i];
         if(_nodes.find(globalNodeNum) == _nodes.end())
           {
-            //for(HashMap< int , double* >::iterator iter3=_nodes.begin();iter3!=_nodes.end();iter3++)
-            //  std::cout << (*iter3).first << " ";
-            //std::cout << std::endl << "*** " << globalNodeNum << std::endl;
             calculateNode2(globalNodeNum, polyCoords[i]);
           }
 
-        checkIsStrictlyOutside(_nodes[globalNodeNum], isStrictlyOutside, precision);
-        checkIsOutside(_nodes[globalNodeNum], isOutside, precision);
+        CheckIsStrictlyOutside(_nodes[globalNodeNum], isStrictlyOutside, precision);
+        CheckIsOutside(_nodes[globalNodeNum], isOutside, precision);
       }
 
     // halfspace filtering check
@@ -861,7 +850,7 @@ namespace INTERP_KERNEL
     for(int i = 0;i<(int)nbOfNodes4Type;++i)
     {
       _t->apply(nodes[i], tetraCorners[i]);
-      checkIsOutside(nodes[i], isOutside);
+      CheckIsOutside(nodes[i], isOutside);
     }
 
     // halfspace filtering check
@@ -933,6 +922,46 @@ namespace INTERP_KERNEL
           }
       }
     _nodes.clear();
+  }
+  
+  /*!
+   * \param [in] targetCell in C mode.
+   * \param [out] tetra is the output result tetra containers.
+   */
+  template<class MyMeshTypeT, class MyMeshTypeS>
+  void SplitterTetra2<MyMeshTypeT, MyMeshTypeS>::splitTargetCell2(typename MyMeshTypeT::MyConnType targetCell, typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra)
+  {
+    const int *refConn(_target_mesh.getConnectivityPtr());
+    const int *cellConn(refConn+_target_mesh.getConnectivityIndexPtr()[targetCell]);
+    INTERP_KERNEL::NormalizedCellType gt(_target_mesh.getTypeOfElement(targetCell));
+    std::vector<int> tetrasNodalConn;
+    std::vector<double> addCoords;
+    const double *coords(_target_mesh.getCoordinatesPtr());
+    SplitIntoTetras(_splitting_pol,gt,cellConn,refConn+_target_mesh.getConnectivityIndexPtr()[targetCell+1],coords,tetrasNodalConn,addCoords);
+    std::size_t nbTetras(tetrasNodalConn.size()/4); tetra.resize(nbTetras);
+    double tmp[12];
+    int tmp2[4];
+    for(std::size_t i=0;i<nbTetras;i++)
+      {
+        for(int j=0;j<4;j++)
+          {
+            int cellId(tetrasNodalConn[4*i+j]);
+            tmp2[j]=cellId;
+            if(cellId>=0)
+              {
+                tmp[j*3+0]=coords[3*cellId+0];
+                tmp[j*3+1]=coords[3*cellId+1];
+                tmp[j*3+2]=coords[3*cellId+2];
+              }
+            else
+              {
+                tmp[j*3+0]=addCoords[3*(-cellId-1)+0];
+                tmp[j*3+1]=addCoords[3*(-cellId-1)+1];
+                tmp[j*3+2]=addCoords[3*(-cellId-1)+2];
+              }
+          }
+        tetra[i]=new SplitterTetra<MyMeshTypeS>(_src_mesh,tmp,tmp2);
+      }
   }
 
   /*!
@@ -1120,25 +1149,10 @@ namespace INTERP_KERNEL
    */
   template<class MyMeshTypeT, class MyMeshTypeS>
   void SplitterTetra2<MyMeshTypeT, MyMeshTypeS>::calculateGeneral48Tetra(typename std::vector< SplitterTetra<MyMeshTypeS>* >& tetra)
-  {
-    // Define 8 hexahedral subzones as in Grandy, p449
-    // the values correspond to the nodes that correspond to nodes 1,2,3,4,5,6,7,8 in the subcell
-    // For the correspondance of the nodes, see the GENERAL_48_SUB_NODES table in calculateSubNodes
-    static const int subZones[64] = 
-      {
-        0,8,21,12,9,20,26,22,
-        8,1,13,21,20,10,23,26,
-        12,21,16,3,22,26,25,17,
-        21,13,2,16,26,23,18,25,
-        9,20,26,22,4,11,24,14,
-        20,10,23,26,11,5,15,24,
-        22,26,25,17,14,24,19,7,
-        26,23,18,25,24,15,6,19
-      };
-    
+  { 
     for(int i = 0; i < 8; ++i)
       {
-        sixSplit(&subZones[8*i],tetra);
+        sixSplit(GENERAL_48_SUBZONES+8*i,tetra);
       }
   }
   
@@ -1198,6 +1212,8 @@ namespace INTERP_KERNEL
     while ( allNodeIndices.size() < nbOfCellNodes )
       allNodeIndices.push_back( allNodeIndices.size() );
     std::vector<int> classicFaceNodes(4);
+    if(cellModelCell.isQuadratic())
+      throw INTERP_KERNEL::Exception("SplitterTetra2::splitConvex : quadratic 3D cells are not implemented yet !");
     int* faceNodes = cellModelCell.isDynamic() ? &allNodeIndices[0] : &classicFaceNodes[0];
 
     // nodes of tetrahedron
@@ -1273,33 +1289,6 @@ namespace INTERP_KERNEL
 
           case GENERAL_48:
             {
-              // Each sub-node is the barycenter of two other nodes.
-              // For the edges, these lie on the original mesh.
-              // For the faces, these are the edge sub-nodes.
-              // For the cell these are two face sub-nodes.
-              static const int GENERAL_48_SUB_NODES[38] = 
-                {
-                  0,1,   // sub-node 9 (edge)
-                  0,4,   // sub-node 10 (edge)
-                  1,5,   // sub-node 11 (edge)
-                  4,5,   // sub-node 12 (edge)
-                  0,3,   // sub-node 13 (edge)
-                  1,2,   // sub-node 14 (edge)
-                  4,7,   // sub-node 15 (edge)
-                  5,6,   // sub-node 16 (edge)
-                  2,3,   // sub-node 17 (edge)
-                  3,7,   // sub-node 18 (edge)
-                  2,6,   // sub-node 19 (edge)
-                  6,7,   // sub-node 20 (edge)
-                  8,11,  // sub-node 21 (face)
-                  12,13, // sub-node 22 (face)
-                  9,17,  // sub-node 23 (face)
-                  10,18, // sub-node 24 (face)
-                  14,15, // sub-node 25 (face)
-                  16,19, // sub-node 26 (face)
-                  20,25  // sub-node 27 (cell)
-                };
-
               for(int i = 0; i < 19; ++i)
                 {
                   double* barycenter = new double[3];

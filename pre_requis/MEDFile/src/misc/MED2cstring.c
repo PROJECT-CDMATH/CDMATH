@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -22,11 +22,14 @@
 
 /*
  * - Nom de la fonction _MED2cstring
- * - Description : convertit une chaine de caracteres FORTRAN en 
+ * - Description : convertit une chaine de caracteres FORTRAN en
  *                 nouvelle chaine de caracteres C
+ *                 (crée une copie de chaine C en supprimant
+ *                   les blancs terminaux et
+ *                   terminant par le caractère \0)
  * - Parametres :
  *     - chaine (IN)   : la chaine FORTRAN
- *     - longueur (IN) : longueur de la chaine
+ *     - longueur (IN) : longueur de la chaine FORTRAN
  * - Resultat : la nouvelle chaine C en cas de succes, NULL sinon
  */
 char *_MED2cstring(char *chaine, int longueur)
@@ -35,6 +38,7 @@ char *_MED2cstring(char *chaine, int longueur)
   char *temoin;
   int long_reelle = longueur;
   int i;
+  med_err _ret =0;
 
   if ( longueur < 0 ) return NULL;
 
@@ -45,9 +49,11 @@ char *_MED2cstring(char *chaine, int longueur)
       long_reelle--;
     }
   if ( *temoin == ' ') long_reelle = 0;
-      
-  if ((nouvelle = (char *) malloc(sizeof(char)*(long_reelle+1))) == NULL)
+
+  if ((nouvelle = (char *) malloc(sizeof(char)*(long_reelle+1))) == NULL) {
+    MED_ERR_(_ret,MED_ERR_NOTNULL,MED_ERR_API,MED_ERR_NAME_MSG"malloc");
     return NULL;
+  }
 
   /* +1 en trop mais caractère écrasé par le caractère null */
   for (i=0;i<long_reelle+1 ;i++)

@@ -18,22 +18,30 @@ class Vector: public Matrix
 
 	Vector( int numberOfRows ) ;
 
-	const Matrix& operator= ( const Matrix& matrix ) ;
 
 	~Vector ( void ) ;
-
-	double& operator [] ( int i ) ;
-
-	const double& operator [] ( int i ) const ;
 
 	double& operator () ( int i ) ;
 
 	const double& operator () ( int i ) const ;
 
+	double& operator [] ( int i ) ;
+
+	const double& operator [] ( int i ) const ;
+
 	double norm() const ;
 
 	double operator* (const Vector& vector) const ;
 
+	friend Vector operator+ (const Vector& vector1, const Vector& vector2);
+
+	friend Vector operator- (const Vector& vector1, const Vector& vector2);
+
+	friend Vector operator* (double value , const Vector& vector ) ;
+
+	friend Vector operator* (const Vector& vector, double value ) ;
+
+	friend Vector operator/ (const Vector& vector, double value) ;
 
 };
 

@@ -1,18 +1,18 @@
-CDMAT
-=====
+CDMATH
+======
 
 CFD TOOLBOX
 
 --------------------------------------------------------------------------------------------------
 cd /home/moi/codes/ (par exemple)
 
-- Chekout CDMATH : 
+- Checkout CDMATH : 
 
-git@github.com:PROJETC-CDMATH/CDMAT.git
+git@github.com:PROJECT-CDMATH/CDMATH.git
 
-Ou recuperer un .zip a partir du site github
+Ou récuperer un .zip à partir du site Github
 
--> le code CDMATH est recupere
+-> le code CDMATH est récupéré
 
 --------------------------------------------------------------------------------------------------
 - Compilation :
@@ -24,7 +24,7 @@ cd build
 
 cmake -G"Eclipse CDT4 - Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/home/moi/codes/install -DCMAKE_BUILD_TYPE=DEBUG /home/moi/codes/CDMATH
 
-Rajouter -DCMAKE_CDMATH_SWIG=ON si on veut utiliser la toolbox en python
+Rajouter -DCMAKE_CDMATH_SWIG=ON si on veut utiliser la toolbox en Python
 
 make -j4
 

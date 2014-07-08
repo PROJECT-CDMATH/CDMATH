@@ -13,6 +13,8 @@
 #include "MEDCouplingUMesh.hxx"
 #include "MEDCouplingFieldDouble.hxx"
 
+#include "CdmathException.hxx"
+
 #include <fstream>
 #include <sstream>
 using namespace ParaMEDMEM;
@@ -24,13 +26,13 @@ Field::Field( void )
 //----------------------------------------------------------------------
 {
 	_field=NULL;
+	_typeField=CELLS;
 }
 
 //----------------------------------------------------------------------
 Field::~Field( void )
 //----------------------------------------------------------------------
 {
-	_field->decrRef();
 }
 
 Field::Field( const string fieldName, TypeField type, const Mesh& mesh , int numberOfComponents, double time )
@@ -49,10 +51,12 @@ Field::Field( const string fieldName, TypeField type, const Mesh& mesh , int num
 		array->alloc(mesh.getNumberOfNodes(),numberOfComponents);
 	}
 	_field->setName(fieldName.c_str()) ;
-	_field->setMesh(mesh.getMeshU());
+	MEDCouplingUMesh* mu=mesh.getMEDCouplingMesh()->buildUnstructured();
+	_field->setMesh(mu);
 	_field->setArray(array);
 	_field->setTime(time,0,0);
 	array->decrRef();
+	mu->decrRef();
 }
 
 Field::Field( const string fieldName, TypeField type, const Mesh& mesh , int numberOfComponents)
@@ -71,10 +75,12 @@ Field::Field( const string fieldName, TypeField type, const Mesh& mesh , int num
 		array->alloc(mesh.getNumberOfNodes(),numberOfComponents);
 	}
 	_field->setName(fieldName.c_str()) ;
-	_field->setMesh(mesh.getMeshU());
+	MEDCouplingUMesh* mu=mesh.getMEDCouplingMesh()->buildUnstructured();
+	_field->setMesh(mu);
 	_field->setArray(array);
 	_field->setTime(0.0,0,0);
 	array->decrRef();
+	mu->decrRef();
 }
 
 Field::Field( const string fieldName, TypeField type, const Mesh& mesh)
@@ -93,10 +99,19 @@ Field::Field( const string fieldName, TypeField type, const Mesh& mesh)
 		array->alloc(mesh.getNumberOfNodes(),1);
 	}
 	_field->setName(fieldName.c_str()) ;
-	_field->setMesh(mesh.getMeshU());
+	MEDCouplingUMesh* mu=mesh.getMEDCouplingMesh()->buildUnstructured();
+	_field->setMesh(mu);
 	_field->setArray(array);
 	_field->setTime(0.0,0,0);
 	array->decrRef();
+	mu->decrRef();
+}
+
+DoubleTab
+Field::getNormEuclidean() const
+{
+	DoubleTab norm(getNumberOfElements(),_field->magnitude()->getArray()->getConstPointer());
+	return norm;
 }
 
 //----------------------------------------------------------------------
@@ -104,12 +119,13 @@ Field::Field( const Field & f )
 //-------------------------------t---------------------------------------
 {
 	_mesh=f.getMesh() ;
-    _field=static_cast<MEDCouplingFieldDouble *>(f.getField()->deepCpy());
+    MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> f1=f.getField()->deepCpy();
+    _field=f1;
 	_typeField=f.getTypeOfField();
 }
 
 //----------------------------------------------------------------------
-MEDCouplingFieldDouble*
+MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble>
 Field::getField ( void )  const
 //----------------------------------------------------------------------
 {
@@ -118,60 +134,79 @@ Field::getField ( void )  const
 
 //----------------------------------------------------------------------
 void
-Field::setField ( MEDCouplingFieldDouble* field )
+Field::setFieldByMEDCouplingFieldDouble ( const MEDCouplingFieldDouble* field )
 //----------------------------------------------------------------------
 {
-	if (_field)
-		_field->decrRef();
-    _field=static_cast<MEDCouplingFieldDouble *>(field->deepCpy());
+	MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> ff=field->deepCpy();
+    _field=ff;
+}
+
+//----------------------------------------------------------------------
+void
+Field::setFieldByDataArrayDouble ( const DataArrayDouble* array )
+//----------------------------------------------------------------------
+{
+	_field->setArray(const_cast<DataArrayDouble*>(array));
 }
 
 //----------------------------------------------------------------------
 double&
-Field::operator() ( int i )
+Field::operator() ( int ielem )
 //----------------------------------------------------------------------
 {
-	return _field->getArray()->getPointer()[i*_field->getNumberOfComponents()];
+	if(ielem>_field->getNumberOfTuples())
+	    throw CdmathException("double& Field::operator(ielem) : ielem>number of values !");
+	return _field->getArray()->getPointer()[ielem*_field->getNumberOfComponents()];
 }
 
 //----------------------------------------------------------------------
 double&
-Field::operator[] ( int i )
+Field::operator[] ( int ielem )
 //----------------------------------------------------------------------
 {
-	return _field->getArray()->getPointer()[i*_field->getNumberOfComponents()];
+	if(ielem>_field->getNumberOfTuples())
+	    throw CdmathException("double& Field::operator[ielem] : ielem>number of values !");
+	return _field->getArray()->getPointer()[ielem*_field->getNumberOfComponents()];
 }
 
 //----------------------------------------------------------------------
 double
-Field::operator() ( int i ) const
+Field::operator() ( int ielem ) const
 //----------------------------------------------------------------------
 {
-	return _field->getArray()->getPointer()[i*_field->getNumberOfComponents()];
+	if(ielem>_field->getNumberOfTuples())
+	    throw CdmathException("double Field::operator(ielem) : ielem>number of values !");
+	return _field->getArray()->getConstPointer()[ielem*_field->getNumberOfComponents()];
 }
 
 //----------------------------------------------------------------------
 double
-Field::operator[] ( int i ) const
+Field::operator[] ( int ielem ) const
 //----------------------------------------------------------------------
 {
-	return _field->getArray()->getPointer()[i*_field->getNumberOfComponents()];
+	if(ielem>_field->getNumberOfTuples())
+	    throw CdmathException("double Field::operator[ielem] : ielem>number of values !");
+	return _field->getArray()->getConstPointer()[ielem*_field->getNumberOfComponents()];
 }
 
 //----------------------------------------------------------------------
 double&
-Field::operator() ( int i, int j )
+Field::operator() ( int ielem, int jcomp )
 //----------------------------------------------------------------------
 {
-	return _field->getArray()->getPointer()[i+j*_field->getNumberOfComponents()];
+	if(ielem>_field->getNumberOfTuples() || jcomp>_field->getNumberOfComponents())
+	    throw CdmathException("double& Field::operator( int ielem, int jcomp ) : ielem>number of values or jcomp>number of components !");
+	return _field->getArray()->getPointer()[jcomp+ielem*_field->getNumberOfComponents()];
 }
 
 //----------------------------------------------------------------------
 double
-Field::operator() ( int i, int j ) const
+Field::operator() (  int ielem, int jcomp ) const
 //----------------------------------------------------------------------
 {
-	return _field->getArray()->getPointer()[i+j*_field->getNumberOfComponents()];
+	if(ielem>_field->getNumberOfTuples() || jcomp>_field->getNumberOfComponents())
+	    throw CdmathException("double Field::operator(  int ielem, int jcomp ) : ielem>number of values or jcomp>number of components !");
+	return _field->getArray()->getConstPointer()[jcomp+ielem*_field->getNumberOfComponents()];
 }
 
 //----------------------------------------------------------------------
@@ -196,6 +231,12 @@ Field::getNumberOfElements ( void ) const
 //----------------------------------------------------------------------
 {
 	return _field->getNumberOfTuples() ;
+}
+
+int
+Field::getSpaceDimension( void ) const
+{
+	return _mesh.getSpaceDimension() ;
 }
 
 //----------------------------------------------------------------------
@@ -255,9 +296,9 @@ Field::operator+ ( const Field& f ) const
 	Field fres("Sum Field",f.getTypeOfField(),f.getMesh(),f.getNumberOfComponents(),f.getTime());
 	int nbComp=f.getNumberOfComponents();
 	int nbElem=f.getNumberOfElements();
-	for (int i=0 ; i<nbComp ; i++)
-			for (int j=0 ; j<nbElem; j++)
-				fres(i,j)=_field->getArray()->getPointer()[i+j*_field->getNumberOfComponents()]+f(i,j);
+	for (int ielem=0 ; ielem<nbElem; ielem++)
+		for (int jcomp=0 ; jcomp<nbComp ; jcomp++)
+			fres(ielem, jcomp)=_field->getArray()->getConstPointer()[jcomp+ielem*_field->getNumberOfComponents()]+f(ielem, jcomp);
 	return fres;
 }
 
@@ -269,9 +310,9 @@ Field::operator- ( const Field& f ) const
 	Field fres("Diff Field",f.getTypeOfField(),f.getMesh(),f.getNumberOfComponents(),f.getTime());
 	int nbComp=f.getNumberOfComponents();
 	int nbElem=f.getNumberOfElements();
-	for (int i=0 ; i<nbComp ; i++)
-			for (int j=0 ; j<nbElem; j++)
-				fres(i,j)=_field->getArray()->getPointer()[i+j*_field->getNumberOfComponents()]-f(i,j);
+	for (int ielem=0 ; ielem<nbElem; ielem++)
+		for (int jcomp=0 ; jcomp<nbComp ; jcomp++)
+			fres(ielem, jcomp)=_field->getArray()->getConstPointer()[jcomp+ielem*_field->getNumberOfComponents()]-f(ielem, jcomp);
 	return fres;
 }
 
@@ -282,9 +323,8 @@ Field::operator= ( const Field& f )
 {
 	_mesh=f.getMesh() ;
 	_typeField=f.getTypeOfField() ;
-	if (_field)
-		_field->decrRef();
-	_field=static_cast<MEDCouplingFieldDouble *>(f.getField()->deepCpy());
+    MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> f1=f.getField()->deepCpy();
+    _field=f1;
 	return *this;
 }
 
@@ -385,9 +425,8 @@ Field::writeVTK ( const string fileName, bool fromScratch ) const
         numfile << iter ;
         string filetmp=fileName+"_";
         filetmp=filetmp+numfile.str();
-    	filetmp=filetmp+".vtu";
-    	file << "<DataSet timestep=\""<< time << "\" group=\"\" part=\"0\" file=\"" << filetmp << "\"/>\n" ;
-    	_field->writeVTK(filetmp.c_str()) ;
+    	string ret=_field->writeVTK(filetmp.c_str()) ;
+    	file << "<DataSet timestep=\""<< time << "\" group=\"\" part=\"0\" file=\"" << ret << "\"/>\n" ;
         file << "</Collection></VTKFile>\n" ;
         file.close() ;
 	}
@@ -407,9 +446,8 @@ Field::writeVTK ( const string fileName, bool fromScratch ) const
         numfile << iter ;
         string filetmp=fileName+"_";
         filetmp=filetmp+numfile.str();
-    	filetmp=filetmp+".vtu";
-    	file << "<DataSet timestep=\""<< time << "\" group=\"\" part=\"0\" file=\"" << filetmp << "\"/>\n" ;
-    	_field->writeVTK(filetmp.c_str()) ;
+    	string ret=_field->writeVTK(filetmp.c_str()) ;
+    	file << "<DataSet timestep=\""<< time << "\" group=\"\" part=\"0\" file=\"" << ret << "\"/>\n" ;
         file << "</Collection></VTKFile>\n" ;
         file.close() ;
 	}
@@ -429,7 +467,7 @@ Field::writeCSV ( const string fileName ) const
 	filetmp=filetmp+numfile.str();
 	filetmp=filetmp+".csv";
 	ofstream file(filetmp.c_str()) ;
-	int dim=_mesh.getDim();
+	int dim=_mesh.getSpaceDimension();
 	int nbElements;
 	if (getTypeOfField()==CELLS)
 		nbElements=_mesh.getNumberOfCells();

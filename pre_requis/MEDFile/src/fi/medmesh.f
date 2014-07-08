@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -647,6 +647,7 @@ c
       integer cmode,chgt,tsf,n,stmode,psize
       integer mmhfnep
 c
+
       n =  mmhfnep(fid,name,len(name),numdt,numit,entype,geotype,
      &             datype,cmode,stmode,pname,psize,chgt,tsf)
 
@@ -655,7 +656,8 @@ c
       else
          cret =0
       endif
-c      
+c     
+
       return
       end
 c

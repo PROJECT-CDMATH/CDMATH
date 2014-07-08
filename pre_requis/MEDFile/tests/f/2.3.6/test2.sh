@@ -6,13 +6,13 @@ ${EXECDIR}/${file} > /dev/null 2>&1 && ${H5DUMP} -a /ENS_MAA/maa1/DIM -a /ENS_MA
 sed -e 's/H5T_STD_I32BE//g' -e 's/H5T_STD_I32LE//g'	 \
     -e 's/H5T_STD_I64BE//g' -e 's/H5T_STD_I64LE//g'  \
     -e 's/H5T_IEEE_F64BE//g' -e 's/H5T_IEEE_F64LE//g'  \
-    -e 's/H5T_STD_I8LE//g' -e 's/H5T_STD_U8BE//g'  \
+    -e 's/H5T_STD_I8LE//g' -e 's/H5T_STD_I8BE//g' -e 's/H5T_STD_U8BE//g'  \
     -e 's/HDF5.*{//g' \
 ${BUILDDIR}/${file}.dump > ${BUILDDIR}/${file}.dump.tmp && \
 sed -e 's/H5T_STD_I32BE//g' -e 's/H5T_STD_I32LE//g'	 \
     -e 's/H5T_STD_I64BE//g' -e 's/H5T_STD_I64LE//g'  \
     -e 's/H5T_IEEE_F64BE//g' -e 's/H5T_IEEE_F64LE//g'  \
-    -e 's/H5T_STD_I8LE//g' -e 's/H5T_STD_U8BE//g'  \
+    -e 's/H5T_STD_I8LE//g' -e 's/H5T_STD_I8BE//g' -e 's/H5T_STD_U8BE//g'  \
     -e 's/HDF5.*{//g' \
 ${BUILDDIR}/dumps.ref/${file}.dump > ${BUILDDIR}/${file}.dump.ref && \
 diff ${BUILDDIR}/${file}.dump.ref ${BUILDDIR}/${file}.dump.tmp && \

@@ -1,10 +1,10 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+# Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
-# version 2.1 of the License.
+# version 2.1 of the License, or (at your option) any later version.
 #
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -253,19 +253,19 @@ class MEDLoaderTest(unittest.TestCase):
         mesh1.setName("3DMesh_1");
         self.assertTrue(mesh1_2.isEqual(mesh1,1e-12));
         #
-        vec=["Family_4","Family_2"];
+        vec=["Family_-3","Family_-5"];
         mesh2_2=MEDLoader.MEDLoader.ReadUMeshFromFamilies(fileName,mnane,0,vec);
         mesh2_2.setName("mesh2");
         self.assertTrue(mesh2_2.isEqual(mesh2,1e-12));
         #
         ret=MEDLoader.MEDLoader.GetMeshFamiliesNamesOnGroup(fileName,"3DToto","3DMesh_1");
         self.assertEqual(4,len(ret));
-        self.assertEqual(ret[0],"Family_1");
-        self.assertEqual(ret[1],"Family_2");
-        self.assertEqual(ret[2],"Family_3");
-        self.assertEqual(ret[3],"Family_4");
+        self.assertEqual(ret[0],"Family_-2");
+        self.assertEqual(ret[1],"Family_-3");
+        self.assertEqual(ret[2],"Family_-4");
+        self.assertEqual(ret[3],"Family_-5");
         #
-        ret1=MEDLoader.MEDLoader.GetMeshGroupsNamesOnFamily(fileName,"3DToto","Family_2");
+        ret1=MEDLoader.MEDLoader.GetMeshGroupsNamesOnFamily(fileName,"3DToto","Family_-3");
         self.assertEqual(2,len(ret1));
         self.assertEqual(ret1[0],"3DMesh_1");
         self.assertEqual(ret1[1],"mesh2");
@@ -315,6 +315,7 @@ class MEDLoaderTest(unittest.TestCase):
         fileName="Pyfile14.med";
         f1=MEDLoaderDataForTest.buildVecFieldOnGaussNE_1();
         MEDLoader.MEDLoader.WriteField(fileName,f1,True);
+        self.assertEqual([MEDLoader.ON_GAUSS_NE],MEDLoader.MEDLoader.GetTypesOfField(fileName,'2DMesh_2','MyFieldOnGaussNE')) #Bug 22/5/2014
         f2=MEDLoader.MEDLoader.ReadField(MEDLoader.ON_GAUSS_NE,fileName,f1.getMesh().getName(),0,f1.getName(),1,5);
         self.assertTrue(f1.isEqual(f2,1e-12,1e-12));
         pass
@@ -560,6 +561,194 @@ class MEDLoaderTest(unittest.TestCase):
         MEDLoader.MEDLoader.WriteField(fileName,f,True)
         f2=MEDLoader.MEDLoader.ReadFieldCell(fileName,m.getName(),0,f.getName(),-1,-1)
         self.assertTrue(f.isEqual(f2,1e-12,1e-12))
+        pass
+
+    def testMultiMeshTypeWrite0(self):
+        fname="Pyfile73.med"
+        m=MEDLoader.MEDCoupling1SGTUMesh("mesh",MEDLoader.NORM_QUAD4) ; m.allocateCells()
+        m.insertNextCell([0,2,1,3])
+        m.setCoords(MEDLoader.DataArrayDouble([0.,0.,1.,1.,1.,0.,0.,1.],4,2))
+        #
+        ms=[m.deepCpy() for i in xrange(4)]
+        for i,elt in enumerate(ms):
+            elt.translate([float(i)*1.5,0.])
+            pass
+        #
+        m0=MEDLoader.MEDCoupling1SGTUMesh.Merge1SGTUMeshes(ms)
+        f=m0.getMeasureField(False) ; f.getArray().setInfoOnComponents(["ABC [defg]"])
+        MEDLoader.MEDLoader.WriteField(fname,f,True)
+        #
+        fRead=MEDLoader.MEDLoader.ReadFieldCell(fname,"merge",0,f.getName(),-1,-1)
+        fRead.setMesh(MEDLoader.MEDCoupling1SGTUMesh(fRead.getMesh()))
+        self.assertTrue(f.isEqual(fRead,1e-12,1e-12))
+        #
+        m0=m0.buildUnstructured() ; m0.convertAllToPoly()
+        m0=MEDLoader.MEDCoupling1DGTUMesh(m0)
+        f=m0.getMeasureField(False) ; f.getArray().setInfoOnComponents(["ABC [defg]"])
+        MEDLoader.MEDLoader.WriteField(fname,f,True)
+        #
+        fRead=MEDLoader.MEDLoader.ReadFieldCell(fname,"merge",0,f.getName(),-1,-1)
+        fRead.setMesh(MEDLoader.MEDCoupling1DGTUMesh(fRead.getMesh()))
+        self.assertTrue(f.isEqual(fRead,1e-12,1e-12))
+        #
+        m0=MEDLoader.MEDCouplingCMesh()
+        arr=MEDLoader.DataArrayDouble(4) ; arr.iota()
+        m0.setCoords(arr,arr)
+        m0.setName("mesh")
+        f=m0.getMeasureField(False) ; f.getArray().setInfoOnComponents(["ABC [defg]"])
+        MEDLoader.MEDLoader.WriteField(fname,f,True)
+        #
+        fRead=MEDLoader.MEDLoader.ReadFieldCell(fname,"mesh",0,f.getName(),-1,-1)
+        self.assertTrue(f.isEqual(fRead,1e-12,1e-12))
+        #
+        c=m0.buildUnstructured().getCoords()
+        m0=MEDLoader.MEDCouplingCurveLinearMesh("mesh")
+        m0.setNodeGridStructure([4,4])
+        m0.setCoords(c)
+        f=m0.getMeasureField(False) ; f.getArray().setInfoOnComponents(["ABC [defg]"])
+        MEDLoader.MEDLoader.WriteField(fname,f,True)
+        #
+        fRead=MEDLoader.MEDLoader.ReadFieldCell(fname,"mesh",0,f.getName(),-1,-1)
+        self.assertTrue(f.isEqual(fRead,1e-12,1e-12))
+        pass
+    
+    def testMultiMeshTypeWrite1(self):
+        fname="Pyfile74.med"
+        m=MEDLoader.MEDCoupling1SGTUMesh("mesh",MEDLoader.NORM_QUAD4) ; m.allocateCells()
+        m.insertNextCell([0,2,1,3])
+        m.setCoords(MEDLoader.DataArrayDouble([0.,0.,1.,1.,1.,0.,0.,1.],4,2))
+        #
+        ms=[m.deepCpy() for i in xrange(4)]
+        for i,elt in enumerate(ms):
+            elt.translate([float(i)*1.5,0.])
+            pass
+        m0=MEDLoader.MEDCoupling1SGTUMesh.Merge1SGTUMeshes(ms)
+        MEDLoader.MEDLoader.WriteMesh(fname,m0,True)
+        #
+        mRead=MEDLoader.MEDLoader.ReadMeshFromFile(fname,"merge",0)
+        self.assertTrue(isinstance(mRead,MEDLoader.MEDCouplingUMesh))
+        mRead=MEDLoader.MEDCoupling1SGTUMesh(mRead)
+        self.assertTrue(m0.isEqual(mRead,1e-12))
+        #
+        m0=m0.buildUnstructured() ; m0.convertAllToPoly()
+        m0=MEDLoader.MEDCoupling1DGTUMesh(m0)
+        MEDLoader.MEDLoader.WriteMesh(fname,m0,True)
+        #
+        mRead=MEDLoader.MEDLoader.ReadMeshFromFile(fname,"merge",0)
+        mRead=MEDLoader.MEDCoupling1DGTUMesh(mRead)
+        self.assertTrue(m0.isEqual(mRead,1e-12))
+        #
+        m0=MEDLoader.MEDCouplingCMesh()
+        arr=MEDLoader.DataArrayDouble(4) ; arr.iota()
+        m0.setCoords(arr,arr)
+        m0.setName("mesh")
+        MEDLoader.MEDLoader.WriteMesh(fname,m0,True)
+        #
+        mRead=MEDLoader.MEDLoader.ReadMeshFromFile(fname,0)
+        self.assertTrue(isinstance(mRead,MEDLoader.MEDCouplingCMesh))
+        self.assertTrue(m0.isEqual(mRead,1e-12))
+        #
+        c=m0.buildUnstructured().getCoords()
+        m0=MEDLoader.MEDCouplingCurveLinearMesh("mesh")
+        m0.setNodeGridStructure([4,4])
+        m0.setCoords(c)
+        MEDLoader.MEDLoader.WriteMesh(fname,m0,True)
+        #
+        mRead=MEDLoader.MEDLoader.ReadMeshFromFile(fname,0)
+        self.assertTrue(isinstance(mRead,MEDLoader.MEDCouplingCurveLinearMesh))
+        self.assertTrue(m0.isEqual(mRead,1e-12))
+        pass
+
+    def testChangeGroupName(self):
+        """ This test is a non regression test on MEDFileUMesh.changeGroupName thanks to Alliance.
+        """
+        mfd=MEDLoaderDataForTest.buildAMEDFileDataWithGroupOnOneFamilyForSauv()
+        mesh = mfd.getMeshes().getMeshAtPos(0)
+        mesh.changeGroupName("grp0_LM1", "xonall1")
+        self.assertTrue("xonall1" in mesh.getGroupsNames())
+        pass
+
+    def testFieldWithTooLongName(self):
+        """ This test is a non regression test, to check that in basic API the policies are taken into account.
+        """
+        fname="Pyfile75.med"
+        # Coordinates
+        coords = [0.,0., 0.,1., 1.,1., 1.,0.]
+        # lvl 0 connectivity
+        conn2D   = [1,2,3,4]
+        # lvl 0 mesh
+        m=MEDLoader.MEDCouplingUMesh.New("mesh",2)
+        m.allocateCells(1)
+        m.insertNextCell(MEDLoader.NORM_QUAD4,4,conn2D)
+        m.finishInsertingCells()
+        # assigning coordinates
+        meshCoords=MEDLoader.DataArrayDouble.New()
+        meshCoords.setValues(coords, 4, 2)
+        m.setCoords(meshCoords)
+        #
+        f=MEDLoader.MEDCouplingFieldDouble.New(MEDLoader.ON_CELLS,MEDLoader.ONE_TIME)
+        f.setMesh(m)
+        d=MEDLoader.DataArrayDouble.New()
+        d.alloc(1,1)
+        d.iota(1.)
+        # seting a long name
+        d.setInfoOnComponent(0,"CONCENTRATION of I129")
+        f.setArray(d)
+        f.setName("field")
+        #
+        mm=MEDLoader.MEDFileUMesh()
+        MEDLoader.MEDLoader.SetTooLongStrPolicy(2)
+        MEDLoader.MEDLoader.AssignStaticWritePropertiesTo(mm)
+        self.assertEqual(2,mm.getTooLongStrPolicy())
+        MEDLoader.MEDLoader.SetTooLongStrPolicy(0)
+        MEDLoader.MEDLoader.AssignStaticWritePropertiesTo(mm)
+        self.assertEqual(0,mm.getTooLongStrPolicy())
+        del mm
+        #
+        MEDLoader.MEDLoader.SetTooLongStrPolicy(2)
+        self.assertRaises(MEDLoader.InterpKernelException,MEDLoader.MEDLoader.WriteField,fname,f,True)# the component name is too long + policy 2 -> throw
+        f.getArray().setInfoOnComponent(0,'I129')
+        MEDLoader.MEDLoader.WriteField(fname,f,True)
+        pass
+
+    def testUsingAlreadyWrittenMesh2(self):
+        """ This test focuses on MEDLoader.WriteFieldUsingAlreadyWrittenMesh with mesh different from UMesh.
+        """
+        fname="Pyfile76.med"
+        mesh=MEDLoader.MEDCouplingCMesh("mesh")
+        arrX=MEDLoader.DataArrayDouble([0,1,2,3])
+        arrY=MEDLoader.DataArrayDouble([0,2,3,5,7])
+        arrZ=MEDLoader.DataArrayDouble([7])
+        mesh.setCoords(arrX,arrY,arrZ)
+        #
+        f1=MEDLoader.MEDCouplingFieldDouble(MEDLoader.ON_NODES) ; f1.setName("f1")
+        f1.setMesh(mesh)
+        arr=MEDLoader.DataArrayDouble(20) ; arr.iota()
+        f1.setArray(arr)
+        f1.checkCoherency()
+        #
+        f2=MEDLoader.MEDCouplingFieldDouble(MEDLoader.ON_NODES) ; f2.setName("f2")
+        f2.setMesh(mesh)
+        arr=MEDLoader.DataArrayDouble(20) ; arr.iota() ; arr*=3
+        f2.setArray(arr)
+        f2.checkCoherency()
+        #
+        f11=f1.deepCpy() ; (f11.getArray())[:]*=4 ; f11.setTime(1.1,5,6)
+        #
+        MEDLoader.MEDLoader.WriteMesh(fname,f1.getMesh(),True)
+        MEDLoader.MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,f1)
+        MEDLoader.MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,f2)
+        MEDLoader.MEDLoader.WriteFieldUsingAlreadyWrittenMesh(fname,f11)
+        ##
+        f1r=MEDLoader.MEDLoader.ReadFieldNode(fname,"mesh",0,"f1",-1,-1);
+        self.assertTrue(f1.isEqual(f1r,1e-12,1e-12))
+        self.assertTrue(f1r.getArray().isEqual(MEDLoader.DataArrayDouble([0.,1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.,13.,14.,15.,16.,17.,18.,19.]),1e-12))
+        f2r=MEDLoader.MEDLoader.ReadFieldNode(fname,"mesh",0,"f2",-1,-1);
+        self.assertTrue(f2.isEqual(f2r,1e-12,1e-12))
+        self.assertTrue(f2r.getArray().isEqual(MEDLoader.DataArrayDouble([0.,3.,6.,9.,12.,15.,18.,21.,24.,27.,30.,33.,36.,39.,42.,45.,48.,51.,54.,57.]),1e-12))
+        f3r=MEDLoader.MEDLoader.ReadFieldNode(fname,"mesh",0,"f1",5,6);
+        self.assertTrue(f11.isEqual(f3r,1e-12,1e-12))
+        self.assertTrue(f3r.getArray().isEqual(MEDLoader.DataArrayDouble([0.,4.,8.,12.,16.,20.,24.,28.,32.,36.,40.,44.,48.,52.,56.,60.,64.,68.,72.,76.]),1e-12))
         pass
     pass
 

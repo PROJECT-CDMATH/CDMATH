@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -55,7 +55,7 @@ med_err MEDfilterEntityCr(const med_idt           fid,
 			  const med_storage_mode  storagemode,
 			  const char * const      profilename,
 			  const med_int           filterarraysize,
-			  const med_int *         filterarray,
+			  const med_int * const   filterarray,
 			  med_filter* const       filter )
 {
   char *  name = "_MEDfilterEntityCr";

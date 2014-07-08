@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -29,12 +29,11 @@ namespace INTERP_KERNEL
 { 
   template<class TrueMainInterpolator>
   template<class MyMeshType, class MatrixType>
-  int Interpolation<TrueMainInterpolator>::fromToIntegralUniform(bool fromTo, const MyMeshType& mesh, MatrixType& result, const char *method)
+  int Interpolation<TrueMainInterpolator>::fromToIntegralUniform(bool fromTo, const MyMeshType& mesh, MatrixType& result, const std::string& method)
   {
     typedef typename MyMeshType::MyConnType ConnType;
-    std::string methodCPP(method);
     int ret=-1;
-    if(methodCPP=="P0")
+    if(method=="P0")
       {
         IntegralUniformIntersectorP0<MyMeshType,MatrixType> intersector(mesh,InterpolationOptions::getMeasureAbsStatus());
         intersector.setFromTo(fromTo);
@@ -42,7 +41,7 @@ namespace INTERP_KERNEL
         intersector.intersectCells(0,tmp,result);
         ret=intersector.getNumberOfColsOfResMatrix();
       }
-    else if(methodCPP=="P1")
+    else if(method=="P1")
       {
         IntegralUniformIntersectorP1<MyMeshType,MatrixType> intersector(mesh,InterpolationOptions::getMeasureAbsStatus());
         intersector.setFromTo(fromTo);
@@ -53,24 +52,6 @@ namespace INTERP_KERNEL
     else
       throw INTERP_KERNEL::Exception("Invalid method specified in fromIntegralUniform : must be in { \"P0\", \"P1\"}");
     return ret;
-  }
-
-  template<class TrueMainInterpolator>
-  void Interpolation<TrueMainInterpolator>::CheckAndSplitInterpolationMethod(const char *method, std::string& srcMeth, std::string& trgMeth) throw(INTERP_KERNEL::Exception)
-  {
-    const int NB_OF_METH_MANAGED=4;
-    const char *METH_MANAGED[NB_OF_METH_MANAGED]={"P0P0","P0P1","P1P0","P1P1"};
-    std::string methodC(method);
-    bool found=false;
-    for(int i=0;i<NB_OF_METH_MANAGED && !found;i++)
-      found=(methodC==METH_MANAGED[i]);
-    if(!found)
-      {
-        std::string msg("The interpolation method : \'"); msg+=method; msg+="\' not managed by INTERP_KERNEL interpolators ! Supported are \"P0P0\", \"P0P1\", \"P1P0\" and \"P1P1\".";
-        throw INTERP_KERNEL::Exception(msg.c_str());
-      }
-    srcMeth=methodC.substr(0,2);
-    trgMeth=methodC.substr(2);
   }
 
   template<class TrueMainInterpolator>

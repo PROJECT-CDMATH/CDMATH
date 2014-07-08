@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,7 +22,7 @@
 
 using namespace ParaMEDMEM;
 
-MEDFileData *MEDFileData::New(const char *fileName) throw(INTERP_KERNEL::Exception)
+MEDFileData *MEDFileData::New(const std::string& fileName)
 {
   return new MEDFileData(fileName);
 }
@@ -32,7 +32,7 @@ MEDFileData *MEDFileData::New()
   return new MEDFileData;
 }
 
-MEDFileData *MEDFileData::deepCpy() const throw(INTERP_KERNEL::Exception)
+MEDFileData *MEDFileData::deepCpy() const
 {
   MEDCouplingAutoRefCountObjectPtr<MEDFileFields> fields;
   if((const MEDFileFields *)_fields)
@@ -48,55 +48,64 @@ MEDFileData *MEDFileData::deepCpy() const throw(INTERP_KERNEL::Exception)
   return ret.retn();
 }
 
-std::size_t MEDFileData::getHeapMemorySize() const
+std::size_t MEDFileData::getHeapMemorySizeWithoutChildren() const
 {
-  std::size_t ret=0;
-  if((const MEDFileFields *)_fields)
-    ret+=_fields->getHeapMemorySize();
-  if((const MEDFileMeshes *)_meshes)
-    ret+=_meshes->getHeapMemorySize();
-  if((const MEDFileParameters *)_params)
-    ret+=_params->getHeapMemorySize();
-  return ret;
+  return 0;
 }
 
+std::vector<const BigMemoryObject *> MEDFileData::getDirectChildren() const
+{
+  std::vector<const BigMemoryObject *> ret;
+  if((const MEDFileFields *)_fields)
+    ret.push_back((const MEDFileFields *)_fields);
+  if((const MEDFileMeshes *)_meshes)
+    ret.push_back((const MEDFileMeshes *)_meshes);
+  if((const MEDFileParameters *)_params)
+    ret.push_back((const MEDFileParameters *)_params);
+  return ret;
+
+}
+
+/** Return a borrowed reference (caller is not responsible for object destruction) */
 MEDFileFields *MEDFileData::getFields() const
 {
   return const_cast<MEDFileFields *>(static_cast<const MEDFileFields *>(_fields));
 }
 
+/** Return a borrowed reference (caller is not responsible for object destruction) */
 MEDFileMeshes *MEDFileData::getMeshes() const
 {
   return const_cast<MEDFileMeshes *>(static_cast<const MEDFileMeshes *>(_meshes));
 }
 
+/** Return a borrowed reference (caller is not responsible for object destruction) */
 MEDFileParameters *MEDFileData::getParams() const
 {
   return const_cast<MEDFileParameters *>(static_cast<const MEDFileParameters *>(_params));
 }
 
-void MEDFileData::setFields(MEDFileFields *fields) throw(INTERP_KERNEL::Exception)
+void MEDFileData::setFields(MEDFileFields *fields)
 {
   if(fields)
     fields->incrRef();
   _fields=fields;
 }
 
-void MEDFileData::setMeshes(MEDFileMeshes *meshes) throw(INTERP_KERNEL::Exception)
+void MEDFileData::setMeshes(MEDFileMeshes *meshes)
 {
   if(meshes)
     meshes->incrRef();
   _meshes=meshes;
 }
 
-void MEDFileData::setParams(MEDFileParameters *params) throw(INTERP_KERNEL::Exception)
+void MEDFileData::setParams(MEDFileParameters *params)
 {
   if(params)
     params->incrRef();
   _params=params;
 }
 
-int MEDFileData::getNumberOfFields() const throw(INTERP_KERNEL::Exception)
+int MEDFileData::getNumberOfFields() const
 {
   const MEDFileFields *f=_fields;
   if(!f)
@@ -104,7 +113,7 @@ int MEDFileData::getNumberOfFields() const throw(INTERP_KERNEL::Exception)
   return f->getNumberOfFields();
 }
 
-int MEDFileData::getNumberOfMeshes() const throw(INTERP_KERNEL::Exception)
+int MEDFileData::getNumberOfMeshes() const
 {
   const MEDFileMeshes *m=_meshes;
   if(!m)
@@ -112,7 +121,7 @@ int MEDFileData::getNumberOfMeshes() const throw(INTERP_KERNEL::Exception)
   return m->getNumberOfMeshes();
 }
 
-int MEDFileData::getNumberOfParams() const throw(INTERP_KERNEL::Exception)
+int MEDFileData::getNumberOfParams() const
 {
   const MEDFileParameters *p=_params;
   if(!p)
@@ -147,11 +156,11 @@ std::string MEDFileData::simpleRepr() const
       tmp3->simpleReprWithoutHeader(oss);
     }
   else
-    oss << "params set !!!\n";
+    oss << "No params set !!!\n";
   return oss.str();
 }
 
-bool MEDFileData::changeMeshNames(const std::vector< std::pair<std::string,std::string> >& modifTab) throw(INTERP_KERNEL::Exception)
+bool MEDFileData::changeMeshNames(const std::vector< std::pair<std::string,std::string> >& modifTab)
 {
   bool ret=false;
   MEDFileFields *fields=_fields;
@@ -163,7 +172,7 @@ bool MEDFileData::changeMeshNames(const std::vector< std::pair<std::string,std::
   return ret;
 }
 
-bool MEDFileData::changeMeshName(const char *oldMeshName, const char *newMeshName) throw(INTERP_KERNEL::Exception)
+bool MEDFileData::changeMeshName(const std::string& oldMeshName, const std::string& newMeshName)
 {
   std::string oldName(oldMeshName);
   std::vector< std::pair<std::string,std::string> > v(1);
@@ -178,7 +187,7 @@ bool MEDFileData::changeMeshName(const char *oldMeshName, const char *newMeshNam
  * \return If true is returned it means that some meshes in \a this has been modified and eventually fields have been renumbered.
  *         \n If false \a this remains unchanged.
  */
-bool MEDFileData::unPolyzeMeshes() throw(INTERP_KERNEL::Exception)
+bool MEDFileData::unPolyzeMeshes()
 {
   MEDFileMeshes *ms=_meshes;
   if(!ms)
@@ -217,22 +226,22 @@ MEDFileData::MEDFileData()
 {
 }
 
-MEDFileData::MEDFileData(const char *fileName) throw(INTERP_KERNEL::Exception)
+MEDFileData::MEDFileData(const std::string& fileName)
 try
-  {
+{
     _fields=MEDFileFields::New(fileName);
     _meshes=MEDFileMeshes::New(fileName);
     _params=MEDFileParameters::New(fileName);
-  }
+}
 catch(INTERP_KERNEL::Exception& e)
-  {
+{
     throw e;
-  }
+}
 
-void MEDFileData::write(const char *fileName, int mode) const throw(INTERP_KERNEL::Exception)
+void MEDFileData::write(const std::string& fileName, int mode) const
 {
   med_access_mode medmod=MEDFileUtilities::TraduceWriteMode(mode);
-  MEDFileUtilities::AutoFid fid=MEDfileOpen(fileName,medmod);
+  MEDFileUtilities::AutoFid fid=MEDfileOpen(fileName.c_str(),medmod);
   const MEDFileMeshes *ms=_meshes;
   if(ms)
     ms->write(fid);

@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -1034,22 +1034,32 @@ med_int lecture_nombre_mailles_polygones(const med_idt fid,
 					 const char * const nommaa,
 					 const med_int numdt,
 					 const med_int numit,
+					 const med_geometry_type polytype,
 					 const med_connectivity_mode typ_con)
 {
 
   med_bool chgt=MED_FALSE,trsf=MED_FALSE;
+  char polytypename[MED_NAME_SIZE+1]="Undefined GeoType";
+  med_int nmpolygones;
+  
+  EXIT_IF( (( polytype != MED_POLYGON) &&
+	    ( polytype != MED_POLYGON2) ),
+	   MED_ERR_RANGE_MSG, MED_ERR_GEOMETRIC_MSG);
 
-  med_int nmpolygones = MEDmeshnEntity(fid,nommaa,numdt,numit,
-				    MED_CELL,MED_POLYGON,
-				    MED_INDEX_NODE,typ_con,&chgt,&trsf);
+
+  nmpolygones = MEDmeshnEntity(fid,nommaa,numdt,numit,
+                               MED_CELL,polytype,
+                               MED_INDEX_NODE,typ_con,&chgt,&trsf);
 
   EXIT_IF(nmpolygones < 0,"lors de la lecture du nombre de mailles polygone\n",
 	  NULL);
   if (nmpolygones > 0 ) nmpolygones--; else nmpolygones=0;
-  if (nmpolygones)
-    fprintf(stdout,"- Nombre de mailles de type MED_POLYGONE : "IFORMAT" \n",
-	    nmpolygones);
-
+  if (nmpolygones) {
+    MEDmeshGeotypeName(fid,polytype,polytypename);
+    fprintf(stdout,"- Nombre de mailles de type %s : "IFORMAT" \n",
+	    polytypename,nmpolygones);
+  }
+  polytypename[0]='\0';
   return nmpolygones;
 }
 
@@ -1057,6 +1067,7 @@ void lecture_mailles_polygones(const med_idt fid,
 			       const char * const nommaa,
 			       const med_int numdt,
 			       const med_int numit,
+			       const med_geometry_type polytype,
 			       const med_int nmpolygones,
 			       const med_switch_mode mode_coo,
 			       const med_connectivity_mode typ_con)
@@ -1073,12 +1084,17 @@ void lecture_mailles_polygones(const med_idt fid,
   char tmp[MED_NAME_SIZE+1];
   med_err ret1,ret2,ret3;
   med_bool chgt=MED_FALSE,trsf=MED_FALSE;
+  char polytypename[MED_NAME_SIZE+1]="Undefined GeoType";
+
+  EXIT_IF( (( polytype != MED_POLYGON) &&
+	    ( polytype != MED_POLYGON2) ),
+	   MED_ERR_RANGE_MSG, MED_ERR_GEOMETRIC_MSG);
 
   /* lecture des mailles de type MED_POLYGONE */
 
   /* quelle taille pour  le tableau des connectivites ? */
   taille=MEDmeshnEntity(fid,nommaa,numdt,numit,
-			MED_CELL,MED_POLYGON,MED_CONNECTIVITY,typ_con,
+			MED_CELL,polytype,MED_CONNECTIVITY,typ_con,
 			&chgt,&trsf);
   EXIT_IF(taille < 0,"lors de la lecture des parametres des mailles polygones",
 	  NULL);
@@ -1096,7 +1112,7 @@ void lecture_mailles_polygones(const med_idt fid,
   EXIT_IF(nomele == NULL,NULL,NULL);
 
   /* lecture de la connectivite des mailles polygones */
-  ret = MEDmeshPolygonRd(fid,nommaa,numdt,numit,MED_CELL,typ_con,
+  ret = MEDmeshPolygon2Rd(fid,nommaa,numdt,numit,MED_CELL,polytype,typ_con,
 			 indexp,connectivite);
 
   EXIT_IF(ret < 0,"lors de la lecture des connectivites des mailles polygones",
@@ -1104,19 +1120,20 @@ void lecture_mailles_polygones(const med_idt fid,
 
   /* lecture noms */
   ret1 = MEDmeshEntityNameRd(fid,nommaa,numdt,numit,
-			     MED_CELL,MED_POLYGON, nomele);
+			     MED_CELL,polytype, nomele);
 
   /* lecture des numeros */
   ret2 = (med_int) MEDmeshEntityNumberRd(fid,nommaa,numdt,numit,
-					 MED_CELL, MED_POLYGON, numele);
+					 MED_CELL, polytype, numele);
 
   /* lecture des numeros de familles */
   ret3 = MEDmeshEntityFamilyNumberRd(fid, nommaa, MED_NO_DT, MED_NO_IT,
-				     MED_CELL, MED_POLYGON, nufael);
+				     MED_CELL, polytype, nufael);
 
   if (!structure) {
   /* affichage des resultats */
-  fprintf(stdout,"\n\n- Mailles de type MED_POLYGONE : ");
+  MEDmeshGeotypeName(fid,polytype,polytypename);
+  fprintf(stdout,"\n\n- Mailles de type %s : ",polytypename);
     for (i=0;i<nmpolygones;i++) {
       fprintf(stdout,"\n >> Maille MED_POLYGONE "IFORMAT" : \n",i+1);
       fprintf(stdout,"\n  - Connectivité : ");
@@ -1137,6 +1154,7 @@ void lecture_mailles_polygones(const med_idt fid,
       else
 	fprintf(stdout,"\n  - Numéro de famille : %d \n",0);
     }
+    polytypename[0]='\0';
   }
 
     /* on libere la memoire */
@@ -1670,7 +1688,7 @@ void lecture_maillage_non_structure(med_idt fid,
   med_int nfaces[MED_N_FACE_GEO_FIXED_CON];
   med_int naretes[MED_N_EDGE_GEO_FIXED_CON];
   /* polygones et polyedres */
-  med_int nmpolygones, npolyedres, nfpolygones;
+  med_int nmpolygones,nmpolygones2, npolyedres, nfpolygones;
   /* familles */
   med_int nfam;
   /* equivalences */
@@ -1713,8 +1731,11 @@ void lecture_maillage_non_structure(med_idt fid,
     nmailles[i] = lecture_nombre_mailles_standards(fid,nommaa,numdt,numit,typmai[i],
 						   typ_con,i);
 
-  /* Combien de mailles polygones quelconques ? */
-  nmpolygones = lecture_nombre_mailles_polygones(fid,nommaa,numdt,numit,typ_con);
+  /* Combien de mailles polygones simples */
+  nmpolygones = lecture_nombre_mailles_polygones(fid,nommaa,numdt,numit,MED_POLYGON,typ_con);
+
+  /* Combien de mailles polygones quadratiques */
+  nmpolygones2 = lecture_nombre_mailles_polygones(fid,nommaa,numdt,numit,MED_POLYGON2,typ_con);
 
   /* Combien de mailles polyedres quelconques ? */
   npolyedres = lecture_nombre_mailles_polyedres(fid,nommaa,numdt,numit,typ_con);
@@ -1791,7 +1812,11 @@ void lecture_maillage_non_structure(med_idt fid,
   /*ICI;_MEDobjetsOuverts(fid);*/
 
   if (nmpolygones > 0)
-    lecture_mailles_polygones(fid,nommaa,numdt,numit,nmpolygones,mode_coo,typ_con);
+    lecture_mailles_polygones(fid,nommaa,numdt,numit,MED_POLYGON,nmpolygones,mode_coo,typ_con);
+  /*ICI;_MEDobjetsOuverts(fid);*/
+
+  if (nmpolygones2 > 0)
+    lecture_mailles_polygones(fid,nommaa,numdt,numit,MED_POLYGON2,nmpolygones2,mode_coo,typ_con);
   /*ICI;_MEDobjetsOuverts(fid);*/
 
   if (npolyedres > 0)

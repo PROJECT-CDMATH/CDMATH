@@ -31,4 +31,5 @@ _MEDcheckVersion30.c \
 _MED23v30stringConvert.c \
 _MEDgetSupportMeshNbOfEntities.c
 
+EXTRA_DIST = CMakeLists.txt
 

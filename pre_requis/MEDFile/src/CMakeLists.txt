@@ -1,727 +1,142 @@
 INCLUDE_DIRECTORIES(
   ${HDF5_INCLUDE_DIRS}
-)
+  ${MPI_INCLUDE_DIRS})
 
-SET(ci236_SOURCES
-  2.3.6/ci/MEDchampCr.c
-  2.3.6/ci/MEDchampEcr.c
-  2.3.6/ci/MEDchampInfo.c
-  2.3.6/ci/MEDchampRefInfo.c
-  2.3.6/ci/MEDconnEcr.c
-  2.3.6/ci/MEDconnLire.c
-  2.3.6/ci/MEDcoordEcr.c
-  2.3.6/ci/MEDcoordLire.c
-  2.3.6/ci/MEDdemonter.c
-  2.3.6/ci/MEDdimEspaceCr.c
-  2.3.6/ci/MEDdimEspaceLire.c
-  2.3.6/ci/MEDdimLire.c
-  2.3.6/ci/MEDelementsEcr.c
-  2.3.6/ci/MEDelementsLire.c
-  2.3.6/ci/MEDequivCr.c
-  2.3.6/ci/MEDequivEcr.c
-  2.3.6/ci/MEDequivInfo.c
-  2.3.6/ci/MEDequivLire.c
-  2.3.6/ci/MEDfamCr.c
-  2.3.6/ci/MEDfamEcr.c
-  2.3.6/ci/MEDfamInfo.c
-  2.3.6/ci/MEDfamLire.c
-  2.3.6/ci/MEDfermer.c
-  2.3.6/ci/MEDfichDesEcr.c
-  2.3.6/ci/MEDfichEntete.c
-  2.3.6/ci/MEDformatConforme.c
-  2.3.6/ci/MEDgaussEcr.c
-  2.3.6/ci/MEDgaussInfo.c
-  2.3.6/ci/MEDgaussLire.c
-  2.3.6/ci/MEDgro2famCr.c
-  2.3.6/ci/MEDindicesCoordEcr.c
-  2.3.6/ci/MEDindicesCoordLire.c
-  2.3.6/ci/MEDjointEcr.c
-  2.3.6/ci/MEDjointLire.c
-  2.3.6/ci/MEDjointCr.c
-  2.3.6/ci/MEDjointInfo.c
-  2.3.6/ci/MEDjointnCorres.c
-  2.3.6/ci/MEDjointTypeCorres.c
-  2.3.6/ci/MEDlFichDes.c
-  2.3.6/ci/MEDglobalNumEcr.c
-  2.3.6/ci/MEDglobalNumLire.c
-  2.3.6/ci/MEDlienEcr.c
-  2.3.6/ci/MEDlienInfo.c
-  2.3.6/ci/MEDlienLire.c
-  2.3.6/ci/MEDmaaCr.c
-  2.3.6/ci/MEDmaaInfo.c
-  2.3.6/ci/MEDmonter.c
-  2.3.6/ci/MEDnAttribut.c
-  2.3.6/ci/MEDnatureGrilleEcr.c
-  2.3.6/ci/MEDnatureGrilleLire.c
-  2.3.6/ci/MEDnbnoisEcr.c
-  2.3.6/ci/MEDnbnoisLire.c
-  2.3.6/ci/MEDnbnomaEcr.c
-  2.3.6/ci/MEDnbnomaLire.c
-  2.3.6/ci/MEDnbnosoEcr.c
-  2.3.6/ci/MEDnbnosoLire.c
-  2.3.6/ci/MEDnChamp.c
-  2.3.6/ci/MEDnChampRef.c
-  2.3.6/ci/MEDnCorres.c
-  2.3.6/ci/MEDnEntites.c
-  2.3.6/ci/MEDnEntMaa.c
-  2.3.6/ci/MEDnEquiv.c
-  2.3.6/ci/MEDnFam.c
-  2.3.6/ci/MEDnGauss.c
-  2.3.6/ci/MEDnGroupe.c
-  2.3.6/ci/MEDnJoint.c
-  2.3.6/ci/MEDnLien.c
-  2.3.6/ci/MEDnMaa.c
-  2.3.6/ci/MEDnoeudsEcr.c
-  2.3.6/ci/MEDnoeudsLire.c
-  2.3.6/ci/MEDnomEcr.c
-  2.3.6/ci/MEDnomLire.c
-  2.3.6/ci/MEDnPasdetemps.c
-  2.3.6/ci/MEDnProfil.c
-  2.3.6/ci/MEDnScalaire.c
-  2.3.6/ci/MEDnScalairePasdeTemps.c
-  2.3.6/ci/MEDnumEcr.c
-  2.3.6/ci/MEDnumLire.c
-  2.3.6/ci/MEDnVal.c
-  2.3.6/ci/MEDnValLien.c
-  2.3.6/ci/MEDnValProfil.c
-  2.3.6/ci/MEDouvrir.c
-  2.3.6/ci/MEDpasdetempsInfo.c
-  2.3.6/ci/MEDpolyedreConnEcr.c
-  2.3.6/ci/MEDpolyedreConnLire.c
-  2.3.6/ci/MEDpolyedreInfo.c
-  2.3.6/ci/MEDpolygoneConnEcr.c
-  2.3.6/ci/MEDpolygoneConnLire.c
-  2.3.6/ci/MEDpolygoneInfo.c
-  2.3.6/ci/MEDprofilEcr.c
-  2.3.6/ci/MEDprofilInfo.c
-  2.3.6/ci/MEDprofilLire.c
-  2.3.6/ci/MEDscalaireCr.c
-  2.3.6/ci/MEDscalaireEntierEcr.c
-  2.3.6/ci/MEDscalaireEntierLire.c
-  2.3.6/ci/MEDscalaireFlottantEcr.c
-  2.3.6/ci/MEDscalaireFlottantLire.c
-  2.3.6/ci/MEDscalaireInfo.c
-  2.3.6/ci/MEDscalairePasdetempsInfo.c
-  2.3.6/ci/MEDstructureCoordEcr.c
-  2.3.6/ci/MEDstructureCoordLire.c
-  2.3.6/ci/MEDunvCr.c
-  2.3.6/ci/MEDunvLire.c
-  2.3.6/ci/MEDversionConforme.c
-  2.3.6/ci/MEDversionDonner.c
-  2.3.6/ci/MEDversionLire.c
-  2.3.6/ci/MEDchampLire.c
-  2.3.6/ci/MEDchampEcr231.c
-  2.3.6/ci/MEDchampEcr232.c
-  2.3.6/ci/MEDjointCr231.c
-  2.3.6/ci/MEDjointCr232.c
-  2.3.6/ci/MEDfamCr231.c
-  2.3.6/ci/MEDfamCr232.c
-  2.3.6/ci/MEDchampEcr233.c
+# On Win platform, we need to make sure symbols are properly exported in
+# the intermediary OBJECT targes built in the sub-directories:
+# The definition "-D<target>_EXPORTS" is normally added automatically by CMake
+# when building Win DLL,
+# but this doesn't work when using intermediary targets (ADD_LIBRARY(... OBJECT ...)
+IF(WIN32)
+  ADD_DEFINITIONS(-DmedC_EXPORTS)
+ENDIF()
+  
+# Specific include logic - see CMakeLists.txt inside:
+ADD_SUBDIRECTORY("2.3.6")
+
+# Important: the following include comes AFTER the subdirectory 2.3.6
+# to ensure the include works properly (2.3.6 includes are specific)
+INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR}/include 
+    ${PROJECT_SOURCE_DIR}/include)
+
+# Get pure C intermediary targets:
+ADD_SUBDIRECTORY(hdfi)
+ADD_SUBDIRECTORY(ci)
+ADD_SUBDIRECTORY(misc)
+
+SET(CMAKE_Fortran_COMPILER_WORKS OFF)
+IF(CMAKE_Fortran_COMPILER_WORKS)
+  # Build intermediate targets _cfi, _cfi_static and _fi:
+  ADD_SUBDIRECTORY(cfi)
+  ADD_SUBDIRECTORY(fi)
+
+  SET(medfort_wrap_SOURCES
+    MEDiteratorsF.f 
+    $<TARGET_OBJECTS:_fi236> 
+    $<TARGET_OBJECTS:_fi>
+    $<TARGET_OBJECTS:_cfi236> 
+    $<TARGET_OBJECTS:_cfi>
   )
-
-SET(ci23v30_SOURCES
-  2.3.6/ci/MED23v30axesInfo.c
+  
+  SET(medfort_static_wrap_SOURCES
+    MEDiteratorsF.f 
+    $<TARGET_OBJECTS:_fi236> 
+    $<TARGET_OBJECTS:_fi>
+    $<TARGET_OBJECTS:_cfi236_static> 
+    $<TARGET_OBJECTS:_cfi_static>
   )
-
-SET(misc236_SOURCES
-  2.3.6/misc/MEDnomEntite.c
-  2.3.6/misc/MEDnomGeometrie.c
-  2.3.6/misc/MEDnomGeometrie30.c
-  2.3.6/misc/MEDnomDataset.c
-  2.3.6/misc/MEDparametresGeometrie.c
-  2.3.6/misc/MEDGeometrieElement.c
-  2.3.6/misc/MEDcheckVersion.c
-  2.3.6/misc/MEDversionedApi.cxx
-  2.3.6/misc/MEDversionedApiC.c
-  )
-
-SET(hdfi236_SOURCES
-  2.3.6/hdfi/MEDattrStringEcrire.c
-  2.3.6/hdfi/MEDattrNumEcrire.c
-  2.3.6/hdfi/MEDdatasetNumEcrire231.c
-  2.3.6/hdfi/MEDdatasetNumEcrire232.c
-  2.3.6/hdfi/MEDdatasetNumEcrire.c
-  2.3.6/hdfi/MEDdatasetNumLire231.c
-  2.3.6/hdfi/MEDdatasetNumLire232.c
-  2.3.6/hdfi/MEDdatasetNumLire.c
-  2.3.6/hdfi/MEDdatasetStringEcrire.c
-  2.3.6/hdfi/MEDdatasetStringLire.c
-  2.3.6/hdfi/MEDfichierCreer.c
-  2.3.6/hdfi/MEDfichierOuvrir.c
-  2.3.6/hdfi/MEDindiceInfo.c
-  2.3.6/hdfi/MEDindiceNum.c
-  2.3.6/hdfi/MEDnObjets.c
-  2.3.6/hdfi/MEDobjetIdentifer.c
-  )
-
-SET(med236_SOURCES 2.3.6/MEDaffiche.c)
-
-SET(ci_SOURCES
-  ci/MEDmeshGeotypeName.c
-  ci/MEDmeshGeotypeParameter.c
-  ci/MEDmeshNodeCoordinateTrsfWr.c
-  ci/MEDmeshNodeCoordinateTrsfRd.c
-  ci/MEDfieldInterpInfo.c
-  ci/MEDfieldnInterp.c
-  ci/MEDfieldInterpWr.c
-  ci/MEDinterpCr.c
-  ci/MEDinterpBaseFunctionWr.c
-  ci/MEDnInterp.c
-  ci/MEDinterpInfoByName.c
-  ci/MEDinterpInfo.c
-  ci/MEDinterpBaseFunctionRd.c
-  ci/MEDinterpBaseFunctionCoeffSize.c
-  ci/MEDlibraryNumVersion.c
-  ci/MEDlibraryStrVersion.c
-  ci/MEDlibraryHdfNumVersion.c
-  ci/MEDlibraryHdfStrVersion.c
-  ci/MEDlibraryClose.c
-  ci/MEDfileOpen.c
-  ci/MEDfileClose.c
-  ci/MEDfileCommentWr.c
-  ci/MEDfileCommentRd.c
-  ci/MEDfileCompatibility.c
-  ci/MEDfileNumVersionRd.c
-  ci/MEDfileStrVersionRd.c
-  ci/MEDfileObjectsMount.c
-  ci/MEDfileObjectsUnmount.c
-  ci/MEDnProfile.c
-  ci/MEDprofileInfo.c
-  ci/MEDprofileWr.c
-  ci/MEDprofileSizeByName.c
-  ci/MEDprofileRd.c
-  ci/MEDfilterEntityCr.c
-  ci/MEDfilterBlockOfEntityCr.c
-  ci/_MEDfieldValueAdvancedWr30.c
-  ci/MEDfieldValueAdvancedWr.c
-  ci/MEDfieldValueWithProfileWr.c
-  ci/MEDfieldValueWr.c
-  ci/_MEDfieldValueAdvancedRd30.c
-  ci/_MEDfieldValueAdvancedRd236.c
-  ci/MEDfieldValueAdvancedRd.c
-  ci/MEDfieldValueWithProfileRd.c
-  ci/MEDfieldValueRd.c
-  ci/MEDfieldCr.c
-  ci/MEDnField.c
-  ci/MEDfieldnComponent.c
-  ci/MEDfieldnComponentByName.c
-  ci/MEDfieldInfo.c
-  ci/MEDfieldInfoByName.c
-  ci/MEDfieldComputingStepInfo.c
-  ci/MEDfieldComputingStepMeshInfo.c
-  ci/MEDfieldComputingStepMeshWr.c
-  ci/MEDfieldnProfile.c
-  ci/_MEDfieldnValue.c
-  ci/MEDfieldnValueWithProfileByName.c
-  ci/MEDfieldnValueWithProfile.c
-  ci/MEDfieldnValue.c
-  ci/MEDlocalizationWr.c
-  ci/MEDlocalizationRd.c
-  ci/MEDnLocalization.c
-  ci/MEDlocalizationInfo.c
-  ci/MEDlocalizationInfoByName.c
-  ci/MEDlinkWr.c
-  ci/MEDlinkRd.c
-  ci/MEDnLink.c
-  ci/MEDlinkInfoByName.c
-  ci/MEDlinkInfo.c
-  ci/_MEDmeshCr.c
-  ci/MEDmeshCr.c
-  ci/MEDsupportMeshCr.c
-  ci/_MEDmeshInfoByName.c
-  ci/MEDmeshInfoByName.c
-  ci/MEDsupportMeshInfoByName.c
-  ci/MEDmeshInfo.c
-  ci/MEDsupportMeshInfo.c
-  ci/MEDnMesh.c
-  ci/MEDnSupportMesh.c
-  ci/MEDsupportMeshnAxis.c
-  ci/MEDsupportMeshnAxisByName.c
-  ci/MEDmeshGridTypeWr.c
-  ci/MEDmeshGridTypeRd.c
-  ci/MEDmeshGridIndexCoordinateWr.c
-  ci/MEDmeshGridIndexCoordinateRd.c
-  ci/MEDmeshGridStructWr.c
-  ci/MEDmeshGridStructRd.c
-  ci/MEDmeshUniversalNameWr.c
-  ci/MEDmeshUniversalNameRd.c
-  ci/MEDmeshAttributeWr.c
-  ci/MEDmeshAttributeRd.c
-  ci/MEDmeshComputationStepCr.c
-  ci/MEDmeshComputationStepInfo.c
-  ci/MEDmeshComputationStepDtRd.c
-  ci/MEDmeshNodeCoordinateWr.c
-  ci/MEDmeshNodeCoordinateWithProfileWr.c
-  ci/MEDmeshNodeCoordinateAdvancedWr.c
-  ci/MEDmeshElementConnectivityAdvancedWr.c
-  ci/MEDmeshElementConnectivityWithProfileWr.c
-  ci/MEDmeshElementConnectivityWr.c
-  ci/MEDmeshNodeCoordinateRd.c
-  ci/MEDmeshNodeCoordinateWithProfileRd.c
-  ci/MEDmeshNodeCoordinateAdvancedRd.c
-  ci/MEDmeshElementConnectivityAdvancedRd.c
-  ci/MEDmeshElementConnectivityWithProfileRd.c
-  ci/MEDmeshElementConnectivityRd.c
-  ci/_MEDmeshnEntity.c
-  ci/MEDmeshnEntityWithProfile.c
-  ci/MEDmeshnEntity.c
-  ci/MEDmeshNodeWr.c
-  ci/MEDmeshNodeRd.c
-  ci/MEDmeshElementWr.c
-  ci/MEDmeshElementRd.c
-  ci/MEDfilterAllocate.c
-  ci/MEDfilterDeAllocate.c
-  ci/MEDfilterClose.c
-  ci/_MEDmeshAdvancedWr.c
-  ci/_MEDmeshAdvancedRd.c
-  ci/MEDmeshEntityNameWr.c
-  ci/MEDmeshEntityNumberWr.c
-  ci/MEDmeshEntityFamilyNumberWr.c
-  ci/MEDmeshEntityNameRd.c
-  ci/MEDmeshEntityNumberRd.c
-  ci/MEDmeshEntityFamilyNumberRd.c
-  ci/MEDmeshnAxis.c
-  ci/MEDmeshnAxisByName.c
-  ci/MEDmeshPolygonWr.c
-  ci/MEDmeshPolygonRd.c
-  ci/MEDmeshPolyhedronWr.c
-  ci/MEDmeshPolyhedronRd.c
-  ci/MEDfamilyCr.c
-  ci/MEDnFamily.c
-  ci/MEDnFamilyGroup.c
-  ci/MEDfamilyInfo.c
-  ci/MEDnFamily23Attribute.c
-  ci/_MEDnFamily23Attribute236.c
-  ci/_MEDnFamily23Attribute30.c
-  ci/MEDfamily23Info.c
-  ci/_MEDfamily23Info236.c
-  ci/_MEDfamily23Info30.c
-  ci/_MEDmeshAssociatedGroupCr.c
-  ci/MEDmeshSortingTypeRd.c
-  ci/MEDnEquivalence.c
-  ci/MEDequivalenceCr.c
-  ci/MEDequivalenceInfo.c
-  ci/MEDequivalenceComputingStepInfo.c
-  ci/MEDequivalenceCorrespondenceWr.c
-  ci/MEDequivalenceCorrespondenceRd.c
-  ci/MEDequivalenceCorrespondenceSizeInfo.c
-  ci/MEDequivalenceCorrespondenceSize.c
-  ci/MEDsubdomainJointCr.c
-  ci/MEDnSubdomainJoint.c
-  ci/MEDsubdomainJointInfo.c
-  ci/MEDsubdomainCorrespondenceWr.c
-  ci/MEDsubdomainComputingStepInfo.c
-  ci/MEDsubdomainCorrespondenceSizeInfo.c
-  ci/MEDsubdomainCorrespondenceSize.c
-  ci/MEDsubdomainCorrespondenceRd.c
-  ci/MEDmeshGlobalNumberWr.c
-  ci/MEDmeshGlobalNumberRd.c
-  ci/MEDstructElementCr.c
-  ci/MEDstructElementConstAttWithProfileWr.c
-  ci/MEDstructElementConstAttWr.c
-  ci/MEDnStructElement.c
-  ci/MEDstructElementInfoByName.c
-  ci/MEDstructElementInfo.c
-  ci/MEDstructElementConstAttInfoByName.c
-  ci/MEDstructElementConstAttInfo.c
-  ci/MEDstructElementConstAttRd.c
-  ci/MEDstructElementAttSizeof.c
-  ci/MEDstructElementVarAttCr.c
-  ci/MEDstructElementVarAttInfoByName.c
-  ci/MEDstructElementVarAttInfo.c
-  ci/MEDmeshStructElementVarAttWr.c
-  ci/MEDmeshStructElementVarAttRd.c
-  ci/MEDstructElementName.c
-  ci/MEDstructElementGeotype.c
-  ci/_MEDmeshDatagroupOpen.c
-  ci/MEDparameterCr.c
-  ci/MEDnParameter.c
-  ci/MEDparameterInfo.c
-  ci/MEDparameterInfoByName.c
-  ci/MEDparameterValueWr.c
-  ci/MEDparameterValueRd.c
-  ci/MEDparameterComputationStepInfo.c
-  ci/MEDmeshEntityAttributeAdvancedWr.c
-  ci/MEDmeshEntityAttributeAdvancedRd.c
-  ci/MEDmeshEntityInfo.c
-  ci/_MEDmeshInfoByName30.c
-  ci/_MEDmeshnAxisByName30.c
-  ci/_MEDmeshUniversalNameRd30.c
-  ci/_MEDmeshnEntity30.c
-  ci/_MEDmeshInfoByName236.c
-  ci/_MEDmeshnAxisByName236.c
-  ci/_MEDmeshUniversalNameRd236.c
-  ci/_MEDmeshnEntity236.c
-  ci/_MEDmeshAdvancedRd30.c
-  ci/_MEDmeshAdvancedRd236.c
-  ci/_MEDfilterEntityCr30.c
-  ci/_MEDfilterEntityCr236.c
-  ci/_MEDnFamily30.c
-  ci/_MEDnFamily236.c
-  ci/_MEDnFamilyGroup30.c
-  ci/_MEDnFamilyGroup236.c
-  ci/_MEDlinkRd30.c
-  ci/_MEDlinkRd236.c
-  ci/_MEDfieldComputingStepInfo30.c
-  ci/_MEDfieldComputingStepInfo236.c
-  ci/_MEDfieldComputingStepMeshInfo30.c
-  ci/_MEDfieldComputingStepMeshInfo236.c
-  ci/_MEDfieldComputingStepCheck236.c
-  ci/_MEDfieldInfoByName30.c
-  ci/_MEDfieldInfoByName236.c
-  ci/_MEDfieldnProfile30.c
-  ci/_MEDfieldnProfile236.c
-  ci/_MEDfieldnValue30.c
-  ci/_MEDfieldnValue236.c
-  ci/_MEDprofileRd30.c
-  ci/_MEDprofileRd236.c
-  ci/_MEDlocalizationRd30.c
-  ci/_MEDlocalizationRd236.c
-  ci/_MEDlocalizationInfoByName30.c
-  ci/_MEDlocalizationInfoByName236.c
-  ci/_MEDnEquivalence30.c
-  ci/_MEDnEquivalence236.c
-  ci/_MEDequivalenceInfo30.c
-  ci/_MEDequivalenceInfo236.c
-  ci/_MEDequivalenceCorrespondenceSize30.c
-  ci/_MEDequivalenceCorrespondenceSize236.c
-  ci/_MEDequivalenceCorrespondenceRd30.c
-  ci/_MEDequivalenceCorrespondenceRd236.c
-  ci/_MEDequivalenceComputingStepInfo30.c
-  ci/_MEDequivalenceComputingStepInfo236.c
-  ci/_MEDequivalenceCorrespondenceSizeInfo30.c
-  ci/_MEDequivalenceCorrespondenceSizeInfo236.c
-  ci/_MEDmeshComputationStepInfo30.c
-  ci/_MEDmeshComputationStepInfo236.c
-  ci/_MEDmeshGridIndexCoordinateRd30.c
-  ci/_MEDmeshGridIndexCoordinateRd236.c
-  ci/_MEDnSubdomainJoint30.c
-  ci/_MEDnSubdomainJoint236.c
-  ci/_MEDsubdomainJointInfo30.c
-  ci/_MEDsubdomainJointInfo236.c
-  ci/_MEDsubdomainCorrespondenceSize30.c
-  ci/_MEDsubdomainCorrespondenceSize236.c
-  ci/_MEDsubdomainCorrespondenceRd30.c
-  ci/_MEDsubdomainCorrespondenceRd236.c
-  ci/_MEDsubdomainComputingStepInfo30.c
-  ci/_MEDsubdomainComputingStepInfo236.c
-  ci/_MEDsubdomainCorrespondenceSizeInfo30.c
-  ci/_MEDsubdomainCorrespondenceSizeInfo236.c
-  ci/_MEDparameterInfoByName30.c
-  ci/_MEDparameterInfoByName236.c
-  ci/_MEDparameterValueRd30.c
-  ci/_MEDparameterValueRd236.c
-  ci/_MEDfileCommentRd30.c
-  ci/_MEDfileCommentRd236.c
-  ci/_MEDfileObjectsMount30.c
-  ci/_MEDfileObjectsMount236.c
-  ci/_MEDfileObjectsUnmount30.c
-  ci/_MEDfileObjectsUnmount236.c
-  ci/_MEDfield23ComputingStepMeshInfo30.c
-  ci/_MEDfield23ComputingStepMeshInfo236.c
-  ci/_MEDfield23nProfile30.c
-  ci/_MEDfield23nProfile236.c
-  ci/MEDfield23nValueWithProfile.c
-  ci/MEDfield23ComputingStepMeshInfo.c
-  ci/MEDfield23nProfile.c
-  ci/MEDfield23ValueWithProfileRd.c
-  ci/_MEDfield23nValue.c
-  ci/_MEDfield23nValue30.c
-  ci/_MEDfield23nValue236.c
-  ci/_MEDmeshEntityInfo30.c
-  ci/_MEDmeshEntityInfo236.c
-  )
-
-SET(misc_SOURCES
-  misc/MEDsetFilter.c
-  misc/MEDcstring.c
-  misc/MED1cstring.c
-  misc/MED2cstring.c
-  misc/MEDcstringFree.c
-  misc/MEDfstring.c
-  misc/_MEDc2fString.c
-  misc/MEDexitIf.c
-  misc/MEDversionedApi3.cxx
-  misc/MEDgetGeometryTypeFromName.cxx
-  misc/MEDversionedApi3C.c
-  misc/MEDmodeAcces.cxx
-  misc/MEDmodeAccesC.c
-  misc/MEDerreur.cxx
-  misc/MEDfieldChecked.cxx
-  misc/MEDfileVersion.cxx
-  misc/_MEDgetGeometricParameter.c
-  misc/_MEDgetDynGeometricParameter.c
-  misc/_MEDgetDatasetName.c
-  misc/_MEDgetDatasetParameter.c
-  misc/_MEDgetDatatype.c
-  misc/_MEDmeshtypeCompatibility.c
-  misc/_MEDgetEntityTypeName.c
-  misc/_MEDgetInternalGeometryTypeName.c
-  misc/_MEDgetExternalGeometryTypeName.c
-  misc/_MEDcheckVersion30.c
-  misc/_MED23v30stringConvert.c
-  misc/_MEDgetSupportMeshNbOfEntities.c
-  )
-
-SET(hdfi_SOURCES
-  hdfi/_MEDfilterEntityFullIGlobalCr.c
-  hdfi/_MEDfilterEntityFullICompactCr.c
-  hdfi/_MEDfilterEntityNoIGlobalCr.c
-  hdfi/_MEDfilterEntityNoICompactCr.c
-  hdfi/_MEDselectAllEntitiesFullI.c
-  hdfi/_MEDselectAllEntitiesNoI.c
-  hdfi/_MEDfilterBlockOfEntityFullIGlobalCr.c
-  hdfi/_MEDfilterBlockOfEntityNoIGlobalCr.c
-  hdfi/_MEDfilterBlockOfEntityFullICompactCr.c
-  hdfi/_MEDfilterBlockOfEntityNoICompactCr.c
-  hdfi/_MEDdatasetWr.c
-  hdfi/_MEDdatasetRd.c
-  hdfi/_MEDfileOpen.c
-  hdfi/_MEDfileCreate.c
-  hdfi/_MEDnObjects.c
-  hdfi/__MEDobjectGetName.c
-  hdfi/_MEDobjectCrOrderGetName.c
-  hdfi/_MEDobjectGetName.c
-  hdfi/_MEDcopyName.c
-  hdfi/_MEDvisit.c
-  hdfi/_MEDlinkObjs.c
-  hdfi/_MEDgetComputationStepName.c
-  hdfi/_MEDdatagroupCrOrderCr.c
-  hdfi/_MEDdatagroupOpen.c
-  hdfi/_MEDsoftlinkDel.c
-  hdfi/_MEDisasoftlink.c
-  hdfi/_MEDgetDatasetChgt.c
-  hdfi/_MEDdatasetExistByMedtype.c
-  hdfi/_MEDattributeStringRdByName.c
-  hdfi/_MEDattributeNumRdByName.c
-  hdfi/_MEDattributeStringWrByName.c
-  hdfi/_MEDattributeStringWr.c
-  hdfi/_MEDattributeNumWrByName.c
-  hdfi/_MEDattributeNumWr.c
-  hdfi/_MEDcheckAttributeStringInit.c
-  hdfi/_MEDcheckAttributeStringFin.c
-  hdfi/_MEDcheckAttributeStringFunc.c
-  hdfi/_MEDchecknSublinkFunc.c
-  hdfi/_MEDiterate.c
-  hdfi/_MEDobjectGetRank.c
-  hdfi/_MEDdatagroupExist.c
-  hdfi/_MEDdatasetExist.c
-  hdfi/_MEDattributeExist.c
-  hdfi/MEDattrFermer.c
-  hdfi/MEDattrNumLire.c
-  hdfi/MEDattrOuvrir.c
-  hdfi/MEDattrStringLire.c
-  hdfi/MEDdatagroupCreer.c
-  hdfi/MEDdatagroupFermer.c
-  hdfi/MEDdatagroupOuvrir.c
-  hdfi/MEDdatagroupLienSupprimer.c
-  hdfi/MEDdatagroupLienCreer.c
-  hdfi/MEDdatasetFermer.c
-  hdfi/MEDdatasetOuvrir.c
-  hdfi/MEDfichierFermer.c
-  hdfi/MEDfichierNo.c
-  hdfi/MEDmodeErreurVerrouiller.c
-  hdfi/MEDfichierMonter.c
-  hdfi/MEDfichierDemonter.c
-  hdfi/MEDobjetsOuverts.c
-  )
-
-SET(cfi236_SOURCES
-  2.3.6/cfi/equcf.c
-  2.3.6/cfi/fichcf.c
-  2.3.6/cfi/intercf.c
-  2.3.6/cfi/jntcf.c
-  2.3.6/cfi/rescf.c
-  2.3.6/cfi/entmaacf.c
-  2.3.6/cfi/famcf.c
-  2.3.6/cfi/maacf.c
-  2.3.6/cfi/procf.c
-  2.3.6/cfi/scalairecf.c
-  2.3.6/cfi/gausscf.c
-  2.3.6/cfi/exitcf.c
-  2.3.6/cfi/famcf231.c
-  2.3.6/cfi/famcf232.c
-  2.3.6/cfi/MEDversionedApiF.cxx
-  )
-
-SET(cfi_SOURCES
-  cfi/librarycf.c
-  cfi/medlocalizationcf.c
-  cfi/medprofilecf.c
-  cfi/medinterpcf.c
-  cfi/medlinkcf.c
-  cfi/medequivalencecf.c
-  cfi/medfieldcf.c
-  cfi/meshcf.c
-  cfi/medfamilycf.c
-  cfi/medstructelementcf.c
-  cfi/medsupportcf.c
-  cfi/medjointcf.c
-  cfi/medparametercf.c
-  cfi/medfiltercf.c
-  cfi/filecf.c
-  cfi/MEDversionedApi3F.cxx
-  )
-
-SET(fi_SOURCES
-  fi/medsupport.f
-  fi/medequivalence.f
-  fi/medlink.f
-  fi/medinterp.f
-  fi/medstructelement.f
-  fi/medfilter.f
-  fi/medfile.f
-  fi/medlocalization.f
-  fi/medprofile.f
-  fi/medjoint.f
-  fi/medparameter.f
-  fi/medfamily.f
-  fi/medfield.f
-  fi/medflibrary.f
-  fi/medmesh.f
-)
-
-SET(fi236_SOURCES
-  2.3.6/fi/entmaaf.f
-  2.3.6/fi/jntf.f
-  2.3.6/fi/gauss.f
-  2.3.6/fi/exit.f
-  2.3.6/fi/resf_i.f
-  2.3.6/fi/interf.f
-  2.3.6/fi/fichf.f
-  2.3.6/fi/maaf.f
-  2.3.6/fi/prof.f
-  2.3.6/fi/resf_r.f
-  2.3.6/fi/famf.f
-  2.3.6/fi/equf.f
-  2.3.6/fi/scalaire.f
-  )
+ENDIF()
 
 SET(medC_SOURCES
   MEDiterators.c
-  ${ci236_SOURCES}
-  ${ci23v30_SOURCES}
-  ${misc236_SOURCES}
-  ${hdfi236_SOURCES}
-  ${med236_SOURCES}
-  ${ci_SOURCES}
-  ${misc_SOURCES}
-  ${hdfi_SOURCES}
+  $<TARGET_OBJECTS:_ci236>
+  $<TARGET_OBJECTS:_hdfi236>
+  $<TARGET_OBJECTS:_misc236>
+  $<TARGET_OBJECTS:_med236>
+  $<TARGET_OBJECTS:_ci>
+  $<TARGET_OBJECTS:_misc>
+  $<TARGET_OBJECTS:_hdfi>  
 )
 
-SET(cfi_tmp_SOURCES
-  ${cfi236_SOURCES}
-  ${cfi_SOURCES}
+SET(medC_static_SOURCES
+  MEDiterators.c
+  $<TARGET_OBJECTS:_ci236_static>
+  $<TARGET_OBJECTS:_hdfi236_static>
+  $<TARGET_OBJECTS:_misc236_static>
+  $<TARGET_OBJECTS:_med236_static>
+  $<TARGET_OBJECTS:_ci_static>
+  $<TARGET_OBJECTS:_misc_static>
+  $<TARGET_OBJECTS:_hdfi_static>  
 )
 
+########################### Pure C stuff ###################################
+############################################################################
 
-SET(med_fi_SOURCES
-  MEDiteratorsF.f
-  ${fi_SOURCES}
-  ${fi236_SOURCES}
-  )
+### Installation preparation:
+SET(_export_group "medfileTargets")
 
-SET_SOURCE_FILES_PROPERTIES(${ci236_SOURCES} ${ci23v30_SOURCES} ${misc236_SOURCES} ${hdfi236_SOURCES} ${cfi236_SOURCES} ${med236_SOURCES} PROPERTIES COMPILE_FLAGS "-I${CMAKE_CURRENT_BINARY_DIR}/../include/2.3.6 -I${CMAKE_CURRENT_SOURCE_DIR}/../include/2.3.6 -I${CMAKE_CURRENT_BINARY_DIR}/../include ${HDF5_DEFINITIONS} -DMED_API_23")
-SET_SOURCE_FILES_PROPERTIES(MEDiterators.c ${ci_SOURCES} ${misc_SOURCES} ${hdfi_SOURCES} ${cfi_SOURCES} PROPERTIES COMPILE_FLAGS "-I${CMAKE_CURRENT_BINARY_DIR}/../include -I${CMAKE_CURRENT_SOURCE_DIR}/../include ${HDF5_DEFINITIONS}")
-SET_SOURCE_FILES_PROPERTIES(MEDiteratorsF.f PROPERTIES COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}/../include")
+######### Shared Libraries ##########
+IF(MEDFILE_BUILD_SHARED_LIBS)
+  ADD_LIBRARY(medC SHARED ${medC_SOURCES})
+  TARGET_LINK_LIBRARIES(medC ${HDF5_LIBRARIES} ${MPI_LIBS})
+  MED_SET_DEFINITIONS(medC NOGDI)
+  
+  INSTALL(TARGETS medC EXPORT ${_export_group} DESTINATION lib)  
+ENDIF()
 
-########################### Shared Libraries ###############################
-# Add Shared MED C library
-SET(medC_COMPILE_CFLAGS ${PLATFORM_CFLAGS} -DNOGDI)
-ADD_LIBRARY(medC SHARED ${medC_SOURCES})
-TARGET_LINK_LIBRARIES(medC ${HDF5_LIBS})
-MED_SET_COMPILE_FLAGS(medC "${medC_COMPILE_CFLAGS}")
+######### Static Libraries ##########
+##
+## Target names are suffixed with "_static" but file 
+## names remain the same.
+ 
+IF(MEDFILE_BUILD_STATIC_LIBS)
+  ADD_LIBRARY(medC_static STATIC ${medC_SOURCES})
+  SET_TARGET_PROPERTIES(medC_static PROPERTIES OUTPUT_NAME medC)
+  TARGET_LINK_LIBRARIES(medC_static ${HDF5_LIBRARIES} ${MPI_LIBS})
+  MED_SET_DEFINITIONS(medC_static NOGDI)
+  
+  INSTALL(TARGETS medC_static EXPORT ${_export_group} DESTINATION lib)
+ENDIF()
 
+########################### Fortran stuff ###################################
+#############################################################################
 IF(CMAKE_Fortran_COMPILER_WORKS)
-  # Add temporary Static MED C library
-  SET(cfi_COMPILE_CFLAGS ${PLATFORM_CFLAGS} -DNOGDI)
-  ADD_LIBRARY(cfi STATIC ${cfi_tmp_SOURCES})
-  TARGET_LINK_LIBRARIES(cfi medC)
-  MED_SET_COMPILE_FLAGS(cfi "${cfi_COMPILE_CFLAGS}")
-  SET_TARGET_PROPERTIES(cfi PROPERTIES OUTPUT_NAME medcfi)
   
-  # Add temporary Static MED Fortran library
-  ADD_LIBRARY(fi STATIC ${med_fi_SOURCES})
-  SET(fi_COMPILE_CFLAGS ${PLATFORM_CFLAGS})
-  SET(fi_COMPILE_CFLAGS ${fi_COMPILE_CFLAGS} ${FORTRAN_STR_ARGS_ORDER})
-  MED_SET_COMPILE_FLAGS(fi "${fi_COMPILE_CFLAGS}")
-  TARGET_LINK_LIBRARIES(fi cfi)
-  SET_TARGET_PROPERTIES(fi PROPERTIES OUTPUT_NAME medfi)
+  ######### Shared Libraries ##########
+  IF(MEDFILE_BUILD_SHARED_LIBS)
+    ## Intermediate library - this is unavoidable 
+    ## if we want the Fortran wrapper to build correctly under win.
+    ADD_LIBRARY(medfwrap STATIC ${medfort_wrap_SOURCES})
+    TARGET_LINK_LIBRARIES(medfwrap medC)
+    INSTALL(TARGETS medfwrap EXPORT medfileTargetsF DESTINATION lib)
+
+    # Add Shared MED library
+    ADD_LIBRARY(med SHARED MEDiterators.c)
+    TARGET_LINK_LIBRARIES(med medfwrap)    
+   
+    # Install only the resulting library:
+    INSTALL(TARGETS med EXPORT medTargetsF DESTINATION lib)
+  ENDIF()
+
+  ######### Static Libraries ##########
+  ##
+  ## Target names are suffixed with "_static" but file 
+  ## names remain the same.
+  IF(MEDFILE_BUILD_STATIC_LIBS)
+    ## Intermediate library - this is unavoidable 
+    ## if we want the Fortran wrapper to build correctly under win.
+    ADD_LIBRARY(medfwrap_static STATIC ${medfort_wrap_SOURCES})
+    SET_TARGET_PROPERTIES(medfwrap_static PROPERTIES OUTPUT_NAME medfwrap)
+    TARGET_LINK_LIBRARIES(medfwrap_static medC_static)
+    INSTALL(TARGETS medfwrap_static EXPORT medfileTargetsF DESTINATION lib)
+    
+    # Add Static MED library
+    ADD_LIBRARY(med_static STATIC MEDiterators.c)
+    SET_TARGET_PROPERTIES(med_static PROPERTIES OUTPUT_NAME med)
+    TARGET_LINK_LIBRARIES(med_static medfwrap_static)
+
+    # Install only the resulting library:  
+    INSTALL(TARGETS med_static EXPORT medfileTargetsF DESTINATION lib)
+  ENDIF()
   
-  IF(WIN32)
-    SET(fortran_link_flags "")
-    FOREACH(f ${med_fi_SOURCES})
-      FILE(READ "${f}" f_content)
-      STRING(REPLACE "\n" ";" list_f_content ${f_content})
-      FOREACH(ln ${list_f_content})
-        STRING(REGEX MATCH "subroutine.*\\(" sub_name "${ln}" )
-        STRING(LENGTH "${sub_name}" len)
-        IF(${len} GREATER 0)
-          STRING(REPLACE "(" "" sub_name "${sub_name}" )
-          STRING(REPLACE "subroutine" "" sub_name "${sub_name}")
-          STRING(STRIP "${sub_name}" sub_name)
-          STRING(TOUPPER "${sub_name}" sub_name)
-          SET(fortran_link_flags "${fortran_link_flags} /INCLUDE:_${sub_name}")
-        ENDIF(${len} GREATER 0)
-      ENDFOREACH(ln ${list_f_content})
-    ENDFOREACH(f ${med_fi_SOURCES})
-  ENDIF(WIN32)
-  # Add Shared MED library
-  SET(med_COMPILE_CFLAGS ${PLATFORM_CFLAGS})
-  ADD_LIBRARY(med SHARED MEDiterators.c)
-  TARGET_LINK_LIBRARIES(med fi)
-  SET_TARGET_PROPERTIES(med PROPERTIES LINK_FLAGS "${fortran_link_flags}")
-  MED_SET_COMPILE_FLAGS(med "${med_COMPILE_CFLAGS}")
 ENDIF(CMAKE_Fortran_COMPILER_WORKS)
-
-########################### Static Libraries ###############################
-# Add Static MED C library
-SET(medC_static_COMPILE_FLAGS ${PLATFORM_CFLAGS} -DNOGDI)
-SET(medC_static_COMPILE_FLAGS ${medC_static_COMPILE_FLAGS} -DMED3_USESTATIC)
-ADD_LIBRARY(medC_static STATIC ${medC_SOURCES})
-TARGET_LINK_LIBRARIES(medC_static ${HDF5_LIBS})
-MED_SET_COMPILE_FLAGS(medC_static "${medC_static_COMPILE_FLAGS}")
-GET_PROPERTY(medC_static_location TARGET medC_static PROPERTY LOCATION)
-
-IF(CMAKE_Fortran_COMPILER_WORKS)
-  # Add temporary Static MED C library
-  SET(cfi_static_COMPILE_CFLAGS ${PLATFORM_CFLAGS} -DNOGDI)
-  SET(cfi_static_COMPILE_CFLAGS ${cfi_static_COMPILE_CFLAGS} -DMED3_USESTATIC)
-  ADD_LIBRARY(cfi_static STATIC ${cfi_tmp_SOURCES})
-  SET_TARGET_PROPERTIES(cfi_static PROPERTIES OUTPUT_NAME medcfi_static)
-  TARGET_LINK_LIBRARIES(cfi_static medC_static)
-  MED_SET_COMPILE_FLAGS(cfi_static "${cfi_static_COMPILE_CFLAGS}")
-  SET_TARGET_PROPERTIES(cfi_static PROPERTIES STATIC_LIBRARY_FLAGS "${medC_static_location}")
-  GET_PROPERTY(cfi_static_location TARGET cfi_static PROPERTY LOCATION)
-  
-  # Add temporary Static MED Fortran library
-  ADD_LIBRARY(fi_static STATIC ${med_fi_SOURCES})
-  SET(fi_static_COMPILE_CFLAGS ${PLATFORM_CFLAGS})
-  SET(fi_static_COMPILE_CFLAGS ${fi_static_COMPILE_CFLAGS} -DMED3_USESTATIC)
-  SET(fi_static_COMPILE_CFLAGS ${fi_static_COMPILE_CFLAGS} ${FORTRAN_STR_ARGS_ORDER})
-  MED_SET_COMPILE_FLAGS(fi_static "${fi_static_COMPILE_CFLAGS}")
-  TARGET_LINK_LIBRARIES(fi_static cfi_static)
-  SET_TARGET_PROPERTIES(fi_static PROPERTIES OUTPUT_NAME medfi_static)
-  SET_TARGET_PROPERTIES(fi_static PROPERTIES STATIC_LIBRARY_FLAGS "${cfi_static_location}")
-  GET_PROPERTY(fi_static_location TARGET fi_static PROPERTY LOCATION)
-  
-  # Add Static MED library
-  SET(med_static_COMPILE_CFLAGS ${PLATFORM_CFLAGS})
-  ADD_LIBRARY(med_static STATIC MEDiterators.c)
-  TARGET_LINK_LIBRARIES(med_static fi_static ${HDF5_LIBS})
-  MED_SET_COMPILE_FLAGS(med_static "${med_static_COMPILE_CFLAGS}")
-  SET_TARGET_PROPERTIES(med_static PROPERTIES STATIC_LIBRARY_FLAGS "${fi_static_location}")
-  
-  INSTALL(TARGETS cfi_static DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-  INSTALL(TARGETS fi_static DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-  INSTALL(TARGETS med_static DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-  INSTALL(TARGETS cfi DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-  INSTALL(TARGETS fi DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-  INSTALL(TARGETS med DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-ENDIF(CMAKE_Fortran_COMPILER_WORKS)
-
-INSTALL(TARGETS medC DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-INSTALL(TARGETS medC_static DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-INSTALL(TARGETS medC DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-INSTALL(TARGETS medC_static DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-

@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -154,7 +154,7 @@ void _MEDmeshAdvancedRd30(int dummy, ...)
   }
 
 
-  /*DEBUT  TODO : Externaliser ce traitement lié  aux éléments de structures */
+  /*DEBUT  TODO : Externaliser ce traitement lié aux éléments de structures */
   if ( entitytype == MED_STRUCT_ELEMENT ) {
     if ( MEDstructElementName(fid, geotype,_geotypename) < 0 ) {
       MED_ERR_(_ret,MED_ERR_CALL,MED_ERR_API,"MEDstructElementName");

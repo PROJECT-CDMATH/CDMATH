@@ -13,3 +13,5 @@ if WITHPMED
 libfi_la_SOURCES += medparfile.f
 endif
 
+EXTRA_DIST = CMakeLists.txt
+

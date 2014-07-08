@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -89,8 +89,7 @@ med_err _MEDnomGeometrie30(char *nom_geo,med_geometrie_element type_geo)
      case MED_HEXA8 :
        strcpy(nom_geo,MED_NOM_HE8);
        break;
-       
-      
+
      case MED_HEXA20 :
        strcpy(nom_geo,MED_NOM_H20);
        break;
@@ -98,7 +97,7 @@ med_err _MEDnomGeometrie30(char *nom_geo,med_geometrie_element type_geo)
      case MED_HEXA27 :
        strcpy(nom_geo,"---");
        break;
-       
+
      case MED_PENTA6 :
        strcpy(nom_geo,MED_NOM_PE6);
        break;
@@ -117,6 +116,10 @@ med_err _MEDnomGeometrie30(char *nom_geo,med_geometrie_element type_geo)
 
      case MED_POLYGONE :
        strcpy(nom_geo,MED_NOM_POG);
+       break;
+
+     case MED_POLYGONE2 :
+       strcpy(nom_geo,"---");
        break;
 
      case MED_POLYEDRE :

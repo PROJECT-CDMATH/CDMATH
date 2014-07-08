@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -84,7 +84,7 @@ int main (int argc, char **argv) {
   
   /* mesh creation : a 2D unstructured mesh */
   if (MEDmeshCr(fid, meshname, spacedim, meshdim, MED_UNSTRUCTURED_MESH, 
-		"A 2D structured mesh","",MED_SORT_DTIT,MED_CARTESIAN, axisname, unitname) < 0) {
+		"A 2D unstructured mesh","",MED_SORT_DTIT,MED_CARTESIAN, axisname, unitname) < 0) {
     MESSAGE("ERROR : mesh creation ...");
     goto ERROR;
   }

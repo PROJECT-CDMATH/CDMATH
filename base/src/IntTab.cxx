@@ -60,6 +60,17 @@ IntTab::operator=(const int value)
 }
 
 int&
+IntTab::operator()(const int i)
+{
+	return _values[i];
+}
+const int&
+IntTab::operator()(const int i) const
+{
+	return _values[i];
+}
+
+int&
 IntTab::operator[](const int i)
 {
 	return _values[i];
@@ -69,6 +80,7 @@ IntTab::operator[](const int i) const
 {
 	return _values[i];
 }
+
 int
 IntTab::size() const
 {
@@ -82,10 +94,10 @@ IntTab::getValues(void) const
 }
 
 IntTab&
-IntTab::operator+=(const IntTab& dt)
+IntTab::operator+=(const IntTab& inttab)
 {
-	for (int i=0;i<dt.size();i++)
-		_values[i] += dt[i] ;
+	for (int i=0;i<inttab.size();i++)
+		_values[i] += inttab(i) ;
 	return *this;
 }
 
@@ -114,10 +126,10 @@ IntTab::operator/=(const int value)
 }
 
 IntTab&
-IntTab::operator-=(const IntTab& dt)
+IntTab::operator-=(const IntTab& inttab)
 {
-	for (int i=0;i<dt.size();i++)
-		_values[i] -= dt[i] ;
+	for (int i=0;i<inttab.size();i++)
+		_values[i] -= inttab(i) ;
 	return *this;
 }
 IntTab&

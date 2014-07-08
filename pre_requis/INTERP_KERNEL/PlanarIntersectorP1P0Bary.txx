@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -31,9 +31,9 @@ namespace INTERP_KERNEL
   PLAN_INTER_TEMPLATE
   PLAN_INTERSECTOR::PlanarIntersectorP1P0Bary(const MyMeshType& meshT, const MyMeshType& meshS,
                                               double dimCaracteristic, double precision,
-                                              double md3DSurf, double medianPlane,
+                                              double md3DSurf, double minDot3DSurf, double medianPlane,
                                               bool doRotate, int orientation, int printLevel):
-    PlanarIntersector<MyMeshType,MyMatrix>(meshT,meshS,dimCaracteristic,precision,md3DSurf,
+    PlanarIntersector<MyMeshType,MyMatrix>(meshT,meshS,dimCaracteristic,precision,md3DSurf,minDot3DSurf,
                                            medianPlane,doRotate,orientation,printLevel)
   {
     // SPEC:

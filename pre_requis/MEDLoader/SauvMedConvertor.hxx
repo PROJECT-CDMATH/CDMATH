@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -47,7 +47,7 @@ namespace ParaMEDMEM
 
 namespace SauvUtilities
 {
-  class IntermediateMED;
+  struct IntermediateMED;
 
   // ==============================================================================
   typedef int                TID;  // an ID countered from 1
@@ -94,7 +94,6 @@ namespace SauvUtilities
     std::string              _name;
     std::vector<const Cell*> _cells;
     std::vector< Group* >    _groups;    // des sous-groupes composant le Group
-    //bool                     _isShared;  // true if any Cell was added to the mesh from other Group
     bool                     _isProfile; // is a field support or not
     std::vector<std::string> _refNames;  /* names of groups referring this one;
                                             _refNames is resized according to nb of references
@@ -126,11 +125,11 @@ namespace SauvUtilities
 
       void setData( int nb_comp, Group* supp )
       { _support = supp; _comp_names.resize(nb_comp); _nb_gauss.resize(nb_comp,1); }
-      int nbComponents() const { return _comp_names.size(); }
+      int  nbComponents() const { return _comp_names.size(); }
       std::string & compName( int i_comp ) { return _comp_names[ i_comp ]; }
-      bool isValidNbGauss() const { return *std::max_element( _nb_gauss.begin(), _nb_gauss.end() ) ==
+      bool isSameNbGauss() const { return *std::max_element( _nb_gauss.begin(), _nb_gauss.end() ) ==
           *std::min_element( _nb_gauss.begin(), _nb_gauss.end() ); }
-      int nbGauss() const { return _nb_gauss[0] ? _nb_gauss[0] : 1; }
+      int  nbGauss() const { return _nb_gauss[0] ? _nb_gauss[0] : 1; }
       bool hasGauss() const { return nbGauss() > 1; }
     };
     // ----------------------------------------------------------------------------
@@ -155,7 +154,7 @@ namespace SauvUtilities
     bool hasSameComponentsBySupport() const;
 
     bool isMultiTimeStamps() const;
-    bool isMedCompatible() const;
+    bool isMedCompatible(bool& sameNbGauss) const;
     ParaMEDMEM::TypeOfField getMedType( const int iSub=0 ) const;
     ParaMEDMEM::TypeOfTimeDiscretization getMedTimeDisc() const;
     int getNbTuples( const int iSub=0 ) const;
@@ -163,6 +162,7 @@ namespace SauvUtilities
     int getNbGauss( const int iSub=0 ) const;
     const Group* getSupport( const int iSub=0 ) const;
     int setValues( double * valPtr, const int iSub, const int elemShift=0 ) const;
+    void splitSubWithDiffNbGauss();
 
     //virtual void dump(std::ostream&) const;
     //virtual ~DoubleField() {}
@@ -254,11 +254,13 @@ namespace SauvUtilities
     Node* getNode( TID nID ) { return _points.getNode( nID ); }
     int getNbCellsOfType( TCellType type ) const { return _cellsByType[type].size(); }
     const Cell* insert(TCellType type, const Cell& ma) { return &( *_cellsByType[type].insert( ma ).first ); }
-    ParaMEDMEM::MEDFileData* convertInMEDFileDS();
+    Group* addNewGroup(std::vector<SauvUtilities::Group*>* groupsToFix=0);
+
+    ParaMEDMEM::MEDFileData* convertInMEDFileDS(bool fix2DOri);
 
   private:
 
-    ParaMEDMEM::MEDFileUMesh* makeMEDFileMesh();
+    ParaMEDMEM::MEDFileUMesh* makeMEDFileMesh(bool fix2DOri);
     ParaMEDMEM::DataArrayDouble * getCoords();
     void setConnectivity( ParaMEDMEM::MEDFileUMesh* mesh, ParaMEDMEM::DataArrayDouble* coords );
     void setGroups( ParaMEDMEM::MEDFileUMesh* mesh );
@@ -273,7 +275,7 @@ namespace SauvUtilities
                 ParaMEDMEM::MEDFileFields*   medFields,
                 ParaMEDMEM::MEDFileUMesh*    mesh,
                 const int                    iSub=0);
-    void checkDataAvailability() const throw(INTERP_KERNEL::Exception);
+    void checkDataAvailability() const;
     void setGroupLongNames();
     void setFieldLongNames(std::set< std::string >& usedNames);
     void makeFieldNewName(std::set< std::string >&    usedNames,
@@ -282,7 +284,7 @@ namespace SauvUtilities
     void eraseUselessGroups();
     void detectMixDimGroups();
     void orientElements2D();
-    void orientElements3D();
+    void orientElements3D(bool fix2DOri);
     void orientFaces3D();
     void orientVolumes();
     void numberElements();

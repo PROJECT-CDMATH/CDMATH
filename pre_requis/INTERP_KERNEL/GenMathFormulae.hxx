@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -60,7 +60,7 @@ namespace INTERP_KERNEL
    * matrix[3]=m_xy, matrix[4]=m_yz, matrix[5]=m_xz
    * This method returns the eigenvector of the corresponding eigenvalue in 'eigenVal'. The returned eigenValue is normalized.
    */
-  void computeEigenVectorForEigenValue6(const double *matrix, double eigenVal, double eps, double *eigenVector) throw(INTERP_KERNEL::Exception)
+  void computeEigenVectorForEigenValue6(const double *matrix, double eigenVal, double eps, double *eigenVector)
   {
     //if(fabs(eigenVal)>eps)
       {

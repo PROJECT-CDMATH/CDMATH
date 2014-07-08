@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -93,7 +93,7 @@ double Node::distanceWithSq(const Node& other) const
 
 /*!
  * WARNING different from 'computeAngle' method ! The returned value are not in the same interval !
- * Here in -Pi/2; Pi/2. Typically this method returns the same value by exchanging pt1 and pt2.
+ * Here in [0; Pi). Typically this method returns the same value by exchanging pt1 and pt2.
  * Use in process of detection of a point in or not in polygon.
  */
 double Node::computeSlope(const double *pt1, const double *pt2)

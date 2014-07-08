@@ -1,7 +1,7 @@
 /* -*- mode:C; coding:utf-8 -*- */
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2012  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -51,14 +51,17 @@ extern "C" {
 #define MED_NUM_MINEUR @MED_NUM_MINEUR@
 #define MED_NUM_RELEASE @MED_NUM_RELEASE@
 
+#define STR(x) #x
+#define _MED_VERSION(x,y,z) STR(x)"."STR(y)"."STR(z)
+#define MED_VERSION_STR _MED_VERSION(MED_NUM_MAJEUR,MED_NUM_MINEUR,MED_NUM_RELEASE)
+
 @MED_DEFINE_MED_HAVE_MPI@
 
 #define MED_NULL       (void *) NULL
 #define MED_MAX_PARA        20
 
 /** Longueurs des chaînes de caractères stockées dans
-    les fichiers
-*/
+    les fichier */
 #define MED_COMMENT_SIZE 200
 #define MED_IDENT_SIZE 8
 #define MED_NAME_SIZE 64
@@ -68,6 +71,9 @@ extern "C" {
 #define MED_SNAME_BLANK "                "
 #define MED_NAME_BLANK  "                                                                "
 /*                       0123456789012345678901234567890123456789012345678901234567890123*/
+
+#define MED_PATHNAME_SIZE 255
+#define MED_MAX_CHFID_PATH MED_PATHNAME_SIZE  /**< Taille maximum du chemin d'accès au groupe cible pour MEDfileObjectsMountById */
 
 /** \enum med_switch_mode Mode d'entrelacement
     \details Indique le mode d'entrelacement utilisé en mémoire par l'application.
@@ -187,6 +193,7 @@ typedef int med_geometry_type;
 #define MED_HEXA27 327
 
 #define MED_POLYGON 400
+#define MED_POLYGON2 420
 #define MED_POLYHEDRON 500
 
 #define MED_STRUCT_GEO_INTERNAL 600
@@ -199,12 +206,12 @@ typedef int med_geometry_type;
 #define MED_ALL_GEOTYPE -1
 #define MED_GEO_ALL MED_ALL_GEOTYPE
 
-#define MED_N_CELL_GEO            23 /**< Nombre de types géométriques de mailles */
-#define MED_N_CELL_FIXED_GEO      22 /**< Nombre de types géométriques statiques de mailles */
+#define MED_N_CELL_GEO            24 /**< Nombre de types géométriques de mailles */
+#define MED_N_CELL_FIXED_GEO      23 /**< Nombre de types géométriques statiques de mailles */
 #define MED_N_CELL_GEO_FIXED_CON  20 /**< Nombre de types géométriques statiques de mailles à connectivité fixe */
 
-#define MED_N_FACE_GEO               7
-#define MED_N_FACE_FIXED_GEO         7
+#define MED_N_FACE_GEO               8
+#define MED_N_FACE_FIXED_GEO         8
 #define MED_N_FACE_GEO_FIXED_CON     6
 
 #define MED_N_EDGE_TYPES             3
@@ -228,7 +235,7 @@ typedef enum {MED_FALSE, MED_TRUE} med_bool ;
 					     localisation ne necessite pas sa création au préalable. */ 
 #define MED_IPOINT_ELNO MED_GAUSS_ELNO
 
-   
+
 #define MED_NO_NAME ""                  /**< De manière générale une chaîne vide indique l'abscence de nom MED.*/
 
 #define MED_NO_MESHNAME ""              /**< Indique qu'il n'y a pas de maillage */
@@ -329,6 +336,8 @@ typedef struct {
 
 
 #include "med_proto.h"
+
+/*En cas de modifications/ajouts de type d'entité/géométrique mettre à jour les itérateurs suivants : */
 
 extern MEDC_EXPORT med_entity_type MED_GET_ENTITY_TYPE[MED_N_ENTITY_TYPES+2];
 extern MEDC_EXPORT const char * const MED_GET_ENTITY_TYPENAME[MED_N_ENTITY_TYPES+2];

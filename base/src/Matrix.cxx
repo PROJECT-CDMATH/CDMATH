@@ -8,47 +8,53 @@
 #include "Matrix.hxx"
 #include "Vector.hxx"
 
+#include "MEDCouplingMatrix.hxx"
+
+using namespace ParaMEDMEM;
 using namespace std;
 
 Matrix::Matrix()
 {
 	_numberOfRows = 0;
 	_numberOfColumns = 0;
-	_values=NULL;
+	_mat=NULL;
 }
 
 Matrix::Matrix(int dim)
 {
 	_numberOfRows = dim;
 	_numberOfColumns = dim;
-    _values = new DoubleTab[dim];
-	for(int i=0; i<dim; i++)
-		_values[i] = DoubleTab(dim,0.);
+	_mat=DenseMatrix::New(dim,dim);
 }
 
 Matrix::Matrix(int numberOfRows, int numberOfColumns)
 {
 	_numberOfRows = numberOfRows;
 	_numberOfColumns = numberOfColumns;
-    _values = new DoubleTab[numberOfRows];
-	for(int i=0; i<numberOfRows; i++)
-		_values[i] = DoubleTab(numberOfColumns,0.);
+	_mat=DenseMatrix::New(numberOfRows,numberOfColumns);
 }
 
 Matrix::~Matrix()
 {
-	for(int i=0; i<_numberOfRows; i++)
-		_values[i].DoubleTab::~DoubleTab();
+	_numberOfRows = 0;
+	_numberOfColumns = 0;
+	if (_mat)
+		_mat->decrRef();
 }
 
 Matrix::Matrix(const Matrix& matrix)
 {
 	_numberOfRows = matrix.getNumberOfRows();
 	_numberOfColumns = matrix.getNumberOfColumns();
+    _mat=static_cast<DenseMatrix *>(matrix.getDenseMatrix()->deepCpy());
+}
 
-	_values = new DoubleTab[_numberOfRows];
-	for(int i=0; i<_numberOfRows; i++)
-		_values[i] = matrix[i];
+//----------------------------------------------------------------------
+DenseMatrix*
+Matrix::getDenseMatrix ( void )  const
+//----------------------------------------------------------------------
+{
+    return _mat ;
 }
 
 int
@@ -63,37 +69,23 @@ Matrix::getNumberOfColumns() const
 	return _numberOfColumns ;
 }
 
-DoubleTab&
-Matrix::operator[](int i)
-{
-	return _values[i];
-}
-const DoubleTab&
-Matrix::operator[](int i) const
-{
-	return _values[i];
-}
-
-DoubleTab&
-Matrix::operator()(int i)
-{
-	return _values[i];
-}
-const DoubleTab&
-Matrix::operator()(int i) const
-{
-	return _values[i];
-}
-
 double&
 Matrix::operator()(int i, int j)
 {
-	return _values[i][j];
+	return _mat->getData()->getPointer()[i+_numberOfRows*j];
 }
+
 const double&
 Matrix::operator()(int i, int j) const
 {
-	return _values[i][j];
+	return _mat->getData()->getPointer()[i+_numberOfRows*j];
+}
+
+void
+Matrix::setDensiteMatrix (const DenseMatrix* mat)
+{
+    _mat=static_cast<DenseMatrix *>(mat->deepCpy());
+
 }
 
 Matrix&
@@ -103,10 +95,10 @@ Matrix::operator = (const Matrix& matrix)
 	_numberOfRows = matrix.getNumberOfRows();
 	_numberOfColumns = matrix.getNumberOfColumns();
 
-	_values = new DoubleTab[_numberOfRows];
-	for(int i=0; i<_numberOfRows; i++)
-		_values[i] = matrix[i];
-	return (*this);
+	_mat=DenseMatrix::New(_numberOfRows,_numberOfColumns);
+    _mat=static_cast<DenseMatrix *>(matrix.getDenseMatrix()->deepCpy());
+
+    return (*this);
 }
 
 void
@@ -118,7 +110,7 @@ Matrix::view() const
 		{
 			cout.width(6);
 			cout.precision(6);
-			cout<<(*this)[i][j];
+			cout<<(*this)(i,j);
 		}
 	cout<<endl;
 	}
@@ -132,10 +124,17 @@ Matrix::operator* (const Vector& vector) const
 	{
 		double sum=0.;
 		for(int j=0; j<_numberOfColumns; j++)
-			sum=sum+_values[i][j]*vector[j];
-		res[i] = sum;
+			sum=sum+(*this)(i,j)*vector(j);
+		res(i) = sum;
 	}
 	return res;
+}
+
+Matrix&
+Matrix::operator*= (const Matrix& matrix)
+{
+	(*this)=(*this)*matrix;
+	return (*this);
 }
 
 bool
@@ -150,7 +149,7 @@ bool
 Matrix::isSymmetric() const
 {
 	if( ! isSquare() )
-		throw "Matrix does not symmetric!!!";
+		throw "isSymmetric::Matrix is not square!!!";
 
 	bool res = true;
 
@@ -158,7 +157,7 @@ Matrix::isSymmetric() const
 
 	for(int i=0; i<dim-1; i++)
 		for(int j=i+1; j<dim; j++)
-			if(_values[i][j] != _values[j][i])
+			if((*this)(i,j) != (*this)(j,i))
 			{
 				res = false;
 				break;
@@ -172,7 +171,7 @@ Matrix::transpose() const
 	Matrix res(_numberOfColumns, _numberOfRows);
 	for(int i=0; i<_numberOfRows; i++)
 		for(int j=0; j<_numberOfColumns; j++)
-			res[j][i] = _values[i][j];
+			res(j,i) = _mat->getData()->getPointer()[i+_numberOfRows*j];
    return res;
 }
 
@@ -190,7 +189,7 @@ Matrix::partMatrix(int row, int column) const
       {
          for(int j=0; j<_numberOfColumns; j++)
             if(j != column)
-            	res[r][c++] = _values[i][j];
+            	res(r,c++) = _mat->getData()->getPointer()[i+_numberOfRows*j];
          r++;
       }
    }
@@ -209,71 +208,23 @@ double
 Matrix::determinant() const
 {
 	if( ! isSquare() )
-	{
-		Matrix matrix=getMatrixU();
-		double res=1.;
-		for (int i=0;i<matrix.getNumberOfRows();i++)
-			res*=matrix(i,i);
-		return res;
-	}else
+		throw "isSymmetric::Matrix is not square!!!";
+	else
 	{
 		Matrix matrix;
 
 	   double res = 0.0;
 	   int dim = _numberOfRows;
 	   if(dim==1)
-		  return _values[0][0];
+		  return (*this)(0,0);
 
 	   for(int i=0; i<dim; i++)
 	   {
 		   matrix = this->partMatrix(i,0);
-		   res += ( coefficient(i)*this->_values[i][0]*(matrix.determinant() ) );
+		   res += ( coefficient(i)*(*this)(i,0)*(matrix.determinant() ) );
 	   }
 	   return res;
 	}
-}
-
-Matrix
-Matrix::getMatrixU(void) const
-{
-	int dim=_numberOfRows;
-	Matrix U(dim);
-	for (int j=0; j<dim-1; j++)
-	{
-		for (int i=j+1; i<dim; i++)
-		{
-			U[i][j] = U[i][j] / U[j][j];
-			for (int k=j+1; k<dim; k++)
-			{
-				U[i][k] += -U[i][j] * U[j][k];
-			}
-			U[i][j] = 0;
-		}
-	}
-	return U;
-}
-
-Matrix
-Matrix::getMatrixL(void) const
-{
-	int dim=_numberOfRows;
-	Matrix L(dim);
-	int j;
-    for (j=0; j<dim-1; j++)
-    {
-    	int i;
-    	for (i=j+1; i<dim; i++)
-    	{
-    		L[i][j] = L[i][j] / L[j][j];
-			for (int k=j+1; k<dim; k++)
-				L[i][k] += -L[i][j] * L[j][k];
-    	}
-    	for ( i=j+1; i<dim; i++)
-    		L[j][i] = 0;
-    	L[j][j] = 1;
-    }
-	L[j][j] = 1;
-	return L;
 }
 
 Matrix
@@ -282,8 +233,8 @@ operator+ (const Matrix& matrix1, const Matrix& matrix2)
   int numberOfRows = matrix1.getNumberOfRows();
   int numberOfColumns = matrix1.getNumberOfColumns();
   Matrix res(numberOfRows, numberOfColumns);
-  for (int i=0; i<numberOfRows; i++)
-	  res[i] = matrix1[i] + matrix2[i];
+  res.setDensiteMatrix(matrix1.getDenseMatrix()->Add(matrix1.getDenseMatrix(),matrix2.getDenseMatrix()));
+
    return res;
 }
 
@@ -293,23 +244,26 @@ operator- (const Matrix& matrix1, const Matrix& matrix2)
   int numberOfRows = matrix1.getNumberOfRows();
   int numberOfColumns = matrix1.getNumberOfColumns();
   Matrix res(numberOfRows, numberOfColumns);
-  for (int i=0; i<numberOfRows; i++)
-	  res[i] = matrix1[i] - matrix2[i];
+  res.setDensiteMatrix(matrix1.getDenseMatrix()->Substract(matrix1.getDenseMatrix(),matrix2.getDenseMatrix()));
    return res;
 }
 
-
-Matrix operator*(const Matrix& M, const Matrix& N)
+Matrix
+operator*(const Matrix& matrix1, const Matrix& matrix2)
 {
-   int rows = M.getNumberOfRows();
-   int columns = M.getNumberOfColumns();
-   Matrix res(rows,columns);
-
-   Matrix L = N.transpose();
-
-   for(int i=0; i<rows; i++)
-	   for( int j=0; j<columns; j++)
-		   res[i][j] = M[i] * L[j];
+	int rows = matrix1.getNumberOfRows();
+	int columns = matrix2.getNumberOfColumns();
+	Matrix res(rows,columns);
+	for (int i=0; i<rows; i++)
+	{
+		for (int j=0; j<columns; j++)
+		{
+			double sum=0.;
+			for (int k=0; k<columns; k++)
+				sum+=matrix1(i,k)*matrix2(k,j);
+			res(i,j)=sum;
+		}
+	}
    return res;
 }
 
@@ -319,9 +273,10 @@ operator* (double value , const Matrix& matrix )
 	int numberOfRows = matrix.getNumberOfRows();
 	int numberOfColumns = matrix.getNumberOfColumns();
 	Matrix res(numberOfRows, numberOfColumns);
-	for (int i=0; i<numberOfRows; i++)
-		  res[i] = matrix[i]*value;
-   return res;
+    for (int i=0; i<numberOfRows; i++)
+    	for (int j=0; j<numberOfColumns; j++)
+    		res(i,j)=value*matrix(i,j);
+	return res;
 }
 
 Matrix
@@ -330,18 +285,21 @@ operator* (const Matrix& matrix, double value )
 	int numberOfRows = matrix.getNumberOfRows();
 	int numberOfColumns = matrix.getNumberOfColumns();
 	Matrix res(numberOfRows, numberOfColumns);
-	for (int i=0; i<numberOfRows; i++)
-		  res[i] = matrix[i]*value;
-   return res;
+    for (int i=0; i<numberOfRows; i++)
+    	for (int j=0; j<numberOfColumns; j++)
+    		res(i,j)=value*matrix(i,j);
+	return res;
 }
 
 Matrix
 operator/ (const Matrix& matrix, double value)
 {
 	int numberOfRows = matrix.getNumberOfRows();
-	Matrix res = matrix;
-	for(int i=0; i<numberOfRows; i++)
-		res[i] = res[i] / value;
+	int numberOfColumns = matrix.getNumberOfColumns();
+	Matrix res(numberOfRows, numberOfColumns);
+    for (int i=0; i<numberOfRows; i++)
+    	for (int j=0; j<numberOfColumns; j++)
+    		res(i,j)=matrix(i,j)/value;
 	return res;
 }
 
@@ -382,7 +340,7 @@ operator<<(ostream& out, const Matrix& matrix)
 		{
 			out.width(6);
 			out.precision(6);
-			out<<"\t"<<matrix[i][j];
+			out<<"\t"<<matrix(i,j);
 		}
 		out<<endl;
 	}

@@ -1,9 +1,9 @@
-// Copyright (C) 2007-2013  CEA/DEN, EDF R&D
+// Copyright (C) 2007-2014  CEA/DEN, EDF R&D
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+// version 2.1 of the License, or (at your option) any later version.
 //
 // This library is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,6 +20,9 @@
 
 #include "MEDCouplingRefCountObject.hxx"
 #include "MED_version.h"
+
+#include <sstream>
+#include <algorithm>
 
 using namespace ParaMEDMEM;
 
@@ -46,15 +49,177 @@ int ParaMEDMEM::MEDCouplingSizeOfVoidStar()
   return 8*sizeof(std::size_t);
 }
 
-RefCountObject::RefCountObject():_cnt(1)
+/*!
+ * If true is returned it is a LittleEndian machine.
+ * If false it is a BigEndian machine.
+ * \return the coding mode of integers of the machine.
+ */
+bool ParaMEDMEM::MEDCouplingByteOrder()
+{
+  unsigned int x(1);
+  unsigned char *xc(reinterpret_cast<unsigned char *>(&x));
+  return xc[0]==1;
+}
+
+const char *ParaMEDMEM::MEDCouplingByteOrderStr()
+{
+  static const char LITTLEENDIAN_STR[]="LittleEndian";
+  static const char BIGENDIAN_STR[]="BigEndian";
+  if(MEDCouplingByteOrder())
+    return LITTLEENDIAN_STR;
+  else
+    return BIGENDIAN_STR;
+}
+
+//=
+
+std::size_t BigMemoryObject::getHeapMemorySize() const
+{
+  std::size_t ret(getHeapMemorySizeWithoutChildren());
+  std::vector<const BigMemoryObject *> v(getDirectChildren());
+  std::set<const BigMemoryObject *> s1,s2(v.begin(),v.end());
+  return ret+GetHeapMemoryOfSet(s1,s2);
+}
+
+/*!
+ * This method returns all the progeny of \a this (this is \b not included in returned vector).
+ * All the progeny means all the subobjects (children), subsubobjects (little children), ... of \a this.
+ * The elements in returned array are reported only once even if they appear several times in the progeny of \a this.
+ */
+std::vector<const BigMemoryObject *> BigMemoryObject::getAllTheProgeny() const
+{
+  std::vector<const BigMemoryObject *> s1(getDirectChildren());
+  std::vector<const BigMemoryObject *> ret;
+  while(!s1.empty())
+    {
+      ret.insert(ret.end(),s1.begin(),s1.end());
+      std::vector<const BigMemoryObject *> s3;
+      for(std::vector<const BigMemoryObject *>::const_iterator it0=s1.begin();it0!=s1.end();it0++)
+        {
+          std::vector<const BigMemoryObject *> s2;
+          if(*it0)
+            s2=(*it0)->getDirectChildren();
+          for(std::vector<const BigMemoryObject *>::const_iterator it1=s2.begin();it1!=s2.end();it1++)
+            {
+              if(*it1)
+                if(std::find(ret.begin(),ret.end(),*it1)==ret.end())
+                  s3.push_back(*it1);
+            }
+        }
+      s1=s3;
+    }
+  return ret;
+}
+
+/*!
+ * This method scan all the progeny of \a this (\a this excluded) to see if \a obj is part of it.
+ * If obj is NULL false is returned.
+ * \sa BigMemoryObject::getAllTheProgeny
+ */
+bool BigMemoryObject::isObjectInTheProgeny(const BigMemoryObject *obj) const
+{
+  if(!obj)
+    return false;
+  std::vector<const BigMemoryObject *> objs(getAllTheProgeny());
+  return std::find(objs.begin(),objs.end(),obj)!=objs.end();
+}
+
+std::size_t BigMemoryObject::GetHeapMemorySizeOfObjs(const std::vector<const BigMemoryObject *>& objs)
+{
+  std::size_t ret(0);
+  std::set<const BigMemoryObject *> s1,s2;
+  for(std::vector<const BigMemoryObject *>::const_iterator it0=objs.begin();it0!=objs.end();it0++)
+    {
+      if(*it0)
+        if(s1.find(*it0)==s1.end())
+          {
+            std::vector<const BigMemoryObject *> vTmp((*it0)->getDirectChildren());
+            s2.insert(vTmp.begin(),vTmp.end());
+            ret+=(*it0)->getHeapMemorySizeWithoutChildren();
+            s1.insert(*it0);
+          }
+    }
+  return ret+GetHeapMemoryOfSet(s1,s2);
+}
+
+std::size_t BigMemoryObject::GetHeapMemoryOfSet(std::set<const BigMemoryObject *>& s1, std::set<const BigMemoryObject *>& s2)
+{
+  std::size_t ret(0);
+  while(!s2.empty())
+    {
+      std::set<const BigMemoryObject *> s3;
+      for(std::set<const BigMemoryObject *>::const_iterator it=s2.begin();it!=s2.end();it++)
+        {
+          if(s1.find(*it)==s1.end())
+            {
+              ret+=(*it)->getHeapMemorySizeWithoutChildren();
+              s1.insert(*it);
+              std::vector<const BigMemoryObject *> v2((*it)->getDirectChildren());
+              for(std::vector<const BigMemoryObject *>::const_iterator it2=v2.begin();it2!=v2.end();it2++)
+                if(s1.find(*it2)==s1.end())
+                  s3.insert(*it2);
+            }
+        }
+      s2=s3;
+    }
+  return ret;
+}
+
+std::string BigMemoryObject::getHeapMemorySizeStr() const
+{
+  static const char *UNITS[4]={"B","kB","MB","GB"};
+  std::size_t m(getHeapMemorySize());
+  std::ostringstream oss; oss.precision(3);
+  std::size_t remain(0);
+  int i(0);
+  for(;i<4;i++)
+    {
+      if(m<1024)
+        {
+          oss << m;
+          if(remain!=0)
+            {
+              std::ostringstream oss2; oss2 << std::fixed << ((double)remain)/1024.;
+              std::string s(oss2.str());
+              s=s.substr(1,4);
+              std::size_t pos(s.find_last_not_of('0'));
+              if(pos==4)
+                oss << s;
+              else
+                oss << s.substr(0,pos+1);
+            }
+          oss << " " << UNITS[i];
+          break;
+        }
+      else
+        {
+          if(i!=3)
+            {
+              remain=(m%1024);
+              m/=1024;
+            }
+        }
+    }
+  if(i==4)
+    oss << m << " " << UNITS[3];
+  return oss.str();
+}
+
+BigMemoryObject::~BigMemoryObject()
 {
 }
 
-RefCountObject::RefCountObject(const RefCountObject& other):_cnt(1)
+//=
+
+RefCountObjectOnly::RefCountObjectOnly():_cnt(1)
 {
 }
 
-bool RefCountObject::decrRef() const
+RefCountObjectOnly::RefCountObjectOnly(const RefCountObjectOnly& other):_cnt(1)
+{
+}
+
+bool RefCountObjectOnly::decrRef() const
 {
   bool ret=((--_cnt)==0);
   if(ret)
@@ -62,9 +227,37 @@ bool RefCountObject::decrRef() const
   return ret;
 }
 
-void RefCountObject::incrRef() const
+void RefCountObjectOnly::incrRef() const
 {
   _cnt++;
+}
+
+int RefCountObjectOnly::getRCValue() const
+{
+  return _cnt;
+}
+
+RefCountObjectOnly::~RefCountObjectOnly()
+{
+}
+
+/*!
+ * Do nothing here ! It is not a bug ( I hope :) ) because all subclasses that
+ * copies using operator= should not copy the ref counter of \a other !
+ */
+RefCountObjectOnly& RefCountObjectOnly::operator=(const RefCountObjectOnly& other)
+{
+  return *this;
+}
+
+//=
+
+RefCountObject::RefCountObject()
+{
+}
+
+RefCountObject::RefCountObject(const RefCountObject& other):RefCountObjectOnly(other)
+{
 }
 
 RefCountObject::~RefCountObject()

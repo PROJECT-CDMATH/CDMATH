@@ -18,9 +18,12 @@
 
 namespace ParaMEDMEM
 {
-  class MEDCouplingUMesh;
   class MEDFileUMesh;
+  class MEDCouplingMesh;
+  class MEDCouplingIMesh;
 }
+
+#include <MEDCouplingAutoRefCountObjectPtr.hxx>
 
 class Node;
 class Cell;
@@ -78,6 +81,8 @@ class Mesh
 	 */
 	Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) ;
 
+	Mesh( const ParaMEDMEM::MEDCouplingIMesh* mesh ) ;
+
 	/**
 	 * constructor with data
 	 * @param filename : file name of mesh med file
@@ -99,8 +104,11 @@ class Mesh
 	 * return Space dimension
 	 * @return _dim
 	 */
-	int getDim( void ) const ;
+	int getSpaceDimension( void ) const ;
 
+	std::vector<double> getDXYZ() const ;
+
+	std::vector<int> getCellGridStructure() const;
 	/**
 	 * return The nodes in this mesh
 	 * @return _nodes
@@ -173,6 +181,18 @@ class Mesh
 	 */
 	int getNz( void )  const ;
 
+	double getXMin( void )  const ;
+
+	double getXSup( void )  const ;
+
+	double getYMin( void )  const ;
+
+	double getYSup( void )  const ;
+
+	double getZMin( void )  const ;
+
+	double getZSup( void )  const ;
+
 	/**
 	 * surcharge opertor =
 	 * @param face : The face object to be copied
@@ -183,7 +203,7 @@ class Mesh
 	 * return the mesh MEDCoupling
 	 * return _mesh
 	 */
-	ParaMEDMEM::MEDCouplingUMesh* getMeshU ( void )  const ;
+	ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<ParaMEDMEM::MEDCouplingMesh> getMEDCouplingMesh ( void )  const ;
 
 	/**
 	 * return the mesh MEDCoupling
@@ -218,21 +238,21 @@ class Mesh
 	 */
 	int _dim ;
 
-	/**
-	 * Number of cells in X-direction
-	 */
-	int _nX ;
+	double _xMin;
 
-	/**
-	 * Number of cells in X-direction
-	 */
-	int _nY ;
+	double _xSup;
 
-	/**
-	 * Number of cells in Z-direction
-	 */
-	int _nZ ;
+	double _yMin;
 
+	double _ySup;
+
+	double _zMin;
+
+	double _zSup;
+
+	std::vector<int> _nxyz;
+
+	std::vector<double> _dxyz;
 	/*
 	 * The nodes in this mesh.
 	 */
@@ -271,7 +291,7 @@ class Mesh
 	/*
 	 * The mesh MEDCoupling
 	 */
-	ParaMEDMEM::MEDCouplingUMesh* _mesh;
+	ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<ParaMEDMEM::MEDCouplingMesh> _mesh;
 };
 
 #endif /* MESH_HXX_ */
