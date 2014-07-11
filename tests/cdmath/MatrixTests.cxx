@@ -168,7 +168,5 @@ MatrixTests::testClassMatrix( void )
 	CPPUNIT_ASSERT_EQUAL( 16., A5(3,3) );
 
 	CPPUNIT_ASSERT_EQUAL( 0., A5.determinant() );
-
-	Matrix A6(A*A4.transpose());
 }
 

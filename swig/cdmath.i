@@ -77,6 +77,7 @@ def VectorIdiv(self,*args):
 #include "Face.hxx"
 #include "Mesh.hxx"
 #include "Field.hxx"
+#include "LinearSolver.hxx"
 
 #include <sstream>
 
@@ -100,6 +101,7 @@ def VectorIdiv(self,*args):
 %include "Face.hxx"
 %include "Mesh.hxx"
 %include "Field.hxx"
+%include "LinearSolver.hxx"
 
 %extend IntTab
 {
@@ -476,6 +478,13 @@ def VectorIdiv(self,*args):
     return trueSelf;
   }
 
+  PyObject *___imul___(PyObject *trueSelf, const Matrix& f)
+  {
+    (*self)*=f;
+    Py_XINCREF(trueSelf);
+    return trueSelf;
+  }
+
   PyObject *___idiv___(PyObject *trueSelf, double val)
   {
     (*self)/=val;
@@ -615,6 +624,7 @@ def VectorIdiv(self,*args):
      return oss.str();
     }
 }
+
 %pythoncode %{
 Field.__iadd__=FieldIadd
 Field.__isub__=FieldIsub
@@ -637,4 +647,3 @@ Vector.__isub__=VectorIsub
 Vector.__imul__=VectorImul
 Vector.__idiv__=VectorIdiv
 %}
-

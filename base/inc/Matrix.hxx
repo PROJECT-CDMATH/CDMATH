@@ -21,6 +21,8 @@ namespace ParaMEDMEM
 }
 
 
+#include <MEDCouplingAutoRefCountObjectPtr.hxx>
+
 #include <iostream>
 
 class Vector ;
@@ -57,8 +59,6 @@ class Matrix
 	 */
 	~Matrix ( void ) ;
 
-	ParaMEDMEM::DenseMatrix* getDenseMatrix ( void )  const ;
-
 	/**
 	 * return number of rows in this matrix
 	 * @return _numberOfRows
@@ -74,9 +74,7 @@ class Matrix
 
 	double& operator () ( int i, int j ) ;
 
-	const double& operator () ( int i, int j ) const ;
-
-	Matrix& operator= ( const Matrix& matrix ) ;
+	double operator () ( int i, int j ) const ;
 
 	Matrix& operator+= (const Matrix& matrix) ;
 
@@ -104,6 +102,8 @@ class Matrix
 
 	void view() const ;
 
+	const Matrix& operator= ( const Matrix& matrix ) ;
+
 	friend Matrix operator+ (const Matrix& matrix1, const Matrix& matrix2);
 
 	friend Matrix operator- (const Matrix& matrix1, const Matrix& matrix2);
@@ -122,6 +122,8 @@ class Matrix
 
 	void setDensiteMatrix (const ParaMEDMEM::DenseMatrix* mat) ;
 
+	ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<ParaMEDMEM::DenseMatrix> getMEDCouplingDenseMatrix ( void )  const ;
+
 	/*
 	 * The number of rows in this cell.
 	 */
@@ -132,7 +134,7 @@ class Matrix
 	 */
 	int _numberOfColumns ;
 
-	ParaMEDMEM::DenseMatrix* _mat;
+	ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<ParaMEDMEM::DenseMatrix> _mat;
 
 };
 

@@ -7,6 +7,8 @@
 
 #include "LinearSolver.hxx"
 
+#include "CdmathException.hxx"
+
 #include <string>
 #include <cmath>
 
@@ -26,7 +28,7 @@ LinearSolver::LinearSolver ( void )
 	_convergence=false;
 	_numberOfIter=0;
 	_isSingular=false;
-//	_nameOfPc="";
+	_nameOfPc="";
 }
 
 void
@@ -45,15 +47,25 @@ void
 LinearSolver::setNameOfMethod(string nameOfMethod)
 {
 	_nameOfMethod=nameOfMethod;
+	if ((_nameOfPc.size()>0 && (_nameOfMethod.compare("GMRES")!=0 && _nameOfMethod.compare("BICG")!=0)))
+	{
+		string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not yet implemented.\n";
+		msg+="The preconditioners implemented are : LU for GMRES and BICG methods.";
+	    throw CdmathException(msg);
+	}
 }
 
-/*
 void
 LinearSolver::setNameOfPc(string nameOfPc)
 {
 	_nameOfPc=nameOfPc;
+	if ((_nameOfPc.size()>0 && (_nameOfMethod.compare("GMRES")!=0 && _nameOfMethod.compare("BICG")!=0)))
+	{
+		string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not yet implemented.\n";
+		msg+="The preconditioners implemented are : LU for GMRES and BICG methods.";
+	    throw CdmathException(msg);
+	}
 }
-*/
 
 LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, string nameOfMethod )
 {
@@ -66,24 +78,9 @@ LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numb
 	_convergence=false;
 	_numberOfIter=0;
 	_isSingular=false;
-//	_nameOfPc="";
+	_nameOfPc="";
 }
 
-LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, string nameOfMethod, bool isSingular)
-{
-	_tol=tol;
-	_nameOfMethod=nameOfMethod;
-//	_nameOfPc="";
-	_numberMaxOfIter=numberMaxOfIter;
-	_matrix=matrix;
-	_vector=vector;
-	_residu=1.E30;
-	_convergence=false;
-	_numberOfIter=0;
-	_isSingular=isSingular;
-}
-
-/*
 LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, string nameOfMethod, string pc )
 {
 	_tol=tol;
@@ -96,22 +93,13 @@ LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numb
 	_convergence=false;
 	_numberOfIter=0;
 	_isSingular=false;
+	if ((_nameOfPc.size()>0 && (_nameOfMethod.compare("GMRES")!=0 && _nameOfMethod.compare("BICG")!=0)))
+	{
+		string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not yet implemented.\n";
+		msg+="The preconditioners implemented are : LU for GMRES and BICG methods.";
+	    throw CdmathException(msg);
+	}
 }
-
-LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, string nameOfMethod, string pc, bool isSingular)
-{
-	_tol=tol;
-	_nameOfMethod=nameOfMethod;
-	_nameOfPc=pc;
-	_numberMaxOfIter=numberMaxOfIter;
-	_matrix=matrix;
-	_vector=vector;
-	_residu=1.E30;
-	_convergence=false;
-	_numberOfIter=0;
-	_isSingular=isSingular;
-}
-*/
 
 bool
 LinearSolver::isSingular( void ) const
@@ -185,13 +173,11 @@ LinearSolver::getNameOfMethod(void) const
 	return _nameOfMethod;
 }
 
-/*
 string
 LinearSolver::getNameOfPc(void) const
 {
 	return _nameOfPc;
 }
-*/
 
 LinearSolver::LinearSolver ( const LinearSolver& LS )
 {
@@ -204,7 +190,7 @@ LinearSolver::LinearSolver ( const LinearSolver& LS )
 	_convergence=LS.getStatus();
 	_numberOfIter=LS.getNumberOfIter();
 	_isSingular=LS.isSingular();
-//	_nameOfPc=LS.getNameOfPc();
+	_nameOfPc=LS.getNameOfPc();
 }
 
 Vector
@@ -241,7 +227,10 @@ LinearSolver::solve( void )
 	PC prec;
 	KSPGetPC(ksp,&prec);
 	if (_nameOfMethod.compare("GMRES")==0)
+	{
 	   KSPSetType(ksp,KSPGMRES);
+	   if (_nameOfPc.compare("LU")==0) PCSetType(prec,PCLU);
+	}
 	else if (_nameOfMethod.compare("LGMRES")==0)
 		KSPSetType(ksp,KSPLGMRES);
 	else if (_nameOfMethod.compare("CG")==0)
@@ -252,12 +241,11 @@ LinearSolver::solve( void )
 		KSPSetType(ksp,KSPCR);
 	else if (_nameOfMethod.compare("CGS")==0)
 		KSPSetType(ksp,KSPCGS);
-	else if (_nameOfMethod.compare("CHEBYSHEV")==0)
-		KSPSetType(ksp,KSPCHEBYSHEV);
-	else if (_nameOfMethod.compare("TFQMR")==0)
-		KSPSetType(ksp,KSPTFQMR);
 	else if (_nameOfMethod.compare("BICG")==0)
+	{
 		KSPSetType(ksp,KSPBICG);
+		if (_nameOfPc.compare("LU")==0) PCSetType(prec,PCLU);
+	}
 	else if (_nameOfMethod.compare("GCR")==0)
 		KSPSetType(ksp,KSPGCR);
 	else if (_nameOfMethod.compare("LSQR")==0)
@@ -267,13 +255,12 @@ LinearSolver::solve( void )
 	else if (_nameOfMethod.compare("LU")==0)
 		PCSetType(prec,PCLU);
 	else
-		throw "Method is not implemented: "+_nameOfMethod;
-/*
-	if (_nameOfPc.compare("ILU")==0)
-           PCSetType(prec,PCILU);
-	else if (_nameOfMethod.compare("SOR")==0)
-	   PCSetType(prec,PCSOR);
-*/
+	{
+		string msg="Vector LinearSolver::solve( void ) : The method "+_nameOfMethod+" is not yet implemented.\n";
+		msg+="The methods implemented are : GMRES, BICG, CG, CHOLESKY, LU, BCG, LGMRES, LSQR, CR, CGS and GCR.\n";
+		msg+="The preconditioners implemented are : LU for GMRES and BICG methods.";
+	    throw CdmathException(msg);
+	}
 	PetscInt its;
 	PetscReal rtol,abstol,dtol;
 	PetscInt maxits;
@@ -338,7 +325,6 @@ Vector
 LinearSolver::vecToVector(const Vec& vec) const
 {
 	PetscInitialize(0,(char ***)"", PETSC_NULL, PETSC_NULL);
-//	cout << "LinearSolver::VecToVector..." << endl;
 	PetscInt numberOfRows;
 
 	VecGetSize(vec,&numberOfRows);
@@ -353,4 +339,22 @@ LinearSolver::vecToVector(const Vec& vec) const
 	}
 
     return X;
+}
+
+//----------------------------------------------------------------------
+const LinearSolver&
+LinearSolver::operator= ( const LinearSolver& linearSolver )
+//----------------------------------------------------------------------
+{
+	_tol=linearSolver.getTolerance();
+	_numberMaxOfIter=linearSolver.getNumberMaxOfIter();
+	_nameOfMethod=linearSolver.getNameOfMethod();
+	_residu=linearSolver.getResidu();
+	_convergence=linearSolver.getStatus();
+	_numberOfIter=linearSolver.getNumberOfIter();
+	_isSingular=linearSolver.isSingular();
+	_matrix=linearSolver.getMatrix();
+	_vector=linearSolver.getSndMember();
+	_nameOfPc=linearSolver.getNameOfPc();
+	return *this;
 }

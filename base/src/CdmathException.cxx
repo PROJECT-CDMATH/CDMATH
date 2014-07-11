@@ -1,10 +1,12 @@
 #include "CdmathException.hxx"
 
-CdmathException::CdmathException(const char *reason):_reason(reason)
+using namespace std;
+
+CdmathException::CdmathException(string reason):_reason(reason)
 {
 }
 
-CdmathException::CdmathException(const char *reason, const char *file, int line):_reason(reason)
+CdmathException::CdmathException(string reason,string file, int line):_reason(reason)
 {
 }
 

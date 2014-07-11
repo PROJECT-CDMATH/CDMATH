@@ -61,7 +61,7 @@ MeshTests::testClassMesh( void )
 	{
 		double x=M2.getFaces()[i].x();
 		double y=M2.getFaces()[i].y();
-		if (abs(y)<1.E-10 && abs(x-0.5)<1.E-10)
+		if (y==0. && x==0.5)
 		{
 			int indexFace=M2.getIndexFacePeriodic(i);
 			double xi=M2.getFace(indexFace).x();
@@ -72,9 +72,8 @@ MeshTests::testClassMesh( void )
 			CPPUNIT_ASSERT_EQUAL( indexFace, indexFaces(i) );
 		}
 
-		if (abs(y-0.5)<1.E-10 && abs(x-1.)<1.E-10)
+		if (y==0.5 && x==1.)
 			CPPUNIT_ASSERT_EQUAL( -1, M2.getIndexFacePeriodic(i) );
-
 	}
 	M2.writeMED("TestMesh");
 	Mesh M22("TestMesh.med");

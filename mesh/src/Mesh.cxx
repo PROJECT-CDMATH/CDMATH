@@ -101,7 +101,6 @@ Mesh::Mesh( const ParaMEDMEM::MEDCouplingIMesh* mesh )
     delete [] dxyzPtr;
     delete [] nodeStrctPtr;
     delete [] Box0 ;
-    _groups.resize(0);
     setMesh();
 }
 
@@ -670,7 +669,6 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny)
     delete [] originPtr;
     delete [] dxyzPtr;
     delete [] nodeStrctPtr;
-    _groups.resize(0);
     setMesh();
 }
 
@@ -730,7 +728,6 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, 
     delete [] originPtr;
     delete [] dxyzPtr;
     delete [] nodeStrctPtr;
-    _groups.resize(0);
     setMesh();
 }
 

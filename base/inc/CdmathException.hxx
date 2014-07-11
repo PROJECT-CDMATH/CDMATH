@@ -8,8 +8,8 @@
 class CdmathException : public std::exception
 {
 	public:
-	CdmathException(const char *reason);
-	CdmathException(const char *reason, const char *file, int line);
+	CdmathException(std::string reason);
+	CdmathException(std::string reason, std::string file, int line);
     ~CdmathException() throw ();
     const char *what() const throw();
   protected:

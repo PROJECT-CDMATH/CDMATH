@@ -30,21 +30,21 @@ LinearSolverTests::testClassLinearSolver( void )
 
     Vector B=A*Xana;
 
-    LinearSolver LS(A,B,500,1.E-10,"GMRES");
+    LinearSolver LS(A,B,500,1.E-10,"GMRES","LU");
 
     Vector X=LS.solve();
-
-	CPPUNIT_ASSERT(abs(X(0)-1.)<1.E-10);
-	CPPUNIT_ASSERT(abs(X(1)-2.)<1.E-10);
+	CPPUNIT_ASSERT(abs(X(0)-Xana(0))<1.E-10);
+	CPPUNIT_ASSERT(abs(X(1)-Xana(1))<1.E-10);
 
 	CPPUNIT_ASSERT_EQUAL(LS.getStatus(),true);
 
 	CPPUNIT_ASSERT_EQUAL(LS.getNumberMaxOfIter(),500);
 	CPPUNIT_ASSERT_EQUAL(LS.getTolerance(),1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS.getNameOfMethod(),(string)"GMRES");
-	CPPUNIT_ASSERT_EQUAL(LS.getNumberOfIter(),2);
+	CPPUNIT_ASSERT_EQUAL(LS.getNumberOfIter(),1);
 	CPPUNIT_ASSERT_EQUAL(LS.isSingular(),false);
-
+	CPPUNIT_ASSERT_EQUAL(LS.getNameOfPc(),(string)"LU");
+	LS.setNameOfPc("");
 	LinearSolver LS2;
     A(0,0)=1.;
     A(0,1)=-2.;
@@ -59,8 +59,8 @@ LinearSolverTests::testClassLinearSolver( void )
 	LS2.setSingularity(true);
 	Vector X2=LS2.solve();
 
-	CPPUNIT_ASSERT(abs(X2(0)-(-4.55556))<1.E-10);
-	CPPUNIT_ASSERT(abs(X2(1)-4.55556)<1.E-10);
+	CPPUNIT_ASSERT(abs(X2(0)-(-4.55555555556))<1.E-10);
+	CPPUNIT_ASSERT(abs(X2(1)-4.55555555556)<1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS2.getNumberOfIter(),2);
 	CPPUNIT_ASSERT_EQUAL(LS2.isSingular(),true);
@@ -69,70 +69,59 @@ LinearSolverTests::testClassLinearSolver( void )
 	LinearSolver LS3(LS);
 	LS3.setNameOfMethod("BCG");
     Vector X3=LS3.solve();
-	CPPUNIT_ASSERT(abs(X3(0)-1.)<1.E-10);
+	CPPUNIT_ASSERT(abs(X3(0)-Xana(0))<1.E-10);
 	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"BCG");
 
 	LS3.setNameOfMethod("CR");
     X3=LS3.solve();
-	CPPUNIT_ASSERT(abs(X3(0)-1.)<1.E-10);
+	CPPUNIT_ASSERT(abs(X3(0)-Xana(0))<1.E-10);
 	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"CR");
 
 	LS3.setNameOfMethod("CGS");
     X3=LS3.solve();
-	CPPUNIT_ASSERT(abs(X3(0)-1.)<1.E-10);
+	CPPUNIT_ASSERT(abs(X3(0)-Xana(0))<1.E-10);
 	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"CGS");
 
-	LS3.setNameOfMethod("CHEBYSHEV");
-    X3=LS3.solve();
-	CPPUNIT_ASSERT(abs(X3(0)-1.)<1.E-10);
-	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
-	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
-	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"CHEBYSHEV");
-
-	LS3.setNameOfMethod("TFQMR");
-    X3=LS3.solve();
-	CPPUNIT_ASSERT(abs(X3(0)-1.)<1.E-10);
-	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
-	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
-	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"TFQMR");
-
 	LS3.setNameOfMethod("BICG");
+    LS3.setNameOfPc("LU");
     X3=LS3.solve();
-	CPPUNIT_ASSERT(abs(X3(0)-1.)<1.E-10);
+	CPPUNIT_ASSERT(abs(X3(0)-Xana(0))<1.E-10);
 	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"BICG");
+	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfPc(),(string)"LU");
+	LS3.setNameOfPc("");
 
 	LS3.setNameOfMethod("GCR");
     X3=LS3.solve();
-	CPPUNIT_ASSERT(abs(X3(0)-1.)<1.E-10);
+	CPPUNIT_ASSERT(abs(X3(0)-Xana(0))<1.E-10);
 	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"GCR");
 
 	LS3.setNameOfMethod("LSQR");
     X3=LS3.solve();
-	CPPUNIT_ASSERT(abs(X3(0)-1.)<1.E-10);
+	CPPUNIT_ASSERT(abs(X3(0)-Xana(0))<1.E-10);
 	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"LSQR");
 
 	LS3.setNameOfMethod("CHOLESKY");
     X3=LS3.solve();
-	CPPUNIT_ASSERT(abs(X3(0)-1.)<1.E-10);
+	CPPUNIT_ASSERT(abs(X3(0)-Xana(0))<1.E-10);
 	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"CHOLESKY");
 
 	LS3.setNameOfMethod("LU");
     X3=LS3.solve();
-	CPPUNIT_ASSERT(abs(X3(0)-1.)<1.E-10);
+	CPPUNIT_ASSERT(abs(X3(0)-Xana(0))<1.E-10);
 	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"LU");

@@ -31,6 +31,9 @@ Rajouter -DCMAKE_CDMATH_SWIG=ON si on veut utiliser la toolbox en Python
 
 Rajouter -DCMAKE_CDMATH_TESTS=ON si on veut lancer les tests unitaires
 
+Rajouter -DCMAKE_CDMATH_DOCUMENTATION=ON si on veut générer la documentation doxygen (après make install la documentation sera dans /home/moi/codes/install/doc)
+
+
 make -j4
 
 make -j4 install

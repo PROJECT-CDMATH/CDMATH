@@ -116,7 +116,7 @@ Field::getNormEuclidean() const
 
 //----------------------------------------------------------------------
 Field::Field( const Field & f )
-//-------------------------------t---------------------------------------
+//----------------------------------------------------------------------
 {
 	_mesh=f.getMesh() ;
     MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> f1=f.getField()->deepCpy();
@@ -154,7 +154,7 @@ double&
 Field::operator() ( int ielem )
 //----------------------------------------------------------------------
 {
-	if(ielem>_field->getNumberOfTuples())
+	if(ielem>_field->getNumberOfTuples() || ielem<0)
 	    throw CdmathException("double& Field::operator(ielem) : ielem>number of values !");
 	return _field->getArray()->getPointer()[ielem*_field->getNumberOfComponents()];
 }
@@ -164,7 +164,7 @@ double&
 Field::operator[] ( int ielem )
 //----------------------------------------------------------------------
 {
-	if(ielem>_field->getNumberOfTuples())
+	if(ielem>_field->getNumberOfTuples() || ielem<0)
 	    throw CdmathException("double& Field::operator[ielem] : ielem>number of values !");
 	return _field->getArray()->getPointer()[ielem*_field->getNumberOfComponents()];
 }
@@ -174,7 +174,7 @@ double
 Field::operator() ( int ielem ) const
 //----------------------------------------------------------------------
 {
-	if(ielem>_field->getNumberOfTuples())
+	if(ielem>_field->getNumberOfTuples() || ielem<0)
 	    throw CdmathException("double Field::operator(ielem) : ielem>number of values !");
 	return _field->getArray()->getConstPointer()[ielem*_field->getNumberOfComponents()];
 }
@@ -184,7 +184,7 @@ double
 Field::operator[] ( int ielem ) const
 //----------------------------------------------------------------------
 {
-	if(ielem>_field->getNumberOfTuples())
+	if(ielem>_field->getNumberOfTuples() || ielem<0)
 	    throw CdmathException("double Field::operator[ielem] : ielem>number of values !");
 	return _field->getArray()->getConstPointer()[ielem*_field->getNumberOfComponents()];
 }
@@ -194,7 +194,7 @@ double&
 Field::operator() ( int ielem, int jcomp )
 //----------------------------------------------------------------------
 {
-	if(ielem>_field->getNumberOfTuples() || jcomp>_field->getNumberOfComponents())
+	if(ielem>_field->getNumberOfTuples() || jcomp>_field->getNumberOfComponents() || ielem<0 || jcomp<0)
 	    throw CdmathException("double& Field::operator( int ielem, int jcomp ) : ielem>number of values or jcomp>number of components !");
 	return _field->getArray()->getPointer()[jcomp+ielem*_field->getNumberOfComponents()];
 }
@@ -204,7 +204,7 @@ double
 Field::operator() (  int ielem, int jcomp ) const
 //----------------------------------------------------------------------
 {
-	if(ielem>_field->getNumberOfTuples() || jcomp>_field->getNumberOfComponents())
+	if(ielem>_field->getNumberOfTuples() || jcomp>_field->getNumberOfComponents() || ielem<0 || jcomp<0)
 	    throw CdmathException("double Field::operator(  int ielem, int jcomp ) : ielem>number of values or jcomp>number of components !");
 	return _field->getArray()->getConstPointer()[jcomp+ielem*_field->getNumberOfComponents()];
 }

@@ -30,7 +30,8 @@ Vector::operator()(int i)
 {
 	return Matrix::operator()(i,0);
 }
-const double&
+
+double
 Vector::operator()(int i) const
 {
 	return Matrix::operator()(i,0);
@@ -41,7 +42,7 @@ Vector::operator[](int i)
 {
 	return Matrix::operator()(i,0);
 }
-const double&
+double
 Vector::operator[](int i) const
 {
 	return Matrix::operator()(i,0);

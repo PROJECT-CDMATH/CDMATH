@@ -8,6 +8,7 @@
 #include "Matrix.hxx"
 #include "Vector.hxx"
 
+#include "CdmathException.hxx"
 #include "MEDCouplingMatrix.hxx"
 
 using namespace ParaMEDMEM;
@@ -17,7 +18,6 @@ Matrix::Matrix()
 {
 	_numberOfRows = 0;
 	_numberOfColumns = 0;
-	_mat=NULL;
 }
 
 Matrix::Matrix(int dim)
@@ -38,20 +38,19 @@ Matrix::~Matrix()
 {
 	_numberOfRows = 0;
 	_numberOfColumns = 0;
-	if (_mat)
-		_mat->decrRef();
 }
 
 Matrix::Matrix(const Matrix& matrix)
 {
 	_numberOfRows = matrix.getNumberOfRows();
 	_numberOfColumns = matrix.getNumberOfColumns();
-    _mat=static_cast<DenseMatrix *>(matrix.getDenseMatrix()->deepCpy());
+    MEDCouplingAutoRefCountObjectPtr<DenseMatrix> m1=matrix.getMEDCouplingDenseMatrix()->deepCpy();
+    _mat=m1;
 }
 
 //----------------------------------------------------------------------
-DenseMatrix*
-Matrix::getDenseMatrix ( void )  const
+ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<ParaMEDMEM::DenseMatrix>
+Matrix::getMEDCouplingDenseMatrix ( void )  const
 //----------------------------------------------------------------------
 {
     return _mat ;
@@ -72,33 +71,25 @@ Matrix::getNumberOfColumns() const
 double&
 Matrix::operator()(int i, int j)
 {
+	if(i>_numberOfRows || j>_numberOfColumns || i<0 || j<0)
+	    throw CdmathException("double& Matrix::operator()(int i, int j) : i>number of rows or j>number of columns !");
+
 	return _mat->getData()->getPointer()[i+_numberOfRows*j];
 }
 
-const double&
+double
 Matrix::operator()(int i, int j) const
 {
-	return _mat->getData()->getPointer()[i+_numberOfRows*j];
+	if(i>_numberOfRows || j>_numberOfColumns || i<0 || j<0)
+	    throw CdmathException("double& Matrix::operator()(int i, int j) : i>number of rows or j>number of columns !");
+	return _mat->getData()->getConstPointer()[i+_numberOfRows*j];
 }
 
 void
 Matrix::setDensiteMatrix (const DenseMatrix* mat)
 {
-    _mat=static_cast<DenseMatrix *>(mat->deepCpy());
-
-}
-
-Matrix&
-Matrix::operator = (const Matrix& matrix)
-{
-	this->Matrix::~Matrix();
-	_numberOfRows = matrix.getNumberOfRows();
-	_numberOfColumns = matrix.getNumberOfColumns();
-
-	_mat=DenseMatrix::New(_numberOfRows,_numberOfColumns);
-    _mat=static_cast<DenseMatrix *>(matrix.getDenseMatrix()->deepCpy());
-
-    return (*this);
+	MEDCouplingAutoRefCountObjectPtr<DenseMatrix> m1=mat->deepCpy();
+    _mat=m1;
 }
 
 void
@@ -171,7 +162,7 @@ Matrix::transpose() const
 	Matrix res(_numberOfColumns, _numberOfRows);
 	for(int i=0; i<_numberOfRows; i++)
 		for(int j=0; j<_numberOfColumns; j++)
-			res(j,i) = _mat->getData()->getPointer()[i+_numberOfRows*j];
+			res(j,i) = _mat->getData()->getConstPointer()[i+_numberOfRows*j];
    return res;
 }
 
@@ -189,7 +180,7 @@ Matrix::partMatrix(int row, int column) const
       {
          for(int j=0; j<_numberOfColumns; j++)
             if(j != column)
-            	res(r,c++) = _mat->getData()->getPointer()[i+_numberOfRows*j];
+            	res(r,c++) = _mat->getData()->getConstPointer()[i+_numberOfRows*j];
          r++;
       }
    }
@@ -233,7 +224,7 @@ operator+ (const Matrix& matrix1, const Matrix& matrix2)
   int numberOfRows = matrix1.getNumberOfRows();
   int numberOfColumns = matrix1.getNumberOfColumns();
   Matrix res(numberOfRows, numberOfColumns);
-  res.setDensiteMatrix(matrix1.getDenseMatrix()->Add(matrix1.getDenseMatrix(),matrix2.getDenseMatrix()));
+  res.setDensiteMatrix(matrix1.getMEDCouplingDenseMatrix()->Add(matrix1.getMEDCouplingDenseMatrix(),matrix2.getMEDCouplingDenseMatrix()));
 
    return res;
 }
@@ -244,7 +235,7 @@ operator- (const Matrix& matrix1, const Matrix& matrix2)
   int numberOfRows = matrix1.getNumberOfRows();
   int numberOfColumns = matrix1.getNumberOfColumns();
   Matrix res(numberOfRows, numberOfColumns);
-  res.setDensiteMatrix(matrix1.getDenseMatrix()->Substract(matrix1.getDenseMatrix(),matrix2.getDenseMatrix()));
+  res.setDensiteMatrix(matrix1.getMEDCouplingDenseMatrix()->Substract(matrix1.getMEDCouplingDenseMatrix(),matrix2.getMEDCouplingDenseMatrix()));
    return res;
 }
 
@@ -254,7 +245,8 @@ operator*(const Matrix& matrix1, const Matrix& matrix2)
 	int rows = matrix1.getNumberOfRows();
 	int columns = matrix2.getNumberOfColumns();
 	Matrix res(rows,columns);
-	for (int i=0; i<rows; i++)
+	res.setDensiteMatrix(matrix1.getMEDCouplingDenseMatrix()->Multiply(matrix1.getMEDCouplingDenseMatrix(),matrix2.getMEDCouplingDenseMatrix()));
+/*	for (int i=0; i<rows; i++)
 	{
 		for (int j=0; j<columns; j++)
 		{
@@ -264,6 +256,7 @@ operator*(const Matrix& matrix1, const Matrix& matrix2)
 			res(i,j)=sum;
 		}
 	}
+*/
    return res;
 }
 
@@ -329,6 +322,18 @@ Matrix::operator/= (double value)
 {
 	(*this)=(*this)/value;
 	return (*this);
+}
+
+//----------------------------------------------------------------------
+const Matrix&
+Matrix::operator= ( const Matrix& matrix )
+//----------------------------------------------------------------------
+{
+	_numberOfRows=matrix.getNumberOfRows();
+	_numberOfColumns=matrix.getNumberOfColumns();
+	MEDCouplingAutoRefCountObjectPtr<DenseMatrix> mat=matrix.getMEDCouplingDenseMatrix()->deepCpy();
+    _mat=mat;
+    return *this;
 }
 
 ostream&

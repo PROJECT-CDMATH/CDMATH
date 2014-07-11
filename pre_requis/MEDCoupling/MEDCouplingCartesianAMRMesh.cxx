@@ -823,14 +823,13 @@ MEDCouplingAutoRefCountObjectPtr<InternalPatch> InternalPatch::deepCpy() const
   return ret;
 }
 
-void DissectBigPatch(const INTERP_KERNEL::BoxSplittingOptions& bso, const InternalPatch *patchToBeSplit, int axisId, int largestLength, int& cutPlace)
+bool DissectBigPatch(const INTERP_KERNEL::BoxSplittingOptions& bso, const InternalPatch *patchToBeSplit, int axisId, int largestLength, int& cutPlace)
 {
   int minimumPatchLength(bso.getMinimumPatchLength());
   std::vector<double> ratio(largestLength-minimumPatchLength,std::numeric_limits<double>::max());
   int index_min = -1;
   double minSemiEfficiencyRatio(std::numeric_limits<double>::max());
   double efficiencyPerAxis[2];
-
   for(int i=minimumPatchLength-1;i<largestLength-minimumPatchLength;i++)
     {
       for(int h=0;h<2;h++)
@@ -852,10 +851,11 @@ void DissectBigPatch(const INTERP_KERNEL::BoxSplittingOptions& bso, const Intern
         }
     }
 
-  if(index_min==-1)
-    throw INTERP_KERNEL::Exception("DissectBigPatch : just call to Arthur !");
-
   cutPlace=index_min+patchToBeSplit->getConstPart()[axisId].first;
+  if(index_min!=-1)
+	  return true;
+  else
+	  return false;
 }
 
 bool FindHole(const INTERP_KERNEL::BoxSplittingOptions& bso, const InternalPatch *patchToBeSplit, int axisId, int& cutPlace)
@@ -999,7 +999,7 @@ bool TryAction4(const INTERP_KERNEL::BoxSplittingOptions& bso, const InternalPat
     {
       if(patchToBeSplit->getNumberOfCells()>bso.getMaximumNbOfCellsInPatch() || rangeOfAxisId>bso.getMaximumPatchLength())
         {
-          DissectBigPatch(bso,patchToBeSplit,axisId,rangeOfAxisId,cutPlace);
+          return DissectBigPatch(bso,patchToBeSplit,axisId,rangeOfAxisId,cutPlace);
         }
       else
         return false;
@@ -1014,6 +1014,10 @@ MEDCouplingAutoRefCountObjectPtr<InternalPatch> DealWithNoCut(const InternalPatc
   return ret;
 }
 
+/*!
+ * Example: the cutPlace between the cell i and i+1 should be numbered i.
+ *
+ */
 void DealWithCut(double minPatchLgth, const InternalPatch *patchToBeSplit, int axisId, int cutPlace, std::vector<MEDCouplingAutoRefCountObjectPtr<InternalPatch> >& listOfPatches)
 {
   MEDCouplingAutoRefCountObjectPtr<InternalPatch> leftPart,rightPart;
@@ -1092,12 +1096,8 @@ void MEDCouplingCartesianAMRMeshGen::createPatchesFromCriterion(const INTERP_KER
           //
           int axisId,largestLength,cutPlace;
           MEDCouplingStructuredMesh::FindTheWidestAxisOfGivenRangeInCompactFrmt((*it)->getConstPart(),axisId,largestLength);
-          if((*it)->getEfficiency()>=bso.getEfficiencyThreshold() && ((*it)->getNumberOfCells()>bso.getMaximumNbOfCellsInPatch() || largestLength>bso.getMaximumPatchLength()))
-            {
-              DissectBigPatch(bso,*it,axisId,largestLength,cutPlace);
-              DealWithCut(bso.getMinimumPatchLength(),*it,axisId,cutPlace,listOfPatchesTmp);
-              continue;
-            }//action 1
+          if((*it)->getEfficiency()>=bso.getEfficiencyThreshold() && ((*it)->getNumberOfCells()>bso.getMaximumNbOfCellsInPatch() || largestLength>bso.getMaximumPatchLength()) && (DissectBigPatch(bso,*it,axisId,largestLength,cutPlace)))
+		    { DealWithCut(bso.getMinimumPatchLength(),*it,axisId,cutPlace,listOfPatchesTmp); continue; }//action 1
           if(FindHole(bso,*it,axisId,cutPlace))//axisId overwritten here if FindHole equal to true !
             { DealWithCut(bso.getMinimumPatchLength(),*it,axisId,cutPlace,listOfPatchesTmp); continue; }//action 2
           if(FindInflection(bso,*it,cutPlace,axisId))//axisId overwritten here if cutFound equal to true !

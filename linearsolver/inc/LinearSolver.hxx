@@ -22,11 +22,9 @@ class LinearSolver
 
 	LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string method  );
 
-	LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string method, bool isSingular);
+	LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string method, std::string pc  );
 
-//	LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string method, std::string pc  );
-
-//	LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string method, std::string pc, bool isSingular);
+	const LinearSolver& operator= ( const LinearSolver& linearSolver ) ;
 
 	LinearSolver ( const LinearSolver& LS ) ;
 
@@ -46,7 +44,7 @@ class LinearSolver
 
 	void setNameOfMethod(std::string nameOfMethod) ;
 
-//	void setNameOfPc(std::string nameOfPc) ;
+	void setNameOfPc(std::string nameOfPc) ;
 
 	Matrix getMatrix( void ) const ;
 
@@ -54,7 +52,7 @@ class LinearSolver
 
 	std::string getNameOfMethod( void ) const ;
 
-//	std::string getNameOfPc( void ) const ;
+	std::string getNameOfPc( void ) const ;
 
 	Vector solve( void ) ;
 
@@ -75,7 +73,7 @@ class LinearSolver
 	double _tol;
 	int _numberMaxOfIter;
 	std::string _nameOfMethod;
-//	std::string _nameOfPc;
+	std::string _nameOfPc;
 	double _residu;
 	bool _convergence;
 	bool _isSingular;

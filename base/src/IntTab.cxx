@@ -8,7 +8,10 @@
 
 
 #include "IntTab.hxx"
+
 #include <string.h>
+
+using namespace std;
 
 IntTab::~IntTab()
 {
@@ -144,4 +147,17 @@ int*
 IntTab::getPointer(void)
 {
 	return _values;
+}
+
+ostream&
+operator<<(ostream& out, const IntTab& U)
+{
+	for (int i=0; i<U.size();i++)
+	{
+		out.width(6);
+		out.precision(6);
+		out<<U[i];
+		out<<endl;
+	}
+	return out;
 }

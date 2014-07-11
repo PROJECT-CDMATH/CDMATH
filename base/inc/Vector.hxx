@@ -23,11 +23,11 @@ class Vector: public Matrix
 
 	double& operator () ( int i ) ;
 
-	const double& operator () ( int i ) const ;
+	double operator () ( int i ) const ;
 
 	double& operator [] ( int i ) ;
 
-	const double& operator [] ( int i ) const ;
+	double operator [] ( int i ) const ;
 
 	double norm() const ;
 

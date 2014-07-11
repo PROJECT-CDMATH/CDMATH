@@ -4,7 +4,7 @@ from cdmath import *
 import unittest
 from math import sqrt
 
-class MeshTest(unittest.TestCase):
+class TestsCDMATHSwig(unittest.TestCase):
     def testClassPoint(self):
         P1=Point(1.,2.,3.)
         self.assertTrue(P1.x()==1.)
@@ -509,7 +509,6 @@ class MeshTest(unittest.TestCase):
 
     def testClassMesh(self):
         import os
-        print os.getcwd()
         M1=Mesh(0.0,1.0,4);
         self.assertTrue( 1==M1.getSpaceDimension() );
         self.assertTrue( 5==M1.getNumberOfNodes() );
@@ -608,6 +607,132 @@ class MeshTest(unittest.TestCase):
         self.assertTrue( 16==M6.getNumberOfCells() );
         self.assertTrue( 40==M6.getNumberOfFaces() );
         return
+
+    def testClassLinearSolver(self):
+        A=Matrix(2,2);
+        A[0,0]=3.;
+        A[0,1]=-2.;
+        A[1,0]=-2.;
+        A[1,1]=4.;
+        
+        A*=A.transpose();
+        
+        Xana=Vector(2);
+        Xana[0]=1.;
+        Xana[1]=2.;
+
+        B=A*Xana;
+        LS=LinearSolver(A,B,500,1.E-10,"GMRES","LU");
+        X=LS.solve();
+        self.assertTrue(abs(X[0]-Xana[0])<1.E-10);
+        self.assertTrue(abs(X[1]-Xana[1])<1.E-10);
+
+        self.assertEqual(LS.getStatus(),True);
+    
+        self.assertEqual(LS.getNumberMaxOfIter(),500);
+        self.assertEqual(LS.getTolerance(),1.E-10);
+        self.assertEqual(LS.getNameOfMethod(),"GMRES");
+        self.assertEqual(LS.getNumberOfIter(),1);
+        self.assertEqual(LS.isSingular(),False);
+        self.assertEqual(LS.getNameOfPc(),"LU");
+
+        LS.setNameOfPc("");
+        LS2=LinearSolver(LS);
+        A[0,0]=1.;
+        A[0,1]=-2.;
+        A[1,0]=-2.;
+        A[1,1]=4.;
+        
+        LS2.setMatrix(A*-1.);
+        LS2.setSndMember(B*-1);
+        LS2.setTolerance(1.E-20);
+        LS2.setNumberMaxOfIter(10);
+        LS2.setNameOfMethod("CG");
+        LS2.setSingularity(True);
+        X2=LS2.solve();
+        self.assertTrue(abs(X2[0]-(-4.55555555556))<1.E-10);
+        self.assertTrue(abs(X2[1]-4.55555555556)<1.E-10);
+        self.assertEqual(LS.getStatus(),True);
+        self.assertEqual(LS2.getNumberOfIter(),2);
+        self.assertEqual(LS2.isSingular(),True);
+        self.assertEqual(LS2.getNameOfMethod(),"CG");
+
+        LS3=LinearSolver(LS);
+        LS3.setNameOfMethod("BCG");
+        X3=LS3.solve();
+        self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
+        self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
+        self.assertEqual(LS3.getStatus(),True);
+        self.assertEqual(LS3.getNameOfMethod(),"BCG");
+    
+        LS3.setNameOfMethod("CR");
+        X3=LS3.solve();
+        self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
+        self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
+        self.assertEqual(LS3.getStatus(),True);
+        self.assertEqual(LS3.getNameOfMethod(),"CR");
+    
+        LS3.setNameOfMethod("CGS");
+        X3=LS3.solve();
+        self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
+        self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
+        self.assertEqual(LS3.getStatus(),True);
+        self.assertEqual(LS3.getNameOfMethod(),"CGS");
+            
+        LS3.setNameOfMethod("GMRES");
+        X3=LS3.solve();
+        self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
+        self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
+        self.assertEqual(LS3.getStatus(),True);
+        self.assertEqual(LS3.getNameOfMethod(),"GMRES");
+        LS3.setNameOfPc("");
+
+        LS3.setNameOfMethod("BICG");
+        LS3.setNameOfPc("LU");
+        X3=LS3.solve();
+        self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
+        self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
+        self.assertEqual(LS3.getStatus(),True);
+        self.assertEqual(LS3.getNameOfMethod(),"BICG");
+        self.assertEqual(LS3.getNameOfPc(),"LU");
+        LS3.setNameOfPc("");
+
+        LS3.setNameOfMethod("BICG");
+        X3=LS3.solve();
+        self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
+        self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
+        self.assertEqual(LS3.getStatus(),True);
+        self.assertEqual(LS3.getNameOfMethod(),"BICG");
+    
+        LS3.setNameOfMethod("GCR");
+        X3=LS3.solve();
+        self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
+        self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
+        self.assertEqual(LS3.getStatus(),True);
+        self.assertEqual(LS3.getNameOfMethod(),"GCR");
+    
+        LS3.setNameOfMethod("LSQR");
+        X3=LS3.solve();
+        self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
+        self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
+        self.assertEqual(LS3.getStatus(),True);
+        self.assertEqual(LS3.getNameOfMethod(),"LSQR");
+    
+        LS3.setNameOfMethod("CHOLESKY");
+        X3=LS3.solve();
+        self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
+        self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
+        self.assertEqual(LS3.getStatus(),True);
+        self.assertEqual(LS3.getNameOfMethod(),"CHOLESKY");
+    
+        LS3.setNameOfMethod("LU");
+        X3=LS3.solve();
+        self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
+        self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
+        self.assertEqual(LS3.getStatus(),True);
+        self.assertEqual(LS3.getNameOfMethod(),"LU");
+        self.assertEqual(LS3.getNameOfPc(),"");
+
 
 if __name__ == '__main__':
     unittest.main()

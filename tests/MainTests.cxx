@@ -43,8 +43,6 @@ int main( int argc, char* argv[] )
    controller.addListener( &progress );
    // Add the top suite to the test runner
    CppUnit::TextUi::TestRunner runner;
-   runner.addTest( MatrixTests::suite() );
-   runner.addTest( VectorTests::suite() );
    runner.addTest( IntTabTests::suite() );
    runner.addTest( DoubleTabTests::suite() );
    runner.addTest( PointTests::suite() );
@@ -55,6 +53,8 @@ int main( int argc, char* argv[] )
    runner.addTest( MeshTests::suite() );
    runner.addTest( IntTabTests::suite() );
    runner.addTest( DoubleTabTests::suite() );
+   runner.addTest( MatrixTests::suite() );
+   runner.addTest( VectorTests::suite() );
    runner.addTest( LinearSolverTests::suite() );
    runner.run( controller );
    CppUnit::CompilerOutputter outputter( &result, CppUnit::stdCOut() );
