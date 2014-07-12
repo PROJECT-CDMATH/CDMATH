@@ -195,6 +195,7 @@ ENDMACRO(MED_C_FORTRAN_INTERFACE)
 
 ###############################################################################
 ## Macro to check possibility include time.h and sys/time.h headers together
+## Anouar : #ifdef __cplusplus extern "C" #endif
 ###############################################################################
 MACRO(MED_TIME_SYS_TIME)
 
@@ -205,9 +206,6 @@ FILE( WRITE ${_TEST_FILE}
 #include <sys/time.h>
 #include <time.h>
 
-#  ifdef __cplusplus
-     extern "C"
-#  endif
 
 int
 main ()
