@@ -728,6 +728,170 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertEqual(LS3.getNameOfMethod(),"LU");
         self.assertEqual(LS3.getNameOfPc(),"");
 
+        A2=Matrix(6,6,14);
+        A2[0,0]=2.;
+        A2[0,1]=-1.;
+
+        A2[1,0]=-1.;
+        A2[1,1]=2.;
+        A2[1,2]=-1.;
+    
+        A2[2,1]=-1.;
+        A2[2,2]=2.;
+        A2[2,3]=-1.;
+    
+        A2[3,2]=-1.;
+        A2[3,3]=2.;
+        A2[3,4]=-1.;
+    
+        A2[4,3]=-1.;
+        A2[4,4]=2.;
+        A2[4,5]=-1.;
+    
+        A2[5,4]=-1.;
+        A2[5,5]=2.;
+
+        Xana2=Vector(6);
+        Xana2[0]=1.;
+        Xana2[1]=2.;
+        Xana2[2]=3.;
+        Xana2[3]=4.;
+        Xana2[4]=5.;
+        Xana2[5]=6.;
+
+        B2=A2*Xana2;
+
+        LS11=LinearSolver(A2,B2,500,1.E-10,"GMRES","ILU");
+        X11=LS11.solve();
+        for i in xrange(X11.getNumberOfRows()):
+            self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
+            pass
+
+        self.assertEqual(LS11.getStatus(),True);
+
+        self.assertEqual(LS11.getNumberMaxOfIter(),500);
+        self.assertEqual(LS11.getTolerance(),1.E-10);
+        self.assertEqual(LS11.getNumberOfIter(),1);
+
+        LS11=LinearSolver(A2,B2,500,1.E-10,"CG","ILU");
+        X11=LS11.solve();
+        for i in xrange(X11.getNumberOfRows()):
+            self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
+            pass
+
+        self.assertEqual(LS11.getStatus(),True);
+
+        self.assertEqual(LS11.getNumberMaxOfIter(),500);
+        self.assertEqual(LS11.getTolerance(),1.E-10);
+        self.assertEqual(LS11.getNumberOfIter(),1);
+
+        LS11=LinearSolver(A2,B2,500,1.E-10,"LGMRES","ILU");
+        X11=LS11.solve();
+        for i in xrange(X11.getNumberOfRows()):
+            self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
+            pass
+
+        self.assertEqual(LS11.getStatus(),True);
+
+        self.assertEqual(LS11.getNumberMaxOfIter(),500);
+        self.assertEqual(LS11.getTolerance(),1.E-10);
+        self.assertEqual(LS11.getNumberOfIter(),1);
+
+        LS11=LinearSolver(A2,B2,500,1.E-10,"BCG","ILU");
+        X11=LS11.solve();
+        for i in xrange(X11.getNumberOfRows()):
+            self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
+            pass
+
+        self.assertEqual(LS11.getStatus(),True);
+
+        self.assertEqual(LS11.getNumberMaxOfIter(),500);
+        self.assertEqual(LS11.getTolerance(),1.E-10);
+        self.assertEqual(LS11.getNumberOfIter(),1);
+
+        LS11=LinearSolver(A2,B2,500,1.E-10,"CR","ILU");
+        X11=LS11.solve();
+        for i in xrange(X11.getNumberOfRows()):
+            self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
+            pass
+
+        self.assertEqual(LS11.getStatus(),True);
+
+        self.assertEqual(LS11.getNumberMaxOfIter(),500);
+        self.assertEqual(LS11.getTolerance(),1.E-10);
+        self.assertEqual(LS11.getNumberOfIter(),1);
+
+        LS11=LinearSolver(A2,B2,500,1.E-10,"CGS","ILU");
+        X11=LS11.solve();
+        for i in xrange(X11.getNumberOfRows()):
+            self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
+            pass
+
+        self.assertEqual(LS11.getStatus(),True);
+
+        self.assertEqual(LS11.getNumberMaxOfIter(),500);
+        self.assertEqual(LS11.getTolerance(),1.E-10);
+        self.assertEqual(LS11.getNumberOfIter(),1);
+
+        LS11=LinearSolver(A2,B2,500,1.E-10,"BICG","ILU");
+        X11=LS11.solve();
+        for i in xrange(X11.getNumberOfRows()):
+            self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
+            pass
+
+        self.assertEqual(LS11.getStatus(),True);
+
+        self.assertEqual(LS11.getNumberMaxOfIter(),500);
+        self.assertEqual(LS11.getTolerance(),1.E-10);
+        self.assertEqual(LS11.getNumberOfIter(),1);
+
+        LS11=LinearSolver(A2,B2,500,1.E-10,"GCR","ILU");
+        X11=LS11.solve();
+        for i in xrange(X11.getNumberOfRows()):
+            self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
+            pass
+
+        self.assertEqual(LS11.getStatus(),True);
+
+        self.assertEqual(LS11.getNumberMaxOfIter(),500);
+        self.assertEqual(LS11.getTolerance(),1.E-10);
+        self.assertEqual(LS11.getNumberOfIter(),1);
+
+        LS11=LinearSolver(A2,B2,500,1.E-10,"LSQR","ILU");
+        X11=LS11.solve();
+        for i in xrange(X11.getNumberOfRows()):
+            self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
+            pass
+
+        self.assertEqual(LS11.getStatus(),True);
+
+        self.assertEqual(LS11.getNumberMaxOfIter(),500);
+        self.assertEqual(LS11.getTolerance(),1.E-10);
+        self.assertEqual(LS11.getNumberOfIter(),6);
+
+        LS11=LinearSolver(A2,B2,500,1.E-10,"CHOLESKY","ILU");
+        X11=LS11.solve();
+        for i in xrange(X11.getNumberOfRows()):
+            self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
+            pass
+
+        self.assertEqual(LS11.getStatus(),True);
+
+        self.assertEqual(LS11.getNumberMaxOfIter(),500);
+        self.assertEqual(LS11.getTolerance(),1.E-10);
+        self.assertEqual(LS11.getNumberOfIter(),1);
+
+        LS11=LinearSolver(A2,B2,500,1.E-10,"LU","ILU");
+        X11=LS11.solve();
+        for i in xrange(X11.getNumberOfRows()):
+            self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
+            pass
+
+        self.assertEqual(LS11.getStatus(),True);
+
+        self.assertEqual(LS11.getNumberMaxOfIter(),500);
+        self.assertEqual(LS11.getTolerance(),1.E-10);
+        self.assertEqual(LS11.getNumberOfIter(),1);
 
 if __name__ == '__main__':
     unittest.main()
