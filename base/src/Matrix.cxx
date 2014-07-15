@@ -124,7 +124,7 @@ Matrix::operator* (const Vector& vector) const
 Matrix&
 Matrix::operator*= (const Matrix& matrix)
 {
-	(*this)=(*this)*matrix;
+	_mat=DenseMatrix::Multiply(_mat,matrix.getMEDCouplingDenseMatrix());
 	return (*this);
 }
 
@@ -246,17 +246,6 @@ operator*(const Matrix& matrix1, const Matrix& matrix2)
 	int columns = matrix2.getNumberOfColumns();
 	Matrix res(rows,columns);
 	res.setDensiteMatrix(matrix1.getMEDCouplingDenseMatrix()->Multiply(matrix1.getMEDCouplingDenseMatrix(),matrix2.getMEDCouplingDenseMatrix()));
-/*	for (int i=0; i<rows; i++)
-	{
-		for (int j=0; j<columns; j++)
-		{
-			double sum=0.;
-			for (int k=0; k<columns; k++)
-				sum+=matrix1(i,k)*matrix2(k,j);
-			res(i,j)=sum;
-		}
-	}
-*/
    return res;
 }
 
@@ -299,14 +288,14 @@ operator/ (const Matrix& matrix, double value)
 Matrix&
 Matrix::operator+= (const Matrix& matrix)
 {
-	(*this)=(*this)+matrix;
+	_mat=DenseMatrix::Add(_mat,matrix.getMEDCouplingDenseMatrix());
 	return (*this);
 }
 
 Matrix&
 Matrix::operator-= (const Matrix& matrix)
 {
-	(*this)=(*this)-matrix;
+	_mat=DenseMatrix::Substract(_mat,matrix.getMEDCouplingDenseMatrix());
 	return (*this);
 }
 

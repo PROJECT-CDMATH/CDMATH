@@ -20,6 +20,8 @@ class LinearSolver
 
 	LinearSolver ( void ) ;
 
+	~LinearSolver ( void ) ;
+
 	LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string method  );
 
 	LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string method, std::string pc  );
@@ -41,10 +43,6 @@ class LinearSolver
 	void setTolerance(double tol) ;
 
 	void setNumberMaxOfIter(int numberMaxOfIter) ;
-
-	void setNameOfMethod(std::string nameOfMethod) ;
-
-	void setNameOfPc(std::string nameOfPc) ;
 
 	Matrix getMatrix( void ) const ;
 
@@ -70,6 +68,12 @@ class LinearSolver
 
     private: //----------------------------------------------------------------
 
+	void setLinearSolver(const Matrix& matrix, const Vector& vector) ;
+	Mat getPetscMatrix() const ;
+	Vec getPetscVector() const ;
+	KSP getPetscKsp() const ;
+	PC getPetscPc() const ;
+
 	double _tol;
 	int _numberMaxOfIter;
 	std::string _nameOfMethod;
@@ -80,6 +84,11 @@ class LinearSolver
 	int _numberOfIter;
 	Matrix _matrix;
 	Vector _vector;
+	Mat _mat;
+	Vec _smb;
+	PC _prec;
+	KSP _ksp;
+
 };
 
 #endif /* LINEARSOLVER_HXX_ */
