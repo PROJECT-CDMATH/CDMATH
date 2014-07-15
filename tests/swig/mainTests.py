@@ -636,18 +636,17 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertEqual(LS.isSingular(),False);
         self.assertEqual(LS.getNameOfPc(),"LU");
 
-        LS.setNameOfPc("");
-        LS2=LinearSolver(LS);
-        A[0,0]=1.;
-        A[0,1]=-2.;
-        A[1,0]=-2.;
-        A[1,1]=4.;
+        LS2=LinearSolver(A,B,500,1.E-10,"CG");
+        A1=Matrix(2,2);
+        A1[0,0]=1.;
+        A1[0,1]=-2.;
+        A1[1,0]=-2.;
+        A1[1,1]=4.;
         
-        LS2.setMatrix(A*-1.);
+        LS2.setMatrix(A1*-1.);
         LS2.setSndMember(B*-1);
         LS2.setTolerance(1.E-20);
         LS2.setNumberMaxOfIter(10);
-        LS2.setNameOfMethod("CG");
         LS2.setSingularity(True);
         X2=LS2.solve();
         self.assertTrue(abs(X2[0]-(-4.55555555556))<1.E-10);
@@ -657,75 +656,71 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertEqual(LS2.isSingular(),True);
         self.assertEqual(LS2.getNameOfMethod(),"CG");
 
-        LS3=LinearSolver(LS);
-        LS3.setNameOfMethod("BCG");
+        LS3=LinearSolver(A,B,500,1.E-10,"BCG");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"BCG");
     
-        LS3.setNameOfMethod("CR");
+        LS3=LinearSolver(A,B,500,1.E-10,"CR");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"CR");
     
-        LS3.setNameOfMethod("CGS");
+        LS3=LinearSolver(A,B,500,1.E-10,"CGS");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"CGS");
             
-        LS3.setNameOfMethod("GMRES");
+        LS3=LinearSolver(A,B,500,1.E-10,"GMRES");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"GMRES");
-        LS3.setNameOfPc("");
 
-        LS3.setNameOfMethod("BICG");
-        LS3.setNameOfPc("LU");
+        LS3=LinearSolver(A,B,500,1.E-10,"BICG","LU");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"BICG");
         self.assertEqual(LS3.getNameOfPc(),"LU");
-        LS3.setNameOfPc("");
 
-        LS3.setNameOfMethod("BICG");
+        LS3=LinearSolver(A,B,500,1.E-10,"BICG");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"BICG");
     
-        LS3.setNameOfMethod("GCR");
+        LS3=LinearSolver(A,B,500,1.E-10,"GCR");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"GCR");
     
-        LS3.setNameOfMethod("LSQR");
+        LS3=LinearSolver(A,B,500,1.E-10,"LSQR");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"LSQR");
     
-        LS3.setNameOfMethod("CHOLESKY");
+        LS3=LinearSolver(A,B,500,1.E-10,"CHOLESKY");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"CHOLESKY");
     
-        LS3.setNameOfMethod("LU");
+        LS3=LinearSolver(A,B,500,1.E-10,"LU");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);

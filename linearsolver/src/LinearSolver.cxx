@@ -29,42 +29,29 @@ LinearSolver::LinearSolver ( void )
 	_numberOfIter=0;
 	_isSingular=false;
 	_nameOfPc="";
+	_mat=NULL;
+	_smb=NULL;
+}
+
+LinearSolver::~LinearSolver ( void )
+{
+	MatDestroy(&_mat);
+	VecDestroy(&_smb);
+	KSPDestroy(&_ksp);
 }
 
 void
 LinearSolver::setTolerance(double tol)
 {
 	_tol=tol;
+	KSPSetTolerances(_ksp,tol,PETSC_DEFAULT,PETSC_DEFAULT,getNumberMaxOfIter());
 }
 
 void
 LinearSolver::setNumberMaxOfIter(int numberMaxOfIter)
 {
 	_numberMaxOfIter=numberMaxOfIter;
-}
-
-void
-LinearSolver::setNameOfMethod(string nameOfMethod)
-{
-	_nameOfMethod=nameOfMethod;
-	if ((_nameOfPc.size()>0 && (_nameOfMethod.compare("GMRES")!=0 && _nameOfMethod.compare("BICG")!=0)))
-	{
-		string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not yet implemented.\n";
-		msg+="The preconditioners implemented are : LU for GMRES and BICG methods.";
-	    throw CdmathException(msg);
-	}
-}
-
-void
-LinearSolver::setNameOfPc(string nameOfPc)
-{
-	_nameOfPc=nameOfPc;
-	if ((_nameOfPc.size()>0 && (_nameOfMethod.compare("GMRES")!=0 && _nameOfMethod.compare("BICG")!=0)))
-	{
-		string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not yet implemented.\n";
-		msg+="The preconditioners implemented are : LU for GMRES and BICG methods.";
-	    throw CdmathException(msg);
-	}
+	KSPSetTolerances(_ksp,getTolerance(),PETSC_DEFAULT,PETSC_DEFAULT,numberMaxOfIter);
 }
 
 LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, string nameOfMethod )
@@ -72,13 +59,12 @@ LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numb
 	_tol=tol;
 	_nameOfMethod=nameOfMethod;
 	_numberMaxOfIter=numberMaxOfIter;
-	_matrix=matrix;
-	_vector=vector;
 	_residu=1.E30;
 	_convergence=false;
 	_numberOfIter=0;
 	_isSingular=false;
 	_nameOfPc="";
+	setLinearSolver(matrix,vector);
 }
 
 LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, string nameOfMethod, string pc )
@@ -87,8 +73,6 @@ LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numb
 	_nameOfMethod=nameOfMethod;
 	_nameOfPc=pc;
 	_numberMaxOfIter=numberMaxOfIter;
-	_matrix=matrix;
-	_vector=vector;
 	_residu=1.E30;
 	_convergence=false;
 	_numberOfIter=0;
@@ -99,6 +83,16 @@ LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numb
 		msg+="The preconditioners implemented are : LU for GMRES and BICG methods.";
 	    throw CdmathException(msg);
 	}
+	setLinearSolver(matrix,vector);
+}
+
+void
+LinearSolver::setLinearSolver(const Matrix& matrix, const Vector& vector)
+{
+	PetscInitialize(0,(char ***)"", PETSC_NULL, PETSC_NULL);
+	setMatrix(matrix);
+	setSndMember(vector);
+
 }
 
 bool
@@ -141,12 +135,39 @@ void
 LinearSolver::setMatrix(const Matrix& matrix)
 {
 	_matrix=matrix;
+    /* matrix to mat */
+    int numberOfRows=getMatrix().getNumberOfRows();
+    int numberOfColumns=getMatrix().getNumberOfColumns();
+
+    MatCreate(PETSC_COMM_WORLD, &_mat);
+    MatSetSizes(_mat, PETSC_DECIDE, PETSC_DECIDE, numberOfRows, numberOfColumns);
+    MatSetType(_mat,MATSEQDENSE);
+
+    PetscScalar *a;
+    PetscMalloc(numberOfRows*numberOfColumns*sizeof(PetscScalar),&a);
+    for (int i=0;i<numberOfRows;i++)
+    	for (int j=0;j<numberOfColumns;j++)
+    		a[i+j*numberOfRows]=_matrix(i,j);
+
+    MatSeqDenseSetPreallocation(_mat,a);
+
+    //Assemblage final
+    MatAssemblyBegin(_mat, MAT_FINAL_ASSEMBLY);
+    MatAssemblyEnd(_mat, MAT_FINAL_ASSEMBLY);
+
+	KSPCreate(PETSC_COMM_WORLD, &_ksp);
+	KSPSetOperators(_ksp,_mat,_mat,SAME_NONZERO_PATTERN);
+
+	KSPGetPC(_ksp,&_prec);
+
 }
 
 void
 LinearSolver::setSndMember(const Vector& vector)
 {
 	_vector=vector;
+    _smb=vectorToVec(vector);
+
 }
 
 void
@@ -191,69 +212,72 @@ LinearSolver::LinearSolver ( const LinearSolver& LS )
 	_numberOfIter=LS.getNumberOfIter();
 	_isSingular=LS.isSingular();
 	_nameOfPc=LS.getNameOfPc();
+	_mat=LS.getPetscMatrix();
+	_smb=LS.getPetscVector();
+	_ksp=LS.getPetscKsp();
+	_prec=LS.getPetscPc();
+}
+
+KSP
+LinearSolver::getPetscKsp() const
+{
+	return _ksp;
+}
+
+Mat
+LinearSolver::getPetscMatrix() const
+{
+	return _mat;
+}
+
+Vec
+LinearSolver::getPetscVector() const
+{
+	return _smb;
+}
+
+PC
+LinearSolver::getPetscPc() const
+{
+	return _prec;
 }
 
 Vector
 LinearSolver::solve( void )
 {
+
 	PetscInitialize(0,(char ***)"", PETSC_NULL, PETSC_NULL);
-    /* matrix to mat */
-	Mat A;
-    int numberOfRows=getMatrix().getNumberOfRows();
-    int numberOfColumns=getMatrix().getNumberOfColumns();
 
-    MatCreate(PETSC_COMM_WORLD, &A);
-	MatSetSizes(A, PETSC_DECIDE, PETSC_DECIDE, numberOfRows, numberOfColumns);
-	MatSetType(A,MATSEQDENSE);
 
-	PetscScalar    *a;
-	PetscMalloc(numberOfRows*numberOfColumns*sizeof(PetscScalar),&a);
-	for (int i=0;i<numberOfRows;i++)
-		for (int j=0;j<numberOfColumns;j++)
-			a[i+j*numberOfRows]=_matrix(i,j);
 
-    MatSeqDenseSetPreallocation(A,a);
-
-	//Assemblage final
-	MatAssemblyBegin(A, MAT_FINAL_ASSEMBLY);
-	MatAssemblyEnd(A, MAT_FINAL_ASSEMBLY);
-
-	Vec B=vectorToVec(getSndMember());
-
-	KSP ksp;
-	KSPCreate(PETSC_COMM_WORLD, &ksp);
-	KSPSetOperators(ksp,A,A,SAME_NONZERO_PATTERN);
-	KSPSetTolerances(ksp,getTolerance(),PETSC_DEFAULT,PETSC_DEFAULT,getNumberMaxOfIter());
-	PC prec;
-	KSPGetPC(ksp,&prec);
 	if (_nameOfMethod.compare("GMRES")==0)
 	{
-	   KSPSetType(ksp,KSPGMRES);
-	   if (_nameOfPc.compare("LU")==0) PCSetType(prec,PCLU);
+	   KSPSetType(_ksp,KSPGMRES);
+	   if (_nameOfPc.compare("LU")==0) PCSetType(_prec,PCLU);
 	}
 	else if (_nameOfMethod.compare("LGMRES")==0)
-		KSPSetType(ksp,KSPLGMRES);
+		KSPSetType(_ksp,KSPLGMRES);
 	else if (_nameOfMethod.compare("CG")==0)
-		KSPSetType(ksp,KSPCG);
+		KSPSetType(_ksp,KSPCG);
 	else if (_nameOfMethod.compare("BCG")==0)
-		KSPSetType(ksp,KSPBCGSL);
+		KSPSetType(_ksp,KSPBCGSL);
 	else if (_nameOfMethod.compare("CR")==0)
-		KSPSetType(ksp,KSPCR);
+		KSPSetType(_ksp,KSPCR);
 	else if (_nameOfMethod.compare("CGS")==0)
-		KSPSetType(ksp,KSPCGS);
+		KSPSetType(_ksp,KSPCGS);
 	else if (_nameOfMethod.compare("BICG")==0)
 	{
-		KSPSetType(ksp,KSPBICG);
-		if (_nameOfPc.compare("LU")==0) PCSetType(prec,PCLU);
+		KSPSetType(_ksp,KSPBICG);
+		if (_nameOfPc.compare("LU")==0) PCSetType(_prec,PCLU);
 	}
 	else if (_nameOfMethod.compare("GCR")==0)
-		KSPSetType(ksp,KSPGCR);
+		KSPSetType(_ksp,KSPGCR);
 	else if (_nameOfMethod.compare("LSQR")==0)
-		KSPSetType(ksp,KSPLSQR);
+		KSPSetType(_ksp,KSPLSQR);
 	else if (_nameOfMethod.compare("CHOLESKY")==0)
-		PCSetType(prec,PCCHOLESKY);
+		PCSetType(_prec,PCCHOLESKY);
 	else if (_nameOfMethod.compare("LU")==0)
-		PCSetType(prec,PCLU);
+		PCSetType(_prec,PCLU);
 	else
 	{
 		string msg="Vector LinearSolver::solve( void ) : The method "+_nameOfMethod+" is not yet implemented.\n";
@@ -261,40 +285,36 @@ LinearSolver::solve( void )
 		msg+="The preconditioners implemented are : LU for GMRES and BICG methods.";
 	    throw CdmathException(msg);
 	}
+
+
 	PetscInt its;
 	PetscReal rtol,abstol,dtol;
 	PetscInt maxits;
 
 	Vec X;
-	VecDuplicate(B,&X);
+	VecDuplicate(_smb,&X);
 
 	if (isSingular())
 	{
 		MatNullSpace nullsp;
 		MatNullSpaceCreate(PETSC_COMM_WORLD, PETSC_TRUE, 0, PETSC_NULL, &nullsp);
-		KSPSetNullSpace(ksp, nullsp);
+		KSPSetNullSpace(_ksp, nullsp);
 		MatNullSpaceDestroy(&nullsp);
 	}
-	KSPSolve(ksp,B,X);
+	KSPSolve(_ksp,_smb,X);
 
 
-	KSPGetResidualNorm(ksp,&rtol);
+	KSPGetResidualNorm(_ksp,&rtol);
 
-	KSPGetIterationNumber(ksp,&its);
+	KSPGetIterationNumber(_ksp,&its);
 	_numberOfIter=(int)its;
 	_residu=(double)rtol;
 	KSPConvergedReason reason;
-	KSPGetConvergedReason(ksp,&reason);
+	KSPGetConvergedReason(_ksp,&reason);
 	if (reason>=0 )
           _convergence=true;
         
 	Vector X1=vecToVector(X);
-
-	MatDestroy(&A);
-	VecDestroy(&B);
-	VecDestroy(&X);
-	KSPDestroy(&ksp);
-	PetscFree(a);
 
 	return X1;
 }
@@ -356,5 +376,9 @@ LinearSolver::operator= ( const LinearSolver& linearSolver )
 	_matrix=linearSolver.getMatrix();
 	_vector=linearSolver.getSndMember();
 	_nameOfPc=linearSolver.getNameOfPc();
+	_mat=linearSolver.getPetscMatrix();
+	_smb=linearSolver.getPetscVector();
+	_ksp=linearSolver.getPetscKsp();
+	_prec=linearSolver.getPetscPc();
 	return *this;
 }

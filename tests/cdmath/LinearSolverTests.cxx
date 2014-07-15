@@ -44,18 +44,17 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS.getNumberOfIter(),1);
 	CPPUNIT_ASSERT_EQUAL(LS.isSingular(),false);
 	CPPUNIT_ASSERT_EQUAL(LS.getNameOfPc(),(string)"LU");
-	LS.setNameOfPc("");
-	LinearSolver LS2;
-    A(0,0)=1.;
-    A(0,1)=-2.;
-    A(1,0)=-2.;
-    A(1,1)=4.;
-	LS2=LS;
-	LS2.setMatrix(-1.*A);
+
+	LinearSolver LS2(A,B,500,1.E-10,"CG");
+	Matrix A1(2,2);
+    A1(0,0)=1.;
+    A1(0,1)=-2.;
+    A1(1,0)=-2.;
+    A1(1,1)=4.;
+	LS2.setMatrix(-1.*A1);
 	LS2.setSndMember(-1*B);
 	LS2.setTolerance(1.E-20);
 	LS2.setNumberMaxOfIter(10);
-	LS2.setNameOfMethod("CG");
 	LS2.setSingularity(true);
 	Vector X2=LS2.solve();
 
@@ -66,63 +65,60 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS2.isSingular(),true);
 	CPPUNIT_ASSERT_EQUAL(LS2.getNameOfMethod(),(string)"CG");
 
-	LinearSolver LS3(LS);
-	LS3.setNameOfMethod("BCG");
+	LinearSolver LS3(A,B,500,1.E-10,"BCG");
     Vector X3=LS3.solve();
 	CPPUNIT_ASSERT(abs(X3(0)-Xana(0))<1.E-10);
 	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"BCG");
 
-	LS3.setNameOfMethod("CR");
-    X3=LS3.solve();
+	LinearSolver LS4(A,B,500,1.E-10,"CR");
+    X3=LS4.solve();
 	CPPUNIT_ASSERT(abs(X3(0)-Xana(0))<1.E-10);
 	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
-	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
-	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"CR");
+	CPPUNIT_ASSERT_EQUAL(LS4.getStatus(),true);
+	CPPUNIT_ASSERT_EQUAL(LS4.getNameOfMethod(),(string)"CR");
 
-	LS3.setNameOfMethod("CGS");
-    X3=LS3.solve();
+	LinearSolver LS5(A,B,500,1.E-10,"CGS");
+    X3=LS5.solve();
 	CPPUNIT_ASSERT(abs(X3(0)-Xana(0))<1.E-10);
 	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
-	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
-	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"CGS");
+	CPPUNIT_ASSERT_EQUAL(LS5.getStatus(),true);
+	CPPUNIT_ASSERT_EQUAL(LS5.getNameOfMethod(),(string)"CGS");
 
-	LS3.setNameOfMethod("BICG");
-    LS3.setNameOfPc("LU");
-    X3=LS3.solve();
+	LinearSolver LS6(A,B,500,1.E-10,"BICG","LU");
+    X3=LS6.solve();
 	CPPUNIT_ASSERT(abs(X3(0)-Xana(0))<1.E-10);
 	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
-	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
-	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"BICG");
-	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfPc(),(string)"LU");
-	LS3.setNameOfPc("");
+	CPPUNIT_ASSERT_EQUAL(LS6.getStatus(),true);
+	CPPUNIT_ASSERT_EQUAL(LS6.getNameOfMethod(),(string)"BICG");
+	CPPUNIT_ASSERT_EQUAL(LS6.getNameOfPc(),(string)"LU");
 
-	LS3.setNameOfMethod("GCR");
-    X3=LS3.solve();
+	LinearSolver LS7(A,B,500,1.E-10,"GCR");
+    X3=LS7.solve();
 	CPPUNIT_ASSERT(abs(X3(0)-Xana(0))<1.E-10);
 	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
-	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
-	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"GCR");
+	CPPUNIT_ASSERT_EQUAL(LS7.getStatus(),true);
+	CPPUNIT_ASSERT_EQUAL(LS7.getNameOfMethod(),(string)"GCR");
 
-	LS3.setNameOfMethod("LSQR");
-    X3=LS3.solve();
+	LinearSolver LS8(A,B,500,1.E-10,"LSQR");
+    X3=LS8.solve();
 	CPPUNIT_ASSERT(abs(X3(0)-Xana(0))<1.E-10);
 	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
-	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
-	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"LSQR");
+	CPPUNIT_ASSERT_EQUAL(LS8.getStatus(),true);
+	CPPUNIT_ASSERT_EQUAL(LS8.getNameOfMethod(),(string)"LSQR");
 
-	LS3.setNameOfMethod("CHOLESKY");
-    X3=LS3.solve();
+	LinearSolver LS9(A,B,500,1.E-10,"CHOLESKY");
+    X3=LS9.solve();
 	CPPUNIT_ASSERT(abs(X3(0)-Xana(0))<1.E-10);
 	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
-	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
-	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"CHOLESKY");
+	CPPUNIT_ASSERT_EQUAL(LS9.getStatus(),true);
+	CPPUNIT_ASSERT_EQUAL(LS9.getNameOfMethod(),(string)"CHOLESKY");
 
-	LS3.setNameOfMethod("LU");
-    X3=LS3.solve();
+	LinearSolver LS10(A,B,500,1.E-10,"LU");
+    X3=LS10.solve();
 	CPPUNIT_ASSERT(abs(X3(0)-Xana(0))<1.E-10);
 	CPPUNIT_ASSERT(abs(X3(1)-2.)<1.E-10);
-	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
-	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"LU");
+	CPPUNIT_ASSERT_EQUAL(LS10.getStatus(),true);
+	CPPUNIT_ASSERT_EQUAL(LS10.getNameOfMethod(),(string)"LU");
 }
