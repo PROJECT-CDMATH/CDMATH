@@ -18,34 +18,71 @@ Matrix::Matrix()
 {
 	_numberOfRows = 0;
 	_numberOfColumns = 0;
+	_numberOfNonZeros = 0;
+	_isSparseMatrix=false;
 }
 
 Matrix::Matrix(int dim)
 {
 	_numberOfRows = dim;
 	_numberOfColumns = dim;
+	_numberOfNonZeros = dim*dim;
+	_isSparseMatrix=false;
 	_mat=DenseMatrix::New(dim,dim);
+	for (int i=0;i<dim;i++)
+		for (int j=0;j<dim;j++)
+			(*this)(i,j)=0.;
 }
 
 Matrix::Matrix(int numberOfRows, int numberOfColumns)
 {
 	_numberOfRows = numberOfRows;
 	_numberOfColumns = numberOfColumns;
+	_numberOfNonZeros = numberOfRows*numberOfColumns;
+	_isSparseMatrix=false;
 	_mat=DenseMatrix::New(numberOfRows,numberOfColumns);
+	for (int i=0;i<numberOfRows;i++)
+		for (int j=0;j<numberOfColumns;j++)
+			(*this)(i,j)=0.;
+}
+
+Matrix::Matrix(int numberOfRows, int numberOfColumns, int numberOfNonZeros)
+{
+	_numberOfRows = numberOfRows;
+	_numberOfColumns = numberOfColumns;
+	_numberOfNonZeros = numberOfNonZeros;
+	_isSparseMatrix=true;
+	_mat=DenseMatrix::New(numberOfRows,numberOfColumns);
+	for (int i=0;i<numberOfRows;i++)
+		for (int j=0;j<numberOfColumns;j++)
+			(*this)(i,j)=0.;
 }
 
 Matrix::~Matrix()
 {
-	_numberOfRows = 0;
-	_numberOfColumns = 0;
 }
 
 Matrix::Matrix(const Matrix& matrix)
 {
 	_numberOfRows = matrix.getNumberOfRows();
 	_numberOfColumns = matrix.getNumberOfColumns();
+	_numberOfNonZeros = matrix.getNumberOfNonZeros();
+	_isSparseMatrix=matrix.isSparseMatrix();
     MEDCouplingAutoRefCountObjectPtr<DenseMatrix> m1=matrix.getMEDCouplingDenseMatrix()->deepCpy();
     _mat=m1;
+}
+
+bool
+Matrix::isSparseMatrix( void ) const
+{
+	return _isSparseMatrix;
+}
+
+
+int
+Matrix::getNumberOfNonZeros() const
+{
+	return _numberOfNonZeros;
 }
 
 //----------------------------------------------------------------------
@@ -320,6 +357,8 @@ Matrix::operator= ( const Matrix& matrix )
 {
 	_numberOfRows=matrix.getNumberOfRows();
 	_numberOfColumns=matrix.getNumberOfColumns();
+	_numberOfNonZeros=matrix.getNumberOfNonZeros();
+	_isSparseMatrix=matrix.isSparseMatrix();
 	MEDCouplingAutoRefCountObjectPtr<DenseMatrix> mat=matrix.getMEDCouplingDenseMatrix()->deepCpy();
     _mat=mat;
     return *this;
