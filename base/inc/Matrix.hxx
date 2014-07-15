@@ -49,6 +49,13 @@ class Matrix
 	Matrix ( int numberOfRows, int numberOfColumns ) ;
 
 	/**
+	 * constructor with data
+	 * @param numberOfRows : The number of rows
+	 * @param numberOfColumns : The number of columns
+	 */
+	Matrix ( int numberOfRows, int numberOfColumns, int numberOfNonZeros ) ;
+
+	/**
 	 * constructor by copy
 	 * @param cell : The matrix object to be copied
 	 */
@@ -71,6 +78,9 @@ class Matrix
 	 */
 	int getNumberOfColumns ( void ) const ;
 
+	bool isSparseMatrix( void ) const ;
+
+	int getNumberOfNonZeros() const ;
 
 	double& operator () ( int i, int j ) ;
 
@@ -133,6 +143,10 @@ class Matrix
 	 * The number of columns in this cell.
 	 */
 	int _numberOfColumns ;
+
+	int _numberOfNonZeros ;
+
+	bool _isSparseMatrix ;
 
 	ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<ParaMEDMEM::DenseMatrix> _mat;
 

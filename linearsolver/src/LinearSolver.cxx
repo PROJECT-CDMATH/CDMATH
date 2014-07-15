@@ -77,12 +77,20 @@ LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numb
 	_convergence=false;
 	_numberOfIter=0;
 	_isSingular=false;
-	if ((_nameOfPc.size()>0 && (_nameOfMethod.compare("GMRES")!=0 && _nameOfMethod.compare("BICG")!=0)))
+
+	if ((_nameOfPc.compare("LU")==0 && (_nameOfMethod.compare("GMRES")!=0 && _nameOfMethod.compare("BICG")!=0)))
 	{
 		string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not yet implemented.\n";
 		msg+="The preconditioners implemented are : LU for GMRES and BICG methods.";
 	    throw CdmathException(msg);
 	}
+
+	if (_nameOfPc.compare("ILU")==0 && matrix.isSparseMatrix()==false)
+	{
+		string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not compatible with dense matrix.\n";
+	    throw CdmathException(msg);
+	}
+
 	setLinearSolver(matrix,vector);
 }
 
@@ -136,30 +144,41 @@ LinearSolver::setMatrix(const Matrix& matrix)
 {
 	_matrix=matrix;
     /* matrix to mat */
-    int numberOfRows=getMatrix().getNumberOfRows();
-    int numberOfColumns=getMatrix().getNumberOfColumns();
+    int numberOfRows=matrix.getNumberOfRows();
+    int numberOfColumns=matrix.getNumberOfColumns();
+    int numberOfNonZeros=matrix.getNumberOfNonZeros();
 
-    MatCreate(PETSC_COMM_WORLD, &_mat);
-    MatSetSizes(_mat, PETSC_DECIDE, PETSC_DECIDE, numberOfRows, numberOfColumns);
-    MatSetType(_mat,MATSEQDENSE);
+    if (numberOfNonZeros==numberOfRows*numberOfColumns)
+    {
 
-    PetscScalar *a;
-    PetscMalloc(numberOfRows*numberOfColumns*sizeof(PetscScalar),&a);
-    for (int i=0;i<numberOfRows;i++)
-    	for (int j=0;j<numberOfColumns;j++)
-    		a[i+j*numberOfRows]=_matrix(i,j);
+		MatCreate(PETSC_COMM_WORLD, &_mat);
+		MatSetSizes(_mat, PETSC_DECIDE, PETSC_DECIDE, numberOfRows, numberOfColumns);
+		MatSetType(_mat,MATSEQDENSE);
 
-    MatSeqDenseSetPreallocation(_mat,a);
+		PetscScalar *a;
+		PetscMalloc(numberOfRows*numberOfColumns*sizeof(PetscScalar),&a);
+		for (int i=0;i<numberOfRows;i++)
+			for (int j=0;j<numberOfColumns;j++)
+				a[i+j*numberOfRows]=_matrix(i,j);
 
+		MatSeqDenseSetPreallocation(_mat,a);
+
+    } else
+    {
+		MatCreateSeqAIJ(MPI_COMM_SELF,numberOfRows,numberOfColumns,numberOfNonZeros,0,&_mat);
+		for (int i=0;i<numberOfRows;i++)
+			for (int j=0;j<numberOfColumns;j++)
+				if (abs(_matrix(i,j))>1.E-16)
+					MatSetValues(_mat,1,&i,1,&j,&_matrix(i,j),INSERT_VALUES);
+    }
     //Assemblage final
-    MatAssemblyBegin(_mat, MAT_FINAL_ASSEMBLY);
-    MatAssemblyEnd(_mat, MAT_FINAL_ASSEMBLY);
+	MatAssemblyBegin(_mat, MAT_FINAL_ASSEMBLY);
+	MatAssemblyEnd(_mat, MAT_FINAL_ASSEMBLY);
 
 	KSPCreate(PETSC_COMM_WORLD, &_ksp);
 	KSPSetOperators(_ksp,_mat,_mat,SAME_NONZERO_PATTERN);
 
 	KSPGetPC(_ksp,&_prec);
-
 }
 
 void
@@ -260,7 +279,7 @@ LinearSolver::solve( void )
 	else if (_nameOfMethod.compare("CG")==0)
 		KSPSetType(_ksp,KSPCG);
 	else if (_nameOfMethod.compare("BCG")==0)
-		KSPSetType(_ksp,KSPBCGSL);
+		KSPSetType(_ksp,KSPBCGS);
 	else if (_nameOfMethod.compare("CR")==0)
 		KSPSetType(_ksp,KSPCR);
 	else if (_nameOfMethod.compare("CGS")==0)
@@ -286,6 +305,7 @@ LinearSolver::solve( void )
 	    throw CdmathException(msg);
 	}
 
+   if (_nameOfPc.compare("ILU")==0) PCSetType(_prec,PCILU);
 
 	PetscInt its;
 	PetscReal rtol,abstol,dtol;
