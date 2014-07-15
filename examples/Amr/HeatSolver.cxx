@@ -225,6 +225,7 @@ HeatSolver::SolverHeat2D(int numberOfCellsGhost,const MEDCouplingIMesh *imesh,do
     yyWithGhost->setArray(YY3->getArray());
 	YY3->decrRef();
 	YY2_F->decrRef();
+	m1->decrRef();
 }
 
 double

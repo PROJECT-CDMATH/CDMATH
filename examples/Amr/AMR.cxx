@@ -169,13 +169,10 @@ AMR::initialize(const MEDCouplingIMesh* coarseMesh,
 		 	 	const GenericSolver& genericSolver)
 {
 	_fieldsInfos=fieldsInfos;
-	int numberOfCellsGhost=genericSolver.getNumberOfGhostCells();
-    MEDCouplingAutoRefCountObjectPtr<MEDCouplingCartesianAMRMesh> amr=MEDCouplingCartesianAMRMesh::New(const_cast<MEDCouplingIMesh *>(coarseMesh));
-	MEDCouplingIMesh* m1=amr->getImageMesh()->buildWithGhost(numberOfCellsGhost);
 
 	MEDCouplingFieldDouble* yy0=genericSolver.initialConditions(coarseMesh);
 
-	// !!!!!!!!!!! CDLIM PYSIQUE !!!!!!!!!!!!
+	// !!!!!!!!!!! CDLIM PHYSIQUE !!!!!!!!!!!!
 	//	vector< vector<int> > bottomG(numberOfCellsGhost),leftG(numberOfCellsGhost),topG(numberOfCellsGhost),rightG(numberOfCellsGhost);
 	//    getBLTRToPeriodic(m1,numberOfCellsGhost,bottomG,leftG,topG,rightG);
 	//   vector< vector<int> > bottom(numberOfCellsGhost),left(numberOfCellsGhost),top(numberOfCellsGhost),right(numberOfCellsGhost);
@@ -186,9 +183,10 @@ AMR::initialize(const MEDCouplingIMesh* coarseMesh,
 	MEDCouplingFieldDouble* fd=genericSolver.refinementCriterion(yy0);
 
 	yy0->decrRef();
-	m1->decrRef();
 
-	int maxLevels=getMaximumLevels();
+    MEDCouplingAutoRefCountObjectPtr<MEDCouplingCartesianAMRMesh> amr=MEDCouplingCartesianAMRMesh::New(const_cast<MEDCouplingIMesh *>(coarseMesh));
+
+    int maxLevels=getMaximumLevels();
 	vector<BoxSplittingOptions> bsos(maxLevels);
 	for(int i=0;i<maxLevels;i++)
 	{
@@ -206,7 +204,8 @@ AMR::initialize(const MEDCouplingIMesh* coarseMesh,
 	amr->createPatchesFromCriterionML(boxOptions,fd->getArray(),_coeficientsRefinement,1e-12);
 	fd->decrRef();
 
-	_fields=MEDCouplingAMRAttribute::New(amr,fieldsInfos,numberOfCellsGhost);
+	int numberOfGhostCells=genericSolver.getNumberOfGhostCells();
+	_fields=MEDCouplingAMRAttribute::New(amr,fieldsInfos,numberOfGhostCells);
 	_fields->alloc();
 
 	int maxLevs=amr->getMaxNumberOfLevelsRelativeToThis();
@@ -224,12 +223,12 @@ AMR::initialize(const MEDCouplingIMesh* coarseMesh,
 		for (size_t p=0;p<levs[i].size();p++)
 		{
 			MEDCouplingCartesianAMRMeshGen* patch=const_cast<MEDCouplingCartesianAMRMeshGen *>(levs[i][p]->getMesh());
-			DataArrayDouble* yyWithGhost=const_cast<DataArrayDouble *>(_fields->getFieldOn(patch,"YY"));
+			DataArrayDouble* yyWithGhost=const_cast<DataArrayDouble *>(_fields->getFieldOn(patch,fieldsInfos[0].first));
 			for(int k=0;k<yyWithGhost->getNumberOfTuples();k++)
 				yyWithGhost->setIJ(k,0,0.0);
 			MEDCouplingFieldDouble* yy=genericSolver.initialConditions(patch->getImageMesh());
 
-			MEDCouplingFieldDouble* YY3=AMR::buildFieldWithGhostFromFieldWithoutGhost(numberOfCellsGhost,patch->getImageMesh(),yy);
+			MEDCouplingFieldDouble* YY3=AMR::buildFieldWithGhostFromFieldWithoutGhost(numberOfGhostCells,patch->getImageMesh(),yy);
 
 			std::copy(YY3->getArray()->getPointer(),YY3->getArray()->getPointer()+YY3->getNumberOfTuples(),yyWithGhost->getPointer());
 			YY3->decrRef();
@@ -299,8 +298,8 @@ AMR::compute(const GenericSolver& genericSolver)
 
 	int frequencyOfPostTreatment=genericSolver.getFrequencyOfPostTreatment();
 
-	string fileName="FieldYY";
-	string nameOfField="YY";
+	string nameOfField=_fieldsInfos[0].first;
+	string fileName="Field"+nameOfField;
 	while (iter < maximumNumberbOfIter && currentTime <= finalTime)
 	{
 		if (iter%frequencyOfPostTreatment == 0)
@@ -308,7 +307,7 @@ AMR::compute(const GenericSolver& genericSolver)
 			PostTreatment(iter,currentTime,nameOfField,fileName,fromscratch);
 			fromscratch=false;
 		}
-	    cout << "iteration : " << iter << " - time = " << currentTime << " - number of patches generates = " << _fields->getMyGodFather()->getNumberOfPatches() << endl;
+	    cout << "iteration = " << iter << ", time = " << currentTime << ", number of generated patches = " << _fields->getMyGodFather()->getNumberOfPatches() << endl;
 	    double dtCoarse=unsteadyAMRDriver(currentTime,genericSolver);
 	    currentTime+=dtCoarse;
 	    iter+=1;
@@ -324,7 +323,7 @@ AMR::refinement(const vector<const BoxSplittingOptions*>& bsos,const GenericSolv
 
     MEDCouplingCartesianAMRMesh* amr1=_fields->getMyGodFather();
     int numberOfCellsGhost=genericSolver.getNumberOfGhostCells();
-	DataArrayDouble* yyWithGhost=const_cast<DataArrayDouble *>(_fields->getFieldOn(amr1,"YY"));
+	DataArrayDouble* yyWithGhost=const_cast<DataArrayDouble *>(_fields->getFieldOn(amr1,_fieldsInfos[0].first));
 
 	MEDCouplingFieldDouble* yy=MEDCouplingFieldDouble::New(ON_CELLS);
 	yy->setName("YY") ;
@@ -334,7 +333,7 @@ AMR::refinement(const vector<const BoxSplittingOptions*>& bsos,const GenericSolv
 	yy->setArray(yyWithGhost);
 	yy->setTime(0.,0,0);
 
-	MEDCouplingFieldDouble* yy3=buildFieldWithoutGhostFromFieldWithGhost(numberOfCellsGhost,amr1->getImageMesh(),yy);
+	MEDCouplingFieldDouble* yy3=AMR::buildFieldWithoutGhostFromFieldWithGhost(numberOfCellsGhost,amr1->getImageMesh(),yy);
 
 	MEDCouplingFieldDouble* fd=genericSolver.refinementCriterion(yy3);
 
@@ -345,7 +344,7 @@ AMR::refinement(const vector<const BoxSplittingOptions*>& bsos,const GenericSolv
     amr2->createPatchesFromCriterionML(bsos,fd->getArray(),_coeficientsRefinement,1e-12);
     amr1=amr2;
 	MEDCouplingAutoRefCountObjectPtr<MEDCouplingAMRAttribute> att2=_fields->projectTo(amr1);
-	for(int i=0;i<amr1->getMaxNumberOfLevelsRelativeToThis()-1;i++)
+	for(int i=0; i < amr1->getMaxNumberOfLevelsRelativeToThis()-1; i++)
         att2->synchronizeAllGhostZonesAtASpecifiedLevel(i+1);
 	_fields=att2;
 	fd->decrRef();
@@ -361,7 +360,6 @@ AMR::unsteadyAMRDriver(double currentTime, const GenericSolver& genericSolver)
 	const MEDCouplingCartesianAMRMesh* amr1=_fields->getMyGodFather();
 	double dtCoarse=1.E30;
 	MEDCouplingCartesianAMRPatchGen* grid0=amr1->retrieveGridsAt(0)[0];
-	int numberOfCellsGhost=genericSolver.getNumberOfGhostCells();
 	int dirs=1;
 	if(genericSolver.isAlternatingDirection())
 		dirs=amr1->getSpaceDimension();
@@ -370,6 +368,10 @@ AMR::unsteadyAMRDriver(double currentTime, const GenericSolver& genericSolver)
 	{
 		dtCoarse=genericSolver.advancingTimeStep(idir,currentTime,_fields,grid0);
 		_fields->synchronizeAllGhostZonesAtASpecifiedLevel(0);
+
+		/* CL PHYSIQUE */
+		/*
+		int numberOfCellsGhost=genericSolver.getNumberOfGhostCells();
 		MEDCouplingCartesianAMRMeshGen* patch=const_cast<MEDCouplingCartesianAMRMeshGen *>(grid0->getMesh());
 		DataArrayDouble* yyWithGhost=const_cast<DataArrayDouble *>(_fields->getFieldOn(patch,"YY"));
 		MEDCouplingFieldDouble* fieldyyWithGhost=MEDCouplingFieldDouble::New(ON_CELLS);
@@ -379,11 +381,10 @@ AMR::unsteadyAMRDriver(double currentTime, const GenericSolver& genericSolver)
 		fieldyyWithGhost->setArray(yyWithGhost);
 		fieldyyWithGhost->setTime(0.,0,0);
 		fieldyyWithGhost->checkCoherency();
-		/* CL PHYSIQUE */
-		// fillCellGhostPeriodic(bottom,left,top,right,bottomG,leftG,topG,rightG,amr1->getImageMesh(),fieldyyWithGhost,numberOfCellsGhost);
-		//////
+		fillCellGhostPeriodic(bottom,left,top,right,bottomG,leftG,topG,rightG,amr1->getImageMesh(),fieldyyWithGhost,numberOfCellsGhost);
 		fieldyyWithGhost->decrRef();
 		m1->decrRef();
+		*/
 	}
 	grid0->decrRef();
 	if (amr1->getMaxNumberOfLevelsRelativeToThis()>1)
@@ -468,6 +469,7 @@ AMR::buildFieldWithGhostFromFieldWithoutGhost(int numberOfCellsGhost, const MEDC
     fieldWitGhost->setArray(ret);
     fieldWitGhost->setTime(0.,0,0);
     m1->decrRef();
+    ret->decrRef();
 	return fieldWitGhost;
 }
 

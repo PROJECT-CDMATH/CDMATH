@@ -56,7 +56,7 @@ public:
 				  ParaMEDMEM::MEDCouplingFieldDouble* yyWithGhost) const;
 
 
-	/* classe obligatoire */
+	/* méthodes obligatoires */
 	ParaMEDMEM::MEDCouplingFieldDouble* initialConditions(const ParaMEDMEM::MEDCouplingIMesh* mesh) const ;
 
 	ParaMEDMEM::MEDCouplingFieldDouble* refinementCriterion(const ParaMEDMEM::MEDCouplingFieldDouble* field) const ;

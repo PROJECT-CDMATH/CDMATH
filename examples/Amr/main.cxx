@@ -34,7 +34,6 @@ int main() {
 	int nx=50;
 	int ny=50;
 
-	/* coarse mesh*/
     double dx = (xsup - xinf)/nx ;
     double dy = (ysup - yinf)/ny ;
 
