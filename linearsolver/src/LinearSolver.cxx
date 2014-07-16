@@ -91,6 +91,12 @@ LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numb
 	    throw CdmathException(msg);
 	}
 
+	if (_nameOfPc.compare("ILU")==0 && (_nameOfMethod.compare("LU")==0 || _nameOfMethod.compare("CHOLESKY")==0) )
+	{
+		string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not compatible with "+_nameOfMethod+".\n";
+	    throw CdmathException(msg);
+	}
+
 	setLinearSolver(matrix,vector);
 }
 
@@ -148,9 +154,15 @@ LinearSolver::setMatrix(const Matrix& matrix)
     int numberOfColumns=matrix.getNumberOfColumns();
     int numberOfNonZeros=matrix.getNumberOfNonZeros();
 
-    if (numberOfNonZeros==numberOfRows*numberOfColumns)
+    if (matrix.isSparseMatrix())
     {
-
+		MatCreateSeqAIJ(MPI_COMM_SELF,numberOfRows,numberOfColumns,numberOfNonZeros,0,&_mat);
+		for (int i=0;i<numberOfRows;i++)
+			for (int j=0;j<numberOfColumns;j++)
+				if (abs(_matrix(i,j))>1.E-16)
+					MatSetValues(_mat,1,&i,1,&j,&_matrix(i,j),INSERT_VALUES);
+    } else
+    {
 		MatCreate(PETSC_COMM_WORLD, &_mat);
 		MatSetSizes(_mat, PETSC_DECIDE, PETSC_DECIDE, numberOfRows, numberOfColumns);
 		MatSetType(_mat,MATSEQDENSE);
@@ -162,14 +174,6 @@ LinearSolver::setMatrix(const Matrix& matrix)
 				a[i+j*numberOfRows]=_matrix(i,j);
 
 		MatSeqDenseSetPreallocation(_mat,a);
-
-    } else
-    {
-		MatCreateSeqAIJ(MPI_COMM_SELF,numberOfRows,numberOfColumns,numberOfNonZeros,0,&_mat);
-		for (int i=0;i<numberOfRows;i++)
-			for (int j=0;j<numberOfColumns;j++)
-				if (abs(_matrix(i,j))>1.E-16)
-					MatSetValues(_mat,1,&i,1,&j,&_matrix(i,j),INSERT_VALUES);
     }
     //Assemblage final
 	MatAssemblyBegin(_mat, MAT_FINAL_ASSEMBLY);
@@ -305,7 +309,7 @@ LinearSolver::solve( void )
 	    throw CdmathException(msg);
 	}
 
-   if (_nameOfPc.compare("ILU")==0) PCSetType(_prec,PCILU);
+   if (_nameOfPc.compare("ILU")==0 && (_nameOfMethod.compare("LU")!=0 && _nameOfMethod.compare("CHOLESKY")!=0) ) PCSetType(_prec,PCILU);
 
 	PetscInt its;
 	PetscReal rtol,abstol,dtol;
