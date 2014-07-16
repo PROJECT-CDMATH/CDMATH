@@ -869,29 +869,5 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertEqual(LS11.getTolerance(),1.E-10);
         self.assertEqual(LS11.getNumberOfIter(),6);
 
-        LS11=LinearSolver(A2,B2,500,1.E-10,"CHOLESKY","ILU");
-        X11=LS11.solve();
-        for i in xrange(X11.getNumberOfRows()):
-            self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
-            pass
-
-        self.assertEqual(LS11.getStatus(),True);
-
-        self.assertEqual(LS11.getNumberMaxOfIter(),500);
-        self.assertEqual(LS11.getTolerance(),1.E-10);
-        self.assertEqual(LS11.getNumberOfIter(),1);
-
-        LS11=LinearSolver(A2,B2,500,1.E-10,"LU","ILU");
-        X11=LS11.solve();
-        for i in xrange(X11.getNumberOfRows()):
-            self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
-            pass
-
-        self.assertEqual(LS11.getStatus(),True);
-
-        self.assertEqual(LS11.getNumberMaxOfIter(),500);
-        self.assertEqual(LS11.getTolerance(),1.E-10);
-        self.assertEqual(LS11.getNumberOfIter(),1);
-
 if __name__ == '__main__':
     unittest.main()

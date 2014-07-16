@@ -253,26 +253,4 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS19.getNumberMaxOfIter(),500);
 	CPPUNIT_ASSERT_EQUAL(LS19.getTolerance(),1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS19.getNumberOfIter(),6);
-
-    LinearSolver LS20(A2,B2,500,1.E-10,"CHOLESKY","ILU");
-    Vector X20=LS20.solve();
-	CPPUNIT_ASSERT_EQUAL(LS20.getStatus(),true);
-
-	for (int i=0;i<X20.getNumberOfRows();i++)
-    	CPPUNIT_ASSERT(abs(X20(i)-Xana2(i))<1.E-10);
-
-	CPPUNIT_ASSERT_EQUAL(LS20.getNumberMaxOfIter(),500);
-	CPPUNIT_ASSERT_EQUAL(LS20.getTolerance(),1.E-10);
-	CPPUNIT_ASSERT_EQUAL(LS20.getNumberOfIter(),1);
-
-    LinearSolver LS21(A2,B2,500,1.E-10,"LU","ILU");
-    Vector X21=LS21.solve();
-	CPPUNIT_ASSERT_EQUAL(LS21.getStatus(),true);
-
-	for (int i=0;i<X21.getNumberOfRows();i++)
-    	CPPUNIT_ASSERT(abs(X21(i)-Xana2(i))<1.E-10);
-
-	CPPUNIT_ASSERT_EQUAL(LS21.getNumberMaxOfIter(),500);
-	CPPUNIT_ASSERT_EQUAL(LS21.getTolerance(),1.E-10);
-	CPPUNIT_ASSERT_EQUAL(LS21.getNumberOfIter(),1);
 }
