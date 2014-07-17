@@ -5,7 +5,8 @@
  *      Author: mekkas
  */
 
-#include "AMR.hxx"
+#include <algorithm>
+#include <fstream>
 
 #include <MEDCouplingAMRAttribute.hxx>
 #include <MEDCouplingCartesianAMRMesh.hxx>
@@ -13,10 +14,8 @@
 #include <MEDCouplingIMesh.hxx>
 #include <BoxSplittingOptions.hxx>
 
-#include <algorithm>
-#include <fstream>
-
 #include "CdmathException.hxx"
+#include "AMR.hxx"
 
 using namespace ParaMEDMEM;
 using namespace INTERP_KERNEL;
