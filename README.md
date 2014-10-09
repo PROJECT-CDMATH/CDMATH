@@ -22,7 +22,7 @@ Dependencies. The following packages list is sufficient on Ubuntu 14.04:
  - `petsc-dev`. This should already include `libopenmpi-dev`, which is necessary if you use the compilation option `-DMEDFILE_USE_MPI=ON`.
  - `python-dev` and `swig`, if you want to generate Python executables and libraries of CDMATH. Use the compilation option `-DCMAKE_CDMATH_SWIG=ON`.
  - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCMAKE_CDMATH_TESTS=ON`.
- - `doxygen`, if you want to generate documentation in ~/workspace/cdmath/cdmath_install/doc/. Use the compilation option `-DCMAKE_CDMATH_DOCUMENTATION=ON`.
+ - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCMAKE_CDMATH_DOCUMENTATION=ON`.
 Some users reported that they need `valgrind-dev` and `numpy` on other systems (Fedora), but this has not been confirmed.
 
 Set PETSc's directory. On Ubuntu 14.04, use the following:
@@ -49,11 +49,11 @@ On some systems (not Ubuntu 14.04, you may have to use the compilation option `-
 
 Use CDMATH
 ----------
-To use CDMATH with your C++ code main.cxx:
+To use CDMATH with your C++ code `main.cxx`:
  * libraries: `export LD_LIBRARY_PATH=~/workspace/cdmath/cdmath_install/lib`
  * include: `~/workspace/cdmath/cdmath_install/include`
 
-To use CDMATH with your Python code main.py:
+To use CDMATH with your Python code `main.py`:
  * libraries: `export LD_LIBRARY_PATH=~/workspace/cdmath/cdmath_install/lib`
                `export PYTHONPATH=~/workspace/cdmath/cdmath_install/lib/cdmath:~/workspace/cdmath/cdmath_install/bin/cdmath`
 
