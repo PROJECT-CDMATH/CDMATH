@@ -24,11 +24,11 @@ SET(TestMesh_SOURCES
   LinearSolver.cxx
   )
 
-SET(MAILLAGE_MED
-  maillage.med
+SET(MESH_MED
+  mesh.med
   )
 
-file(COPY ${MAILLAGE_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests) 
+file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests) 
 
 FILE(GLOB TestMesh_SOURCES . *.cxx)
 ADD_LIBRARY(TestMesh SHARED ${TestMesh_SOURCES})

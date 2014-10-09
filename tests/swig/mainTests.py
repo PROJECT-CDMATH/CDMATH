@@ -1,4 +1,4 @@
-# coding: latin-1 
+# coding: latin-1
 
 from cdmath import *
 import unittest
@@ -77,25 +77,25 @@ class TestsCDMATHSwig(unittest.TestCase):
         P15/=3.0;
         self.assertTrue( 1., P15.x());
         self.assertTrue( 2., P15.y());
-        self.assertTrue( 3., P15.z());        
+        self.assertTrue( 3., P15.z());
         return
-    
+
     def testClassField(self):
         M=Mesh(0.0,1.0,10,0.,1.,5);
 
         conc1=Field("CONCENTRATION",CELLS,M,2,1.2) ;
         self.assertTrue( 1.2==conc1.getTime() );
         for j in range(conc1.getNumberOfComponents()):
-	        for i in range(conc1.getNumberOfElements()):
-	            conc1[i,j]=i+j;
+            for i in range(conc1.getNumberOfElements()):
+                conc1[i,j]=i+j;
 
         conc1n=Field("CONCENTRATION",NODES,M,2,1.2) ;
         self.assertTrue( 1.2==conc1n.getTime() );
         for j in range(conc1n.getNumberOfComponents()):
-	        for i in range(conc1n.getNumberOfElements()):
-	            conc1n[i,j]=i;
+            for i in range(conc1n.getNumberOfElements()):
+                conc1n[i,j]=i;
 
-        
+
         fileNameVTK="champc";
         conc1.writeVTK(fileNameVTK);
 
@@ -106,7 +106,7 @@ class TestsCDMATHSwig(unittest.TestCase):
         for i in range(conc1.getNumberOfElements()):
             self.assertTrue( 1.0*i==conc1[i] );
             pass
-            
+
         self.assertTrue( 2==conc1.getNumberOfComponents() );
         self.assertTrue( 50==conc1.getNumberOfElements() );
         self.assertTrue( 2.3==conc1.getTime() );
@@ -308,7 +308,7 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue( 0.3==c2.getNormalVector(0,1) );
         self.assertTrue( 0.4==c2.getNormalVector(1,0) );
         self.assertTrue( 0.6==c2.getNormalVector(1,1) );
-    
+
         c2=c1;
         c2.addFaceId(0,10);
         c2.addFaceId(1,11);
@@ -318,7 +318,7 @@ class TestsCDMATHSwig(unittest.TestCase):
         c2.addNodeId(1,21);
         c2.addNodeId(2,22);
         c2.addNodeId(3,23);
-    
+
         self.assertTrue( 10==c2.getFacesId()[0] );
         self.assertTrue( 11==c2.getFacesId()[1] );
         self.assertTrue( 12==c2.getFacesId()[2] );
@@ -351,7 +351,7 @@ class TestsCDMATHSwig(unittest.TestCase):
         n2.addCellId(1,21);
         n2.addCellId(2,22);
         n2.addCellId(3,23);
-        
+
         self.assertTrue( 10==n2.getFacesId()[0] );
         self.assertTrue( 11==n2.getFacesId()[1] );
         self.assertTrue( 12==n2.getFacesId()[2] );
@@ -384,18 +384,18 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue( 0==f.getRegion() );
         self.assertTrue( True==f.isBorder() );
         self.assertTrue( "Bord1"==f.getGroupName() );
-        
+
         f2=f1;
         f2.addCellId(0,10);
         f2.addCellId(1,11);
         f2.addNodeId(0,20);
         f2.addNodeId(1,21);
-    
+
         self.assertTrue( 10==f2.getCellsId()[0] );
         self.assertTrue( 11==f2.getCellsId()[1] );
         self.assertTrue( 20==f2.getNodesId()[0] );
         self.assertTrue( 21==f2.getNodesId()[1] );
-    
+
         f2=f;
         self.assertTrue( 1.0==f2.getMeasure() );
         self.assertTrue( 2==f2.getNumberOfNodes() );
@@ -413,19 +413,19 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue( 1==T[0] );
         self.assertTrue( 2==T[1] );
         self.assertTrue( 3==T[2] );
-    
+
         T1=IntTab(T);
         self.assertTrue( 1==T1[0] );
         self.assertTrue( 2==T1[1] );
         self.assertTrue( 3==T1[2] );
-    
+
         T2=IntTab();
         T2=T;
         self.assertTrue( 1==T2[0] );
         self.assertTrue( 2==T2[1] );
         self.assertTrue( 3==T2[2] );
-    
-    
+
+
         T4=IntTab(3,3);
         T5=IntTab(3);
         T5[0]=1;
@@ -435,8 +435,8 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue( 4==T5[0] );
         self.assertTrue( 5==T5[1] );
         self.assertTrue( 6==T5[2] );
-    
-    
+
+
         T8=IntTab(3);
         T8[0]=1;
         T8[1]=2;
@@ -445,15 +445,15 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue( -2==T8[0] );
         self.assertTrue( -1==T8[1] );
         self.assertTrue( 0==T8[2] );
-    
-    
+
+
         T12=IntTab(3);
         T12[0]=1;
         T12[1]=2;
         T12[2]=3;
         self.assertTrue( 1==T12.getValues()[0] );
         self.assertTrue( 2==T12.getValues()[1] );
-        self.assertTrue( 3==T12.getValues()[2] );        
+        self.assertTrue( 3==T12.getValues()[2] );
         return
 
     def testClassDoubleTab(self):
@@ -464,19 +464,19 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue( 1==T[0] );
         self.assertTrue( 2==T[1] );
         self.assertTrue( 3==T[2] );
-    
+
         T1=DoubleTab(T);
         self.assertTrue( 1==T1[0] );
         self.assertTrue( 2==T1[1] );
         self.assertTrue( 3==T1[2] );
-    
+
         T2=DoubleTab();
         T2=T;
         self.assertTrue( 1==T2[0] );
         self.assertTrue( 2==T2[1] );
         self.assertTrue( 3==T2[2] );
-    
-    
+
+
         T4=DoubleTab(3,3);
         T5=DoubleTab(3);
         T5[0]=1;
@@ -486,8 +486,8 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue( 4==T5[0] );
         self.assertTrue( 5==T5[1] );
         self.assertTrue( 6==T5[2] );
-    
-    
+
+
         T8=DoubleTab(3);
         T8[0]=1;
         T8[1]=2;
@@ -496,15 +496,15 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue( -2==T8[0] );
         self.assertTrue( -1==T8[1] );
         self.assertTrue( 0==T8[2] );
-    
-    
+
+
         T12=DoubleTab(3);
         T12[0]=1;
         T12[1]=2;
         T12[2]=3;
         self.assertTrue( 1==T12.getValues()[0] );
         self.assertTrue( 2==T12.getValues()[1] );
-        self.assertTrue( 3==T12.getValues()[2] );        
+        self.assertTrue( 3==T12.getValues()[2] );
         return
 
     def testClassMesh(self):
@@ -557,44 +557,44 @@ class TestsCDMATHSwig(unittest.TestCase):
                 self.assertTrue( yi==ysup );
                 self.assertTrue( True==M2.getFace(indexFace).isBorder() );
                 self.assertTrue( indexFace== indexFaces[i] );
-                pass    
+                pass
             if (abs(y-0.5)<1.E-10 and abs(x-1.)<1.E-10):
                 self.assertTrue( -1==M2.getIndexFacePeriodic(i) );
                 pass
             pass
-    
-    
+
+
         M2.writeMED("TestMesh");
         M22=Mesh("TestMesh.med");
         self.assertTrue( 2==M22.getSpaceDimension() );
         self.assertTrue( 25==M22.getNumberOfNodes() );
         self.assertTrue( 16==M22.getNumberOfCells() );
         self.assertTrue( 40==M22.getNumberOfFaces() );
-    
-        M23=Mesh("maillage.med");
+
+        M23=Mesh("mesh.med");
         self.assertTrue(M23.getNamesOfGroups()[0]=="BORD1");
         self.assertTrue(M23.getNamesOfGroups()[1]=="BORD2");
         self.assertTrue(M23.getNamesOfGroups()[2]=="BORD3");
         self.assertTrue(M23.getNamesOfGroups()[3]=="BORD4");
-    
+
         M3=M1
         self.assertTrue( 1==M3.getSpaceDimension() );
         self.assertTrue( 5==M3.getNumberOfNodes() );
         self.assertTrue( 4==M3.getNumberOfCells() );
         self.assertTrue( 5==M3.getNumberOfFaces() );
-    
+
         M3=M2;
         self.assertTrue( 2==M3.getSpaceDimension() );
         self.assertTrue( 25==M3.getNumberOfNodes() );
         self.assertTrue( 16==M3.getNumberOfCells() );
         self.assertTrue( 40==M3.getNumberOfFaces() );
-    
+
         M4=M3;
         self.assertTrue( 2==M4.getSpaceDimension() );
         self.assertTrue( 25==M4.getNumberOfNodes() );
         self.assertTrue( 16==M4.getNumberOfCells() );
         self.assertTrue( 40==M4.getNumberOfFaces() );
-    
+
         M5=Mesh(0.0,1.0,4,0.0,1.0,4,0.0,1.0,4);
         self.assertTrue( 3==M5.getSpaceDimension() );
         fileNameVTK="TestMesh";
@@ -614,9 +614,9 @@ class TestsCDMATHSwig(unittest.TestCase):
         A[0,1]=-2.;
         A[1,0]=-2.;
         A[1,1]=4.;
-        
+
         A*=A.transpose();
-        
+
         Xana=Vector(2);
         Xana[0]=1.;
         Xana[1]=2.;
@@ -628,7 +628,7 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue(abs(X[1]-Xana[1])<1.E-10);
 
         self.assertEqual(LS.getStatus(),True);
-    
+
         self.assertEqual(LS.getNumberMaxOfIter(),500);
         self.assertEqual(LS.getTolerance(),1.E-10);
         self.assertEqual(LS.getNameOfMethod(),"GMRES");
@@ -642,7 +642,7 @@ class TestsCDMATHSwig(unittest.TestCase):
         A1[0,1]=-2.;
         A1[1,0]=-2.;
         A1[1,1]=4.;
-        
+
         LS2.setMatrix(A1*-1.);
         LS2.setSndMember(B*-1);
         LS2.setTolerance(1.E-20);
@@ -662,21 +662,21 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"BCG");
-    
+
         LS3=LinearSolver(A,B,500,1.E-10,"CR");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"CR");
-    
+
         LS3=LinearSolver(A,B,500,1.E-10,"CGS");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"CGS");
-            
+
         LS3=LinearSolver(A,B,500,1.E-10,"GMRES");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
@@ -698,28 +698,28 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"BICG");
-    
+
         LS3=LinearSolver(A,B,500,1.E-10,"GCR");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"GCR");
-    
+
         LS3=LinearSolver(A,B,500,1.E-10,"LSQR");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"LSQR");
-    
+
         LS3=LinearSolver(A,B,500,1.E-10,"CHOLESKY");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"CHOLESKY");
-    
+
         LS3=LinearSolver(A,B,500,1.E-10,"LU");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
@@ -735,19 +735,19 @@ class TestsCDMATHSwig(unittest.TestCase):
         A2[1,0]=-1.;
         A2[1,1]=2.;
         A2[1,2]=-1.;
-    
+
         A2[2,1]=-1.;
         A2[2,2]=2.;
         A2[2,3]=-1.;
-    
+
         A2[3,2]=-1.;
         A2[3,3]=2.;
         A2[3,4]=-1.;
-    
+
         A2[4,3]=-1.;
         A2[4,4]=2.;
         A2[4,5]=-1.;
-    
+
         A2[5,4]=-1.;
         A2[5,5]=2.;
 
