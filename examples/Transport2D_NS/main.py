@@ -10,7 +10,7 @@ def initial_conditions(my_mesh):
     rayon=0.15
     xcentre=0.25
     ycentre=0.25
-    y_field=cdmath.Field("YField",cdmath.CELLS,my_mesh,1)
+    y_field=cdmath.Field("Y field",cdmath.CELLS,my_mesh,1)
     nbCells=my_mesh.getNumberOfCells()
     for j in range(nbCells):
         x = my_mesh.getCell(j).x()

@@ -1,4 +1,4 @@
-# Transport2D_NS makefile
+# Transport2D_S makefile
 
 CC = g++
 # Adapt the following line to your own system:
@@ -25,4 +25,4 @@ sweep:
 	rm -f *.vtu
 	rm -f *.pvd
 	rm -f *.csv
-	rm -f Exercie2*.med
+	rm -f Exercie1*.med

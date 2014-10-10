@@ -123,13 +123,13 @@ void sigma_flux(double VitesseX, double VitesseY, double cfl, const Field& yFiel
 
 void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double cfl, int freqSortie, const Mesh& myMesh, const string file)
 {
-    /* Condition initiale */
+    /* Initial conditions */
     cout << "Construction de la condition initiale ... " << endl;
-    Field yField("yField",CELLS,myMesh,1) ;
+    Field yField("Y field",CELLS,myMesh,1) ;
     conditions_initiales(yField);
 
     /*
-     * Sortie MED de la condition initiale à t=0 et iter = 0
+     * MED output of the initial condition at t=0 and iter = 0
      */
     int iter=0;
     double time=0.;
@@ -140,23 +140,23 @@ void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double c
     yField.writeCSV(file);
     /* --------------------------------------------- */
 
-    /* boucle de temps */
+    /* Time loop */
     cout << "Resolution of the transport equation with an UPWIND scheme…" << endl;
     int ntmax=100000;
     double dt;
     IntTab indexFacesPerio=myMesh.getIndexFacePeriodic();
     while (iter<ntmax && time <= tmax )
     {
-        Field SumFlux("SUM FLUX",CELLS,myMesh,1) ;
+        Field SumFlux("Fluxes sum",CELLS,myMesh,1) ;
         sigma_flux(VitesseX,VitesseY,cfl,yField,indexFacesPerio,dt,SumFlux);
         cout << "-- Iter: " << iter << ", Time: " << time << ", dt: " << dt << endl;
 
-        /* Avancement en temps */
+        /* Advancing time step */
         yField-=SumFlux;
 
         time+=dt;
         iter+=1;
-        // sortie visu tous les freq iterations
+        // Output every freq iterations
         if (iter%freqSortie==0)
         {
             yField.setTime(time,iter);
@@ -172,8 +172,8 @@ int main()
     cout << "Resolution of the 2D transport equation:" << endl;
     cout << "- DOMAIN: SQUARE" << endl;
     cout << "- MESH: TRIANGULAR, GENERATED WITH SALOME" << endl;
-    cout << "- PERIODICAL BC UP AND DOWN" << endl;
-    cout << "- HOMOGENEOUS NEUMANN BC LEFT AND RIGHT" << endl;
+    cout << "- PERIODIC BC ON TOP AND BOTTOM" << endl;
+    cout << "- HOMOGENEOUS NEUMANN BC ON LEFT AND RIGHT" << endl;
 
     // donnees du probleme
     double cfl=0.4;
