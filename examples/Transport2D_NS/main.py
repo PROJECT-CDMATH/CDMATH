@@ -1,43 +1,46 @@
-# coding: latin-1 
+#!/usr/bin/env python
+# -*-coding:utf-8 -*
 
-from cdmath import *
 from math import sqrt
 
-def conditions_initiales(M):
+import cdmath
+
+
+def initial_conditions(my_mesh):
     rayon=0.15
     xcentre=0.25
     ycentre=0.25
-    YY=Field("YY",CELLS,M,1)
-    nbCells=M.getNumberOfCells()
+    y_field=cdmath.Field("YField",cdmath.CELLS,my_mesh,1)
+    nbCells=my_mesh.getNumberOfCells()
     for j in range(nbCells):
-        x = M.getCell(j).x() 
-        y = M.getCell(j).y() 
+        x = my_mesh.getCell(j).x()
+        y = my_mesh.getCell(j).y()
         valX=(x-xcentre)*(x-xcentre)
         valY=(y-ycentre)*(y-ycentre)
         val=sqrt(valX+valY)
         if val<rayon:
-            YY[j] = 1.0
+            y_field[j] = 1.0
             pass
         else:
-            YY[j] = 0.0
+            y_field[j] = 0.0
             pass
         pass
-    return YY
+    return y_field
 
-def sigma_flux(VitesseX,VitesseY,cfl,YY,indexFacesPerio):
-    # Calcul des flux #
-    SumFlux=Field("Fluxes",CELLS,YY.getMesh(),1)
-    M=YY.getMesh();
-    nbCells=M.getNumberOfCells();
+def sigma_flux(VitesseX,VitesseY,cfl,y_field,indexFacesPerio):
+    # Calculation of fluxes #
+    SumFlux=cdmath.Field("Fluxes",cdmath.CELLS,y_field.getMesh(),1)
+    my_mesh=y_field.getMesh();
+    nbCells=my_mesh.getNumberOfCells();
     normU=sqrt(VitesseX*VitesseX+VitesseY*VitesseY);
     for j in range(nbCells):
-        Cj=M.getCell(j);
+        Cj=my_mesh.getCell(j);
         nbFace=Cj.getNumberOfFaces();
         SumF=0.0;
         minlengthFk=1.E30;
         for k in range(nbFace):
             indexFace=Cj.getFacesId()[k];
-            Fk=M.getFace(indexFace);
+            Fk=my_mesh.getFace(indexFace);
             NormalX=Cj.getNormalVector(k,0);
             NormalY=Cj.getNormalVector(k,1);
             LengthFk = Fk.getMeasure();
@@ -51,117 +54,118 @@ def sigma_flux(VitesseX,VitesseY,cfl,YY,indexFacesPerio):
             if (not Fk.isBorder()):
                 indexC1=Fk.getCellsId()[0];
                 indexC2=Fk.getCellsId()[1];
-                # hypothese: La cellule d'index indexC1 est la cellule courante index j #
+                # hypothesis: the cell of index indexC1 is the current cell of index j #
                 if (indexC1 == j ):
-                    # hypothese verifie #
+                    # hypothese is verified #
                     cellCourante=indexC1;
                     cellAutre=indexC2;
                     pass
                 elif ( indexC2 == j ):
-                    # hypothese non verifie #
+                    # hypothesis is not verified #
                     cellCourante=indexC2;
                     cellAutre=indexC1;
                     pass
-                # definir la cellule gauche et droite par le prduit vitesse * normale sortante
-                # si u*n>0 : rien a faire sinon inverser la gauche et la droite
+                # define left and right cell with the product of velocity * outward normal vector
+                # if u*n>0: nothing to do, else invert left and right
                 if (UN>1.E-15):
-                    conc=YY[cellCourante];
+                    conc=y_field[cellCourante];
                     pass
                 else:
-                    conc=YY[cellAutre];
+                    conc=y_field[cellAutre];
                     pass
                 pass
             else:
-                # conditions aux limites neumann homogene #
+                # homogeneous Neumann boundary conditions #
                 if (Fk.getGroupName()=="GAUCHE" or Fk.getGroupName()=="DROITE"):
                     if (UN>1.E-15):
-                        conc=YY[cellCourante];
+                        conc=y_field[cellCourante];
                         pass
                     else:
                         conc=0.0;
                         pass
                     pass
-                # conditions aux limites periodiques #
+                # periodical boundary conditions #
                 if (Fk.getGroupName()=="BAS" or Fk.getGroupName()=="HAUT"):
                     indexFP=indexFacesPerio[indexFace];
-                    # une autre maniÃÂ¨re de recuperer l'index de la face periodique #
-                    #int indexFP=M.getIndexFacePeriodic(indexFace);
-                    Fp=M.getFace(indexFP);
+                    # another way to get the index of the periodical face #
+                    #int indexFP=my_mesh.getIndexFacePeriodic(indexFace);
+                    Fp=my_mesh.getFace(indexFP);
                     indexCp=Fp.getCellsId()[0];
                     if (UN>1.E-15):
-                        conc=YY[cellCourante];
+                        conc=y_field[cellCourante];
                         pass
                     else:
-                        conc=YY[indexCp];
+                        conc=y_field[indexCp];
                         pass
                     pass
                 pass
             SumF=SumF+UN*LengthFk*conc;
-            pass        
+            pass
         dt=cfl*minlengthFk/normU;
         SumFlux[j]=dt*SumF/Cj.getMeasure();
         pass
     return dt,SumFlux
 
-def EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,fileOutPut):
+def EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,my_mesh,output_filename):
 
-    # Condition initiale #
-    print "Construction de la condition initiale ... "
-    YY=conditions_initiales(M)
+    # Initial conditions #
+    print("Construction of the initial condition…")
+    y_field=initial_conditions(my_mesh)
     #
-    #   Sortie MED de la condition initiale a  t=0 et iter = 0
+    # MED output of the initial condition at t=0 and iter = 0
     #
 
     it=0;
     time=0.;
-    print "Post-traitement MED de la solution a� T=%s ..."%time
-    YY.setTime(time,it);
-    YY.writeMED(fileOutPut);
-    YY.writeVTK(fileOutPut);
-    YY.writeCSV(fileOutPut);
+    print("MED post-treatment of the solution at T=" + str(time) + "…")
+    y_field.setTime(time,it);
+    y_field.writeMED(output_filename);
+    y_field.writeVTK(output_filename);
+    y_field.writeCSV(output_filename);
 
-    # boucle de temps #
-    print " Resolution de l'equation de transport par un schema UPWIND ..."
+    # Time loop #
+    print("Resolution of the transport equation with an UPWIND scheme…")
     ntmax=100000;
-    indexFacesPerio=M.getIndexFacePeriodic();
+    indexFacesPerio=my_mesh.getIndexFacePeriodic();
     dt=0.
     while (it<ntmax and time <= tmax ):
-        dt,SumFlux=sigma_flux(VitesseX,VitesseY,cfl,YY,indexFacesPerio);
-        print "-- Iter : ",it," Time : ",time," dt : ",dt 
+        dt,SumFlux=sigma_flux(VitesseX,VitesseY,cfl,y_field,indexFacesPerio);
+        print("-- Iter: " + str(it) + ", Time: " + str(time) + ", dt: " + str(dt))
 
-        #Avancement en temps#
-        YY-=SumFlux;
+        # Advancing one time step #
+        y_field-=SumFlux;
         time+=dt;
         it+=1;
-        #sortie visu tous les freq iterations
+        # Output every freq times
         if (it%freqSortie==0):
-            YY.setTime(time,it);
-            YY.writeMED(fileOutPut,False);
-            YY.writeVTK(fileOutPut,False);
-            YY.writeCSV(fileOutPut);
+            y_field.setTime(time,it);
+            y_field.writeMED(output_filename,False);
+            y_field.writeVTK(output_filename,False);
+            y_field.writeCSV(output_filename);
             pass
         pass
     return
 
 def main():
-    print "RESOLUTION EQUATION DE TRANSPORT 2D : "
-    print "- DOMAINE : CARREE "
-    print "- MAILLAGE TRIANGULAIRE : GENERATION SALOME "
-    print "- CL PERIODIQUE BAS ET HAUT "
-    print "- CL NEUMANN HOMOGENE GAUCHE ET DROITE "
+    print("Resolution of the 2D transport equation:")
+    print("- DOMAIN: SQUARE")
+    print("- MESH: TRIANGULAR, GENERATED WITH SALOME")
+    print("- PERIODICAL BC UP AND DOWN")
+    print("- HOMOGENEOUS NEUMANN BC LEFT AND RIGHT")
 
-    # donnees du probleme
+    # Problem data
     cfl=0.4
     VitesseX=1.0
     VitesseY=1.0
     tmax=1.
     freqSortie=10
 
-    print "Construction du maillage Cartesien ... "
-    M=Mesh("MeshTri.med");
-    fileOutPut="Exercie2PyTest"
-    EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,fileOutPut)
+    print("Building Cartesian mesh…")
+    my_mesh=cdmath.Mesh("MeshTri.med");
+    output_filename="Exercie2PyTest"
+    EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,my_mesh,output_filename)
     return
 
-if __name__ == '__main__':
+
+if __name__ == """__main__""":
     main()

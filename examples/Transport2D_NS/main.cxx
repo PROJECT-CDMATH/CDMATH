@@ -4,187 +4,188 @@
 // Description : Equation de transport lineaire 2D non structure
 //============================================================================
 
+#include <iostream>
+#include <string>
+#include <cmath>
+
 #include "Mesh.hxx"
 #include "Cell.hxx"
 #include "Face.hxx"
 #include "Field.hxx"
 
-#include <iostream>
-#include <string>
-#include <cmath>
-
 using namespace std;
 
-void conditions_initiales(Field& YY)
+
+void conditions_initiales(Field& yField)
 {
-	double rayon=0.15;
-	double xcentre=0.25;
-	double ycentre=0.25;
-	Mesh M=YY.getMesh();
-	int nbCells=M.getNumberOfCells();
-	for (int j=0 ; j<nbCells ; j++)
-	{
-		double x = M.getCell(j).x() ;
-		double y = M.getCell(j).y() ;
-		double valX=(x-xcentre)*(x-xcentre);
-		double valY=(y-ycentre)*(y-ycentre);
-		double val=sqrt(valX+valY);
-		if (val<rayon)
-			YY(j) = 1.0;
-		else
-			YY(j) = 0.0;
-	}
+    double rayon=0.15;
+    double xcentre=0.25;
+    double ycentre=0.25;
+    Mesh myMesh=yField.getMesh();
+    int nbCells=myMesh.getNumberOfCells();
+    for (int j=0 ; j<nbCells ; j++)
+    {
+        double x = myMesh.getCell(j).x() ;
+        double y = myMesh.getCell(j).y() ;
+        double valX=(x-xcentre)*(x-xcentre);
+        double valY=(y-ycentre)*(y-ycentre);
+        double val=sqrt(valX+valY);
+        if (val<rayon)
+            yField(j) = 1.0;
+        else
+            yField(j) = 0.0;
+    }
 }
 
-void sigma_flux(double VitesseX, double VitesseY, double cfl, const Field& YY, const IntTab indexFacesPerio, double& dt, Field& SumFlux)
+void sigma_flux(double VitesseX, double VitesseY, double cfl, const Field& yField, const IntTab indexFacesPerio, double& dt, Field& SumFlux)
 {
-	/* Calcul des flux */
-	Mesh M=YY.getMesh();
-	int nbCells=M.getNumberOfCells();
-	double normU=sqrt(VitesseX*VitesseX+VitesseY*VitesseY);
-	for (int j=0 ; j<nbCells ; j++)
-	{
-		Cell Cj=M.getCell(j);
-		int nbFace=Cj.getNumberOfFaces();
-		double SumF=0.0;
-		double minlengthFk=1.E30;
+    /* Calcul des flux */
+    Mesh myMesh=yField.getMesh();
+    int nbCells=myMesh.getNumberOfCells();
+    double normU=sqrt(VitesseX*VitesseX+VitesseY*VitesseY);
+    for (int j=0 ; j<nbCells ; j++)
+    {
+        Cell Cj=myMesh.getCell(j);
+        int nbFace=Cj.getNumberOfFaces();
+        double SumF=0.0;
+        double minlengthFk=1.E30;
 
-		int cellCourante,cellAutre;
-		for (int k=0 ; k<nbFace ; k++)
-		{
-			int indexFace=Cj.getFacesId()[k];
-			Face Fk=M.getFace(indexFace);
-			double NormalX=Cj.getNormalVector(k,0);
-			double NormalY=Cj.getNormalVector(k,1);
-			double LengthFk = Fk.getMeasure();
-			double UN=VitesseX*NormalX+VitesseY*NormalY;
+        int cellCourante,cellAutre;
+        for (int k=0 ; k<nbFace ; k++)
+        {
+            int indexFace=Cj.getFacesId()[k];
+            Face Fk=myMesh.getFace(indexFace);
+            double NormalX=Cj.getNormalVector(k,0);
+            double NormalY=Cj.getNormalVector(k,1);
+            double LengthFk = Fk.getMeasure();
+            double UN=VitesseX*NormalX+VitesseY*NormalY;
 
-			minlengthFk=min(minlengthFk,LengthFk/fabs(UN));
-			minlengthFk=min(minlengthFk,LengthFk/fabs(VitesseX));
-			minlengthFk=min(minlengthFk,LengthFk/fabs(VitesseY));
+            minlengthFk=min(minlengthFk,LengthFk/fabs(UN));
+            minlengthFk=min(minlengthFk,LengthFk/fabs(VitesseX));
+            minlengthFk=min(minlengthFk,LengthFk/fabs(VitesseY));
 
-			double conc=0.0;
-			cellCourante=j;
-			cellAutre=-1;
+            double conc=0.0;
+            cellCourante=j;
+            cellAutre=-1;
 
-			if (!Fk.isBorder())
-			{
-				int indexC1=Fk.getCellsId()[0];
-				int indexC2=Fk.getCellsId()[1];
-				/* hypothese: La cellule d'index indexC1 est la cellule courante index j */
-				if ( indexC1 == j )
-				{
-					/* hypothese verifie */
-					cellCourante=indexC1;
-					cellAutre=indexC2;
-				} else if ( indexC2 == j )
-				{
-					/* hypothese non verifie */
-					cellCourante=indexC2;
-					cellAutre=indexC1;
-				}
-				// definir la cellule gauche et droite par le prduit vitesse * normale sortante
-				// si u*n>0 : rien a faire sinon inverser la gauche et la droite
-				if (UN>1.E-15)
-					conc=YY(cellCourante);
-				else
-					conc=YY(cellAutre);
-			}else
-			{
-				/* conditions aux limites neumann homogene */
-				if (Fk.getGroupName().compare("GAUCHE")==0 || Fk.getGroupName().compare("DROITE")==0)
-				{
-					if (UN>1.E-15)
-						conc=YY(cellCourante);
-					else
-						conc=0.0;
-				}
-				/* conditions aux limites periodiques */
-				if (Fk.getGroupName().compare("BAS")==0 || Fk.getGroupName().compare("HAUT")==0)
-				{
-						int indexFP=indexFacesPerio[indexFace];
-						/* une autre manière de recuperer l'index de la face periodique */
-						//int indexFP=M.getIndexFacePeriodic(indexFace);
-						Face Fp=M.getFace(indexFP);
-						int indexCp=Fp.getCellsId()[0];
-						if (UN>1.E-15)
-							conc=YY(cellCourante);
-						else
-							conc=YY(indexCp);
-				}
-			}
-			SumF=SumF+UN*LengthFk*conc;
-		  }
-		dt=cfl*minlengthFk/normU;
-		SumFlux(j)=dt*SumF/Cj.getMeasure();
-	}
+            if (!Fk.isBorder())
+            {
+                int indexC1=Fk.getCellsId()[0];
+                int indexC2=Fk.getCellsId()[1];
+                /* hypothese: La cellule d'index indexC1 est la cellule courante index j */
+                if ( indexC1 == j )
+                {
+                    /* hypothese verifie */
+                    cellCourante=indexC1;
+                    cellAutre=indexC2;
+                } else if ( indexC2 == j )
+                {
+                    /* hypothese non verifie */
+                    cellCourante=indexC2;
+                    cellAutre=indexC1;
+                }
+                // definir la cellule gauche et droite par le prduit vitesse * normale sortante
+                // si u*n>0 : rien a faire sinon inverser la gauche et la droite
+                if (UN>1.E-15)
+                    conc=yField(cellCourante);
+                else
+                    conc=yField(cellAutre);
+            }else
+            {
+                /* conditions aux limites neumann homogene */
+                if (Fk.getGroupName().compare("GAUCHE")==0 || Fk.getGroupName().compare("DROITE")==0)
+                {
+                    if (UN>1.E-15)
+                        conc=yField(cellCourante);
+                    else
+                        conc=0.0;
+                }
+                /* conditions aux limites periodiques */
+                if (Fk.getGroupName().compare("BAS")==0 || Fk.getGroupName().compare("HAUT")==0)
+                {
+                        int indexFP=indexFacesPerio[indexFace];
+                        /* une autre manière de recuperer l'index de la face periodique */
+                        //int indexFP=M.getIndexFacePeriodic(indexFace);
+                        Face Fp=myMesh.getFace(indexFP);
+                        int indexCp=Fp.getCellsId()[0];
+                        if (UN>1.E-15)
+                            conc=yField(cellCourante);
+                        else
+                            conc=yField(indexCp);
+                }
+            }
+            SumF=SumF+UN*LengthFk*conc;
+          }
+        dt=cfl*minlengthFk/normU;
+        SumFlux(j)=dt*SumF/Cj.getMeasure();
+    }
 }
 
-void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double cfl, int freqSortie, const Mesh& M, const string file)
+void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double cfl, int freqSortie, const Mesh& myMesh, const string file)
 {
-	/* Condition initiale */
-	cout << "Construction de la condition initiale ... " << endl;
-	Field YY("YY",CELLS,M,1) ;
-	conditions_initiales(YY);
+    /* Condition initiale */
+    cout << "Construction de la condition initiale ... " << endl;
+    Field yField("yField",CELLS,myMesh,1) ;
+    conditions_initiales(yField);
 
-	/*
-	 * Sortie MED de la condition initiale à t=0 et iter = 0
-	 */
-	int iter=0;
-	double time=0.;
-	cout << "Post-traitement MED de la solution à T=" << time << " ..." << endl;
-	YY.setTime(time,iter);
-	YY.writeMED(file);
-	YY.writeVTK(file);
-	YY.writeCSV(file);
-	/* --------------------------------------------- */
+    /*
+     * Sortie MED de la condition initiale à t=0 et iter = 0
+     */
+    int iter=0;
+    double time=0.;
+    cout << "MED post-treatment of the solution at T=" << time << "…" << endl;
+    yField.setTime(time,iter);
+    yField.writeMED(file);
+    yField.writeVTK(file);
+    yField.writeCSV(file);
+    /* --------------------------------------------- */
 
-	/* boucle de temps */
-	cout << " Resolution de l'equation de transport par un schema UPWIND ..." << endl;
-	int ntmax=100000;
-	double dt;
-	IntTab indexFacesPerio=M.getIndexFacePeriodic();
-	while (iter<ntmax && time <= tmax )
-	{
-		Field SumFlux("SUM FLUX",CELLS,M,1) ;
-		sigma_flux(VitesseX,VitesseY,cfl,YY,indexFacesPerio,dt,SumFlux);
-		cout << "-- Iter : " << iter << " Time : " << time << " dt : " << dt << endl;
+    /* boucle de temps */
+    cout << "Resolution of the transport equation with an UPWIND scheme…" << endl;
+    int ntmax=100000;
+    double dt;
+    IntTab indexFacesPerio=myMesh.getIndexFacePeriodic();
+    while (iter<ntmax && time <= tmax )
+    {
+        Field SumFlux("SUM FLUX",CELLS,myMesh,1) ;
+        sigma_flux(VitesseX,VitesseY,cfl,yField,indexFacesPerio,dt,SumFlux);
+        cout << "-- Iter: " << iter << ", Time: " << time << ", dt: " << dt << endl;
 
-		/* Avancement en temps */
-		YY-=SumFlux;
+        /* Avancement en temps */
+        yField-=SumFlux;
 
-		time+=dt;
-		iter+=1;
-		// sortie visu tous les freq iterations
-		if (iter%freqSortie==0)
-		{
-			YY.setTime(time,iter);
-			YY.writeMED(file,false);
-			YY.writeVTK(file,false);
-			YY.writeCSV(file);
-		}
-	}
+        time+=dt;
+        iter+=1;
+        // sortie visu tous les freq iterations
+        if (iter%freqSortie==0)
+        {
+            yField.setTime(time,iter);
+            yField.writeMED(file,false);
+            yField.writeVTK(file,false);
+            yField.writeCSV(file);
+        }
+    }
 }
 
 int main()
 {
-	cout << "RESOLUTION EQUATION DE TRANSPORT 2D : " << endl;
-	cout << "- DOMAINE : CARREE " << endl;
-	cout << "- MAILLAGE TRIANGULAIRE : SALOME " << endl;
-	cout << "- CL PERIODIQUE BAS ET HAUT " << endl;
-	cout << "- CL NEUMANN HOMOGENE GAUCHE ET DROITE " << endl;
+    cout << "Resolution of the 2D transport equation:" << endl;
+    cout << "- DOMAIN: SQUARE" << endl;
+    cout << "- MESH: TRIANGULAR, GENERATED WITH SALOME" << endl;
+    cout << "- PERIODICAL BC UP AND DOWN" << endl;
+    cout << "- HOMOGENEOUS NEUMANN BC LEFT AND RIGHT" << endl;
 
-	// donnees du probleme
-	double cfl=0.4;
-	double VitesseX=1.0;
-	double VitesseY=1.0;
-	double tmax=1.;
-	int freqSortie=10;
+    // donnees du probleme
+    double cfl=0.4;
+    double VitesseX=1.0;
+    double VitesseY=1.0;
+    double tmax=1.;
+    int freqSortie=10;
 
-	cout << "Construction du maillage Cartesien ... " << endl;
-	Mesh M("MeshTri.med");
-	string fileOutPut="Exercie2";
-	EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,M,fileOutPut);
+    cout << "Construction of Cartesian mesh…" << endl;
+    Mesh myMesh("MeshTri.med");
+    string fileOutPut="Exercie2";
+    EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,myMesh,fileOutPut);
 
-	return 0;
+    return 0;
 }
