@@ -1,17 +1,18 @@
 //============================================================================
 // Author      : Anouar MEKKAS
 // Version     :
-// Description : Equation de transport lineaire 1D
+// Description : 1D linear transport equation
 //============================================================================
+
+#include <iostream>
+#include <cmath>
 
 #include "Cell.hxx"
 #include "Mesh.hxx"
 #include "Field.hxx"
 
-#include <iostream>
-#include <cmath>
-
 using namespace std;
+
 
 int main( void )
 {
@@ -21,20 +22,20 @@ int main( void )
   int ntmax=1000;
   double dx = (b-a)/nx;
   double pi=3.1415927;
-  // vitesse de transport
+  // Transport velocity
   double cfl=0.5;
   double u=3.;
   double dt=cfl*dx/u;
 
-  Mesh M(a,b,nx);
+  Mesh myMesh(a,b,nx);
 
-  Field conc("CONCENTRATION",CELLS,M,1);
+  Field conc("Concentration",CELLS,myMesh,1);
 
-  //conditions iniiales
+  // Initial conditions
   double sigma=sqrt(0.2);
-  for (int i=0 ; i<M.getNumberOfCells() ; i++)
+  for (int i=0 ; i<myMesh.getNumberOfCells() ; i++)
   {
-   double x=M.getCell(i).x();
+   double x=myMesh.getCell(i).x();
    conc(i) = 0.5/(sigma*sqrt(2*pi))*exp(-0.5*pow((x/sigma),2));
   }
 
@@ -42,30 +43,31 @@ int main( void )
   double tmax=3.0;
   int iter=0;
 
-  cout << "Post-traitement MED de la solution à T=" << time << " ..." << endl;
+  cout << "MED post-treatment of the solution at T=" << time << "…" << endl;
   string fileOutPut="EqTr1D";
   conc.setTime(time,iter);
   conc.writeMED(fileOutPut);
   conc.writeVTK(fileOutPut);
   conc.writeCSV(fileOutPut);
-  int freqSortie=10;
-  // boucle en temps
+  int outputFreq=10;
+
+  // Time loop
   while (iter<ntmax && time <= tmax )
   {
-   cout << "-- Iter : " << iter << " Time : " << time << " dt : " << dt << endl;
-   conc(0) = conc(0) -u*dt/dx*(conc(0)-conc(M.getNumberOfCells()-1));
-   for (int j=1 ; j<M.getNumberOfCells() ; j++)
+   cout << "-- Iter: " << iter << ", Time: " << time << ", dt: " << dt << endl;
+   conc(0) = conc(0) -u*dt/dx*(conc(0)-conc(myMesh.getNumberOfCells()-1));
+   for (int j=1 ; j<myMesh.getNumberOfCells() ; j++)
    {
     conc(j) = conc(j) -u*dt/dx*(conc(j)-conc(j-1));
    }
    time+=dt;
    iter+=1;
-   if (iter%freqSortie==0)
+   if (iter%outputFreq==0)
    {
-	   conc.setTime(time,iter);
-	   conc.writeMED(fileOutPut,false);
-	   conc.writeVTK(fileOutPut,false);
-	   conc.writeCSV(fileOutPut);
+       conc.setTime(time,iter);
+       conc.writeMED(fileOutPut,false);
+       conc.writeVTK(fileOutPut,false);
+       conc.writeCSV(fileOutPut);
    }
   }
   return 0;
