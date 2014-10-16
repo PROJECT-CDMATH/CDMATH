@@ -2,10 +2,9 @@
 
 CC = g++
 # Adapt the following line to your own system:
-ICDMATHDIR = ~/workspace/cdmath/cdmath_install/include/
-IFLAG = -I$(ICDMATHDIR) -I.
-# Adapt the following line to your own system:
-LDIR = ~/workspace/cdmath/cdmath_install/lib/
+CDMATHDIR = ~/workspace/cdmath/cdmath_install
+IFLAG = -I$(CDMATHDIR)/include -I.
+LDIR = $(CDMATHDIR)/lib
 LFLAG = -L$(LDIR)
 LIBS  =-linterpkernel -lmedC -lmedloader -lmedcoupling -lbase -lmesh -llinearsolver
 OBJ = main.o
