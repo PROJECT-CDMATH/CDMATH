@@ -1,15 +1,15 @@
 # thermique1d makefile
 
 CC = g++
-# Adapt the following line(s) to your own system:
+
+# Adapt the following lines to your own system:
 PETSCDIR = /usr/lib/petscdir/3.4.2/include
 MPIDIR = /usr/lib/openmpi/include
-ICDMATHDIR = ~/workspace/cdmath/cdmath_install/include/
-IFLAG = -I$(PETSCDIR) -I$(MPIDIR) -I$(ICDMATHDIR) -I.
-# Adapt the following line to your own system:
-LDIR = ~/workspace/cdmath/cdmath_install/lib/
-LFLAG = -L$(LDIR)
-LIBS  =-linterpkernel -lmedC -lmedloader -lmedcoupling -lbase -lmesh -llinearsolver
+CDMATHDIR = ~/workspace/cdmath/cdmath_install
+
+IFLAG = -I$(PETSCDIR) -I$(MPIDIR) -I$(CDMATHDIR)/include -I.
+LFLAG = -L$(CDMATHDIR)/lib
+LIBS  = -linterpkernel -lmedC -lmedloader -lmedcoupling -lbase -lmesh -llinearsolver
 OBJ = main.o
 
 all: $(OBJ)
