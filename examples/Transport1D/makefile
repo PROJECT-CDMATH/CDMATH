@@ -4,8 +4,7 @@ CC = g++
 # Adapt the following line to your own system:
 CDMATHDIR = ~/workspace/cdmath/cdmath_install
 IFLAG = -I$(CDMATHDIR)/include -I.
-LDIR = $(CDMATHDIR)/lib
-LFLAG = -L$(LDIR)
+LFLAG = -L$(CDMATHDIR)/lib
 LIBS  =-linterpkernel -lmedC -lmedloader -lmedcoupling -lbase -lmesh -llinearsolver
 OBJ = main.o
 
