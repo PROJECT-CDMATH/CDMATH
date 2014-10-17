@@ -2,11 +2,11 @@
 
 using namespace std;
 
-CdmathException::CdmathException(string reason):_reason(reason)
+CdmathException::CdmathException(std::string reason):_reason(reason)
 {
 }
 
-CdmathException::CdmathException(string reason,string file, int line):_reason(reason)
+CdmathException::CdmathException(std::string reason, std::string file, int line):_reason(reason)
 {
 }
 
