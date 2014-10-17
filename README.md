@@ -26,7 +26,7 @@ Dependencies. The following packages list is sufficient on Ubuntu 14.04:
  - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCMAKE_CDMATH_DOCUMENTATION=ON`.
 Some users reported that they need `valgrind-dev` and `numpy` on other systems (Fedora), but this has not been confirmed.
 
-If necessary, you may have to set PETSc's directory. This is was not necessary on Ubuntu 14.04. However, if you prefered to compile PETSc from the sources as explained on [the official documentation](http://www.mcs.anl.gov/petsc/documentation/installation.html), then use the following:
+On some systems (not Ubuntu 14.04), you may have to set PETSc's directory. Typically, if you prefered to compile PETSc from the sources as explained on [the official documentation](http://www.mcs.anl.gov/petsc/documentation/installation.html), then use the following:
 * `export PETSC_DIR=/path/to/compiled/source/petsc-3.5.2/bin/`.
 
 Create the suggested build and installation folders:
