@@ -3,11 +3,11 @@
 CC = g++
 
 # Adapt the following lines to your own system:
-PETSCDIR = /usr/lib/petscdir/3.4.2/include
-MPIDIR = /usr/lib/openmpi/include
-CDMATHDIR = ~/workspace/cdmath/cdmath_install
+PETSCDIR = /usr/lib/petscdir/3.4.2
+MPIDIR = /usr/lib/openmpi
+CDMATHDIR = ../..
 
-IFLAG = -I$(PETSCDIR) -I$(MPIDIR) -I$(CDMATHDIR)/include -I.
+IFLAG = -I$(PETSCDIR)/include -I$(MPIDIR)/include -I$(CDMATHDIR)/include -I.
 LFLAG = -L$(CDMATHDIR)/lib
 LIBS  = -linterpkernel -lmedC -lmedloader -lmedcoupling -lbase -lmesh -llinearsolver
 OBJ = main.o
