@@ -1,3 +1,3 @@
-FILE(GLOB cdmath_examples . Transport2D_NACA Transport1D Transport2D_CARTESIAN)
+file(GLOB nice_examples_directories thermique1d transport1d transport2d_ns transport2d_s)
 
-INSTALL(DIRECTORY ${cdmath_examples} DESTINATION ${CMAKE_INSTALL_PREFIX}/${REP_EXAMPLES})
+install(DIRECTORY ${nice_examples_directories} DESTINATION ${CMAKE_INSTALL_PREFIX}/examples)
