@@ -1,4 +1,4 @@
-##Copyright jedbrown, johnfettig, mdave, ckhroulev.
+##Copyright (C) jedbrown, johnfettig, mdave, ckhroulev.
 ##All rights reserved.
 ##
 ##Redistribution and use in source and binary forms, with or without modification,
