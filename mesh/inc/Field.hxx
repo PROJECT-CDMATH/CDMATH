@@ -41,6 +41,7 @@ class Field
     /**
     * constructor with data:
     * @param fieldName : name of the field
+    * @param type : type of the field
     * @param mesh : mesh of the field
     * @param numberOfComponents : number of the component
     * @param time : time of the field
@@ -50,14 +51,16 @@ class Field
     /**
     * constructor with data:
     * @param fieldName : name of the field
+    * @param type : type of the field
     * @param mesh : mesh of the field
     * @param numberOfComponents : number of the component
     */
-    Field( const std::string fieldName, TypeField type, const Mesh& mesh , int numberOfComponents) ;
+    Field( const std::string fieldName, TypeField type, const Mesh& mesh, int numberOfComponents) ;
 
     /**
     * constructor with data:
     * @param fieldName : name of the field
+    * @param type : type of the field
     * @param mesh : mesh of the field
     */
     Field( const std::string fieldName, TypeField type, const Mesh& mesh) ;
@@ -69,7 +72,7 @@ class Field
 
     /**
     * constructor by copy
-    * @param f : The object to be copied
+    * @param field : The Field object to be copied
     */
     Field ( const Field & field ) ;
 

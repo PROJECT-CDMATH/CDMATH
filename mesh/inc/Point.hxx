@@ -36,7 +36,7 @@ class Point
 
       /**
        * constructor by copy
-       * @param P : The object to be copied
+       * @param p : The Point object to be copied
       */
       Point ( const Point & p ) ;
 
