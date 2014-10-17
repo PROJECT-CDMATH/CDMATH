@@ -28,6 +28,7 @@ Some users reported that they need `valgrind-dev` and `numpy` on other systems (
 
 Set PETSc's directory. On Ubuntu 14.04, use the following:
 * `export PETSC_DIR=/usr/lib/petscdir/3.4.2/`
+If you prefered to compile PETSc from the sources as explained on [the official documentation](http://www.mcs.anl.gov/petsc/documentation/installation.html), then use `export PETSC_DIR=/path/to/compiled/source/petsc-3.5.2/bin/`.
 
 Create the suggested build and installation folders:
 * `cd ~/workspace/cdmath`
