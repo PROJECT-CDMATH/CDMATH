@@ -1,3 +1,3 @@
-file(GLOB nice_examples_directories thermique1d transport1d transport2d_ns transport2d_s)
+file(GLOB NICE_EXAMPLES_TO_INSTALL thermique1d transport1d transport2d_ns transport2d_s)
 
-install(DIRECTORY ${nice_examples_directories} DESTINATION ${CMAKE_INSTALL_PREFIX}/examples)
+install(DIRECTORY ${NICE_EXAMPLES_TO_INSTALL} DESTINATION ${CMAKE_INSTALL_PREFIX}/examples)
