@@ -8,38 +8,38 @@
 #ifndef HEATSOLVER_HXX_
 #define HEATSOLVER_HXX_
 
-#include "GenericSolver.hxx"
+#include "IterativeProblem.hxx"
 
 
-class HeatSolver : public GenericSolver
+class HeatSolver : public IterativeProblem
 {
 public:
-	HeatSolver(double finalTime, int maximumNumberbOfIter, bool isAlternatingDirection, int numberOfGhostCells, int frequencyOfPostTreatment,double cfl);
+    HeatSolver(double finalTime, int maximumNumberbOfIter, bool isAlternatingDirection, int numberOfGhostCells, int frequencyOfPostTreatment,double cfl);
 
-	virtual ~HeatSolver();
+    virtual ~HeatSolver();
 
-	void setDiffusion( double nu ) ;
+    void setDiffusion( double nu ) ;
 
-	double getDiffusion( void ) const ;
+    double getDiffusion( void ) const ;
 
-	double computeDt(double cfl, std::vector<double> dxyz) const;
+    double computeDt(double cfl, std::vector<double> dxyz) const;
 
-	void SolverHeat2D(int numberOfCellsGhost,
-					  const ParaMEDMEM::MEDCouplingIMesh *imesh,
-					  double dt,
-					  ParaMEDMEM::MEDCouplingFieldDouble* yyWithGhost) const ;
+    void SolverHeat2D(int numberOfCellsGhost,
+                      const ParaMEDMEM::MEDCouplingIMesh *imesh,
+                      double dt,
+                      ParaMEDMEM::MEDCouplingFieldDouble* yyWithGhost) const ;
 
-	/* classe obligatoire */
-	ParaMEDMEM::MEDCouplingFieldDouble* initialConditions(const ParaMEDMEM::MEDCouplingIMesh* mesh) const ;
+    /* classe obligatoire */
+    ParaMEDMEM::MEDCouplingFieldDouble* initialConditions(const ParaMEDMEM::MEDCouplingIMesh* mesh) const ;
 
-	ParaMEDMEM::MEDCouplingFieldDouble* refinementCriterion(const ParaMEDMEM::MEDCouplingFieldDouble* field) const ;
+    ParaMEDMEM::MEDCouplingFieldDouble* refinementCriterion(const ParaMEDMEM::MEDCouplingFieldDouble* field) const ;
 
-	double advancingTimeStep(int idir,
-							 double currentTime,
-						     ParaMEDMEM::MEDCouplingAMRAttribute* fields,
-						     const ParaMEDMEM::MEDCouplingCartesianAMRPatchGen* grid) const;
+    double advancingTimeStep(int idir,
+                             double currentTime,
+                             ParaMEDMEM::MEDCouplingAMRAttribute* fields,
+                             const ParaMEDMEM::MEDCouplingCartesianAMRPatchGen* grid) const;
 private:
-	double _nu;
+    double _nu;
 };
 
 #endif /* HeatSOLVER_HXX_ */
