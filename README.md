@@ -55,7 +55,7 @@ Use CDMATH
 ----------
 To use CDMATH with your C++ code `main.cxx`:
  * C++ libraries: `export LD_LIBRARY_PATH=~/workspace/cdmath/cdmath_install/lib`
- * To find the right libraries to include for compilation, see the makefiles of the examples.
+ * To know how to include the right libraries for compilation, see the makefiles of the examples. They include the list `-linterpkernel -lmedC -lmedloader -lmedcoupling -lbase -lmesh -llinearsolver`.
 
 To use CDMATH with your Python code `main.py`:
  * C++ libraries: `export LD_LIBRARY_PATH=~/workspace/cdmath/cdmath_install/lib`
