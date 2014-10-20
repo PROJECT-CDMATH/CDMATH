@@ -9,7 +9,7 @@ LIBS  =-linterpkernel -lmedC -lmedloader -lmedcoupling -lbase -lmesh -llinearsol
 PARAFLAG = -fopenmp
 
 ODIR = build
-_OBJ = main.o AMR.o GenericSolver.o HeatSolver.o AdvectionSolver.o
+_OBJ = main.o AMR.o IterativeProblem.o HeatSolver.o AdvectionSolver.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 all: $(OBJ)
