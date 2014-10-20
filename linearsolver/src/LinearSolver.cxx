@@ -5,19 +5,18 @@
  *      Author: mekkas
  */
 
-#include "LinearSolver.hxx"
-
-#include "CdmathException.hxx"
-
 #include <string>
 #include <cmath>
-
 
 #include <petscvec.h>
 #include <petscmat.h>
 #include <petscksp.h>
 
+#include "LinearSolver.hxx"
+#include "CdmathException.hxx"
+
 using namespace std;
+
 
 LinearSolver::LinearSolver ( void )
 {
@@ -157,8 +156,8 @@ LinearSolver::setMatrix(const Matrix& matrix)
     if (matrix.isSparseMatrix())
     {
         MatCreateSeqAIJ(MPI_COMM_SELF,numberOfRows,numberOfColumns,numberOfNonZeros,0,&_mat);
-        for (int i=0;i<numberOfRows;i++)
-            for (int j=0;j<numberOfColumns;j++)
+        for (PetscInt i=0;i<numberOfRows;i++)
+            for (PetscInt j=0;j<numberOfColumns;j++)
                 if (abs(_matrix(i,j))>1.E-16)
                     MatSetValues(_mat,1,&i,1,&j,&_matrix(i,j),INSERT_VALUES);
     } else
@@ -180,7 +179,9 @@ LinearSolver::setMatrix(const Matrix& matrix)
     MatAssemblyEnd(_mat, MAT_FINAL_ASSEMBLY);
 
     KSPCreate(PETSC_COMM_WORLD, &_ksp);
-    KSPSetOperators(_ksp,_mat,_mat,SAME_NONZERO_PATTERN);
+    KSPSetOperators(_ksp,_mat,_mat);
+    // For previous versions of PETSc:
+    //KSPSetOperators(_ksp,_mat,_mat,SAME_NONZERO_PATTERN);
 
     KSPGetPC(_ksp,&_prec);
 }
@@ -353,7 +354,7 @@ LinearSolver::vectorToVec(const Vector& vec) const
     VecCreate(PETSC_COMM_WORLD,&X);
     VecSetSizes(X,PETSC_DECIDE,numberOfRows);
     VecSetFromOptions(X);
-    for (int i=0; i<numberOfRows; i++)
+    for (PetscInt i=0; i<numberOfRows; i++)
     {
         double value = vec(i);
         VecSetValues(X,1,&i,&value,ADD_VALUES);
@@ -376,7 +377,7 @@ LinearSolver::vecToVector(const Vec& vec) const
     Vector X(numberOfRows);
     double value;
 
-    for (int i=0; i<numberOfRows; i++)
+    for (PetscInt i=0; i<numberOfRows; i++)
     {
         VecGetValues(vec,1,&i,&value);
         X(i)=value;
