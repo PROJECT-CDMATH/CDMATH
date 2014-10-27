@@ -1,6 +1,6 @@
 # amr makefile
 
-CC = g++
+CC = g++ -g #-Wall -Wextra
 # Adapt the following line to your own system:
 CDMATHDIR = ../..
 IFLAG = -I$(CDMATHDIR)/include -I.

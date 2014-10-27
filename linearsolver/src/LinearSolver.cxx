@@ -5,19 +5,18 @@
  *      Author: mekkas
  */
 
-#include "LinearSolver.hxx"
-
-#include "CdmathException.hxx"
-
 #include <string>
 #include <cmath>
-
 
 #include <petscvec.h>
 #include <petscmat.h>
 #include <petscksp.h>
 
+#include "LinearSolver.hxx"
+#include "CdmathException.hxx"
+
 using namespace std;
+
 
 LinearSolver::LinearSolver ( void )
 {
@@ -222,7 +221,7 @@ LinearSolver::solve( void )
 
 	KSP ksp;
 	KSPCreate(PETSC_COMM_WORLD, &ksp);
-	KSPSetOperators(ksp,A,A,SAME_NONZERO_PATTERN);
+	KSPSetOperators(ksp,A,A);
 	KSPSetTolerances(ksp,getTolerance(),PETSC_DEFAULT,PETSC_DEFAULT,getNumberMaxOfIter());
 	PC prec;
 	KSPGetPC(ksp,&prec);

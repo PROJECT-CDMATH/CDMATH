@@ -164,7 +164,7 @@ AdvectionSolver::computeVelocity(const MEDCouplingIMesh* mesh, double currentTim
     DataArrayDouble* barry=mesh->getBarycenterAndOwner();
     const double *coorBary=barry->getConstPointer();
 
-    double timePeriod=6.;
+    double timePeriod=3.;
     double speedAmplifier = cos(2*M_PI*currentTime/timePeriod);
     int k=0;
     for (int ic=0;ic<nbCells;ic++,k+=dim)
@@ -180,8 +180,8 @@ AdvectionSolver::computeVelocity(const MEDCouplingIMesh* mesh, double currentTim
         }
         if (dim==2)
         {
-            vals[k] = speedAmplifier * (-2) * sin(M_PI*xb)*sin(M_PI*xb) * sin(M_PI*yb) * cos(M_PI*yb);
-            vals[k+1] = speedAmplifier * 2 * sin(M_PI*yb)*sin(M_PI*yb) * sin(M_PI*xb) * cos(M_PI*xb);
+            vals[k] = speedAmplifier * (-1) * sin(M_PI*xb)*sin(M_PI*xb) * sin(2*M_PI*yb);
+            vals[k+1] = speedAmplifier * sin(M_PI*yb)*sin(M_PI*yb) * sin(2*M_PI*xb);
         }
     }
 

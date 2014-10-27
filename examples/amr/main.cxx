@@ -29,17 +29,17 @@ int main() {
 
 
     /* Coarse Mesh */
-	double xinf=0.;
-	double yinf=0.;
-	double xsup=2.;
-	double ysup=2.;
-	int nx=50;
-	int ny=50;
+    double xinf=0.;
+    double yinf=0.;
+    double xsup=1.;
+    double ysup=1.;
+    int nx=100;
+    int ny=100;
 
     double dx = (xsup - xinf)/nx ;
     double dy = (ysup - yinf)/ny ;
 
-	double *originPtr = new double[2];
+    double *originPtr = new double[2];
     double *dxyzPtr = new double[2];
     int *nodeStrctPtr = new int[2];
 
@@ -66,71 +66,72 @@ int main() {
 
 
     /* Infos solver advection */
-    /*
+    //*
     bool isAlternatingDirection=true;
-    int maximumNumberbOfIter=1;
-    double finalTime=2.;
+    int maximumNumberbOfIter=1000;
+    double finalTime=10.;
     int numberOfGhostCells=2;
-    int frequencyOfPostTreatment=1;
+    int frequencyOfPostTreatment=10;
     double cfl=0.7;
-	AdvectionSolver solver(finalTime,
-    					   maximumNumberbOfIter,
-    					   isAlternatingDirection,
-    					   numberOfGhostCells,
-    					   frequencyOfPostTreatment,
-    					   cfl);
-   */
+    AdvectionSolver solver(finalTime,
+                           maximumNumberbOfIter,
+                           isAlternatingDirection,
+                           numberOfGhostCells,
+                           frequencyOfPostTreatment,
+                           cfl);
+    //*/
     /* End Infos Solver Advection */
+    /*
     bool isAlternatingDirection=false;
     int maximumNumberbOfIter=100;
-    double finalTime=2.;
+    double finalTime=5.;
     int numberOfGhostCells=2;
     int frequencyOfPostTreatment=1;
     double nu=0.005;
-	HeatSolver solver(finalTime,
-    					   maximumNumberbOfIter,
-    					   isAlternatingDirection,
-    					   numberOfGhostCells,
-    					   frequencyOfPostTreatment,
-    					   nu);
-
+    HeatSolver solver(finalTime,
+                           maximumNumberbOfIter,
+                           isAlternatingDirection,
+                           numberOfGhostCells,
+                           frequencyOfPostTreatment,
+                           nu);
+    */
 
     /* Infos AMR */
-	int maxLevels=1;
+    int maxLevels=1;
 
     int frequencyOfRefinement=1;
 
     vector<int> coefRefinement1(2);
-    coefRefinement1[0]=2;
-    coefRefinement1[1]=2;
+    coefRefinement1[0]=4;
+    coefRefinement1[1]=4;
 
     vector< vector<int> > coefsRefinement(maxLevels);
     coefsRefinement[0]=coefRefinement1;
 
     vector< double > efficiencyGoal(maxLevels);
-    efficiencyGoal[0]=0.9;
+    efficiencyGoal[0]=0.8;
     vector< double > efficiencyThreshold(maxLevels);
-    efficiencyThreshold[0]=0.9;
+    efficiencyThreshold[0]=0.7;
     vector< int > maximumNbOfCellsInPatch(maxLevels);
-    maximumNbOfCellsInPatch[0]=300;
+    maximumNbOfCellsInPatch[0]=2500;
     vector< int > minimumPatchLength(maxLevels);
-    minimumPatchLength[0]=4;
+    minimumPatchLength[0]=7;
     vector< int > maximumPatchLength(maxLevels);
-    maximumPatchLength[0]=10;
+    maximumPatchLength[0]=12;
 
     /* End Infos AMR */
-	AMR amr(maxLevels,
-			frequencyOfRefinement,
-    		efficiencyGoal,
-    		efficiencyThreshold,
-    		maximumNbOfCellsInPatch,
-    		minimumPatchLength,
-    		maximumPatchLength,
-    		coefsRefinement);
+    AMR amr(maxLevels,
+            frequencyOfRefinement,
+            efficiencyGoal,
+            efficiencyThreshold,
+            maximumNbOfCellsInPatch,
+            minimumPatchLength,
+            maximumPatchLength,
+            coefsRefinement);
 
-	amr.initialize(coarseMesh,
-    			   fieldsInfos,
-    			   solver);
+    amr.initialize(coarseMesh,
+                   fieldsInfos,
+                   solver);
 
     amr.compute(solver);
     coarseMesh->decrRef();

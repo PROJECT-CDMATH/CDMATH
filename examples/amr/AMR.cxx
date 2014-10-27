@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <fstream>
 
+#include <omp.h>
+
 #include <MEDCouplingAMRAttribute.hxx>
 #include <MEDCouplingCartesianAMRMesh.hxx>
 #include <MEDCouplingFieldDouble.hxx>
@@ -422,8 +424,19 @@ AMR::unsteadyAMRDriverHigherLevels(int curLevel, double currentTime, const Itera
     {
         for (int idir=0;idir<dirs;idir++)
         {
-            for (size_t p=0;p<tmpLev.size();p++)
-                double dt1=IterativeProblem.advancingTimeStep(idir,currentTime,_fields,tmpLev[p]);
+            size_t p;
+            int th_id(0);
+            cout << endl;
+            #pragma omp parallel for private(th_id) shared(IterativeProblem, tmpLev, currentTime, idir, cout) default(none)
+            for (p=0;p<tmpLev.size();p++)
+            {
+                # ifdef _OPENMP
+                    th_id = omp_get_thread_num();
+                # endif
+                cout << "Patch #" << p << " taken care by thread #" << th_id << endl;
+                double dt1;
+                dt1 = IterativeProblem.advancingTimeStep(idir,currentTime,_fields,tmpLev[p]);
+            }
             _fields->synchronizeAllGhostZonesAtASpecifiedLevelUsingOnlyFather(curLevel);
             _fields->synchronizeAllGhostZonesAtASpecifiedLevel(curLevel);
         }
