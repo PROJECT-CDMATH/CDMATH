@@ -107,6 +107,8 @@ public:
 
     std::string writeVTKAMRFieldOnRecurse(int it, std::string nameOfField, std::string fileName) const;
 
+    std::string writeVTKAMRFieldPatches(int it, std::string nameOfField, std::string fileName) const;
+
     void writePVD(std::string fileName, std::string filevt, double time, bool fromScratch) const ;
 
     void refinement(const std::vector<const INTERP_KERNEL::BoxSplittingOptions*>& bsos,const IterativeProblem& IterativeProblem) ;

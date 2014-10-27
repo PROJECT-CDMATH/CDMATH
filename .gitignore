@@ -21,3 +21,6 @@ pre_requis/MEDFile/doc/*
 *.html
 *.jpg
 *.map
+
+# Eclipse projects
+.project

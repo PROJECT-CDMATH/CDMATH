@@ -269,11 +269,12 @@ AMR::PostTreatment(int it, double time, string nameOfField, string fileName, boo
         int maxLevs=amr->getMaxNumberOfLevelsRelativeToThis();
         for (int i=0;i<maxLevs;i++)
         {
-//            string rets=writeVTKAMRStructure(i,amr1,it,"Grid");
+//          string rets=writeVTKAMRStructure(i,amr,it,"Grid");
 //            writePVD("Grids",rets,time,fromscratch);
-//                string retf=writeVTKAMRField(i,amr1,att,"YY",it,"Fields");
+//                string retf=writeVTKAMRField(i,amr,att,"YY",it,"Fields");
 //              writePVD("Fields",retf,time,fromscratch);
         }
+        writeVTKAMRFieldPatches(it,nameOfField,fileName);
 }
 
 void
@@ -530,6 +531,42 @@ AMR::writeVTKAMRFieldOnRecurse(int it, string nameOfField, string fileName) cons
     f->mergeNodes(1.E-15);
     string ret=f->writeVTK(fi);
     f->decrRef();
+    return ret;
+}
+
+string
+AMR::writeVTKAMRFieldPatches(int it, string nameOfField, string fileName) const
+{
+	double time = 0.0;
+	bool fromscratch = true;
+	string ret;
+	const MEDCouplingCartesianAMRMesh* amr=_fields->getMyGodFather();
+	vector<MEDCouplingCartesianAMRPatchGen *> tmpLev(amr->retrieveGridsAt(2));
+	std::size_t sz(tmpLev.size());
+	size_t p;
+	for (p=0;p<tmpLev.size();p++)
+	{
+		MEDCouplingCartesianAMRPatchGen* patchGrid(tmpLev[p]);
+		MEDCouplingCartesianAMRMeshGen* patchMesh=const_cast<MEDCouplingCartesianAMRMeshGen *>(patchGrid->getMesh());
+		const MEDCouplingIMesh* patchIMesh=patchGrid->getMesh()->getImageMesh();
+		MEDCouplingFieldDouble* patchField=MEDCouplingFieldDouble::New(ON_CELLS);
+		patchField->setName(nameOfField+" patch");
+		patchField->setMesh(patchIMesh);
+		DataArrayDouble* patchFieldData=const_cast<DataArrayDouble *>(_fields->getFieldOn(patchMesh,nameOfField));
+		patchField->setArray(patchFieldData);
+		patchField->setTime(0.,0,0);
+		patchField->checkCoherency();
+
+		ostringstream its;
+		its << it;
+		string patchFileName="P_"+fileName+"_"+its.str();
+		ret=patchField->writeVTK(patchFileName);
+		writePVD(patchFileName,ret,time,fromscratch);
+		patchFieldData->decrRef();
+		patchField->decrRef();
+		patchMesh->decrRef();
+		patchGrid->decrRef();
+	}
     return ret;
 }
 
