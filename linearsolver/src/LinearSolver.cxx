@@ -15,6 +15,8 @@
 #include "LinearSolver.hxx"
 #include "CdmathException.hxx"
 
+#include "SparseMatrix.hxx"
+
 using namespace std;
 
 
@@ -30,6 +32,8 @@ LinearSolver::LinearSolver ( void )
     _nameOfPc="";
     _mat=NULL;
     _smb=NULL;
+    _ksp=NULL;
+    _prec=NULL;
 }
 
 LinearSolver::~LinearSolver ( void )
@@ -53,7 +57,7 @@ LinearSolver::setNumberMaxOfIter(int numberMaxOfIter)
     KSPSetTolerances(_ksp,getTolerance(),PETSC_DEFAULT,PETSC_DEFAULT,numberMaxOfIter);
 }
 
-LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string nameOfMethod )
+LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string nameOfMethod )
 {
     _tol=tol;
     _nameOfMethod=nameOfMethod;
@@ -66,7 +70,7 @@ LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numb
     setLinearSolver(matrix,vector);
 }
 
-LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string nameOfMethod, std::string pc )
+LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string nameOfMethod, std::string pc )
 {
     _tol=tol;
     _nameOfMethod=nameOfMethod;
@@ -100,7 +104,7 @@ LinearSolver::LinearSolver( const Matrix& matrix, const Vector& vector, int numb
 }
 
 void
-LinearSolver::setLinearSolver(const Matrix& matrix, const Vector& vector)
+LinearSolver::setLinearSolver(const GenericMatrix& matrix, const Vector& vector)
 {
     PetscInitialize(0,(char ***)"", PETSC_NULL, PETSC_NULL);
     setMatrix(matrix);
@@ -145,21 +149,36 @@ LinearSolver::getNumberMaxOfIter(void) const
 }
 
 void
-LinearSolver::setMatrix(const Matrix& matrix)
+LinearSolver::setMatrix(const GenericMatrix& matrix)
 {
-    _matrix=matrix;
     /* matrix to mat */
     int numberOfRows=matrix.getNumberOfRows();
     int numberOfColumns=matrix.getNumberOfColumns();
-    int numberOfNonZeros=matrix.getNumberOfNonZeros();
 
     if (matrix.isSparseMatrix())
     {
-        MatCreateSeqAIJ(MPI_COMM_SELF,numberOfRows,numberOfColumns,numberOfNonZeros,0,&_mat);
-        for (PetscInt i=0;i<numberOfRows;i++)
-            for (PetscInt j=0;j<numberOfColumns;j++)
-                if (abs(_matrix(i,j))>1.E-16)
-                    MatSetValues(_mat,1,&i,1,&j,&_matrix(i,j),INSERT_VALUES);
+    	const SparseMatrix& Smat = dynamic_cast<const SparseMatrix&>(matrix);
+//        int numberOfNonZeros=Smat.getNumberOfNonZeros();
+        MatCreateSeqAIJ(MPI_COMM_SELF,numberOfRows,numberOfColumns,PETSC_DEFAULT,0,&_mat);
+        IntTab iRows=Smat.getIndexRows();
+		IntTab iColumns=Smat.getIndexColumns();
+        DoubleTab values=Smat.getValues();
+        for (int i=0;i<numberOfRows;i++)
+        {
+        	int nbval=iRows[i+1]-iRows[i];
+        	PetscInt    cols[nbval];
+        	PetscScalar    vals[nbval];
+        	for (int j=0;j<nbval;j++)
+        	{
+            	cols[j]=iColumns[iRows[i]+j]-1;
+            	vals[j]=values[iRows[i]+j];
+        	}
+        	MatSetValues(_mat,1,
+        				&i,
+    					nbval,
+    					cols,
+    					vals,INSERT_VALUES);
+        }
     } else
     {
         MatCreate(PETSC_COMM_WORLD, &_mat);
@@ -170,7 +189,7 @@ LinearSolver::setMatrix(const Matrix& matrix)
         PetscMalloc(numberOfRows*numberOfColumns*sizeof(PetscScalar),&a);
         for (int i=0;i<numberOfRows;i++)
             for (int j=0;j<numberOfColumns;j++)
-                a[i+j*numberOfRows]=_matrix(i,j);
+                a[i+j*numberOfRows]=matrix(i,j);
 
         MatSeqDenseSetPreallocation(_mat,a);
     }
@@ -200,12 +219,6 @@ LinearSolver::setSingularity(bool sing)
     _isSingular=sing;
 }
 
-Matrix
-LinearSolver::getMatrix(void) const
-{
-    return _matrix;
-}
-
 Vector
 LinearSolver::getSndMember(void) const
 {
@@ -229,7 +242,6 @@ LinearSolver::LinearSolver ( const LinearSolver& LS )
     _tol=LS.getTolerance();
     _nameOfMethod=LS.getNameOfMethod();
     _numberMaxOfIter=LS.getNumberMaxOfIter();
-    _matrix=LS.getMatrix();
     _vector=LS.getSndMember();
     _residu=LS.getResidu();
     _convergence=LS.getStatus();
@@ -398,7 +410,6 @@ LinearSolver::operator= ( const LinearSolver& linearSolver )
     _convergence=linearSolver.getStatus();
     _numberOfIter=linearSolver.getNumberOfIter();
     _isSingular=linearSolver.isSingular();
-    _matrix=linearSolver.getMatrix();
     _vector=linearSolver.getSndMember();
     _nameOfPc=linearSolver.getNameOfPc();
     _mat=linearSolver.getPetscMatrix();

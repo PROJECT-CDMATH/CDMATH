@@ -5,7 +5,7 @@ import unittest
 from math import sqrt
 
 class TestsCDMATHSwig(unittest.TestCase):
-    def testClassPoint(self):
+    def testClassPoint(self):   
         P1=Point(1.,2.,3.)
         self.assertTrue(P1.x()==1.)
         self.assertTrue(P1.y()==2.)
@@ -607,6 +607,296 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue( 16==M6.getNumberOfCells() );
         self.assertTrue( 40==M6.getNumberOfFaces() );
         return
+    
+    def testClassMatrix(self):
+        A=Matrix(2,2);
+        A[0,0]=1.;
+        A[0,1]=2.;
+        A[1,0]=3.;
+        A[1,1]=4.;
+    
+        self.assertTrue( 1.0, A[0,0] );
+        self.assertTrue( 2.0, A[0,1] );
+        self.assertTrue( 3.0, A[1,0] );
+        self.assertTrue( 4.0, A[1,1] );
+    
+        self.assertTrue( -2., A.determinant() );
+    
+        A1=Matrix(2,2);
+        A1=A;
+        self.assertTrue( 1.0, A1[0,0] );
+        self.assertTrue( 2.0, A1[0,1] );
+        self.assertTrue( 3.0, A1[1,0] );
+        self.assertTrue( 4.0, A1[1,1] );
+    
+        A11=Matrix(2,2);
+    
+        A11 = A1-A;
+
+        self.assertTrue( 0.0==A11[0,0] );
+        self.assertTrue( 0.0==A11[0,1] );
+        self.assertTrue( 0.0==A11[1,0] );
+        self.assertTrue( 0.0==A11[1,1] );
+    
+        A11 = A1+A;
+    
+        self.assertTrue( 2.0==A11[0,0] );
+        self.assertTrue( 4.0==A11[0,1] );
+        self.assertTrue( 6.0==A11[1,0] );
+        self.assertTrue( 8.0==A11[1,1] );
+    
+        A22=Matrix(2,2);
+        A22 = A*2;
+    
+        self.assertTrue( 2.0==A22[0,0] );
+        self.assertTrue( 4.0==A22[0,1] );
+        self.assertTrue( 6.0==A22[1,0] );
+        self.assertTrue( 8.0==A22[1,1] );
+    
+        A22 = A*3;
+        self.assertTrue( 3.0==A22[0,0] );
+        self.assertTrue( 6.0==A22[0,1] );
+        self.assertTrue( 9.0==A22[1,0] );
+        self.assertTrue( 12.0==A22[1,1] );
+    
+        A22 = A/2;
+        self.assertTrue( 0.5==A22[0,0] );
+        self.assertTrue( 1.0==A22[0,1] );
+        self.assertTrue( 1.5==A22[1,0] );
+        self.assertTrue( 2.0==A22[1,1] );
+    
+        A2=Matrix(A1);
+        A2*=2;
+        self.assertTrue( 2.0==A2[0,0] );
+        self.assertTrue( 4.0==A2[0,1] );
+        self.assertTrue( 6.0==A2[1,0] );
+        self.assertTrue( 8.0==A2[1,1] );
+    
+        A2/=2;
+        self.assertTrue( 1.0==A2[0,0] );
+        self.assertTrue( 2.0==A2[0,1] );
+        self.assertTrue( 3.0==A2[1,0] );
+        self.assertTrue( 4.0==A2[1,1] );
+    
+        A2-=A;
+        self.assertTrue( 0.0==A2[0,0] );
+        self.assertTrue( 0.0==A2[0,1] );
+        self.assertTrue( 0.0==A2[1,0] );
+        self.assertTrue( 0.0==A2[1,1] );
+    
+        A2+=A;
+        self.assertTrue( 1.0==A2[0,0] );
+        self.assertTrue( 2.0==A2[0,1] );
+        self.assertTrue( 3.0==A2[1,0] );
+        self.assertTrue( 4.0==A2[1,1] );
+    
+        X=Vector(2);
+        X[0]=1.;
+        X[1]=2.;
+    
+        X1=A*X;
+        self.assertTrue( 5.==X1[0] );
+        self.assertTrue( 11.0==X1[1] );
+    
+        self.assertTrue( True==A2.isSquare() );
+        self.assertTrue( False==A2.isSymmetric() );
+    
+        A3=Matrix(2,3);
+        A3[0,0]=1.;
+        A3[0,1]=2.;
+        A3[0,2]=2.;
+        A3[1,0]=3.;
+        A3[1,1]=4.;
+        A3[1,2]=4.;
+        self.assertTrue( False==A3.isSquare() );
+    
+        A[0,0]=1.;
+        A[0,1]=-2.;
+        A[1,0]=-2.;
+        A[1,1]=4.;
+        self.assertTrue( True==A.isSymmetric() );
+    
+        A4=Matrix(4,4);
+        A4[0,0]=1.;
+        A4[0,1]=2.;
+        A4[0,2]=3.;
+        A4[0,3]=4.;
+        A4[1,0]=5.;
+        A4[1,1]=6.;
+        A4[1,2]=7.;
+        A4[1,3]=8.;
+        A4[2,0]=9.;
+        A4[2,1]=10.;
+        A4[2,2]=11.;
+        A4[2,3]=12.;
+        A4[3,0]=13.;
+        A4[3,1]=14.;
+        A4[3,2]=15.;
+        A4[3,3]=16.;
+        A5=Matrix(A4.transpose());
+        self.assertTrue( 1.==A5[0,0] );
+        self.assertTrue( 5.==A5[0,1] );
+        self.assertTrue( 9.==A5[0,2] );
+        self.assertTrue( 13.==A5[0,3] );
+        self.assertTrue( 2.==A5[1,0] );
+        self.assertTrue( 6.==A5[1,1] );
+        self.assertTrue( 10.==A5[1,2] );
+        self.assertTrue( 14.==A5[1,3] );
+        self.assertTrue( 3.==A5[2,0] );
+        self.assertTrue( 7.==A5[2,1] );
+        self.assertTrue( 11.==A5[2,2] );
+        self.assertTrue( 15.==A5[2,3] );
+        self.assertTrue( 4.==A5[3,0] );
+        self.assertTrue( 8.==A5[3,1] );
+        self.assertTrue( 12.==A5[3,2] );
+        self.assertTrue( 16.==A5[3,3] );
+    
+        self.assertTrue( 0.==A5.determinant() );
+        
+    def testClassSparseMatrix(self):
+        A=SparseMatrix(2,2);
+        A[0,0]=1.;
+        A[0,1]=2.;
+        A[1,0]=3.;
+        A[1,1]=4.;
+    
+        self.assertTrue( 1.0, A[0,0] );
+        self.assertTrue( 2.0, A[0,1] );
+        self.assertTrue( 3.0, A[1,0] );
+        self.assertTrue( 4.0, A[1,1] );
+    
+        self.assertTrue( -2., A.determinant() );
+    
+        A1=SparseMatrix(2,2);
+        A1=A;
+        self.assertTrue( 1.0, A1[0,0] );
+        self.assertTrue( 2.0, A1[0,1] );
+        self.assertTrue( 3.0, A1[1,0] );
+        self.assertTrue( 4.0, A1[1,1] );
+    
+        A11=SparseMatrix(2,2);
+    
+        A11 = A1-A;
+
+        self.assertTrue( 0.0==A11[0,0] );
+        self.assertTrue( 0.0==A11[0,1] );
+        self.assertTrue( 0.0==A11[1,0] );
+        self.assertTrue( 0.0==A11[1,1] );
+    
+        A11 = A1+A;
+    
+        self.assertTrue( 2.0==A11[0,0] );
+        self.assertTrue( 4.0==A11[0,1] );
+        self.assertTrue( 6.0==A11[1,0] );
+        self.assertTrue( 8.0==A11[1,1] );
+    
+        A22=SparseMatrix(2,2);
+        A22 = A*2;
+    
+        self.assertTrue( 2.0==A22[0,0] );
+        self.assertTrue( 4.0==A22[0,1] );
+        self.assertTrue( 6.0==A22[1,0] );
+        self.assertTrue( 8.0==A22[1,1] );
+    
+        A22 = A*3;
+        self.assertTrue( 3.0==A22[0,0] );
+        self.assertTrue( 6.0==A22[0,1] );
+        self.assertTrue( 9.0==A22[1,0] );
+        self.assertTrue( 12.0==A22[1,1] );
+    
+        A22 = A/2;
+        self.assertTrue( 0.5==A22[0,0] );
+        self.assertTrue( 1.0==A22[0,1] );
+        self.assertTrue( 1.5==A22[1,0] );
+        self.assertTrue( 2.0==A22[1,1] );
+    
+        A2=SparseMatrix(A1);
+        A2*=2;
+        self.assertTrue( 2.0==A2[0,0] );
+        self.assertTrue( 4.0==A2[0,1] );
+        self.assertTrue( 6.0==A2[1,0] );
+        self.assertTrue( 8.0==A2[1,1] );
+    
+        A2/=2;
+        self.assertTrue( 1.0==A2[0,0] );
+        self.assertTrue( 2.0==A2[0,1] );
+        self.assertTrue( 3.0==A2[1,0] );
+        self.assertTrue( 4.0==A2[1,1] );
+    
+        A2-=A;
+        self.assertTrue( 0.0==A2[0,0] );
+        self.assertTrue( 0.0==A2[0,1] );
+        self.assertTrue( 0.0==A2[1,0] );
+        self.assertTrue( 0.0==A2[1,1] );
+    
+        A2+=A;
+        self.assertTrue( 1.0==A2[0,0] );
+        self.assertTrue( 2.0==A2[0,1] );
+        self.assertTrue( 3.0==A2[1,0] );
+        self.assertTrue( 4.0==A2[1,1] );
+    
+        X=Vector(2);
+        X[0]=1.;
+        X[1]=2.;
+    
+        X1=A*X;
+        self.assertTrue( 5.==X1[0] );
+        self.assertTrue( 11.0==X1[1] );
+    
+        self.assertTrue( True==A2.isSquare() );
+        self.assertTrue( False==A2.isSymmetric() );
+    
+        A3=SparseMatrix(2,3);
+        A3[0,0]=1.;
+        A3[0,1]=2.;
+        A3[0,2]=2.;
+        A3[1,0]=3.;
+        A3[1,1]=4.;
+        A3[1,2]=4.;
+        self.assertTrue( False==A3.isSquare() );
+    
+        A[0,0]=1.;
+        A[0,1]=-2.;
+        A[1,0]=-2.;
+        A[1,1]=4.;
+        self.assertTrue( True==A.isSymmetric() );
+    
+        A4=SparseMatrix(4,4);
+        A4[0,0]=1.;
+        A4[0,1]=2.;
+        A4[0,2]=3.;
+        A4[0,3]=4.;
+        A4[1,0]=5.;
+        A4[1,1]=6.;
+        A4[1,2]=7.;
+        A4[1,3]=8.;
+        A4[2,0]=9.;
+        A4[2,1]=10.;
+        A4[2,2]=11.;
+        A4[2,3]=12.;
+        A4[3,0]=13.;
+        A4[3,1]=14.;
+        A4[3,2]=15.;
+        A4[3,3]=16.;
+        A5=SparseMatrix(A4.transpose());
+        self.assertTrue( 1.==A5[0,0] );
+        self.assertTrue( 5.==A5[0,1] );
+        self.assertTrue( 9.==A5[0,2] );
+        self.assertTrue( 13.==A5[0,3] );
+        self.assertTrue( 2.==A5[1,0] );
+        self.assertTrue( 6.==A5[1,1] );
+        self.assertTrue( 10.==A5[1,2] );
+        self.assertTrue( 14.==A5[1,3] );
+        self.assertTrue( 3.==A5[2,0] );
+        self.assertTrue( 7.==A5[2,1] );
+        self.assertTrue( 11.==A5[2,2] );
+        self.assertTrue( 15.==A5[2,3] );
+        self.assertTrue( 4.==A5[3,0] );
+        self.assertTrue( 8.==A5[3,1] );
+        self.assertTrue( 12.==A5[3,2] );
+        self.assertTrue( 16.==A5[3,3] );
+    
+        self.assertTrue( 0.==A5.determinant() );
 
     def testClassLinearSolver(self):
         A=Matrix(2,2);
@@ -614,35 +904,35 @@ class TestsCDMATHSwig(unittest.TestCase):
         A[0,1]=-2.;
         A[1,0]=-2.;
         A[1,1]=4.;
-
+ 
         A*=A.transpose();
-
+ 
         Xana=Vector(2);
         Xana[0]=1.;
         Xana[1]=2.;
-
+ 
         B=A*Xana;
         LS=LinearSolver(A,B,500,1.E-10,"GMRES","LU");
         X=LS.solve();
         self.assertTrue(abs(X[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X[1]-Xana[1])<1.E-10);
-
+ 
         self.assertEqual(LS.getStatus(),True);
-
+ 
         self.assertEqual(LS.getNumberMaxOfIter(),500);
         self.assertEqual(LS.getTolerance(),1.E-10);
         self.assertEqual(LS.getNameOfMethod(),"GMRES");
         self.assertEqual(LS.getNumberOfIter(),1);
         self.assertEqual(LS.isSingular(),False);
         self.assertEqual(LS.getNameOfPc(),"LU");
-
+ 
         LS2=LinearSolver(A,B,500,1.E-10,"CG");
         A1=Matrix(2,2);
         A1[0,0]=1.;
         A1[0,1]=-2.;
         A1[1,0]=-2.;
         A1[1,1]=4.;
-
+ 
         LS2.setMatrix(A1*-1.);
         LS2.setSndMember(B*-1);
         LS2.setTolerance(1.E-20);
@@ -655,35 +945,35 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertEqual(LS2.getNumberOfIter(),2);
         self.assertEqual(LS2.isSingular(),True);
         self.assertEqual(LS2.getNameOfMethod(),"CG");
-
+ 
         LS3=LinearSolver(A,B,500,1.E-10,"BCG");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"BCG");
-
+ 
         LS3=LinearSolver(A,B,500,1.E-10,"CR");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"CR");
-
+ 
         LS3=LinearSolver(A,B,500,1.E-10,"CGS");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"CGS");
-
+ 
         LS3=LinearSolver(A,B,500,1.E-10,"GMRES");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"GMRES");
-
+ 
         LS3=LinearSolver(A,B,500,1.E-10,"BICG","LU");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
@@ -691,35 +981,35 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"BICG");
         self.assertEqual(LS3.getNameOfPc(),"LU");
-
+ 
         LS3=LinearSolver(A,B,500,1.E-10,"BICG");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"BICG");
-
+ 
         LS3=LinearSolver(A,B,500,1.E-10,"GCR");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"GCR");
-
+ 
         LS3=LinearSolver(A,B,500,1.E-10,"LSQR");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"LSQR");
-
+ 
         LS3=LinearSolver(A,B,500,1.E-10,"CHOLESKY");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
         self.assertTrue(abs(X3[1]-Xana[1])<1.E-10);
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"CHOLESKY");
-
+ 
         LS3=LinearSolver(A,B,500,1.E-10,"LU");
         X3=LS3.solve();
         self.assertTrue(abs(X3[0]-Xana[0])<1.E-10);
@@ -727,30 +1017,30 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertEqual(LS3.getStatus(),True);
         self.assertEqual(LS3.getNameOfMethod(),"LU");
         self.assertEqual(LS3.getNameOfPc(),"");
-
-        A2=Matrix(6,6,14);
+ 
+        A2=SparseMatrix(6,6,16);
         A2[0,0]=2.;
         A2[0,1]=-1.;
-
+ 
         A2[1,0]=-1.;
         A2[1,1]=2.;
         A2[1,2]=-1.;
-
+ 
         A2[2,1]=-1.;
         A2[2,2]=2.;
         A2[2,3]=-1.;
-
+ 
         A2[3,2]=-1.;
         A2[3,3]=2.;
         A2[3,4]=-1.;
-
+ 
         A2[4,3]=-1.;
         A2[4,4]=2.;
         A2[4,5]=-1.;
-
+ 
         A2[5,4]=-1.;
         A2[5,5]=2.;
-
+ 
         Xana2=Vector(6);
         Xana2[0]=1.;
         Xana2[1]=2.;
@@ -758,113 +1048,113 @@ class TestsCDMATHSwig(unittest.TestCase):
         Xana2[3]=4.;
         Xana2[4]=5.;
         Xana2[5]=6.;
-
+ 
         B2=A2*Xana2;
-
+ 
         LS11=LinearSolver(A2,B2,500,1.E-10,"GMRES","ILU");
         X11=LS11.solve();
         for i in xrange(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
             pass
-
+ 
         self.assertEqual(LS11.getStatus(),True);
-
+ 
         self.assertEqual(LS11.getNumberMaxOfIter(),500);
         self.assertEqual(LS11.getTolerance(),1.E-10);
         self.assertEqual(LS11.getNumberOfIter(),1);
-
+ 
         LS11=LinearSolver(A2,B2,500,1.E-10,"CG","ILU");
         X11=LS11.solve();
         for i in xrange(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
             pass
-
+ 
         self.assertEqual(LS11.getStatus(),True);
-
+ 
         self.assertEqual(LS11.getNumberMaxOfIter(),500);
         self.assertEqual(LS11.getTolerance(),1.E-10);
         self.assertEqual(LS11.getNumberOfIter(),1);
-
+ 
         LS11=LinearSolver(A2,B2,500,1.E-10,"LGMRES","ILU");
         X11=LS11.solve();
         for i in xrange(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
             pass
-
+ 
         self.assertEqual(LS11.getStatus(),True);
-
+ 
         self.assertEqual(LS11.getNumberMaxOfIter(),500);
         self.assertEqual(LS11.getTolerance(),1.E-10);
         self.assertEqual(LS11.getNumberOfIter(),1);
-
+ 
         LS11=LinearSolver(A2,B2,500,1.E-10,"BCG","ILU");
         X11=LS11.solve();
         for i in xrange(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
             pass
-
+ 
         self.assertEqual(LS11.getStatus(),True);
-
+ 
         self.assertEqual(LS11.getNumberMaxOfIter(),500);
         self.assertEqual(LS11.getTolerance(),1.E-10);
         self.assertEqual(LS11.getNumberOfIter(),1);
-
+ 
         LS11=LinearSolver(A2,B2,500,1.E-10,"CR","ILU");
         X11=LS11.solve();
         for i in xrange(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
             pass
-
+ 
         self.assertEqual(LS11.getStatus(),True);
-
+ 
         self.assertEqual(LS11.getNumberMaxOfIter(),500);
         self.assertEqual(LS11.getTolerance(),1.E-10);
         self.assertEqual(LS11.getNumberOfIter(),1);
-
+ 
         LS11=LinearSolver(A2,B2,500,1.E-10,"CGS","ILU");
         X11=LS11.solve();
         for i in xrange(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
             pass
-
+ 
         self.assertEqual(LS11.getStatus(),True);
-
+ 
         self.assertEqual(LS11.getNumberMaxOfIter(),500);
         self.assertEqual(LS11.getTolerance(),1.E-10);
         self.assertEqual(LS11.getNumberOfIter(),1);
-
+ 
         LS11=LinearSolver(A2,B2,500,1.E-10,"BICG","ILU");
         X11=LS11.solve();
         for i in xrange(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
             pass
-
+ 
         self.assertEqual(LS11.getStatus(),True);
-
+ 
         self.assertEqual(LS11.getNumberMaxOfIter(),500);
         self.assertEqual(LS11.getTolerance(),1.E-10);
         self.assertEqual(LS11.getNumberOfIter(),1);
-
+ 
         LS11=LinearSolver(A2,B2,500,1.E-10,"GCR","ILU");
         X11=LS11.solve();
         for i in xrange(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
             pass
-
+ 
         self.assertEqual(LS11.getStatus(),True);
-
+ 
         self.assertEqual(LS11.getNumberMaxOfIter(),500);
         self.assertEqual(LS11.getTolerance(),1.E-10);
         self.assertEqual(LS11.getNumberOfIter(),1);
-
+ 
         LS11=LinearSolver(A2,B2,500,1.E-10,"LSQR","ILU");
         X11=LS11.solve();
         for i in xrange(X11.getNumberOfRows()):
             self.assertTrue(abs(X11[i]-Xana2[i])<1.E-10);
             pass
-
+ 
         self.assertEqual(LS11.getStatus(),True);
-
+ 
         self.assertEqual(LS11.getNumberMaxOfIter(),500);
         self.assertEqual(LS11.getTolerance(),1.E-10);
         self.assertEqual(LS11.getNumberOfIter(),6);

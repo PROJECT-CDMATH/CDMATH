@@ -14,6 +14,7 @@
 #include <cppunit/XmlOutputter.h>
 #include <cppunit/CompilerOutputter.h>
 
+#include "SparseMatrixTests.hxx"
 #include "MatrixTests.hxx"
 #include "VectorTests.hxx"
 #include "PointTests.hxx"
@@ -45,17 +46,17 @@ int main( int argc, char* argv[] )
    CppUnit::TextUi::TestRunner runner;
    runner.addTest( IntTabTests::suite() );
    runner.addTest( DoubleTabTests::suite() );
+   runner.addTest( MatrixTests::suite() );
+   runner.addTest( SparseMatrixTests::suite() );
    runner.addTest( PointTests::suite() );
    runner.addTest( NodeTests::suite() );
    runner.addTest( CellTests::suite() );
    runner.addTest( FaceTests::suite() );
    runner.addTest( FieldTests::suite() );
    runner.addTest( MeshTests::suite() );
-   runner.addTest( IntTabTests::suite() );
-   runner.addTest( DoubleTabTests::suite() );
-   runner.addTest( MatrixTests::suite() );
    runner.addTest( VectorTests::suite() );
    runner.addTest( LinearSolverTests::suite() );
+
    runner.run( controller );
    CppUnit::CompilerOutputter outputter( &result, CppUnit::stdCOut() );
    outputter.write();

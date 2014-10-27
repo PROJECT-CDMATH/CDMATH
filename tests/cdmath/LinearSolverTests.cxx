@@ -7,6 +7,7 @@
 
 #include "Matrix.hxx"
 #include "Vector.hxx"
+#include "SparseMatrix.hxx"
 #include "LinearSolverTests.hxx"
 
 using namespace std;
@@ -122,28 +123,29 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS10.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS10.getNameOfMethod(),(string)"LU");
 
-	Matrix A2(6,6,14);
-    A2(0,0)=2.;
-    A2(0,1)=-1.;
+	SparseMatrix A2(6,6,16);
+//	SparseMatrix A2(6,6);
+    A2.setValue(0,0,2.);
+    A2.setValue(0,1,-1.);
 
-    A2(1,0)=-1.;
-    A2(1,1)=2.;
-    A2(1,2)=-1.;
+    A2.setValue(1,0,-1.);
+    A2.setValue(1,1,2.);
+    A2.setValue(1,2,-1.);
 
-    A2(2,1)=-1.;
-    A2(2,2)=2.;
-    A2(2,3)=-1.;
+    A2.setValue(2,1,-1.);
+    A2.setValue(2,2,2.);
+    A2.setValue(2,3,-1.);
 
-    A2(3,2)=-1.;
-    A2(3,3)=2.;
-    A2(3,4)=-1.;
+    A2.setValue(3,2,-1.);
+    A2.setValue(3,3,2.);
+    A2.setValue(3,4,-1.);
 
-    A2(4,3)=-1.;
-    A2(4,4)=2.;
-    A2(4,5)=-1.;
+    A2.setValue(4,3,-1.);
+    A2.setValue(4,4,2.);
+    A2.setValue(4,5,-1.);
 
-    A2(5,4)=-1.;
-    A2(5,5)=2.;
+    A2.setValue(5,4,-1.);
+    A2.setValue(5,5,2.);
 
     Vector Xana2(6);
     Xana2(0)=1.;

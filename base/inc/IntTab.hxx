@@ -29,6 +29,8 @@ class IntTab
 
 	int* getValues(void) const ;
 
+	void resize(const int size) ;
+
 	IntTab & operator=(const IntTab & dt);
 
 	IntTab & operator=(const int value);

@@ -9,7 +9,7 @@
 #define LINEARSOLVER_HXX_
 
 #include <petsc.h>
-#include "Matrix.hxx"
+#include "GenericMatrix.hxx"
 #include "Vector.hxx"
 
 #include <string>
@@ -22,9 +22,9 @@ class LinearSolver
 
 	~LinearSolver ( void ) ;
 
-	LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string method  );
+	LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string method  );
 
-	LinearSolver( const Matrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string method, std::string pc  );
+	LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string method, std::string pc  );
 
 	const LinearSolver& operator= ( const LinearSolver& linearSolver ) ;
 
@@ -44,8 +44,6 @@ class LinearSolver
 
 	void setNumberMaxOfIter(int numberMaxOfIter) ;
 
-	Matrix getMatrix( void ) const ;
-
 	Vector getSndMember( void ) const ;
 
 	std::string getNameOfMethod( void ) const ;
@@ -58,7 +56,7 @@ class LinearSolver
 
 	Vector vecToVector(const Vec& vec) const ;
 
-	void setMatrix(const Matrix& matrix) ;
+	void setMatrix(const GenericMatrix& matrix) ;
 
 	void setSndMember(const Vector& vector) ;
 
@@ -66,11 +64,12 @@ class LinearSolver
 
 	bool isSingular( void ) const;
 
-    private: //----------------------------------------------------------------
-
-	void setLinearSolver(const Matrix& matrix, const Vector& vector) ;
 	Mat getPetscMatrix() const ;
 	Vec getPetscVector() const ;
+
+    private: //----------------------------------------------------------------
+
+	void setLinearSolver(const GenericMatrix& matrix, const Vector& vector) ;
 	KSP getPetscKsp() const ;
 	PC getPetscPc() const ;
 
@@ -82,7 +81,7 @@ class LinearSolver
 	bool _convergence;
 	bool _isSingular;
 	int _numberOfIter;
-	Matrix _matrix;
+//	GenericMatrix* _matrix;
 	Vector _vector;
 	Mat _mat;
 	Vec _smb;
