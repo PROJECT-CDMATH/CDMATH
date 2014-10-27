@@ -18,7 +18,6 @@ class Vector: public Matrix
 
 	Vector( int numberOfRows ) ;
 
-
 	~Vector ( void ) ;
 
 	double& operator () ( int i ) ;

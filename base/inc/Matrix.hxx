@@ -15,19 +15,13 @@
  * - number of columns
  */
 
-namespace ParaMEDMEM
-{
-  class DenseMatrix;
-}
-
-
-#include <MEDCouplingAutoRefCountObjectPtr.hxx>
-
 #include <iostream>
+
+#include "GenericMatrix.hxx"
 
 class Vector ;
 
-class Matrix
+class Matrix: public GenericMatrix
 {
     public: //----------------------------------------------------------------
     /**
@@ -49,14 +43,6 @@ class Matrix
     Matrix ( int numberOfRows, int numberOfColumns ) ;
 
     /**
-     * constructor with data
-     * @param numberOfRows : The number of rows
-     * @param numberOfColumns : The number of columns
-     * @param numberOfNonZeros : The number of non zeros
-     */
-    Matrix ( int numberOfRows, int numberOfColumns, int numberOfNonZeros ) ;
-
-    /**
      * constructor by copy
      * @param matrix : The Matrix object to be copied
      */
@@ -65,23 +51,9 @@ class Matrix
     /**
      * destructor
      */
-    ~Matrix ( void ) ;
-
-    /**
-     * return number of rows in this matrix
-     * @return _numberOfRows
-     */
-    int getNumberOfRows ( void ) const ;
-
-    /**
-     * return number of columns in this matrix
-     * @return _numberOfColumns
-     */
-    int getNumberOfColumns ( void ) const ;
+    virtual ~Matrix ( void ) ;
 
     bool isSparseMatrix( void ) const ;
-
-    int getNumberOfNonZeros() const ;
 
     double& operator () ( int i, int j ) ;
 
@@ -99,19 +71,11 @@ class Matrix
 
     Vector operator* (const Vector& vector) const ;
 
-    bool isSymmetric() const ;
-
-    bool isSquare() const ;
-
     Matrix transpose() const ;
 
     Matrix partMatrix(int row, int column) const ;
 
-    int coefficient(int index) const ;
-
     double determinant() const ;
-
-    void view() const ;
 
     const Matrix& operator= ( const Matrix& matrix ) ;
 
@@ -128,28 +92,6 @@ class Matrix
     friend Matrix operator*(const Matrix& M, const Matrix& N) ;
 
     friend std::ostream& operator<<(std::ostream& out, const Matrix& matrix ) ;
-
-    private: //----------------------------------------------------------------
-
-    void setDensiteMatrix (const ParaMEDMEM::DenseMatrix* mat) ;
-
-    ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<ParaMEDMEM::DenseMatrix> getMEDCouplingDenseMatrix ( void )  const ;
-
-    /*
-     * The number of rows in this cell.
-     */
-    int _numberOfRows ;
-
-    /*
-     * The number of columns in this cell.
-     */
-    int _numberOfColumns ;
-
-    int _numberOfNonZeros ;
-
-    bool _isSparseMatrix ;
-
-    ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<ParaMEDMEM::DenseMatrix> _mat;
 
 };
 

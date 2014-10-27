@@ -4,24 +4,6 @@
  *  Created on: 18 mars 2013
  *      Author: mekkas
  */
-
-
-/*
- * IntTabTests.cxx
- *
- *  Created on: 18 mars 2013
- *      Author: mekkas
- */
-
-
-
-/*
- * celltests.cxx
- *
- *  Created on: 24 janv. 2012
- *      Authors: CDMAT
- */
-
 #include "IntTabTests.hxx"
 
 //----------------------------------------------------------------------
@@ -119,6 +101,3 @@ IntTabTests::testClassIntTab( void )
 	CPPUNIT_ASSERT_EQUAL( 2, T10[1] );
 	CPPUNIT_ASSERT_EQUAL( 3, T10[2] );
 }
-
-
-

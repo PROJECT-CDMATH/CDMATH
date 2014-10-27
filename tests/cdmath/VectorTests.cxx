@@ -1,18 +1,10 @@
 /*
- * DoubleTabTests.cxx
+ * VectorTests.cxx
  *
  *  Created on: 18 mars 2013
  *      Author: mekkas
  */
 
-
-
-/*
- * celltests.cxx
- *
- *  Created on: 24 janv. 2012
- *      Authors: CDMAT
- */
 
 #include "VectorTests.hxx"
 #include <cmath>

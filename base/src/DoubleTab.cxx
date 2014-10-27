@@ -45,6 +45,23 @@ DoubleTab::DoubleTab(const int size, const double* value)
 		_values[i] = value[i] ;
 }
 
+void
+DoubleTab::resize(const int size)
+{
+	double* oldvalues=new double [_numberOfElements] ;
+	int oldsize=_numberOfElements;
+	copy(_values,_values+oldsize,oldvalues);
+	delete [] _values;
+
+	_numberOfElements+=size;
+	_values = new double [_numberOfElements] ;
+	for (int i=0;i<oldsize;i++)
+		_values[i] = oldvalues[i] ;
+	for (int i=oldsize;i<_numberOfElements;i++)
+		_values[i] = 0. ;
+	delete [] oldvalues;
+}
+
 DoubleTab::DoubleTab(const DoubleTab& dt)
 {
 	_numberOfElements=dt.size();
@@ -56,6 +73,8 @@ DoubleTab&
 DoubleTab::operator=(const DoubleTab & dt)
 {
 	_numberOfElements=dt.size();
+    if (_values)
+        delete [] _values ;
 	_values = new double [_numberOfElements];
 	memcpy(_values,dt.getValues(),_numberOfElements*sizeof(double)) ;
 	return *this;
@@ -64,7 +83,7 @@ DoubleTab::operator=(const DoubleTab & dt)
 DoubleTab&
 DoubleTab::operator=(double value)
 {
-	for (int i=0;i<size();i++)
+	for (int i=0;i<_numberOfElements;i++)
 		_values[i] = value ;
 	return *this;
 }
@@ -74,6 +93,7 @@ DoubleTab::operator[](int i)
 {
 	return _values[i];
 }
+
 const double&
 DoubleTab::operator[](int i) const
 {
@@ -108,7 +128,7 @@ double
 DoubleTab::max() const
 {
 	double res=_values[0];
-	for (int i=0;i<size();i++)
+	for (int i=0;i<_numberOfElements;i++)
 		if (_values[i]>res)
 			res=_values[i];
 	return res;
@@ -118,7 +138,7 @@ double
 DoubleTab::min() const
 {
 	double res=_values[0];
-	for (int i=0;i<size();i++)
+	for (int i=0;i<_numberOfElements;i++)
 		if (_values[i]<res)
 			res=_values[i];
 	return res;
@@ -141,7 +161,7 @@ DoubleTab::operator+=(const DoubleTab& dt)
 DoubleTab&
 DoubleTab::operator+=(double value)
 {
-	for (int i=0;i<size();i++)
+	for (int i=0;i<_numberOfElements;i++)
 		_values[i] += value ;
 	return *this;
 }
@@ -149,7 +169,7 @@ DoubleTab::operator+=(double value)
 DoubleTab&
 DoubleTab::operator*=(double value)
 {
-	for (int i=0;i<size();i++)
+	for (int i=0;i<_numberOfElements;i++)
 		_values[i] *= value ;
 	return *this;
 }
@@ -157,7 +177,7 @@ DoubleTab::operator*=(double value)
 DoubleTab&
 DoubleTab::operator/=(double value)
 {
-	for (int i=0;i<size();i++)
+	for (int i=0;i<_numberOfElements;i++)
 		_values[i] /= value ;
 	return *this;
 }
@@ -173,7 +193,7 @@ DoubleTab::operator-=(const DoubleTab& dt)
 DoubleTab&
 DoubleTab::operator-=(double value)
 {
-	for (int i=0;i<size();i++)
+	for (int i=0;i<_numberOfElements;i++)
 		_values[i] -= value ;
 	return *this;
 }

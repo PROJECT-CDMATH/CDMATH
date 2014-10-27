@@ -24,6 +24,8 @@ class DoubleTab
 
 	DoubleTab(const int size, const double* value) ;
 
+	void resize(const int size) ;
+
 	~DoubleTab();
 
 	int size() const;

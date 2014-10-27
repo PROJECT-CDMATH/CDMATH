@@ -45,10 +45,29 @@ IntTab::IntTab(const IntTab& dt)
 	memcpy(_values,dt.getValues(),_numberOfElements*sizeof(int)) ;
 }
 
+void
+IntTab::resize(const int size)
+{
+	int* oldvalues=new int [_numberOfElements] ;
+	int oldsize=_numberOfElements;
+	copy(_values,_values+oldsize,oldvalues);
+	delete [] _values;
+
+	_numberOfElements+=size;
+	_values = new int [_numberOfElements] ;
+	for (int i=0;i<oldsize;i++)
+		_values[i] = oldvalues[i] ;
+	for (int i=oldsize;i<_numberOfElements;i++)
+		_values[i] = 0 ;
+	delete [] oldvalues;
+}
+
 IntTab&
 IntTab::operator=(const IntTab & dt)
 {
 	_numberOfElements=dt.size();
+    if (_values)
+        delete [] _values ;
 	_values = new int [_numberOfElements];
 	memcpy(_values,dt.getValues(),_numberOfElements*sizeof(int)) ;
 	return *this;
@@ -57,7 +76,7 @@ IntTab::operator=(const IntTab & dt)
 IntTab&
 IntTab::operator=(const int value)
 {
-	for (int i=0;i<size();i++)
+	for (int i=0;i<_numberOfElements;i++)
 		_values[i] = value ;
 	return *this;
 }
@@ -107,7 +126,7 @@ IntTab::operator+=(const IntTab& inttab)
 IntTab&
 IntTab::operator+=(const int value)
 {
-	for (int i=0;i<size();i++)
+	for (int i=0;i<_numberOfElements;i++)
 		_values[i] += value ;
 	return *this;
 }
@@ -115,7 +134,7 @@ IntTab::operator+=(const int value)
 IntTab&
 IntTab::operator*=(const int value)
 {
-	for (int i=0;i<size();i++)
+	for (int i=0;i<_numberOfElements;i++)
 		_values[i] *= value ;
 	return *this;
 }
@@ -123,7 +142,7 @@ IntTab::operator*=(const int value)
 IntTab&
 IntTab::operator/=(const int value)
 {
-	for (int i=0;i<size();i++)
+	for (int i=0;i<_numberOfElements;i++)
 		_values[i] /= value ;
 	return *this;
 }
@@ -138,7 +157,7 @@ IntTab::operator-=(const IntTab& inttab)
 IntTab&
 IntTab::operator-=(const int value)
 {
-	for (int i=0;i<size();i++)
+	for (int i=0;i<_numberOfElements;i++)
 		_values[i] -= value ;
 	return *this;
 }
