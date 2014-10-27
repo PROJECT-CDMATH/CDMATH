@@ -427,7 +427,7 @@ AMR::unsteadyAMRDriverHigherLevels(int curLevel, double currentTime, const Itera
             size_t p;
             int th_id(0);
             cout << endl;
-            #pragma omp parallel for private(th_id) shared(IterativeProblem, tmpLev, currentTime, idir, cout) default(none)
+            #pragma omp parallel for if (maxLevel=2) private(th_id)
             for (p=0;p<tmpLev.size();p++)
             {
                 # ifdef _OPENMP
