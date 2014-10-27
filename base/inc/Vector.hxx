@@ -32,6 +32,8 @@ class Vector: public Matrix
 
 	double operator* (const Vector& vector) const ;
 
+	friend Matrix operator^(const Vector& vector1, const Vector& vector2);
+
 	friend Vector operator+ (const Vector& vector1, const Vector& vector2);
 
 	friend Vector operator- (const Vector& vector1, const Vector& vector2);

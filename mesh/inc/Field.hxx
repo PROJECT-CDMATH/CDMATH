@@ -21,6 +21,7 @@ typedef enum
   } TypeField;
 
 #include "DoubleTab.hxx"
+#include "Vector.hxx"
 #include "Mesh.hxx"
 
 #include <MEDCouplingAutoRefCountObjectPtr.hxx>
@@ -114,11 +115,19 @@ class Field
 
     void setTime ( double time, int iter );
 
+    Vector getValuesOnComponent(int compo) const ;
+
+    Vector getValuesOnAllComponent(int elem) const ;
+
     int getSpaceDimension( void ) const;
 
     double getTime ( void ) const;
 
     void setName ( const std::string fieldName ) ;
+
+    void setInfoOnComponent(int icomp, std::string nameCompo) ;
+
+    std::string getInfoOnComponent(int icomp) const;
 
     const Field& operator= ( const Field& f ) ;
 
@@ -147,6 +156,14 @@ class Field
     void writeMED ( const std::string fileName, bool fromScratch ) const ;
 
     void writeCSV ( const std::string fileName ) const ;
+
+    friend Field operator* (double value , const Field& field ) ;
+
+    friend Field operator* (const Field& field, double value ) ;
+
+    friend Field operator/ (const Field& field, double value) ;
+
+    friend std::ostream& operator<<(std::ostream& out, const Field& field ) ;
 
     protected: //----------------------------------------------------------------
 

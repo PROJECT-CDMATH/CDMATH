@@ -119,3 +119,13 @@ operator/ (const Vector& vector, double value)
 		  res(i) = vector(i)/value;
    return res;
 }
+
+Matrix
+operator^(const Vector& vector1, const Vector& vector2)
+{
+	Matrix res(vector1.getNumberOfRows(),vector2.getNumberOfRows());
+	for(int i=0;i<vector1.getNumberOfRows();i++)
+		for(int j=0;j<vector2.getNumberOfRows();j++)
+			res(i,j)=vector1(i)*vector1(j);
+	return res;
+}

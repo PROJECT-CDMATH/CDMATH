@@ -6,6 +6,7 @@
  */
 
 #include "FieldTests.hxx"
+#include "Vector.hxx"
 #include <string>
 
 #include <MEDCouplingFieldDouble.hxx>
@@ -88,7 +89,16 @@ FieldTests::testClassField( void )
     	for (int i=0;i<conc3.getNumberOfElements();i++)
     		conc3(i,j)=-(i+j);
 
-    double x=conc3(2,0);
+	Vector v1=conc3.getValuesOnComponent(1);
+	Vector v2=conc3.getValuesOnAllComponent(4);
+
+	for (int i=0;i<conc3.getNumberOfElements();i++)
+		CPPUNIT_ASSERT_EQUAL( double(-(i+1)), v1(i) );
+
+	for (int j=0;j<conc3.getNumberOfComponents();j++)
+		CPPUNIT_ASSERT_EQUAL( double(-(4+j)), v2(j) );
+
+	double x=conc3(2,0);
 	CPPUNIT_ASSERT_EQUAL( x, -2.0 );
 
 	for (int i=0;i<conc3.getNumberOfElements();i++)
@@ -138,6 +148,11 @@ FieldTests::testClassField( void )
 	CPPUNIT_ASSERT( conc7.getName().compare("CONC")==0 );
 
 	Field conc77("CONCENTRATION",CELLS,M,2) ;
+	conc77.setInfoOnComponent(0,"compo1");
+	conc77.setInfoOnComponent(1,"compo2");
+	CPPUNIT_ASSERT(conc77.getInfoOnComponent(0).compare("compo1")==0 );
+	CPPUNIT_ASSERT(conc77.getInfoOnComponent(1).compare("compo2")==0 );
+
 	MEDCouplingAutoRefCountObjectPtr<MEDCouplingFieldDouble> f2=conc1.getField();
 	conc77.setFieldByDataArrayDouble(f2->getArray());
     conc77.setName("CONC");
@@ -197,4 +212,16 @@ FieldTests::testClassField( void )
 	conc13-=conc8;
     for (int i=0;i<conc13.getNumberOfElements();i++)
     	CPPUNIT_ASSERT_EQUAL( 0.0, conc13(i) );
+
+    Field conc14=2.*conc1 ;
+    Field conc15=conc1*2. ;
+    Field conc16=conc1/3. ;
+
+    for (int i=0;i<conc14.getNumberOfElements();i++)
+    {
+    	CPPUNIT_ASSERT_EQUAL( conc1(i)*2., conc14(i) );
+    	CPPUNIT_ASSERT_EQUAL( conc1(i)*2., conc15(i) );
+    	CPPUNIT_ASSERT_EQUAL( conc1(i)/3., conc16(i) );
+    }
+
 }

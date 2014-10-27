@@ -52,6 +52,7 @@ def MatrixImul(self,*args):
 def MatrixIdiv(self,*args):
     import _cdmath
     return _cdmath.Matrix____idiv___(self,self, *args)
+
 def SparseMatrixIadd(self,*args):
     import _cdmath
     return _cdmath.SparseMatrix____iadd___(self,self, *args)
@@ -64,6 +65,7 @@ def SparseMatrixImul(self,*args):
 def SparseMatrixIdiv(self,*args):
     import _cdmath
     return _cdmath.SparseMatrix____idiv___(self,self, *args)
+
 def VectorIadd(self,*args):
     import _cdmath
     return _cdmath.Vector____iadd___(self,self, *args)
@@ -637,6 +639,36 @@ def VectorIdiv(self,*args):
 
 %extend Field
 {
+  Field __sub__(const Field& f)
+  {
+    return (*self)-f;
+  }
+
+  Field __add__(const Field& f)
+  {
+    return (*self)+f;
+  }
+
+  Field __mul__(double value)
+  {
+    return (*self)*value;
+  }
+
+  Field __mul__(int value)
+  {
+    return (*self)*value;
+  }
+
+  Field __div__(double value)
+  {
+    return (*self)/value;
+  }
+
+  Field __div__(int value)
+  {
+    return (*self)/value;
+  }
+
   PyObject *___iadd___(PyObject *trueSelf, const Field& f)
   {
     (*self)+=f;
@@ -730,22 +762,27 @@ Field.__iadd__=FieldIadd
 Field.__isub__=FieldIsub
 Field.__imul__=FieldImul
 Field.__idiv__=FieldIdiv
+
 IntTab.__iadd__=IntTabIadd
 IntTab.__isub__=IntTabIsub
 IntTab.__imul__=IntTabImul
 IntTab.__idiv__=IntTabIdiv
+
 DoubleTab.__iadd__=DoubleTabIadd
 DoubleTab.__isub__=DoubleTabIsub
 DoubleTab.__imul__=DoubleTabImul
 DoubleTab.__idiv__=DoubleTabIdiv
+
 Matrix.__iadd__=MatrixIadd
 Matrix.__isub__=MatrixIsub
 Matrix.__imul__=MatrixImul
 Matrix.__idiv__=MatrixIdiv
+
 SparseMatrix.__iadd__=SparseMatrixIadd
 SparseMatrix.__isub__=SparseMatrixIsub
 SparseMatrix.__imul__=SparseMatrixImul
 SparseMatrix.__idiv__=SparseMatrixIdiv
+
 Vector.__iadd__=VectorIadd
 Vector.__isub__=VectorIsub
 Vector.__imul__=VectorImul

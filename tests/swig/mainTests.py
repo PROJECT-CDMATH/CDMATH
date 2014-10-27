@@ -95,6 +95,20 @@ class TestsCDMATHSwig(unittest.TestCase):
             for i in range(conc1n.getNumberOfElements()):
                 conc1n[i,j]=i;
 
+        conc3=Field("CONCENTRATION",CELLS,M,2,1.2) ;
+        for j in range(conc3.getNumberOfComponents()):
+            for i in range(conc3.getNumberOfElements()):
+                conc3[i,j]=-(i+j);
+
+        v1=conc3.getValuesOnComponent(1);
+        v2=conc3.getValuesOnAllComponent(4);
+
+        for i in range(conc3.getNumberOfElements()):
+            self.assertTrue( -(i+1)==v1[i] );
+
+        for j in range(conc3.getNumberOfComponents()):
+            self.assertTrue(-(4+j)==v2[j] );
+
 
         fileNameVTK="champc";
         conc1.writeVTK(fileNameVTK);
@@ -140,6 +154,10 @@ class TestsCDMATHSwig(unittest.TestCase):
             pass
 
         conc6=Field("CONCENTRATION",CELLS,M,2);
+        conc6.setInfoOnComponent(0,"compo1");
+        conc6.setInfoOnComponent(1,"compo2");
+        self.assertTrue(conc6.getInfoOnComponent(0)=="compo1");
+        self.assertTrue(conc6.getInfoOnComponent(1)=="compo2");
         for i in range(conc6.getNumberOfComponents()):
             for j in range(conc6.getNumberOfElements()):
                 conc6[j,i]=i*1.0+2.*j;
@@ -281,6 +299,14 @@ class TestsCDMATHSwig(unittest.TestCase):
         conc13-=conc8;
         for i in range(conc13.getNumberOfElements()):
             self.assertTrue( 0.0 == conc13[i] );
+
+        conc15=conc1*2. ;
+        conc16=conc1/3. ;
+
+        for i in range(conc15.getNumberOfElements()):
+            self.assertTrue( conc1[i]*2.==conc15[i] );
+            self.assertTrue( conc1[i]/3.==conc16[i] );
+        
         return
 
     def testClassCell(self):
@@ -509,6 +535,35 @@ class TestsCDMATHSwig(unittest.TestCase):
 
     def testClassMesh(self):
         import os
+        M1=Mesh(0.0,4.0,4);
+        self.assertTrue( 1==M1.getSpaceDimension() );
+        self.assertTrue( 5==M1.getNumberOfNodes() );
+        self.assertTrue( 4==M1.getNumberOfCells() );
+        self.assertTrue( 5==M1.getNumberOfFaces() );
+        self.assertTrue( 0.==M1.getFace(0).x() );
+        self.assertTrue( 0.==M1.getNode(0).x() );
+        self.assertTrue( 1.==M1.getFace(1).x() );
+        self.assertTrue( 1.==M1.getNode(1).x() );
+        self.assertTrue( 2.==M1.getFace(2).x() );
+        self.assertTrue( 2.==M1.getNode(2).x() );
+        self.assertTrue( 3.==M1.getFace(3).x() );
+        self.assertTrue( 3.==M1.getNode(3).x() );
+        self.assertTrue( 4.==M1.getFace(4).x() );
+        self.assertTrue( 4.==M1.getNode(4).x() );
+        x11=M1.getCell(1).x();
+        y11=M1.getCell(1).y();
+        self.assertTrue( x11==1.5 );
+        self.assertTrue( y11==0.0 );
+        M1.setGroupAtFaceByCoords(0.,0.,0.,1.E-14,"LeftEdge") ;
+        M1.setGroupAtFaceByCoords(4.,0.,0.,1.E-14,"RightEdge") ;
+        self.assertTrue(M1.getFace(0).isBorder()==True);
+        self.assertTrue(M1.getFace(1).isBorder()==False);
+        self.assertTrue(M1.getFace(2).isBorder()==False);
+        self.assertTrue(M1.getFace(3).isBorder()==False);
+        self.assertTrue(M1.getFace(4).isBorder()==True);
+        self.assertTrue(M1.getNamesOfGroups()[0]=="LeftEdge");
+        self.assertTrue(M1.getNamesOfGroups()[1]=="RightEdge");
+
         M1=Mesh(0.0,1.0,4);
         self.assertTrue( 1==M1.getSpaceDimension() );
         self.assertTrue( 5==M1.getNumberOfNodes() );
@@ -897,6 +952,77 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue( 16.==A5[3,3] );
     
         self.assertTrue( 0.==A5.determinant() );
+
+    def testClassVector(self):
+        A=Vector(2);
+        A[0]=1.;
+        A[1]=2.;
+        self.assertTrue( 1.0==A[0] );
+        self.assertTrue( 2.0==A[1] );
+        self.assertTrue( sqrt(5.)==A.norm() );
+
+        B=A;
+        self.assertTrue( 1.0==B[0] );
+        self.assertTrue( 2.0==B[1] );
+
+        C=A+B;
+        self.assertTrue( 2.0==C[0] );
+        self.assertTrue( 4.0==C[1] );
+
+        val=A*C;
+        self.assertTrue( 10.0==val );
+
+        D=A-B;
+        self.assertTrue( 0.0==D[0] );
+        self.assertTrue( 0.0==D[1] );
+
+        E=A*2;
+        self.assertTrue( 2.0==E[0] );
+        self.assertTrue( 4.0==E[1] );
+
+        E/=2;
+        self.assertTrue( 1.0==E[0] );
+        self.assertTrue( 2.0==E[1] );
+
+        E=A*2;
+        self.assertTrue( 2.0, E[0] );
+        self.assertTrue( 4.0, E[1] );
+
+        F=A/2;
+        self.assertTrue( A[0]/2==F[0] );
+        self.assertTrue( A[1]/2==F[1] );
+    
+        F*=2;
+        self.assertTrue( A[0]==F[0] );
+        self.assertTrue( A[1]==F[1] );
+        a=A[0];
+        self.assertTrue( A[0]==a );
+
+#         v3=Vector(4);
+#         v3[0]=1;
+#         v3[1]=2;
+#         v3[2]=3;
+#         v3[3]=4;
+# 
+#         v4=Vector(3);
+#         v4[0]=1.;
+#         v4[1]=2.;
+#         v4[2]=3.;
+# 
+#         v5=v3^v4;
+# 
+#         self.assertTrue( 1.==v5[0,0] );
+#         self.assertTrue( 2.==v5[0,1] );
+#         self.assertTrue( 3.==v5[0,2] );
+#         self.assertTrue( 2.==v5[1,0] );
+#         self.assertTrue( 4.==v5[1,1] );
+#         self.assertTrue( 6.==v5[1,2] );
+#         self.assertTrue( 3.==v5[2,0] );
+#         self.assertTrue( 6.==v5[2,1] );
+#         self.assertTrue( 9.==v5[2,2] );
+#         self.assertTrue( 4.==v5[3,0] );
+#         self.assertTrue( 8.==v5[3,1] );
+#         self.assertTrue( 12.==v5[3,2] );
 
     def testClassLinearSolver(self):
         A=Matrix(2,2);

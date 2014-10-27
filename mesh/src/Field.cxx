@@ -114,6 +114,18 @@ Field::getNormEuclidean() const
     return norm;
 }
 
+string
+Field::getInfoOnComponent(int icomp) const
+{
+	return _field->getArray()->getInfoOnComponent(icomp);
+}
+
+void
+Field::setInfoOnComponent(int icomp, string nameCompo)
+{
+	_field.retn()->getArray()->setInfoOnComponent(icomp,nameCompo);
+}
+
 //----------------------------------------------------------------------
 Field::Field( const Field & f )
 //----------------------------------------------------------------------
@@ -293,7 +305,7 @@ Field
 Field::operator+ ( const Field& f ) const
 //----------------------------------------------------------------------
 {
-    Field fres("Sum Field",f.getTypeOfField(),f.getMesh(),f.getNumberOfComponents(),f.getTime());
+    Field fres(getName(),f.getTypeOfField(),f.getMesh(),f.getNumberOfComponents(),f.getTime());
     int nbComp=f.getNumberOfComponents();
     int nbElem=f.getNumberOfElements();
     for (int ielem=0 ; ielem<nbElem; ielem++)
@@ -307,7 +319,7 @@ Field
 Field::operator- ( const Field& f ) const
 //----------------------------------------------------------------------
 {
-    Field fres("Diff Field",f.getTypeOfField(),f.getMesh(),f.getNumberOfComponents(),f.getTime());
+    Field fres(getName(),f.getTypeOfField(),f.getMesh(),f.getNumberOfComponents(),f.getTime());
     int nbComp=f.getNumberOfComponents();
     int nbElem=f.getNumberOfElements();
     for (int ielem=0 ; ielem<nbElem; ielem++)
@@ -532,4 +544,64 @@ Field::writeMED ( const std::string fileName, bool fromScratch ) const
         MEDLoader::WriteField(fname.c_str(),_field,fromScratch);
     else
         MEDLoader::WriteFieldUsingAlreadyWrittenMesh(fname.c_str(),_field);
+}
+
+Field
+operator* (double value , const Field& field )
+{
+    Field fres(field.getName(),field.getTypeOfField(),field.getMesh(),field.getNumberOfComponents(),field.getTime());
+    int nbComp=field.getNumberOfComponents();
+    int nbElem=field.getNumberOfElements();
+    for (int ielem=0 ; ielem<nbElem; ielem++)
+        for (int jcomp=0 ; jcomp<nbComp ; jcomp++)
+            fres(ielem, jcomp)=value*field(ielem, jcomp);
+    return fres;
+}
+
+Field
+operator* (const Field& field, double value )
+{
+    Field fres(field.getName(),field.getTypeOfField(),field.getMesh(),field.getNumberOfComponents(),field.getTime());
+    int nbComp=field.getNumberOfComponents();
+    int nbElem=field.getNumberOfElements();
+    for (int ielem=0 ; ielem<nbElem; ielem++)
+        for (int jcomp=0 ; jcomp<nbComp ; jcomp++)
+            fres(ielem, jcomp)=value*field(ielem, jcomp);
+    return fres;
+}
+
+Field operator/ (const Field& field, double value)
+{
+    Field fres(field.getName(),field.getTypeOfField(),field.getMesh(),field.getNumberOfComponents(),field.getTime());
+    int nbComp=field.getNumberOfComponents();
+    int nbElem=field.getNumberOfElements();
+    for (int ielem=0 ; ielem<nbElem; ielem++)
+        for (int jcomp=0 ; jcomp<nbComp ; jcomp++)
+            fres(ielem, jcomp)=field(ielem, jcomp)/value;
+    return fres;
+}
+
+Vector
+Field::getValuesOnAllComponent(int elem) const
+{
+	Vector v(getNumberOfComponents());
+	for(int i=0;i<getNumberOfComponents();i++)
+		v[i]=(*this)(elem,i);
+	return v;
+}
+
+Vector
+Field::getValuesOnComponent(int compo) const
+{
+	Vector v(getNumberOfElements());
+	for(int i=0;i<getNumberOfElements();i++)
+		v[i]=(*this)(i,compo);
+	return v;
+}
+
+std::ostream& operator<<(std::ostream& out, const Field& field )
+{
+	cout << "Field " << field.getName() << " : " << endl ;
+	out<< field.getField().retn()->getArray()->repr();
+	return out;
 }

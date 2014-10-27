@@ -111,19 +111,3 @@ GenericMatrix::view() const
 	cout<<endl;
 	}
 }
-
-ostream&
-operator<<(ostream& out, const GenericMatrix& matrix)
-{
-	for (int i=0; i<matrix.getNumberOfRows();i++)
-	{
-		for (int j=0;j<matrix.getNumberOfColumns(); j++)
-		{
-			out.width(6);
-			out.precision(6);
-			out<<"\t"<<matrix(i,j);
-		}
-		out<<endl;
-	}
-	return out;
-}

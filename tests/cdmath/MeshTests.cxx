@@ -22,11 +22,36 @@ void
 MeshTests::testClassMesh( void )
 //----------------------------------------------------------------------
 {
-    Mesh M1(0.0,1.0,4);
+    Mesh M1(0.0,4.0,4);
     CPPUNIT_ASSERT_EQUAL( 1, M1.getSpaceDimension() );
     CPPUNIT_ASSERT_EQUAL( 5, M1.getNumberOfNodes() );
     CPPUNIT_ASSERT_EQUAL( 4, M1.getNumberOfCells() );
     CPPUNIT_ASSERT_EQUAL( 5, M1.getNumberOfFaces() );
+    CPPUNIT_ASSERT_EQUAL( 0., M1.getFace(0).x() );
+    CPPUNIT_ASSERT_EQUAL( 0., M1.getNode(0).x() );
+    CPPUNIT_ASSERT_EQUAL( 1., M1.getFace(1).x() );
+    CPPUNIT_ASSERT_EQUAL( 1., M1.getNode(1).x() );
+    CPPUNIT_ASSERT_EQUAL( 2., M1.getFace(2).x() );
+    CPPUNIT_ASSERT_EQUAL( 2., M1.getNode(2).x() );
+    CPPUNIT_ASSERT_EQUAL( 3., M1.getFace(3).x() );
+    CPPUNIT_ASSERT_EQUAL( 3., M1.getNode(3).x() );
+    CPPUNIT_ASSERT_EQUAL( 4., M1.getFace(4).x() );
+    CPPUNIT_ASSERT_EQUAL( 4., M1.getNode(4).x() );
+    double x11=M1.getCells()[1].x();
+    double y11=M1.getCells()[1].y();
+    CPPUNIT_ASSERT_EQUAL( x11, 1.5 );
+    CPPUNIT_ASSERT_EQUAL( y11, 0.0 );
+    M1.setGroupAtFaceByCoords(0.,0.,0.,1.E-14,"LeftEdge") ;
+    M1.setGroupAtFaceByCoords(4.,0.,0.,1.E-14,"RightEdge") ;
+    CPPUNIT_ASSERT(M1.getFace(0).isBorder()==true);
+    CPPUNIT_ASSERT(M1.getFace(1).isBorder()==false);
+    CPPUNIT_ASSERT(M1.getFace(2).isBorder()==false);
+    CPPUNIT_ASSERT(M1.getFace(3).isBorder()==false);
+    CPPUNIT_ASSERT(M1.getFace(4).isBorder()==true);
+    CPPUNIT_ASSERT(M1.getNamesOfGroups()[0].compare("LeftEdge")==0);
+    CPPUNIT_ASSERT(M1.getNamesOfGroups()[1].compare("RightEdge")==0);
+
+
     double xinf=0.0;
     double xsup=4.0;
     double yinf=0.0;

@@ -89,7 +89,7 @@ public:
 
     friend SparseMatrix operator*(const SparseMatrix& M, const SparseMatrix& N) ;
 
-    friend std::ostream& operator<<(std::ostream& out, const SparseMatrix& SparseMatrix ) ;
+    friend std::ostream& operator<<(std::ostream& out, const SparseMatrix& matrix ) ;
 
 private:
     void replaceValue(int i,int j,double value) ;

@@ -223,6 +223,8 @@ class Mesh
 
     void setGroupAtPlan(double value, int direction, double eps, std::string groupName) ;
 
+    void setGroupAtFaceByCoords(double x, double y, double z, double eps, std::string groupName) ;
+
     int getIndexFacePeriodic(int indexFace) const ;
 
     IntTab getIndexFacePeriodic( void ) const ;

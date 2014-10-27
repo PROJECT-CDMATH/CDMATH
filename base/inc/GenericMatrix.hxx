@@ -62,8 +62,6 @@ class GenericMatrix
 
     void view() const ;
 
-    friend std::ostream& operator<<(std::ostream& out, const GenericMatrix& matrix ) ;
-
     protected: //----------------------------------------------------------------
 
     /*

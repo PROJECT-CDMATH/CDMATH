@@ -162,6 +162,26 @@ Mesh::readMeshMed( const std::string filename)
 }
 
 void
+Mesh::setGroupAtFaceByCoords(double x, double y, double z, double eps, std::string groupName)
+{
+    int nbFace=getNumberOfFaces();
+    bool flag=false;
+    for (int iface=0;iface<nbFace;iface++)
+    {
+        double FX=_faces[iface].x();
+        double FY=_faces[iface].y();
+        double FZ=_faces[iface].z();
+        if (abs(FX-x)<eps && abs(FY-y)<eps && abs(FZ-z)<eps)
+        {
+            _faces[iface].setGroupName(groupName);
+            flag=true;
+        }
+    }
+    if (flag)
+        _groups.push_back(groupName);
+}
+
+void
 Mesh::setGroupAtPlan(double value, int direction, double eps, std::string groupName)
 {
     int nbFace=getNumberOfFaces();
@@ -169,7 +189,7 @@ Mesh::setGroupAtPlan(double value, int direction, double eps, std::string groupN
     for (int iface=0;iface<nbFace;iface++)
     {
         double cord=_faces[iface].getBarryCenter()[direction];
-        if (direction==direction && abs(cord-value)<eps)
+        if (abs(cord-value)<eps)
         {
             _faces[iface].setGroupName(groupName);
             flag=true;
@@ -494,8 +514,12 @@ Mesh::setMesh( void )
 Mesh::Mesh( double xinf, double xsup, int nx )
 //----------------------------------------------------------------------
 {
-    // il manque test xsup siinf
-    double dx = (xsup - xinf)/nx ;
+	if(nx<=0)
+	    throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : nx <= 0");
+	if(xinf>=xsup)
+	    throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : xinf <= xsup");
+
+	double dx = (xsup - xinf)/nx ;
 
     _dim = 1 ;
     _xMin=xinf;
@@ -590,8 +614,8 @@ Mesh::Mesh( double xinf, double xsup, int nx )
         Node vi( nbCells, nbFaces, p ) ;
         int nbVertices=1;
         /* provisoire !!!!!!!!!!!!*/
-        Point pf(0.0,0.0,0.0) ;
-        Face fi( nbVertices, nbCells, 0.0, pf, 0., 0., 0. ) ;
+//        Point pf(0.0,0.0,0.0) ;
+        Face fi( nbVertices, nbCells, 0.0, p, 0., 0., 0. ) ;
 
         for( int el=0;el<nbCells;el++ )
             vi.addCellId(el,workc[el]) ;
@@ -622,10 +646,10 @@ Mesh::Mesh( double xinf, double xsup, int nx )
 Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny)
 //----------------------------------------------------------------------
 {
-
-// Anouar a faire
-//  if ( xinf >= xsup and yinf >= ysup )
-// exit probleme
+	if(nx<=0 || ny<=0)
+	    throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : nx <= 0 or ny <= 0");
+	if(xinf>=xsup || yinf>=ysup)
+	    throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : xinf <= xsup or yinf <= ysup");
     _xMin=xinf;
     _xSup=xsup;
     _yMin=yinf;
@@ -676,10 +700,10 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny)
 Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz)
 //----------------------------------------------------------------------
 {
-    // Anouar a faire
-    //  if ( xinf >= xsup and yinf >= ysup )
-    // exit probleme
-
+	if(nx<=0 || ny<=0 || nz<=0)
+	    throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : nx <= 0 or ny <= 0 or nz <= 0");
+	if(xinf>=xsup || yinf>=ysup)
+	    throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : xinf <= xsup or yinf <= ysup or zinf <= zsup");
     _dim=3;
     _xMin=xinf;
     _xSup=xsup;

@@ -62,5 +62,31 @@ VectorTests::testClassVector( void )
 	CPPUNIT_ASSERT_EQUAL( A(1), F(1) );
 	double a=A(0);
 	CPPUNIT_ASSERT_EQUAL( A(0), a );
+
+	Vector v3(4);
+	v3(0)=1;
+	v3(1)=2;
+	v3(2)=3;
+	v3(3)=4;
+
+	Vector v4(3);
+	v4(0)=1.;
+	v4(1)=2.;
+	v4(2)=3.;
+
+	Matrix v5=v3^v4;
+
+	CPPUNIT_ASSERT_EQUAL( 1., v5(0,0) );
+	CPPUNIT_ASSERT_EQUAL( 2., v5(0,1) );
+	CPPUNIT_ASSERT_EQUAL( 3., v5(0,2) );
+	CPPUNIT_ASSERT_EQUAL( 2., v5(1,0) );
+	CPPUNIT_ASSERT_EQUAL( 4., v5(1,1) );
+	CPPUNIT_ASSERT_EQUAL( 6., v5(1,2) );
+	CPPUNIT_ASSERT_EQUAL( 3., v5(2,0) );
+	CPPUNIT_ASSERT_EQUAL( 6., v5(2,1) );
+	CPPUNIT_ASSERT_EQUAL( 9., v5(2,2) );
+	CPPUNIT_ASSERT_EQUAL( 4., v5(3,0) );
+	CPPUNIT_ASSERT_EQUAL( 8., v5(3,1) );
+	CPPUNIT_ASSERT_EQUAL( 12., v5(3,2) );
 }
 

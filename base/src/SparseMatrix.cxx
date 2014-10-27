@@ -216,6 +216,7 @@ SparseMatrix::SparseMatrix(const SparseMatrix& matrix)
 	_indexRows = matrix.getIndexRows();
 	_indexColumns = matrix.getIndexColumns();
 	_values = matrix.getValues();
+	_isSparseMatrix=matrix.isSparseMatrix();
 }
 
 //----------------------------------------------------------------------
@@ -231,6 +232,7 @@ SparseMatrix::operator= ( const SparseMatrix& matrix )
 	_indexRows = matrix.getIndexRows();
 	_indexColumns = matrix.getIndexColumns();
 	_values = matrix.getValues();
+	_isSparseMatrix=matrix.isSparseMatrix();
     return *this;
 }
 
@@ -441,4 +443,20 @@ SparseMatrix::determinant() const
 	   }
 	   return res;
 	}
+}
+
+ostream&
+operator<<(ostream& out, const SparseMatrix& matrix)
+{
+	for (int i=0; i<matrix.getNumberOfRows();i++)
+	{
+		for (int j=0;j<matrix.getNumberOfColumns(); j++)
+		{
+			out.width(6);
+			out.precision(6);
+			out<<"\t"<<matrix(i,j);
+		}
+		out<<endl;
+	}
+	return out;
 }
