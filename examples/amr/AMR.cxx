@@ -15,11 +15,13 @@
 #include <BoxSplittingOptions.hxx>
 
 #include "CdmathException.hxx"
+
 #include "AMR.hxx"
 
 using namespace ParaMEDMEM;
 using namespace INTERP_KERNEL;
 using namespace std;
+
 
 AMR::AMR(int maxLevels,
          int frequencyOfRefinement,

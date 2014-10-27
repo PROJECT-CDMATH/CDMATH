@@ -13,9 +13,9 @@
 #include "AMR.hxx"
 #include "HeatSolver.hxx"
 
-
 using namespace ParaMEDMEM;
 using namespace std;
+
 
 HeatSolver::HeatSolver(double finalTime,
                        int maximumNumberbOfIter,

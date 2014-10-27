@@ -5,8 +5,6 @@
  *      Author: mekkas
  */
 
-#include "AdvectionSolver.hxx"
-
 #include <MEDCouplingFieldDouble.hxx>
 #include <MEDCouplingIMesh.hxx>
 #include <MEDCouplingCartesianAMRMesh.hxx>
@@ -14,9 +12,11 @@
 
 #include "AMR.hxx"
 
+#include "AdvectionSolver.hxx"
 
 using namespace ParaMEDMEM;
 using namespace std;
+
 
 AdvectionSolver::AdvectionSolver(double finalTime,
                                  int maximumNumberbOfIter,
@@ -450,7 +450,7 @@ AdvectionSolver::advancingTimeStep(
 
     std::copy(yyWithGhost_F->getArray()->getPointer(),yyWithGhost_F->getArray()->getPointer()+yyWithGhost_F->getArray()->getNumberOfTuples(),yyWithGhost->getPointer());
     yyWithGhost_F->decrRef();
-//  velocity->decrRef();
+    velocity->decrRef();
     m1->decrRef();
     return dt;
 }

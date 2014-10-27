@@ -2,15 +2,14 @@
 // Name        : Solver.cpp
 // Author      : 
 // Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
+// Copyright   : CDMATH group
+// Description : Computation with Adaptive Mesh Refinement
 //============================================================================
 
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <assert.h>
-using namespace std;
 
 #include <MEDCouplingCartesianAMRMesh.hxx>
 #include <MEDCouplingFieldDouble.hxx>
@@ -21,7 +20,10 @@ using namespace std;
 #include "AMR.hxx"
 #include "AdvectionSolver.hxx"
 #include "HeatSolver.hxx"
+
 using namespace ParaMEDMEM;
+using namespace std;
+
 
 int main() {
 
