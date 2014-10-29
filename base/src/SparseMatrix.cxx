@@ -8,12 +8,15 @@
 #include "SparseMatrix.hxx"
 #include "CdmathException.hxx"
 
+#include <cstring>
+
 using namespace std;
 
 //----------------------------------------------------------------------
 SparseMatrix::SparseMatrix()
 //----------------------------------------------------------------------
 {
+	_effectNumberOfNonZeros=0;
 	_numberOfColumns=0;
 	_numberOfRows=0;
 	_numberOfNonZeros=0;
@@ -27,6 +30,7 @@ SparseMatrix::SparseMatrix( int numberOfRows, int numberOfColumns):_blocNNZ(5)
 //----------------------------------------------------------------------
 {
 	_flagNNZ=false;
+	_effectNumberOfNonZeros=0;
 	_numberOfRows = numberOfRows;
 	_numberOfColumns=numberOfColumns;
 	_numberOfNonZeros=0;
@@ -40,6 +44,7 @@ SparseMatrix::SparseMatrix( int numberOfRows, int numberOfColumns):_blocNNZ(5)
 SparseMatrix::SparseMatrix( int numberOfRows, int numberOfColumns, int nnz )
 //----------------------------------------------------------------------
 {
+	_effectNumberOfNonZeros=0;
 	_flagNNZ=true;
 	_blocNNZ=nnz;
 	_numberOfRows = numberOfRows;
@@ -125,8 +130,16 @@ SparseMatrix::insertValue( int i, int j, double value )
 	for(int l=i;l<_numberOfRows;l++)
 		_indexRows[l+1]++;
 	int index = pos+k;
+
+	if(_effectNumberOfNonZeros-index>0)
+	{
+		memmove(&(_indexColumns.getPointer()[index+1]),&(_indexColumns.getPointer()[index]),(_effectNumberOfNonZeros-index)*sizeof(int));
+		memmove(&(_values.getPointer()[index+1]),&(_values.getPointer()[index]),(_effectNumberOfNonZeros-index)*sizeof(double));
+	}
+
 	_indexColumns[index] = j+1;
 	_values[index]=value;
+	_effectNumberOfNonZeros++;
 }
 
 //----------------------------------------------------------------------

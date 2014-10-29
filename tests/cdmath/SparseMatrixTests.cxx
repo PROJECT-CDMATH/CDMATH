@@ -159,5 +159,25 @@ SparseMatrixTests::testClassSparseMatrix( void )
 	CPPUNIT_ASSERT_EQUAL( 12., A5(3,2) );
 	CPPUNIT_ASSERT_EQUAL( 16., A5(3,3) );
 	CPPUNIT_ASSERT_EQUAL( 0., A5.determinant() );
+
+	SparseMatrix AA(4,4);
+
+	AA.setValue(1,1,1.);
+	AA.setValue(3,3,3.);
+	AA.setValue(2,2,2.);
+
+	CPPUNIT_ASSERT_EQUAL( 1., AA(1,1) );
+	CPPUNIT_ASSERT_EQUAL( 2., AA(2,2) );
+	CPPUNIT_ASSERT_EQUAL( 3., AA(3,3) );
+
+	SparseMatrix BB(4,4,3);
+
+	BB.setValue(1,1,1.);
+	BB.setValue(3,3,3.);
+	BB.setValue(2,2,2.);
+
+	CPPUNIT_ASSERT_EQUAL( 1., BB(1,1) );
+	CPPUNIT_ASSERT_EQUAL( 2., BB(2,2) );
+	CPPUNIT_ASSERT_EQUAL( 3., BB(3,3) );
 }
 

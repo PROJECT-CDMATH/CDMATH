@@ -94,7 +94,7 @@ public:
 private:
     void replaceValue(int i,int j,double value) ;
     void insertValue(int i,int j,double value) ;
-
+    int _effectNumberOfNonZeros;
 protected:
 	bool _flagNNZ;
 	int _blocNNZ;

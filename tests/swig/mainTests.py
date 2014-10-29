@@ -966,6 +966,26 @@ class TestsCDMATHSwig(unittest.TestCase):
     
         self.assertTrue( 0.==A5.determinant() );
 
+        AA=SparseMatrix(4,4);
+
+        AA.setValue(1,1,1.);
+        AA.setValue(3,3,3.);
+        AA.setValue(2,2,2.);
+
+        self.assertTrue( 1.==AA(1,1) );
+        self.assertTrue( 2.==AA(2,2) );
+        self.assertTrue( 3.==AA(3,3) );
+    
+        BB=SparseMatrix(4,4,3);
+    
+        BB.setValue(1,1,1.);
+        BB.setValue(3,3,3.);
+        BB.setValue(2,2,2.);
+
+        self.assertTrue( 1.==BB(1,1) );
+        self.assertTrue( 2.==BB(2,2) );
+        self.assertTrue( 3.==BB(3,3) );
+
     def testClassVector(self):
         A=Vector(2);
         A[0]=1.;
