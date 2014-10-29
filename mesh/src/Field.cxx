@@ -38,21 +38,38 @@ Field::~Field( void )
 Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh, int numberOfComponents, double time)
 {
     _mesh=mesh ;
+    MEDCouplingUMesh* mu=mesh.getMEDCouplingMesh()->buildUnstructured();
     DataArrayDouble *array=DataArrayDouble::New();
     _typeField=type;
     if (type==CELLS)
     {
         _field=MEDCouplingFieldDouble::New(ON_CELLS);
         array->alloc(mesh.getNumberOfCells(),numberOfComponents);
-    }
-    if (type==NODES)
+        _field->setMesh(mu);
+    }else if(type==NODES)
     {
         _field=MEDCouplingFieldDouble::New(ON_NODES);
         array->alloc(mesh.getNumberOfNodes(),numberOfComponents);
-    }
+        _field->setMesh(mu);
+    }else if(type==FACES)
+    {
+        _field=MEDCouplingFieldDouble::New(ON_CELLS);
+        array->alloc(mesh.getNumberOfFaces(),numberOfComponents);
+        DataArrayInt *desc=DataArrayInt::New();
+        DataArrayInt *descI=DataArrayInt::New();
+        DataArrayInt *revDesc=DataArrayInt::New();
+        DataArrayInt *revDescI=DataArrayInt::New();
+        MEDCouplingUMesh *m3=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
+        _field->setMesh(m3);
+        desc->decrRef();
+        descI->decrRef();
+        revDesc->decrRef();
+        revDescI->decrRef();
+        m3->decrRef();
+    }else
+        throw CdmathException("Type of Field::Field() is not compatible");
+
     _field->setName(fieldName.c_str()) ;
-    MEDCouplingUMesh* mu=mesh.getMEDCouplingMesh()->buildUnstructured();
-    _field->setMesh(mu);
     _field->setArray(array);
     _field->setTime(time,0,0);
     array->decrRef();
@@ -62,21 +79,38 @@ Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh, int 
 Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh, int numberOfComponents)
 {
     _mesh=mesh ;
+    MEDCouplingUMesh* mu=mesh.getMEDCouplingMesh()->buildUnstructured();
     DataArrayDouble *array=DataArrayDouble::New();
     _typeField=type;
     if (type==CELLS)
     {
         _field=MEDCouplingFieldDouble::New(ON_CELLS);
         array->alloc(mesh.getNumberOfCells(),numberOfComponents);
-    }
-    if (type==NODES)
+        _field->setMesh(mu);
+    }else if(type==NODES)
     {
         _field=MEDCouplingFieldDouble::New(ON_NODES);
         array->alloc(mesh.getNumberOfNodes(),numberOfComponents);
-    }
+        _field->setMesh(mu);
+    }else if(type==FACES)
+    {
+        _field=MEDCouplingFieldDouble::New(ON_CELLS);
+        array->alloc(mesh.getNumberOfFaces(),numberOfComponents);
+        DataArrayInt *desc=DataArrayInt::New();
+        DataArrayInt *descI=DataArrayInt::New();
+        DataArrayInt *revDesc=DataArrayInt::New();
+        DataArrayInt *revDescI=DataArrayInt::New();
+        MEDCouplingUMesh *m3=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
+        _field->setMesh(m3);
+        desc->decrRef();
+        descI->decrRef();
+        revDesc->decrRef();
+        revDescI->decrRef();
+        m3->decrRef();
+    }else
+        throw CdmathException("Type of Field::Field() is not compatible");
+
     _field->setName(fieldName.c_str()) ;
-    MEDCouplingUMesh* mu=mesh.getMEDCouplingMesh()->buildUnstructured();
-    _field->setMesh(mu);
     _field->setArray(array);
     _field->setTime(0.0,0,0);
     array->decrRef();
@@ -86,21 +120,38 @@ Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh, int 
 Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh)
 {
     _mesh=mesh ;
+    MEDCouplingUMesh* mu=mesh.getMEDCouplingMesh()->buildUnstructured();
     DataArrayDouble *array=DataArrayDouble::New();
     _typeField=type;
     if (type==CELLS)
     {
         _field=MEDCouplingFieldDouble::New(ON_CELLS);
         array->alloc(mesh.getNumberOfCells(),1);
-    }
-    if (type==NODES)
+        _field->setMesh(mu);
+    }else if(type==NODES)
     {
         _field=MEDCouplingFieldDouble::New(ON_NODES);
         array->alloc(mesh.getNumberOfNodes(),1);
-    }
+        _field->setMesh(mu);
+    }else if(type==FACES)
+    {
+        _field=MEDCouplingFieldDouble::New(ON_CELLS);
+        array->alloc(mesh.getNumberOfFaces(),1);
+        DataArrayInt *desc=DataArrayInt::New();
+        DataArrayInt *descI=DataArrayInt::New();
+        DataArrayInt *revDesc=DataArrayInt::New();
+        DataArrayInt *revDescI=DataArrayInt::New();
+        MEDCouplingUMesh *m3=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
+        _field->setMesh(m3);
+        desc->decrRef();
+        descI->decrRef();
+        revDesc->decrRef();
+        revDescI->decrRef();
+        m3->decrRef();
+    }else
+        throw CdmathException("Type of Field::Field() is not compatible");
+
     _field->setName(fieldName.c_str()) ;
-    MEDCouplingUMesh* mu=mesh.getMEDCouplingMesh()->buildUnstructured();
-    _field->setMesh(mu);
     _field->setArray(array);
     _field->setTime(0.0,0,0);
     array->decrRef();

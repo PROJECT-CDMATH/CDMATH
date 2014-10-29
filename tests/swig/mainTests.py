@@ -307,6 +307,19 @@ class TestsCDMATHSwig(unittest.TestCase):
             self.assertTrue( conc1[i]*2.==conc15[i] );
             self.assertTrue( conc1[i]/3.==conc16[i] );
         
+        MF=Mesh(0.0,1.0,3,0.,1.,3);
+        concF1=Field("CONCENTRATION",FACES,MF) ;
+        for j in range(concF1.getNumberOfComponents()):
+            for i in range(concF1.getNumberOfElements()):
+                concF1[i,j]=i+j;
+
+        for j in range(concF1.getNumberOfComponents()):
+            for i in range(concF1.getNumberOfElements()):
+                self.assertTrue( i+j== concF1[i,j] );
+                
+        self.assertTrue( 1==concF1.getNumberOfComponents() );
+        self.assertTrue( 0.0==concF1.getTime() );
+        self.assertTrue( 24==concF1.getNumberOfElements() );
         return
 
     def testClassCell(self):

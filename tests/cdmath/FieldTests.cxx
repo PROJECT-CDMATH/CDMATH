@@ -224,4 +224,16 @@ FieldTests::testClassField( void )
     	CPPUNIT_ASSERT_EQUAL( conc1(i)/3., conc16(i) );
     }
 
+	Mesh MF(0.0,1.0,3,0.,1.,3);
+	Field concF1("CONCENTRATION",FACES,MF) ;
+    for (int j=0;j<concF1.getNumberOfComponents();j++)
+    	for (int i=0;i<concF1.getNumberOfElements();i++)
+    		concF1(i,j)=i+j;
+
+    for (int j=0;j<concF1.getNumberOfComponents();j++)
+    	for (int i=0;i<concF1.getNumberOfElements();i++)
+    		CPPUNIT_ASSERT_EQUAL( double(i+j), concF1(i,j) );
+	CPPUNIT_ASSERT_EQUAL( 1, concF1.getNumberOfComponents() );
+	CPPUNIT_ASSERT_EQUAL( 0.0, concF1.getTime() );
+	CPPUNIT_ASSERT_EQUAL( 24, concF1.getNumberOfElements() );
 }
