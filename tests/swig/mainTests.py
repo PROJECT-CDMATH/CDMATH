@@ -101,7 +101,7 @@ class TestsCDMATHSwig(unittest.TestCase):
                 conc3[i,j]=-(i+j);
 
         v1=conc3.getValuesOnComponent(1);
-        v2=conc3.getValuesOnAllComponent(4);
+        v2=conc3.getValuesOnAllComponents(4);
 
         for i in range(conc3.getNumberOfElements()):
             self.assertTrue( -(i+1)==v1[i] );

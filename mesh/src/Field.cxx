@@ -633,7 +633,7 @@ Field operator/ (const Field& field, double value)
 }
 
 Vector
-Field::getValuesOnAllComponent(int elem) const
+Field::getValuesOnAllComponents(int elem) const
 {
 	Vector v(getNumberOfComponents());
 	for(int i=0;i<getNumberOfComponents();i++)

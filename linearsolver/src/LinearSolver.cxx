@@ -159,23 +159,25 @@ LinearSolver::setMatrix(const GenericMatrix& matrix)
     {
     	const SparseMatrix& Smat = dynamic_cast<const SparseMatrix&>(matrix);
 //        int numberOfNonZeros=Smat.getNumberOfNonZeros();
-        MatCreateSeqAIJ(MPI_COMM_SELF,numberOfRows,numberOfColumns,PETSC_DEFAULT,0,&_mat);
+	PetscInt    nnz[numberOfRows];
         IntTab iRows=Smat.getIndexRows();
-		IntTab iColumns=Smat.getIndexColumns();
+	IntTab iColumns=Smat.getIndexColumns();
+        for (int i=0;i<numberOfRows;i++)
+            nnz[i]=iRows[i+1]-iRows[i];
+        MatCreateSeqAIJ(MPI_COMM_SELF,numberOfRows,numberOfColumns,PETSC_DEFAULT,nnz,&_mat);
         DoubleTab values=Smat.getValues();
         for (int i=0;i<numberOfRows;i++)
         {
-        	int nbval=iRows[i+1]-iRows[i];
-        	PetscInt    cols[nbval];
-        	PetscScalar    vals[nbval];
-        	for (int j=0;j<nbval;j++)
+        	PetscInt    cols[nnz[i]];
+        	PetscScalar    vals[nnz[i]];
+        	for (int j=0;j<nnz[i];j++)
         	{
             	cols[j]=iColumns[iRows[i]+j]-1;
             	vals[j]=values[iRows[i]+j];
         	}
         	MatSetValues(_mat,1,
         				&i,
-    					nbval,
+    					nnz[i],
     					cols,
     					vals,INSERT_VALUES);
         }

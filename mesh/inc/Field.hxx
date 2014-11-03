@@ -118,7 +118,7 @@ class Field
 
     Vector getValuesOnComponent(int compo) const ;
 
-    Vector getValuesOnAllComponent(int elem) const ;
+    Vector getValuesOnAllComponents(int elem) const ;
 
     int getSpaceDimension( void ) const;
 

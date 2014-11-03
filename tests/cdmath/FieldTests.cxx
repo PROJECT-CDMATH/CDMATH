@@ -90,7 +90,7 @@ FieldTests::testClassField( void )
     		conc3(i,j)=-(i+j);
 
 	Vector v1=conc3.getValuesOnComponent(1);
-	Vector v2=conc3.getValuesOnAllComponent(4);
+	Vector v2=conc3.getValuesOnAllComponents(4);
 
 	for (int i=0;i<conc3.getNumberOfElements();i++)
 		CPPUNIT_ASSERT_EQUAL( double(-(i+1)), v1(i) );
