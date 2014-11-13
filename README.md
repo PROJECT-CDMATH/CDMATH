@@ -18,6 +18,7 @@ Set environment for the compilation of CDMATH
 ---------------------------------------------
 Dependencies. The following packages list is sufficient on Ubuntu 14.04:
  - `cmake`
+ - `g++` or another C++ compiler
  - `libhdf5-dev`
  - `petsc-dev` (mandatorily version 3.5 or more recent). This should already include `libopenmpi-dev`, which is necessary if you use the compilation option `-DMEDFILE_USE_MPI=ON`.
  - `python-dev` and `swig`, if you want to generate Python executables and libraries of CDMATH. Use the compilation option `-DCMAKE_CDMATH_SWIG=ON`.
