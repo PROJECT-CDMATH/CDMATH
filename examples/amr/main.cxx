@@ -163,6 +163,7 @@ int main() {
     specificName += toString(efficiencyGoal[0]*10);
     specificName += toString(maximumNbOfCellsInPatch[0]);
     specificName += toString(minimumPatchLength[0]);
+    specificName += toString(maximumPatchLength[0]);
     initializeEnvironment(specificName);
     
     AMR amr(maxLevels,
