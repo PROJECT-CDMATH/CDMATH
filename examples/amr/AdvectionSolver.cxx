@@ -164,7 +164,7 @@ AdvectionSolver::computeVelocity(const MEDCouplingIMesh* mesh, double currentTim
     DataArrayDouble* barry=mesh->getBarycenterAndOwner();
     const double *coorBary=barry->getConstPointer();
 
-    double timePeriod=3.;
+    double timePeriod = 5.;
     double speedAmplifier = cos(2*M_PI*currentTime/timePeriod);
     int k=0;
     for (int ic=0;ic<nbCells;ic++,k+=dim)
@@ -402,8 +402,8 @@ AdvectionSolver::advanceTimeDL(int numberOfCellsGhost,
     DataArrayDouble* YY2=YY2_F->getArray();
     double* YY=YY2->getPointer();
     int nbCells = YY2->getNumberOfTuples();
-    for(int i=0;i<nbCells;i++)
-        YY[i]=YY[i] - dt/dspace*(fluxes->getIJ(i,1)-fluxes->getIJ(i,0));
+    for(int i=0; i<nbCells; i++)
+        YY[i] = YY[i] - dt/dspace*(fluxes->getIJ(i,1)-fluxes->getIJ(i,0));
 
     MEDCouplingFieldDouble* YY3=AMR::buildFieldWithGhostFromFieldWithoutGhost(numberOfCellsGhost,imesh,YY2_F);
     yyWithGhost->setArray(YY3->getArray());
@@ -435,7 +435,7 @@ AdvectionSolver::advancingTimeStep(
     double finalTime=getFinalTime();
     MEDCouplingFieldDouble* velocity=computeVelocity(grid->getMesh()->getImageMesh(),currentTime,finalTime);
     vector<double> dxyz=grid->getMesh()->getImageMesh()->getDXYZ();
-    double cfl=getCfl() ;
+    double cfl=getCfl();
     double dt=computeDt(cfl,dxyz,velocity);
     MEDCouplingIMesh* m1=grid->getMesh()->getImageMesh()->buildWithGhost(numberOfCellsGhost);
     MEDCouplingFieldDouble* yyWithGhost_F=MEDCouplingFieldDouble::New(ON_CELLS);

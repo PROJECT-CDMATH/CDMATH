@@ -427,14 +427,14 @@ AMR::unsteadyAMRDriverHigherLevels(int curLevel, double currentTime, const Itera
         {
             size_t p;
             int th_id(0);
-            cout << endl;
+            //cout << endl;
             #pragma omp parallel for if (maxLevel=2) private(th_id)
             for (p=0;p<tmpLev.size();p++)
             {
                 # ifdef _OPENMP
                     th_id = omp_get_thread_num();
                 # endif
-                cout << "Patch #" << p << " taken care by thread #" << th_id << endl;
+                //cout << "Patch #" << p << " taken care by thread #" << th_id << endl;
                 double dt1;
                 dt1 = IterativeProblem.advancingTimeStep(idir,currentTime,_fields,tmpLev[p]);
             }

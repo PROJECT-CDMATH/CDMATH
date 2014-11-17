@@ -10,6 +10,7 @@
 #include <fstream>
 #include <string>
 #include <assert.h>
+#include <sstream> // to convert integers to strings
 
 #include <MEDCouplingCartesianAMRMesh.hxx>
 #include <MEDCouplingFieldDouble.hxx>
@@ -25,16 +26,52 @@ using namespace ParaMEDMEM;
 using namespace std;
 
 
-int main() {
+std::string toString(const int value)
+{
+    stringstream ss;
+    ss << value;
+    return ss.str();
+}
 
+void initializeEnvironment(const std::string specificName)
+{
+    std::string commandString;
+    std::string outputDirectory;
+    outputDirectory = "out_" + specificName;
+	commandString = "mkdir " + outputDirectory;
+	const char * commandChar = commandString.c_str();
+	system(commandChar);
+    int statusIndicator;
+	try
+    {
+		statusIndicator = chdir(outputDirectory.c_str());
+		if (statusIndicator != 0) throw 20;
+	}
+	catch (int const& e)
+	{
+		cerr << "Error: could not change directory." << endl;
+	}
+	cout << "Cleaning up first" << endl;
+	try
+	{
+		statusIndicator = system("rm *.pvd *.vtu *.med -r"); // careful with that command
+		if (statusIndicator != 0) throw 20;
+	}
+	catch (int const& e)
+	{
+		cerr << "Error: something went wrong with deleting files." << endl;
+	}
+}
+
+int main() {
 
     /* Coarse Mesh */
     double xinf=0.;
     double yinf=0.;
     double xsup=1.;
     double ysup=1.;
-    int nx=100;
-    int ny=100;
+    int nx=200;
+    int ny=200;
 
     double dx = (xsup - xinf)/nx ;
     double dy = (ysup - yinf)/ny ;
@@ -67,12 +104,12 @@ int main() {
 
     /* Infos solver advection */
     //*
-    bool isAlternatingDirection=true;
-    int maximumNumberbOfIter=1000;
-    double finalTime=10.;
-    int numberOfGhostCells=2;
-    int frequencyOfPostTreatment=10;
-    double cfl=0.7;
+    bool isAlternatingDirection = true;
+    int maximumNumberbOfIter = 1000;
+    double finalTime = 12.;
+    int numberOfGhostCells = 2;
+    int frequencyOfPostTreatment = 10;
+    double cfl = 0.7;
     AdvectionSolver solver(finalTime,
                            maximumNumberbOfIter,
                            isAlternatingDirection,
@@ -118,8 +155,16 @@ int main() {
     minimumPatchLength[0]=7;
     vector< int > maximumPatchLength(maxLevels);
     maximumPatchLength[0]=12;
-
     /* End Infos AMR */
+    
+    std::string specificName;
+    specificName = toString(maxLevels);
+    specificName += toString(coefRefinement1[0]);
+    specificName += toString(efficiencyGoal[0]*10);
+    specificName += toString(maximumNbOfCellsInPatch[0]);
+    specificName += toString(minimumPatchLength[0]);
+    initializeEnvironment(specificName);
+    
     AMR amr(maxLevels,
             frequencyOfRefinement,
             efficiencyGoal,
@@ -135,6 +180,6 @@ int main() {
 
     amr.compute(solver);
     coarseMesh->decrRef();
-    cout << "fin........." << endl;
+    cout << "FIN........." << endl;
     return 0;
 }

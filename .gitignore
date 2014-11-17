@@ -24,3 +24,6 @@ pre_requis/MEDFile/doc/*
 
 # Eclipse projects
 .project
+
+# Output data files
+*.json
