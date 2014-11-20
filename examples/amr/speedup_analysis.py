@@ -34,17 +34,22 @@ def main():
     timespent_global_sum = range(len(timespent_archive))
     timespent_global = range(len(timespent_archive))
     speedup_global = range(len(timespent_archive))
+    max_speedup = 1.
     for i in range(len(timespent_archive)):
         timespent_global_sum[i] = 0.
         for j in range(len(timespent_archive[i])):
             timespent_global_sum[i] += timespent_archive[i][j]
         timespent_global[i] = timespent_global_sum[i] / len(timespent_archive[i])
         speedup_global[i] = timespent_global[0] / timespent_global[i]
+        if speedup_global[i] > max_speedup:
+            max_speedup = speedup_global[i]
     print(timespent_global)
     print(speedup_global)
+    print(max_speedup)
 
     plt.bar(nb_threads, speedup_global, align='center', alpha=0.4)
     plt.plot(nb_threads, speedup_global)
+    plt.axis([0, len(timespent_archive)+1, 0, max_speedup*1.1])
     plt.xlabel("""Number of threads""")
     plt.ylabel("""Speed-up""")
     plt.title("""Speed-up as a function of the number of threads""")

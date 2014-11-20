@@ -139,8 +139,8 @@ int main() {
     int frequencyOfRefinement=1;
 
     vector<int> coefRefinement1(2);
-    coefRefinement1[0]=4;
-    coefRefinement1[1]=4;
+    coefRefinement1[0]=8;
+    coefRefinement1[1]=8;
 
     vector< vector<int> > coefsRefinement(maxLevels);
     coefsRefinement[0]=coefRefinement1;
