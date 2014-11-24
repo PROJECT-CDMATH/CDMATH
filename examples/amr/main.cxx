@@ -66,29 +66,40 @@ void initializeEnvironment(const std::string specificName)
 int main() {
 
     /* Coarse Mesh */
+    int spaceDim = 3;
+    
     double xinf=0.;
     double yinf=0.;
+    double zinf=0.;
     double xsup=1.;
     double ysup=1.;
+    double zsup=1.;
     int nx=200;
     int ny=200;
+    int nz=200;
 
     double dx = (xsup - xinf)/nx ;
     double dy = (ysup - yinf)/ny ;
+    double dz = (zsup - zinf)/nz;
 
-    double *originPtr = new double[2];
-    double *dxyzPtr = new double[2];
-    int *nodeStrctPtr = new int[2];
+    double *originPtr = new double[spaceDim];
+    double *dxyzPtr = new double[spaceDim];
+    int *nodeStrctPtr = new int[spaceDim];
 
     originPtr[0]=xinf;
     originPtr[1]=yinf;
+    if (spaceDim == 3)
+        originPtr[2]=zinf;
     nodeStrctPtr[0]=nx+1;
     nodeStrctPtr[1]=ny+1;
+    if (spaceDim == 3)
+        nodeStrctPtr[2]=nz+1;
     dxyzPtr[0]=dx;
     dxyzPtr[1]=dy;
+    if (spaceDim == 3)
+        dxyzPtr[2]=dz;
 
 
-    int spaceDim=2;
     string meshName="MeshAMR2D";
 
     MEDCouplingIMesh* coarseMesh=MEDCouplingIMesh::New(meshName,spaceDim,nodeStrctPtr,nodeStrctPtr+spaceDim,originPtr,originPtr+spaceDim,dxyzPtr,dxyzPtr+spaceDim);
@@ -152,7 +163,7 @@ int main() {
     vector< double > efficiencyThreshold(maxLevels);
     efficiencyThreshold[0]=0.7;
     vector< int > maximumNbOfCellsInPatch(maxLevels);
-    maximumNbOfCellsInPatch[0]=2500;
+    maximumNbOfCellsInPatch[0]=6000; // NB: 6000 >> 1728=12*12*12
     vector< int > minimumPatchLength(maxLevels);
     minimumPatchLength[0]=7;
     vector< int > maximumPatchLength(maxLevels);
