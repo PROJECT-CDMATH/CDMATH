@@ -205,6 +205,7 @@ AMR::initialize(const MEDCouplingIMesh* coarseMesh,
         boxOptions[i]=&(bsos[i]);
 
     amr->createPatchesFromCriterionML(boxOptions,fd->getArray(),_coeficientsRefinement,1e-12);
+    cout << computeNumberOfCoarseCellsAtHigherLevel(amr,1) << endl;
     fd->decrRef();
 
     int numberOfGhostCells=IterativeProblem.getNumberOfGhostCells();
@@ -347,11 +348,29 @@ AMR::refinement(const vector<const BoxSplittingOptions*>& bsos,const IterativePr
     MEDCouplingAutoRefCountObjectPtr<MEDCouplingCartesianAMRMesh> amr2=MEDCouplingCartesianAMRMesh::New(const_cast<MEDCouplingIMesh *>(amr1->getImageMesh()));
     amr2->createPatchesFromCriterionML(bsos,fd->getArray(),_coeficientsRefinement,1e-12);
     amr1=amr2;
+    cout << computeNumberOfCoarseCellsAtHigherLevel(amr2,1) << endl;
+
     MEDCouplingAutoRefCountObjectPtr<MEDCouplingAMRAttribute> att2=_fields->projectTo(amr1);
     for(int i=0; i < amr1->getMaxNumberOfLevelsRelativeToThis()-1; i++)
         att2->synchronizeAllGhostZonesAtASpecifiedLevel(i+1);
     _fields=att2;
     fd->decrRef();
+}
+
+double
+AMR::computeNumberOfCoarseCellsAtHigherLevel(const MEDCouplingAutoRefCountObjectPtr<MEDCouplingCartesianAMRMesh> amr, int level) const
+{
+    int numberOfSmallCells = 0;
+    vector<MEDCouplingCartesianAMRPatchGen *> tmpLev(amr->retrieveGridsAt(level));
+    for (size_t p=0;p<tmpLev.size();p++)
+    {
+        numberOfSmallCells += tmpLev[p]->getMesh()->getImageMesh()->getNumberOfCells();
+    }
+    vector<int> coefsRef = getCoeficientsRefinementAtLevel(level-1);
+    int numberOfRefinedCellsAtLevel = numberOfSmallCells;
+    for (int dimension = 0; dimension < coefsRef.size(); dimension++)
+        numberOfRefinedCellsAtLevel /= coefsRef[dimension];
+    return numberOfRefinedCellsAtLevel;
 }
 
 AMR::~AMR()

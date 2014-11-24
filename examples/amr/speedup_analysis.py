@@ -48,11 +48,11 @@ def main():
     print(max_speedup)
 
     plt.bar(nb_threads, speedup_global, align='center', alpha=0.4)
-    plt.plot(nb_threads, speedup_global)
+    #plt.plot(nb_threads, speedup_global)
     plt.axis([0, len(timespent_archive)+1, 0, max_speedup*1.1])
     plt.xlabel("""Number of threads""")
     plt.ylabel("""Speed-up""")
-    plt.title("""Speed-up as a function of the number of threads""")
+    #plt.title("""Speed-up as a function of the number of threads""")
 
     plt.show()
     

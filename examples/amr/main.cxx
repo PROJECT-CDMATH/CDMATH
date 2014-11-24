@@ -95,6 +95,8 @@ int main() {
     delete [] originPtr;
     delete [] dxyzPtr;
     delete [] nodeStrctPtr;
+    
+    cout << coarseMesh->getNumberOfCells() << endl;
 
 
     vector< pair<string,int> > fieldsInfos(1);

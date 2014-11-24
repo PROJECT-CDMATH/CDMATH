@@ -113,6 +113,8 @@ public:
 
     void refinement(const std::vector<const INTERP_KERNEL::BoxSplittingOptions*>& bsos,const IterativeProblem& IterativeProblem) ;
 
+    double computeNumberOfCoarseCellsAtHigherLevel(const ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<ParaMEDMEM::MEDCouplingCartesianAMRMesh> amr, int level) const ;
+
 protected:
 
     int _maxLevels;
