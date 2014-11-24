@@ -47,9 +47,12 @@ AdvectionSolver::setCfl( double cfl )
 ParaMEDMEM::MEDCouplingFieldDouble*
 AdvectionSolver::initialConditions(const ParaMEDMEM::MEDCouplingIMesh* mesh) const
 {
+    cout << "Initial Conditions: spherical bubble." << endl;
+    int dim=mesh->getSpaceDimension();
     double rayon=0.15;
-    double xcentre=0.5;
-    double ycentre=0.75;
+    double xcentre=0.35;
+    double ycentre=0.35;
+    double zcentre=0.35;
     int nbCells=mesh->getNumberOfCells();
     DataArrayDouble *baryCell = mesh->getBarycenterAndOwner() ;
     const double *coorBary=baryCell->getConstPointer();
@@ -60,16 +63,20 @@ AdvectionSolver::initialConditions(const ParaMEDMEM::MEDCouplingIMesh* mesh) con
     for (int i=0;i<nbCells;i++)
     {
         double xb=coorBary[k];
-        double yb=coorBary[k+1];
-
         double valX=(xb-xcentre)*(xb-xcentre);
+        double yb=coorBary[k+1];
         double valY=(yb-ycentre)*(yb-ycentre);
-        double val=sqrt(valX+valY);
+        double zb=0;
+        double valZ=0;
+        if (dim == 3)
+            zb=coorBary[k+2];
+            valZ=(zb-zcentre)*(zb-zcentre);
+        double val=sqrt(valX+valY+valZ);
         if (val<rayon)
             vals[i] = 1.0;
         else
             vals[i] = 0.0;
-        k+=2;
+        k+=dim;
     }
 
     MEDCouplingFieldDouble* YY=MEDCouplingFieldDouble::New(ON_CELLS);
@@ -91,12 +98,16 @@ AdvectionSolver::refinementCriterion(const ParaMEDMEM::MEDCouplingFieldDouble* f
     MEDCouplingFieldDouble* field_WG=AMR::buildFieldWithGhostFromFieldWithoutGhost(getNumberOfGhostCells(),mesh,field);
     const double* yy=field_WG->getArray()->getConstPointer();
 
-
+    
+    int dim=mesh->getSpaceDimension();
     int numberOfCellsGhost=getNumberOfGhostCells();
     MEDCouplingIMesh* m1=mesh->buildWithGhost(numberOfCellsGhost);
     vector<int> nxyz=m1->getCellGridStructure();
     int nx=nxyz[0];
     int ny=nxyz[1];
+    int nz=1;
+    if (dim == 3)
+        nz=nxyz[2];
     m1->decrRef();
     int nbCells = mesh->getNumberOfCells();
     DataArrayDouble *array=DataArrayDouble::New();
@@ -104,38 +115,77 @@ AdvectionSolver::refinementCriterion(const ParaMEDMEM::MEDCouplingFieldDouble* f
     double* vals=array->getPointer();
 
     double grad_max_YY=0.;
-    for (int j=numberOfCellsGhost;j<ny-numberOfCellsGhost;j++)
+    for (int i=numberOfCellsGhost;i<nx-numberOfCellsGhost;i++)
     {
-        for (int i=numberOfCellsGhost;i<nx-numberOfCellsGhost;i++)
+        for (int j=numberOfCellsGhost;j<ny-numberOfCellsGhost;j++)
         {
-            int ij=i+j*nx;
-            int ijWithoutGhost=(i-numberOfCellsGhost)+(j-numberOfCellsGhost)*(nx-2*numberOfCellsGhost);
-            int iminus1=ij-1;
-            int iplus1=ij+1;
-            int jminus1=ij-nx;
-            int jplus1=ij+nx;
-            double gradX = (yy[iplus1] - yy[iminus1]);
-            double gradY = (yy[jplus1] - yy[jminus1]);
-            grad_max_YY = max(grad_max_YY,abs(gradX)+abs(gradY));
-            vals[ijWithoutGhost]=0;
+            if (dim == 2)
+            {
+                int ij=i+j*nx;
+                int ijWithoutGhost=(i-numberOfCellsGhost)+(j-numberOfCellsGhost)*(nx-2*numberOfCellsGhost);
+                int iminus1=ij-1;
+                int iplus1=ij+1;
+                int jminus1=ij-nx;
+                int jplus1=ij+nx;
+                double gradX = (yy[iplus1] - yy[iminus1]);
+                double gradY = (yy[jplus1] - yy[jminus1]);
+                grad_max_YY = max(grad_max_YY,abs(gradX)+abs(gradY));
+                vals[ijWithoutGhost]=0;
+            }
+            else for (int k=numberOfCellsGhost;k<nz-numberOfCellsGhost;k++)
+            {
+                int ijk=i+j*nx+k*nx*ny;
+                int ijkWithoutGhost=(i-numberOfCellsGhost)+(j-numberOfCellsGhost)*(nx-2*numberOfCellsGhost)+(k-numberOfCellsGhost)*(nx-2*numberOfCellsGhost)*(ny-2*numberOfCellsGhost);
+                int iminus1=ijk-1;
+                int iplus1=ijk+1;
+                int jminus1=ijk-nx;
+                int jplus1=ijk+nx;
+                int kminus1=ijk-nx*ny;
+                int kplus1=ijk+nx*ny;
+                double gradX = (yy[iplus1] - yy[iminus1]);
+                double gradY = (yy[jplus1] - yy[jminus1]);
+                double gradZ = (yy[kplus1] - yy[kminus1]);
+                grad_max_YY = max(grad_max_YY,abs(gradX)+abs(gradY)+abs(gradZ));
+                vals[ijkWithoutGhost]=0;
+            }
         }
     }
 
-    for (int j=numberOfCellsGhost;j<ny-numberOfCellsGhost;j++)
+    for (int i=numberOfCellsGhost;i<nx-numberOfCellsGhost;i++)
     {
-        for (int i=numberOfCellsGhost;i<nx-numberOfCellsGhost;i++)
+        for (int j=numberOfCellsGhost;j<ny-numberOfCellsGhost;j++)
         {
-            int ij=i+j*nx;
-            int ijWithoutGhost=(i-numberOfCellsGhost)+(j-numberOfCellsGhost)*(nx-2*numberOfCellsGhost);
-            int iminus1=ij-1;
-            int iplus1=ij+1;
-            int jminus1=ij-nx;
-            int jplus1=ij+nx;
-            double gradX = (yy[iplus1] - yy[iminus1]);
-            double gradY = (yy[jplus1] - yy[jminus1]);
-            double err = (abs(gradX)+abs(gradY))/grad_max_YY;
-            if(err>=triggeringVariation)
-                vals[ijWithoutGhost]=1;
+            if (dim == 2)
+            {
+                int ij=i+j*nx;
+                int ijWithoutGhost=(i-numberOfCellsGhost)+(j-numberOfCellsGhost)*(nx-2*numberOfCellsGhost);
+                int iminus1=ij-1;
+                int iplus1=ij+1;
+                int jminus1=ij-nx;
+                int jplus1=ij+nx;
+                double gradX = (yy[iplus1] - yy[iminus1]);
+                double gradY = (yy[jplus1] - yy[jminus1]);
+                double err = (abs(gradX)+abs(gradY))/grad_max_YY;
+                if(err>=triggeringVariation)
+                    vals[ijWithoutGhost]=1;
+            }
+            else for (int k=numberOfCellsGhost;k<nz-numberOfCellsGhost;k++)
+            {
+                int ijk=i+j*nx+k*nx*ny;
+                int ijkWithoutGhost=(i-numberOfCellsGhost)+(j-numberOfCellsGhost)*(nx-2*numberOfCellsGhost)+(k-numberOfCellsGhost)*(nx-2*numberOfCellsGhost)*(ny-2*numberOfCellsGhost);
+                int iminus1=ijk-1;
+                int iplus1=ijk+1;
+                int jminus1=ijk-nx;
+                int jplus1=ijk+nx;
+                int kminus1=ijk-nx*ny;
+                int kplus1=ijk+nx*ny;
+                double gradX = (yy[iplus1] - yy[iminus1]);
+                double gradY = (yy[jplus1] - yy[jminus1]);
+                double gradZ = (yy[kplus1] - yy[kminus1]);
+                double err = (abs(gradX)+abs(gradY)+abs(gradZ))/grad_max_YY;
+                if(err>=triggeringVariation)
+                    vals[ijkWithoutGhost]=1;
+            }
         }
     }
 
