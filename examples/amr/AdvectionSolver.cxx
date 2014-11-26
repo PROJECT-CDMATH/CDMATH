@@ -47,7 +47,7 @@ AdvectionSolver::setCfl( double cfl )
 ParaMEDMEM::MEDCouplingFieldDouble*
 AdvectionSolver::initialConditions(const ParaMEDMEM::MEDCouplingIMesh* mesh) const
 {
-    cout << "Initial Conditions: spherical bubble." << endl;
+    //cout << "Initial Conditions: spherical bubble." << endl;
     int dim=mesh->getSpaceDimension();
     double rayon=0.15;
     double xcentre=0.35;

@@ -151,9 +151,10 @@ int main() {
 
     int frequencyOfRefinement=1;
 
-    vector<int> coefRefinement1(2);
+    vector<int> coefRefinement1(spaceDim);
     coefRefinement1[0]=8;
     coefRefinement1[1]=8;
+    coefRefinement1[2]=8;
 
     vector< vector<int> > coefsRefinement(maxLevels);
     coefsRefinement[0]=coefRefinement1;

@@ -203,7 +203,7 @@ AMR::initialize(const MEDCouplingIMesh* coarseMesh,
     vector<const BoxSplittingOptions*> boxOptions(bsos.size());
     for(int i=0;i<maxLevels;i++)
         boxOptions[i]=&(bsos[i]);
-
+    
     amr->createPatchesFromCriterionML(boxOptions,fd->getArray(),_coeficientsRefinement,1e-12);
     cout << computeNumberOfCoarseCellsAtHigherLevel(amr,1) << endl;
     fd->decrRef();
