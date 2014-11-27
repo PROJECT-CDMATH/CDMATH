@@ -1,6 +1,6 @@
 //============================================================================
 // Name        : Solver.cpp
-// Author      : 
+// Author      :
 // Version     :
 // Copyright   : CDMATH group
 // Description : Computation with Adaptive Mesh Refinement
@@ -33,8 +33,8 @@ int main() {
     double yinf=0.;
     double xsup=1.;
     double ysup=1.;
-    int nx=100;
-    int ny=100;
+    int nx=50;
+    int ny=50;
 
     double dx = (xsup - xinf)/nx ;
     double dy = (ysup - yinf)/ny ;
@@ -68,7 +68,7 @@ int main() {
     /* Infos solver advection */
     //*
     bool isAlternatingDirection=true;
-    int maximumNumberbOfIter=1000;
+    int maximumNumberbOfIter=500;
     double finalTime=10.;
     int numberOfGhostCells=2;
     int frequencyOfPostTreatment=10;
@@ -102,7 +102,7 @@ int main() {
     int frequencyOfRefinement=1;
 
     vector<int> coefRefinement1(2);
-    coefRefinement1[0]=4;
+    coefRefinement1[0]=1024;
     coefRefinement1[1]=4;
 
     vector< vector<int> > coefsRefinement(maxLevels);
