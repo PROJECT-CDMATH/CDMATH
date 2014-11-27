@@ -1,6 +1,6 @@
 //============================================================================
 // Name        : Solver.cpp
-// Author      :
+// Author      : 
 // Version     :
 // Copyright   : CDMATH group
 // Description : Computation with Adaptive Mesh Refinement
@@ -38,29 +38,29 @@ void initializeEnvironment(const std::string specificName)
     std::string commandString;
     std::string outputDirectory;
     outputDirectory = "out_" + specificName;
-    commandString = "mkdir " + outputDirectory;
-    const char * commandChar = commandString.c_str();
-    system(commandChar);
+	commandString = "mkdir " + outputDirectory;
+	const char * commandChar = commandString.c_str();
+	system(commandChar);
     int statusIndicator;
-    try
+	try
     {
-        statusIndicator = chdir(outputDirectory.c_str());
-        if (statusIndicator != 0) throw 20;
-    }
-    catch (int const& e)
-    {
-        cerr << "Error: could not change directory." << endl;
-    }
-    cout << "Cleaning up first" << endl;
-    try
-    {
-        statusIndicator = system("rm *.pvd *.vtu *.med -r"); // careful with that command
-        if (statusIndicator != 0) throw 20;
-    }
-    catch (int const& e)
-    {
-        cerr << "Error: something went wrong with deleting files." << endl;
-    }
+		statusIndicator = chdir(outputDirectory.c_str());
+		if (statusIndicator != 0) throw 20;
+	}
+	catch (int const& e)
+	{
+		cerr << "Error: could not change directory." << endl;
+	}
+	cout << "Cleaning up first" << endl;
+	try
+	{
+		statusIndicator = system("rm *.pvd *.vtu *.med -r"); // careful with that command
+		if (statusIndicator != 0) throw 20;
+	}
+	catch (int const& e)
+	{
+		cerr << "Error: something went wrong with deleting files." << endl;
+	}
 }
 
 int main() {
@@ -73,15 +73,10 @@ int main() {
     double zinf=0.;
     double xsup=1.;
     double ysup=1.;
-<<<<<<< HEAD
-    int nx=50;
-    int ny=50;
-=======
     double zsup=1.;
     int nx=200;
     int ny=200;
     int nz=200;
->>>>>>> dd355ff4f4f9ec0f845fac2acdb475c3e0055109
 
     double dx = (xsup - xinf)/nx ;
     double dy = (ysup - yinf)/ny ;
@@ -111,7 +106,7 @@ int main() {
     delete [] originPtr;
     delete [] dxyzPtr;
     delete [] nodeStrctPtr;
-
+    
     cout << coarseMesh->getNumberOfCells() << endl;
 
 
@@ -122,21 +117,12 @@ int main() {
 
     /* Infos solver advection */
     //*
-<<<<<<< HEAD
-    bool isAlternatingDirection=true;
-    int maximumNumberbOfIter=500;
-    double finalTime=10.;
-    int numberOfGhostCells=2;
-    int frequencyOfPostTreatment=10;
-    double cfl=0.7;
-=======
     bool isAlternatingDirection = true;
     int maximumNumberbOfIter = 1000;
     double finalTime = 12.;
     int numberOfGhostCells = 2;
     int frequencyOfPostTreatment = 10;
     double cfl = 0.7;
->>>>>>> dd355ff4f4f9ec0f845fac2acdb475c3e0055109
     AdvectionSolver solver(finalTime,
                            maximumNumberbOfIter,
                            isAlternatingDirection,
@@ -165,16 +151,10 @@ int main() {
 
     int frequencyOfRefinement=1;
 
-<<<<<<< HEAD
-    vector<int> coefRefinement1(2);
-    coefRefinement1[0]=1024;
-    coefRefinement1[1]=4;
-=======
     vector<int> coefRefinement1(spaceDim);
     coefRefinement1[0]=8;
     coefRefinement1[1]=8;
     coefRefinement1[2]=8;
->>>>>>> dd355ff4f4f9ec0f845fac2acdb475c3e0055109
 
     vector< vector<int> > coefsRefinement(maxLevels);
     coefsRefinement[0]=coefRefinement1;
