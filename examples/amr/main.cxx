@@ -38,7 +38,7 @@ void initializeEnvironment(const std::string specificName)
     std::string commandString;
     std::string outputDirectory;
     outputDirectory = "out_" + specificName;
-	commandString = "mkdir " + outputDirectory;
+	commandString = "mkdir -p " + outputDirectory;
 	const char * commandChar = commandString.c_str();
 	system(commandChar);
     int statusIndicator;
@@ -54,7 +54,7 @@ void initializeEnvironment(const std::string specificName)
 	cout << "Cleaning up first" << endl;
 	try
 	{
-		statusIndicator = system("rm *.pvd *.vtu *.med -r"); // careful with that command
+		statusIndicator = system("rm -f *.pvd *.vtu *.med -r"); // careful with that command
 		if (statusIndicator != 0) throw 20;
 	}
 	catch (int const& e)
