@@ -7,7 +7,7 @@ IFLAG = -I$(CDMATHDIR)/include -I.
 LFLAG = -L$(CDMATHDIR)/lib
 LIBS  =-linterpkernel -lmedC -lmedloader -lmedcoupling -lbase -lmesh -llinearsolver
 PARAFLAG = -fopenmp
-EXTRAFLAGS = -g $(PARAFLAG) #-Wall -Wextra
+EXTRAFLAGS = -g $(PARAFLAG) -Wall #-Wextra
 
 ODIR = build
 _OBJ = main.o AMR.o IterativeProblem.o HeatSolver.o AdvectionSolver.o
@@ -23,6 +23,11 @@ $(ODIR)/%.o: %.cxx
 
 clean:
 	rm -f $(ODIR)/*.o *~ core $(INCDIR)/*~
+
+sweep:
+	mv *.vtu output/
+	mv *.pvd output/
+	mv *.vti output/
 	
 doc:
 	doxygen Doxyfile

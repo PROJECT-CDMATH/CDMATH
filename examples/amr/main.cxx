@@ -107,7 +107,7 @@ int main() {
     delete [] dxyzPtr;
     delete [] nodeStrctPtr;
     
-    cout << coarseMesh->getNumberOfCells() << endl;
+    cout << "Number of cells on coarse mesh = " << coarseMesh->getNumberOfCells() << endl;
 
 
     vector< pair<string,int> > fieldsInfos(1);

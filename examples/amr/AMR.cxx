@@ -205,7 +205,7 @@ AMR::initialize(const MEDCouplingIMesh* coarseMesh,
         boxOptions[i]=&(bsos[i]);
     
     amr->createPatchesFromCriterionML(boxOptions,fd->getArray(),_coeficientsRefinement,1e-12);
-    cout << computeNumberOfCoarseCellsAtHigherLevel(amr,1) << endl;
+    cout << "Number of cells to be refined = " << computeNumberOfCoarseCellsAtHigherLevel(amr,1) << endl;
     fd->decrRef();
 
     int numberOfGhostCells=IterativeProblem.getNumberOfGhostCells();
@@ -348,7 +348,7 @@ AMR::refinement(const vector<const BoxSplittingOptions*>& bsos,const IterativePr
     MEDCouplingAutoRefCountObjectPtr<MEDCouplingCartesianAMRMesh> amr2=MEDCouplingCartesianAMRMesh::New(const_cast<MEDCouplingIMesh *>(amr1->getImageMesh()));
     amr2->createPatchesFromCriterionML(bsos,fd->getArray(),_coeficientsRefinement,1e-12);
     amr1=amr2;
-    cout << computeNumberOfCoarseCellsAtHigherLevel(amr2,1) << endl;
+    cout << "Number of cells to be refined = " << computeNumberOfCoarseCellsAtHigherLevel(amr2,1) << endl;
 
     MEDCouplingAutoRefCountObjectPtr<MEDCouplingAMRAttribute> att2=_fields->projectTo(amr1);
     for(int i=0; i < amr1->getMaxNumberOfLevelsRelativeToThis()-1; i++)
@@ -368,7 +368,7 @@ AMR::computeNumberOfCoarseCellsAtHigherLevel(const MEDCouplingAutoRefCountObject
     }
     vector<int> coefsRef = getCoeficientsRefinementAtLevel(level-1);
     int numberOfRefinedCellsAtLevel = numberOfSmallCells;
-    for (int dimension = 0; dimension < coefsRef.size(); dimension++)
+    for (std::size_t dimension = 0; dimension < coefsRef.size(); dimension++)
         numberOfRefinedCellsAtLevel /= coefsRef[dimension];
     return numberOfRefinedCellsAtLevel;
 }
@@ -425,7 +425,7 @@ AMR::unsteadyAMRDriverHigherLevels(int curLevel, double currentTime, const Itera
     vector<MEDCouplingCartesianAMRPatchGen *> tmpLev(amr->retrieveGridsAt(curLevel));
     std::size_t sz(tmpLev.size());
     vector< MEDCouplingAutoRefCountObjectPtr <MEDCouplingCartesianAMRPatchGen> > tmpLevSafe(sz);
-    for(std::size_t ii=0;ii<sz;ii++)
+    for(std::size_t ii = 0; ii < sz; ii++)
         tmpLevSafe[ii]=tmpLev[ii];
 
     if (tmpLev.size()>0)
@@ -445,17 +445,15 @@ AMR::unsteadyAMRDriverHigherLevels(int curLevel, double currentTime, const Itera
         for (int idir=0;idir<dirs;idir++)
         {
             size_t p;
-            int th_id(0);
             //cout << endl;
-            #pragma omp parallel for if (maxLevel=2) private(th_id)
+            #pragma omp parallel for if (maxLevel == 2) //private(th_id)
             for (p=0;p<tmpLev.size();p++)
             {
                 # ifdef _OPENMP
-                    th_id = omp_get_thread_num();
+                    //int th_id = omp_get_thread_num();
+                    //cout << "Patch #" << p << " taken care by thread #" << th_id << endl;
                 # endif
-                //cout << "Patch #" << p << " taken care by thread #" << th_id << endl;
-                double dt1;
-                dt1 = IterativeProblem.advancingTimeStep(idir,currentTime,_fields,tmpLev[p]);
+                IterativeProblem.advancingTimeStep(idir,currentTime,_fields,tmpLev[p]);
             }
             _fields->synchronizeAllGhostZonesAtASpecifiedLevelUsingOnlyFather(curLevel);
             _fields->synchronizeAllGhostZonesAtASpecifiedLevel(curLevel);
@@ -563,7 +561,7 @@ AMR::writeVTKAMRFieldPatches(int it, string nameOfField, string fileName) const
 	vector<MEDCouplingCartesianAMRPatchGen *> tmpLev(amr->retrieveGridsAt(2));
 	std::size_t sz(tmpLev.size());
 	size_t p;
-	for (p=0;p<tmpLev.size();p++)
+	for (p = 0; p < sz; p++)
 	{
 		MEDCouplingCartesianAMRPatchGen* patchGrid(tmpLev[p]);
 		MEDCouplingCartesianAMRMeshGen* patchMesh=const_cast<MEDCouplingCartesianAMRMeshGen *>(patchGrid->getMesh());
