@@ -87,8 +87,8 @@ HeatSolver::refinementCriterion(const ParaMEDMEM::MEDCouplingFieldDouble* field)
     const double* yy=field_WG->getArray()->getConstPointer();
 
 
-    int numberOfCellsGhost=getNumberOfGhostCells();
-    MEDCouplingIMesh* m1=mesh->buildWithGhost(numberOfCellsGhost);
+    int numberOfGhostCells=getNumberOfGhostCells();
+    MEDCouplingIMesh* m1=mesh->buildWithGhost(numberOfGhostCells);
     vector<int> nxyz=m1->getCellGridStructure();
     int nx=nxyz[0];
     int ny=nxyz[1];
@@ -99,12 +99,12 @@ HeatSolver::refinementCriterion(const ParaMEDMEM::MEDCouplingFieldDouble* field)
     double* vals=array->getPointer();
 
     double grad_max_YY=0.;
-    for (int j=numberOfCellsGhost;j<ny-numberOfCellsGhost;j++)
+    for (int j=numberOfGhostCells;j<ny-numberOfGhostCells;j++)
     {
-        for (int i=numberOfCellsGhost;i<nx-numberOfCellsGhost;i++)
+        for (int i=numberOfGhostCells;i<nx-numberOfGhostCells;i++)
         {
             int ij=i+j*nx;
-            int ijWithoutGhost=(i-numberOfCellsGhost)+(j-numberOfCellsGhost)*(nx-2*numberOfCellsGhost);
+            int ijWithoutGhost=(i-numberOfGhostCells)+(j-numberOfGhostCells)*(nx-2*numberOfGhostCells);
             int iminus1=ij-1;
             int iplus1=ij+1;
             int jminus1=ij-nx;
@@ -116,12 +116,12 @@ HeatSolver::refinementCriterion(const ParaMEDMEM::MEDCouplingFieldDouble* field)
         }
     }
 
-    for (int j=numberOfCellsGhost;j<ny-numberOfCellsGhost;j++)
+    for (int j=numberOfGhostCells;j<ny-numberOfGhostCells;j++)
     {
-        for (int i=numberOfCellsGhost;i<nx-numberOfCellsGhost;i++)
+        for (int i=numberOfGhostCells;i<nx-numberOfGhostCells;i++)
         {
             int ij=i+j*nx;
-            int ijWithoutGhost=(i-numberOfCellsGhost)+(j-numberOfCellsGhost)*(nx-2*numberOfCellsGhost);
+            int ijWithoutGhost=(i-numberOfGhostCells)+(j-numberOfGhostCells)*(nx-2*numberOfGhostCells);
             int iminus1=ij-1;
             int iplus1=ij+1;
             int jminus1=ij-nx;
@@ -153,12 +153,12 @@ HeatSolver::advancingTimeStep(
         ParaMEDMEM::MEDCouplingAMRAttribute* fields,
         const ParaMEDMEM::MEDCouplingCartesianAMRPatchGen* grid) const
 {
-    int numberOfCellsGhost=getNumberOfGhostCells();
+    int numberOfGhostCells=getNumberOfGhostCells();
     MEDCouplingCartesianAMRMeshGen* mesh=const_cast<MEDCouplingCartesianAMRMeshGen *>(grid->getMesh());
     vector<double> dxyz=grid->getMesh()->getImageMesh()->getDXYZ();
     double nu=getDiffusion();
     double dt=computeDt(nu,dxyz);
-    MEDCouplingIMesh* m1=grid->getMesh()->getImageMesh()->buildWithGhost(numberOfCellsGhost);
+    MEDCouplingIMesh* m1=grid->getMesh()->getImageMesh()->buildWithGhost(numberOfGhostCells);
     MEDCouplingFieldDouble* yyWithGhost_F=MEDCouplingFieldDouble::New(ON_CELLS);
     yyWithGhost_F->setName("YY") ;
     yyWithGhost_F->setMesh(m1);
@@ -167,7 +167,7 @@ HeatSolver::advancingTimeStep(
     yyWithGhost_F->setTime(currentTime,0,0);
     yyWithGhost_F->checkCoherency();
 
-    SolverHeat2D(numberOfCellsGhost,grid->getMesh()->getImageMesh(),dt,yyWithGhost_F);
+    SolverHeat2D(numberOfGhostCells,grid->getMesh()->getImageMesh(),dt,yyWithGhost_F);
 
     std::copy(yyWithGhost_F->getArray()->getPointer(),yyWithGhost_F->getArray()->getPointer()+yyWithGhost_F->getArray()->getNumberOfTuples(),yyWithGhost->getPointer());
     yyWithGhost_F->decrRef();
@@ -176,9 +176,9 @@ HeatSolver::advancingTimeStep(
 }
 
 void
-HeatSolver::SolverHeat2D(int numberOfCellsGhost,const MEDCouplingIMesh *imesh,double dt,MEDCouplingFieldDouble* yyWithGhost) const
+HeatSolver::SolverHeat2D(int numberOfGhostCells,const MEDCouplingIMesh *imesh,double dt,MEDCouplingFieldDouble* yyWithGhost) const
 {
-    MEDCouplingFieldDouble* YY2_F=AMR::buildFieldWithoutGhostFromFieldWithGhost(numberOfCellsGhost,imesh,yyWithGhost);
+    MEDCouplingFieldDouble* YY2_F=AMR::buildFieldWithoutGhostFromFieldWithGhost(numberOfGhostCells,imesh,yyWithGhost);
     DataArrayDouble* YY2=YY2_F->getArray();
     double* YY=YY2->getPointer();
     double nu=getDiffusion();
@@ -187,30 +187,30 @@ HeatSolver::SolverHeat2D(int numberOfCellsGhost,const MEDCouplingIMesh *imesh,do
 
     const double *yy=yyWithGhost->getArray()->getConstPointer();
 
-    MEDCouplingIMesh* m1=imesh->buildWithGhost(numberOfCellsGhost);
+    MEDCouplingIMesh* m1=imesh->buildWithGhost(numberOfGhostCells);
 
     vector<int> nxyz=m1->getCellGridStructure();
     int nx=nxyz[0];
     int ny=nxyz[1];
     int nz;
     if (m1->getSpaceDimension()==2)
-        nz=2*numberOfCellsGhost+1;
+        nz=2*numberOfGhostCells+1;
     else
         nz=nxyz[2];
 
     int dim=imesh->getSpaceDimension();
-    for (int k=numberOfCellsGhost;k<nz-numberOfCellsGhost;k++)
+    for (int k=numberOfGhostCells;k<nz-numberOfGhostCells;k++)
     {
-        for (int j=numberOfCellsGhost;j<ny-numberOfCellsGhost;j++)
+        for (int j=numberOfGhostCells;j<ny-numberOfGhostCells;j++)
         {
-            for (int i=numberOfCellsGhost;i<nx-numberOfCellsGhost;i++)
+            for (int i=numberOfGhostCells;i<nx-numberOfGhostCells;i++)
             {
                 int ijkCWithGhost;
                 if (dim==2)
                     ijkCWithGhost=i+j*nx;
                 else
                     ijkCWithGhost=i+j*nx+k*nx*ny;
-                int ijkCWithoutGhost=(i-numberOfCellsGhost)+(j-numberOfCellsGhost)*(nx-2*numberOfCellsGhost)+(k-numberOfCellsGhost)*(nx-2*numberOfCellsGhost)*(ny-2*numberOfCellsGhost);
+                int ijkCWithoutGhost=(i-numberOfGhostCells)+(j-numberOfGhostCells)*(nx-2*numberOfGhostCells)+(k-numberOfGhostCells)*(nx-2*numberOfGhostCells)*(ny-2*numberOfGhostCells);
 
                 double ax=yy[ijkCWithGhost+1]-2*yy[ijkCWithGhost]+yy[ijkCWithGhost-1];
                 double ay=yy[ijkCWithGhost+nx]-2*yy[ijkCWithGhost]+yy[ijkCWithGhost-nx];
@@ -220,7 +220,7 @@ HeatSolver::SolverHeat2D(int numberOfCellsGhost,const MEDCouplingIMesh *imesh,do
         }
     }
 
-    MEDCouplingFieldDouble* YY3=AMR::buildFieldWithGhostFromFieldWithoutGhost(numberOfCellsGhost,imesh,YY2_F);
+    MEDCouplingFieldDouble* YY3=AMR::buildFieldWithGhostFromFieldWithoutGhost(numberOfGhostCells,imesh,YY2_F);
     yyWithGhost->setArray(YY3->getArray());
     YY3->decrRef();
     YY2_F->decrRef();

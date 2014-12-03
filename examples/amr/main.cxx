@@ -1,6 +1,6 @@
 //============================================================================
-// Name        : Solver.cpp
-// Author      : 
+// Name        : main.cxx
+// Author      :
 // Version     :
 // Copyright   : CDMATH group
 // Description : Computation with Adaptive Mesh Refinement
@@ -11,6 +11,7 @@
 #include <string>
 #include <assert.h>
 #include <sstream> // to convert integers to strings
+#include <unistd.h> // contains chdir()
 
 #include <MEDCouplingCartesianAMRMesh.hxx>
 #include <MEDCouplingFieldDouble.hxx>
@@ -22,8 +23,8 @@
 #include "AdvectionSolver.hxx"
 #include "HeatSolver.hxx"
 
-using namespace ParaMEDMEM;
 using namespace std;
+using namespace ParaMEDMEM;
 
 
 std::string toString(const int value)
@@ -154,7 +155,8 @@ int main() {
     vector<int> coefRefinement1(spaceDim);
     coefRefinement1[0]=8;
     coefRefinement1[1]=8;
-    coefRefinement1[2]=8;
+    if (spaceDim == 3)
+        coefRefinement1[2]=8;
 
     vector< vector<int> > coefsRefinement(maxLevels);
     coefsRefinement[0]=coefRefinement1;
