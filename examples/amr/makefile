@@ -23,11 +23,6 @@ $(ODIR)/%.o: %.cxx
 
 clean:
 	rm -f $(ODIR)/*.o *~ core $(INCDIR)/*~
-
-sweep:
-	mv *.vtu output/
-	mv *.pvd output/
-	mv *.vti output/
 	
 doc:
 	doxygen Doxyfile
