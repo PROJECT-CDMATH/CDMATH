@@ -69,8 +69,10 @@ AdvectionSolver::initialConditions(const ParaMEDMEM::MEDCouplingIMesh* mesh) con
         double zb=0;
         double valZ=0;
         if (dim == 3)
+        {
             zb=coorBary[k+2];
             valZ=(zb-zcentre)*(zb-zcentre);
+		}
         double val=sqrt(valX+valY+valZ);
         if (val<rayon)
             vals[i] = 1.0;
