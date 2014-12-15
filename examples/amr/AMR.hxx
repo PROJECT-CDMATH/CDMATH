@@ -81,6 +81,12 @@ public:
 
     void PostTreatment(int it, double time, std::string nameOfField, std::string fileName, bool fromscratch) const;
 
+    void PostTreatmentByPatch(int it, double time, std::string nameOfField, std::string fileName, bool fromscratch) const ;
+
+    std::string writeVTKAMRField(int ilev,const ParaMEDMEM::MEDCouplingCartesianAMRMesh* amr,const ParaMEDMEM::MEDCouplingAMRAttribute* att, std::string nameOfField,int it,std::string fileName) const ;
+
+    std::string writeVTKAMRStructure(int ilev,const ParaMEDMEM::MEDCouplingCartesianAMRMesh* amr,int it,std::string fileName) const ;
+
     void compute(const IterativeProblem& IterativeProblem) ;
 
     void setFieldsInfo(std::vector< std::pair<std::string,int> > fieldsInfos) ;
@@ -107,7 +113,7 @@ public:
 
     std::string writeVTKAMRFieldOnRecurse(int it, std::string nameOfField, std::string fileName) const;
 
-    std::string writeVTKAMRFieldPatches(int it, std::string nameOfField, std::string fileName) const;
+    std::string writeVTKAMRFieldPatches(int iLevel, int it, double time, bool fromscratch, std::string nameOfField, std::string fileName) const;
 
     void writePVD(std::string fileName, std::string filevt, double time, bool fromScratch) const ;
 

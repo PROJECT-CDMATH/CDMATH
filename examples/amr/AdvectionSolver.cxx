@@ -82,7 +82,7 @@ AdvectionSolver::initialConditions(const ParaMEDMEM::MEDCouplingIMesh* mesh) con
     }
 
     MEDCouplingFieldDouble* YY=MEDCouplingFieldDouble::New(ON_CELLS);
-    YY->setName("YY") ;
+    YY->setName("yField") ;
     YY->setMesh(const_cast<MEDCouplingIMesh *>(mesh));
     YY->setArray(array);
     YY->setTime(0.,0,0);
@@ -242,10 +242,14 @@ AdvectionSolver::computeVelocity(const MEDCouplingIMesh* mesh, double currentTim
     velocity->setMesh(const_cast<MEDCouplingIMesh *>(mesh));
     velocity->setArray(array);
     velocity->setTime(currentTime,0,0);
-    velocity->writeVTK("velocity");
+    string ret = velocity->writeVTK("velocity");
     velocity->checkCoherency();
     array->decrRef();
     barry->decrRef();
+    bool fromScratch = true;
+    //if (currentTime > 0)
+    	//fromScratch = false;
+    //writePVD("velocity", ret, currentTime, fromScratch);
     return velocity;
 }
 
@@ -491,9 +495,9 @@ AdvectionSolver::advancingTimeStep(
     double dt=computeDt(cfl,dxyz,velocity);
     MEDCouplingIMesh* m1=grid->getMesh()->getImageMesh()->buildWithGhost(numberOfCellsGhost);
     MEDCouplingFieldDouble* yyWithGhost_F=MEDCouplingFieldDouble::New(ON_CELLS);
-    yyWithGhost_F->setName("YY") ;
+    yyWithGhost_F->setName("yField") ;
     yyWithGhost_F->setMesh(m1);
-    DataArrayDouble* yyWithGhost=const_cast<DataArrayDouble *>(fields->getFieldOn(mesh,"YY"));
+    DataArrayDouble* yyWithGhost=const_cast<DataArrayDouble *>(fields->getFieldOn(mesh,"yField"));
     yyWithGhost_F->setArray(yyWithGhost);
     yyWithGhost_F->setTime(0.,0,0);
     yyWithGhost_F->checkCoherency();

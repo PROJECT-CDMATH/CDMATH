@@ -14,6 +14,7 @@
 #include <MEDCouplingCartesianAMRMesh.hxx>
 #include <MEDCouplingFieldDouble.hxx>
 #include <MEDCouplingIMesh.hxx>
+#include <MEDCoupling1GTUMesh.hxx>
 #include <BoxSplittingOptions.hxx>
 
 #include "CdmathException.hxx"
@@ -242,7 +243,7 @@ AMR::initialize(const MEDCouplingIMesh* coarseMesh,
             if (i==0)
             {
                 MEDCouplingFieldDouble* fieldyyWithGhost=MEDCouplingFieldDouble::New(ON_CELLS);
-                fieldyyWithGhost->setName("YY") ;
+                fieldyyWithGhost->setName("yField") ;
                 MEDCouplingIMesh* m1=amr->getImageMesh()->buildWithGhost(numberOfCellsGhost);
                 fieldyyWithGhost->setMesh(m1);
                 fieldyyWithGhost->setArray(yyWithGhost);
@@ -265,17 +266,110 @@ AMR::PostTreatment(int it, double time, string nameOfField, string fileName, boo
 {
         cout << "PostProcessing - Iteration = " << it << " - time = " << time << endl;
         const MEDCouplingCartesianAMRMesh* amr=getFields()->getMyGodFather();
+//        string ret1=writeVTKAMRFieldOnRecurse(it,nameOfField,fileName);
+//        writePVD(fileName,ret1,time,fromscratch);
+
+        int maxLevs=amr->getMaxNumberOfLevelsRelativeToThis();
+        bool fromscratchTmp=fromscratch;
+        for (int i=0;i<maxLevs;i++)
+        {
+          string rets=writeVTKAMRStructure(i,amr,it,nameOfField+"_grid");
+          writePVD("yField_grids",rets,time,fromscratchTmp);
+          string retf=writeVTKAMRField(i,amr,getFields(),"yField",it,nameOfField+"_field");
+ 		  writePVD("yField_fields",retf,time,fromscratchTmp);
+       	  fromscratchTmp=false;
+        }
+
+//        if(it>1)
+//        {
+//			int maxLevs=amr->getMaxNumberOfLevelsRelativeToThis();
+//			for (int iLevel=1;iLevel<maxLevs;iLevel++)
+//				writeVTKAMRFieldPatches(iLevel,it,time,fromscratch,nameOfField,fileName);
+//        }
+}
+
+string
+AMR::writeVTKAMRField(int ilev,const MEDCouplingCartesianAMRMesh* amr,const MEDCouplingAMRAttribute* att, string nameOfField,int it,string fileName) const
+{
+    ostringstream ilevs;
+    ilevs << ilev;
+    ostringstream its;
+    its << it;
+	string fi=fileName+"_"+its.str()+"_"+ilevs.str();
+
+    vector<MEDCouplingCartesianAMRPatchGen*> lev;
+	lev=amr->retrieveGridsAt(ilev);
+    std::vector<const MEDCouplingFieldDouble *> fs(lev.size());
+
+    int k=0;
+	for (size_t p=0;p<lev.size();p++)
+	{
+		fs[p]=att->buildCellFieldOnWithoutGhost(const_cast<MEDCouplingCartesianAMRMeshGen *>(lev[p]->getMesh()),nameOfField);
+	    ostringstream ks;
+	    ks << k;
+        fs[p]->writeVTK("yField_patch_"+its.str()+"_"+ilevs.str()+"_"+ks.str());
+		k++;
+	}
+    MEDCouplingFieldDouble* f=MEDCouplingFieldDouble::MergeFields(fs);
+    f->mergeNodes(1.E-12);
+    string ret=f->writeVTK(fi);
+	for (size_t p=0;p<lev.size();p++)
+		fs[p]->decrRef();
+	for (size_t p=0;p<lev.size();p++)
+		lev[p]->decrRef();
+    f->decrRef();
+    return ret;
+}
+
+string
+AMR::writeVTKAMRStructure(int ilev,const MEDCouplingCartesianAMRMesh* amr,int it,string fileName) const
+{
+    ostringstream ilevs;
+    ilevs << ilev;
+    ostringstream its;
+    its << it;
+	string fi=fileName+"_"+its.str()+"_"+ilevs.str();
+    vector<MEDCouplingCartesianAMRPatchGen*> lev;
+	lev=amr->retrieveGridsAt(ilev);
+    std::vector<const MEDCoupling1SGTUMesh *> ms(lev.size());
+	for (size_t p=0;p<lev.size();p++)
+	{
+		MEDCouplingIMesh* mp=lev[p]->getMesh()->getImageMesh()->asSingleCell();
+		ms[p]=mp->build1SGTUnstructured();
+		mp->decrRef();
+	}
+    MEDCoupling1SGTUMesh *m=MEDCoupling1SGTUMesh::Merge1SGTUMeshes(ms);
+
+    // Uncomment the following lines to get a nicer multi-level visualization from a 2D problem.
+    //if (m->getSpaceDimension()==2)
+        //m->changeSpaceDimension(3,float(ilev));
+
+    string ret=m->writeVTK(fi);
+	for (size_t p=0;p<lev.size();p++)
+		ms[p]->decrRef();
+	for (size_t p=0;p<lev.size();p++)
+		lev[p]->decrRef();
+    m->decrRef();
+    return ret;
+}
+
+void
+AMR::PostTreatmentByPatch(int it, double time, string nameOfField, string fileName, bool fromscratch) const
+{
+        cout << "PostProcessing - Iteration = " << it << " - time = " << time << endl;
+        const MEDCouplingCartesianAMRMesh* amr=getFields()->getMyGodFather();
         string ret1=writeVTKAMRFieldOnRecurse(it,nameOfField,fileName);
         writePVD(fileName,ret1,time,fromscratch);
+        /*
         int maxLevs=amr->getMaxNumberOfLevelsRelativeToThis();
         for (int i=0;i<maxLevs;i++)
         {
-//          string rets=writeVTKAMRStructure(i,amr,it,"Grid");
-//            writePVD("Grids",rets,time,fromscratch);
-//                string retf=writeVTKAMRField(i,amr,att,"YY",it,"Fields");
-//              writePVD("Fields",retf,time,fromscratch);
+          string rets=writeVTKAMRStructure(i,amr,it,nameOfField+"_Grid");
+          writePVD("Grids",rets,time,fromscratch);
+          string retf=writeVTKAMRField(i,amr,att,"yField",it,"Fields");
+		  writePVD("Fields",retf,time,fromscratch);
         }
-        writeVTKAMRFieldPatches(it,nameOfField,fileName);
+        */
 }
 
 void
@@ -331,7 +425,7 @@ AMR::refinement(const vector<const BoxSplittingOptions*>& bsos,const IterativePr
     DataArrayDouble* yyWithGhost=const_cast<DataArrayDouble *>(_fields->getFieldOn(amr1,_fieldsInfos[0].first));
 
     MEDCouplingFieldDouble* yy=MEDCouplingFieldDouble::New(ON_CELLS);
-    yy->setName("YY") ;
+    yy->setName("yField") ;
     MEDCouplingIMesh* m1=amr1->getImageMesh()->buildWithGhost(numberOfCellsGhost);
     yy->setMesh(const_cast<MEDCouplingIMesh *>(m1));
     m1->decrRef();
@@ -396,9 +490,9 @@ AMR::unsteadyAMRDriver(double currentTime, const IterativeProblem& IterativeProb
         /*
         int numberOfCellsGhost=IterativeProblem.getNumberOfGhostCells();
         MEDCouplingCartesianAMRMeshGen* patch=const_cast<MEDCouplingCartesianAMRMeshGen *>(grid0->getMesh());
-        DataArrayDouble* yyWithGhost=const_cast<DataArrayDouble *>(_fields->getFieldOn(patch,"YY"));
+        DataArrayDouble* yyWithGhost=const_cast<DataArrayDouble *>(_fields->getFieldOn(patch,"yField"));
         MEDCouplingFieldDouble* fieldyyWithGhost=MEDCouplingFieldDouble::New(ON_CELLS);
-        fieldyyWithGhost->setName("YY") ;
+        fieldyyWithGhost->setName("yField") ;
         MEDCouplingIMesh* m1=amr1->getImageMesh()->buildWithGhost(numberOfCellsGhost);
         fieldyyWithGhost->setMesh(m1);
         fieldyyWithGhost->setArray(yyWithGhost);
@@ -552,15 +646,14 @@ AMR::writeVTKAMRFieldOnRecurse(int it, string nameOfField, string fileName) cons
 }
 
 string
-AMR::writeVTKAMRFieldPatches(int it, string nameOfField, string fileName) const
+AMR::writeVTKAMRFieldPatches(int iLevel, int it, double time, bool fromscratch, string nameOfField, string fileName) const
 {
-	double time = 0.0;
-	bool fromscratch = true;
 	string ret;
 	const MEDCouplingCartesianAMRMesh* amr=_fields->getMyGodFather();
-	vector<MEDCouplingCartesianAMRPatchGen *> tmpLev(amr->retrieveGridsAt(2));
+	vector<MEDCouplingCartesianAMRPatchGen *> tmpLev(amr->retrieveGridsAt(iLevel));
 	std::size_t sz(tmpLev.size());
 	size_t p;
+	int numberOfCellsGhost=2;
 	for (p = 0; p < sz; p++)
 	{
 		MEDCouplingCartesianAMRPatchGen* patchGrid(tmpLev[p]);
@@ -569,17 +662,32 @@ AMR::writeVTKAMRFieldPatches(int it, string nameOfField, string fileName) const
 		MEDCouplingFieldDouble* patchField=MEDCouplingFieldDouble::New(ON_CELLS);
 		patchField->setName(nameOfField+" patch");
 		patchField->setMesh(patchIMesh);
-		DataArrayDouble* patchFieldData=const_cast<DataArrayDouble *>(_fields->getFieldOn(patchMesh,nameOfField));
-		patchField->setArray(patchFieldData);
-		patchField->setTime(0.,0,0);
+
+	    DataArrayDouble* yyWithGhost_DAD=const_cast<DataArrayDouble *>(_fields->getFieldOn(patchMesh,nameOfField));
+
+	    MEDCouplingFieldDouble* yyWithGhost_MFD=MEDCouplingFieldDouble::New(ON_CELLS);
+	    yyWithGhost_MFD->setName("yyWithoutGhost") ;
+	    MEDCouplingIMesh* m1=patchIMesh->buildWithGhost(numberOfCellsGhost);
+	    yyWithGhost_MFD->setMesh(const_cast<MEDCouplingIMesh *>(m1));
+	    m1->decrRef();
+	    yyWithGhost_MFD->setArray(yyWithGhost_DAD);
+	    yyWithGhost_MFD->setTime(time,it,0);
+
+	    MEDCouplingFieldDouble* yy3=AMR::buildFieldWithoutGhostFromFieldWithGhost(numberOfCellsGhost,patchIMesh,yyWithGhost_MFD);
+
+//		DataArrayDouble* patchFieldData=const_cast<DataArrayDouble *>(_fields->getFieldOn(patchMesh,nameOfField));
+		patchField->setArray(yy3->getArray());
+		patchField->setTime(time,it,0);
 		patchField->checkCoherency();
 
 		ostringstream its;
 		its << it;
-		string patchFileName="P_"+fileName+"_"+its.str();
+		ostringstream iLevels;
+		iLevels << iLevel;
+		string patchFileName="p"+iLevels.str()+"_"+fileName+"_"+its.str();
 		ret=patchField->writeVTK(patchFileName);
 		writePVD(patchFileName,ret,time,fromscratch);
-		patchFieldData->decrRef();
+//		patchFieldData->decrRef();
 		patchField->decrRef();
 		patchMesh->decrRef();
 		patchGrid->decrRef();
