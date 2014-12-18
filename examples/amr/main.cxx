@@ -153,10 +153,11 @@ int main() {
     int frequencyOfRefinement=1;
 
     vector<int> coefRefinement1(spaceDim);
-    coefRefinement1[0]=8;
-    coefRefinement1[1]=8;
+    int isentropicRefCoef = 8;
+    coefRefinement1[0] = insentropicRefCoef;
+    coefRefinement1[1] = insentropicRefCoef;
     if (spaceDim == 3)
-        coefRefinement1[2]=8;
+        coefRefinement1[2] = insentropicRefCoef;
 
     vector< vector<int> > coefsRefinement(maxLevels);
     coefsRefinement[0]=coefRefinement1;
