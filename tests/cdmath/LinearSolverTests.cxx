@@ -34,8 +34,8 @@ LinearSolverTests::testClassLinearSolver( void )
     LinearSolver LS(A,B,500,1.E-10,"GMRES","LU");
 
     Vector X=LS.solve();
-	CPPUNIT_ASSERT(fabs(X(0)-Xana(0))<1.E-10);
-	CPPUNIT_ASSERT(fabs(X(1)-Xana(1))<1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana(0), X(0), 1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana(1), X(1), 1.E-10);
 
 	CPPUNIT_ASSERT_EQUAL(LS.getStatus(),true);
 
@@ -59,8 +59,8 @@ LinearSolverTests::testClassLinearSolver( void )
 	LS2.setSingularity(true);
 	Vector X2=LS2.solve();
 
-	CPPUNIT_ASSERT(fabs(X2(0)-(-4.55555555556))<1.E-10);
-	CPPUNIT_ASSERT(fabs(X2(1)-4.55555555556)<1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(-4.55555555556, X2(0), 1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(4.55555555556, X2(1), 1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS2.getNumberOfIter(),2);
 	CPPUNIT_ASSERT_EQUAL(LS2.isSingular(),true);
@@ -68,58 +68,58 @@ LinearSolverTests::testClassLinearSolver( void )
 
 	LinearSolver LS3(A,B,500,1.E-10,"BCG");
     Vector X3=LS3.solve();
-	CPPUNIT_ASSERT(fabs(X3(0)-Xana(0))<1.E-10);
-	CPPUNIT_ASSERT(fabs(X3(1)-2.)<1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana(0), X3(0), 1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(2., X3(1), 1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS3.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS3.getNameOfMethod(),(string)"BCG");
 
 	LinearSolver LS4(A,B,500,1.E-10,"CR");
     X3=LS4.solve();
-	CPPUNIT_ASSERT(fabs(X3(0)-Xana(0))<1.E-10);
-	CPPUNIT_ASSERT(fabs(X3(1)-2.)<1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana(0), X3(0), 1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(2., X3(1), 1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS4.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS4.getNameOfMethod(),(string)"CR");
 
 	LinearSolver LS5(A,B,500,1.E-10,"CGS");
     X3=LS5.solve();
-	CPPUNIT_ASSERT(fabs(X3(0)-Xana(0))<1.E-10);
-	CPPUNIT_ASSERT(fabs(X3(1)-2.)<1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana(0), X3(0), 1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(2., X3(1), 1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS5.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS5.getNameOfMethod(),(string)"CGS");
 
 	LinearSolver LS6(A,B,500,1.E-10,"BICG","LU");
     X3=LS6.solve();
-	CPPUNIT_ASSERT(fabs(X3(0)-Xana(0))<1.E-10);
-	CPPUNIT_ASSERT(fabs(X3(1)-2.)<1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana(0), X3(0), 1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(2., X3(1), 1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS6.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS6.getNameOfMethod(),(string)"BICG");
 	CPPUNIT_ASSERT_EQUAL(LS6.getNameOfPc(),(string)"LU");
 
 	LinearSolver LS7(A,B,500,1.E-10,"GCR");
     X3=LS7.solve();
-	CPPUNIT_ASSERT(fabs(X3(0)-Xana(0))<1.E-10);
-	CPPUNIT_ASSERT(fabs(X3(1)-2.)<1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana(0), X3(0), 1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(2., X3(1), 1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS7.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS7.getNameOfMethod(),(string)"GCR");
 
 	LinearSolver LS8(A,B,500,1.E-10,"LSQR");
     X3=LS8.solve();
-	CPPUNIT_ASSERT(fabs(X3(0)-Xana(0))<1.E-10);
-	CPPUNIT_ASSERT(fabs(X3(1)-2.)<1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana(0), X3(0), 1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(2., X3(1), 1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS8.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS8.getNameOfMethod(),(string)"LSQR");
 
 	LinearSolver LS9(A,B,500,1.E-10,"CHOLESKY");
     X3=LS9.solve();
-	CPPUNIT_ASSERT(fabs(X3(0)-Xana(0))<1.E-10);
-	CPPUNIT_ASSERT(fabs(X3(1)-2.)<1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana(0), X3(0), 1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(2., X3(1), 1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS9.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS9.getNameOfMethod(),(string)"CHOLESKY");
 
 	LinearSolver LS10(A,B,500,1.E-10,"LU");
     X3=LS10.solve();
-	CPPUNIT_ASSERT(fabs(X3(0)-Xana(0))<1.E-10);
-	CPPUNIT_ASSERT(fabs(X3(1)-2.)<1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana(0), X3(0), 1.E-10);
+	CPPUNIT_ASSERT_DOUBLES_EQUAL(2., X3(1), 1.E-10);
 	CPPUNIT_ASSERT_EQUAL(LS10.getStatus(),true);
 	CPPUNIT_ASSERT_EQUAL(LS10.getNameOfMethod(),(string)"LU");
 
@@ -160,7 +160,7 @@ LinearSolverTests::testClassLinearSolver( void )
     LinearSolver LS11(A2,B2,500,1.E-10,"GMRES","ILU");
     Vector X11=LS11.solve();
     for (int i=0;i<X11.getNumberOfRows();i++)
-    	CPPUNIT_ASSERT(fabs(X11(i)-Xana2(i))<1.E-10);
+    	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana2(i), X11(i), 1.E-10);
 
 	CPPUNIT_ASSERT_EQUAL(LS11.getStatus(),true);
 
@@ -171,7 +171,7 @@ LinearSolverTests::testClassLinearSolver( void )
     LinearSolver LS12(A2,B2,500,1.E-10,"CG","ILU");
     Vector X12=LS12.solve();
     for (int i=0;i<X12.getNumberOfRows();i++)
-    	CPPUNIT_ASSERT(fabs(X12(i)-Xana2(i))<1.E-10);
+    	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana2(i), X12(i), 1.E-10);
 
 	CPPUNIT_ASSERT_EQUAL(LS12.getStatus(),true);
 
@@ -182,7 +182,7 @@ LinearSolverTests::testClassLinearSolver( void )
     LinearSolver LS13(A2,B2,500,1.E-10,"LGMRES","ILU");
     Vector X13=LS13.solve();
     for (int i=0;i<X13.getNumberOfRows();i++)
-    	CPPUNIT_ASSERT(fabs(X13(i)-Xana2(i))<1.E-10);
+    	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana2(i), X13(i), 1.E-10);
 
 	CPPUNIT_ASSERT_EQUAL(LS13.getStatus(),true);
 
@@ -195,7 +195,7 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS14.getStatus(),true);
 
 	for (int i=0;i<X14.getNumberOfRows();i++)
-    	CPPUNIT_ASSERT(fabs(X14(i)-Xana2(i))<1.E-10);
+    	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana2(i), X14(i), 1.E-10);
 
 	CPPUNIT_ASSERT_EQUAL(LS14.getNumberMaxOfIter(),500);
 	CPPUNIT_ASSERT_EQUAL(LS14.getTolerance(),1.E-10);
@@ -206,7 +206,7 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS15.getStatus(),true);
 
 	for (int i=0;i<X15.getNumberOfRows();i++)
-    	CPPUNIT_ASSERT(fabs(X15(i)-Xana2(i))<1.E-10);
+    	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana2(i), X15(i), 1.E-10);
 
 	CPPUNIT_ASSERT_EQUAL(LS15.getNumberMaxOfIter(),500);
 	CPPUNIT_ASSERT_EQUAL(LS15.getTolerance(),1.E-10);
@@ -217,7 +217,7 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS16.getStatus(),true);
 
 	for (int i=0;i<X16.getNumberOfRows();i++)
-    	CPPUNIT_ASSERT(fabs(X16(i)-Xana2(i))<1.E-10);
+    	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana2(i), X16(i), 1.E-10);
 
 	CPPUNIT_ASSERT_EQUAL(LS16.getNumberMaxOfIter(),500);
 	CPPUNIT_ASSERT_EQUAL(LS16.getTolerance(),1.E-10);
@@ -228,7 +228,7 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS17.getStatus(),true);
 
 	for (int i=0;i<X17.getNumberOfRows();i++)
-    	CPPUNIT_ASSERT(fabs(X17(i)-Xana2(i))<1.E-10);
+    	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana2(i), X17(i), 1.E-10);
 
 	CPPUNIT_ASSERT_EQUAL(LS17.getNumberMaxOfIter(),500);
 	CPPUNIT_ASSERT_EQUAL(LS17.getTolerance(),1.E-10);
@@ -239,7 +239,7 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS18.getStatus(),true);
 
 	for (int i=0;i<X18.getNumberOfRows();i++)
-    	CPPUNIT_ASSERT(fabs(X18(i)-Xana2(i))<1.E-10);
+    	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana2(i), X18(i), 1.E-10);
 
 	CPPUNIT_ASSERT_EQUAL(LS18.getNumberMaxOfIter(),500);
 	CPPUNIT_ASSERT_EQUAL(LS18.getTolerance(),1.E-10);
@@ -250,7 +250,7 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS19.getStatus(),true);
 
 	for (int i=0;i<X19.getNumberOfRows();i++)
-    	CPPUNIT_ASSERT(fabs(X19(i)-Xana2(i))<1.E-10);
+    	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana2(i), X19(i), 1.E-10);
 
 	CPPUNIT_ASSERT_EQUAL(LS19.getNumberMaxOfIter(),500);
 	CPPUNIT_ASSERT_EQUAL(LS19.getTolerance(),1.E-10);
