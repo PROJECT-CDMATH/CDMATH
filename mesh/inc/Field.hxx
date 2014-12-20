@@ -78,6 +78,24 @@ class Field
     */
     Field ( const Field & field ) ;
 
+    /**
+     * constructor with data
+     * @param filename : file name of field med file
+     * @param fieldType: field type
+     * @param fieldName: field name
+     * @param iteration: iteration number (optional)
+     * @param order:     order inside an iteration (optional)
+     */
+    Field( const std::string filename, TypeField fieldType,
+           const std::string & fieldName = "",
+           int iteration = -1, int order = -1);
+  
+    void readFieldMed( const std::string & filename,
+                       TypeField type,
+                       const std::string & fieldName = "",
+                       int iteration = -1,
+                       int order = -1) ;
+
     double& operator[] ( int ielem ) ;
 
     double operator[] ( int ielem ) const;
@@ -148,13 +166,9 @@ class Field
 
     const Field& operator+= ( double s ) ;
 
-    void writeVTK ( const std::string fileName ) const ;
+    void writeVTK ( const std::string fileName, bool fromScratch=true ) const ;
 
-    void writeVTK ( const std::string fileName, bool fromScratch ) const ;
-
-    void writeMED ( const std::string fileName ) const ;
-
-    void writeMED ( const std::string fileName, bool fromScratch ) const ;
+    void writeMED ( const std::string fileName, bool fromScratch=true ) const ;
 
     void writeCSV ( const std::string fileName ) const ;
 
