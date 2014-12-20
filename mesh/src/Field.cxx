@@ -35,6 +35,7 @@ Field::~Field( void )
 {
 }
 
+  
 Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh, int numberOfComponents, double time)
 {
     _mesh=mesh ;
@@ -157,6 +158,76 @@ Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh)
     array->decrRef();
     mu->decrRef();
 }
+
+
+Field::Field( const std::string filename, TypeField type,
+              const std::string & fieldName,
+              int iteration, int order) : _mesh(filename + ".med"), _typeField(type)
+  
+{
+  readFieldMed(filename, type, fieldName, iteration, order);
+}
+
+void Field::readFieldMed( const std::string & fileName,
+                          TypeField type,
+                          const std::string & fieldName,
+                          int iteration,
+                          int order)
+{
+  std::string fName = fileName + ".med";
+  std::vector<std::string> fNames = MEDLoader::GetAllFieldNames(fName);
+  size_t iField = 0;
+  std::string theFieldName;
+  
+  if (fieldName == "") {
+    if (fNames.size() > 0)
+      theFieldName = fNames[0];
+    else {
+      std::ostringstream message;
+      message << "no field in file " << fName;
+      throw CdmathException(message.str().c_str());
+    }
+  }
+  else {
+    for (; iField < fNames.size(); iField++)
+      if (fieldName == fNames[iField]) break;
+
+    if (iField < fNames.size())
+      theFieldName = fieldName;
+    else {
+      std::ostringstream message;
+      message << "no field named " << fieldName << " in file " << fName;
+      throw CdmathException(message.str().c_str());
+    }
+  }
+  
+  std::vector<std::string> meshNames
+    = MEDLoader::GetMeshNamesOnField(fName, theFieldName);
+  if (meshNames.size() == 0) {
+    std::ostringstream message;
+    message << "no mesh associated to " << fieldName
+            << " in file " << fName;
+    throw CdmathException(message.str().c_str());
+  }
+  std::cerr << meshNames[0] << std::endl;
+
+  ParaMEDMEM::TypeOfField medFieldType[3] = { ON_CELLS, ON_NODES, ON_CELLS };
+  switch (type) {
+  case CELLS:
+    _field = MEDLoader::ReadField(medFieldType[type], fName, meshNames[0], 0,
+                                  theFieldName, iteration, order);
+    break;
+  case   NODES:
+    _field = MEDLoader::ReadField(medFieldType[type], fName, meshNames[0], 0,
+                                  theFieldName, iteration, order);
+    break;
+  case   FACES:
+    _field = MEDLoader::ReadField(medFieldType[type], fName, meshNames[0],-1,
+                                  theFieldName, iteration, order);
+    break;
+  }
+}
+
 
 DoubleTab
 Field::getNormEuclidean() const
@@ -465,15 +536,7 @@ Field::operator+= ( double s )
 
 //----------------------------------------------------------------------
 void
-Field::writeVTK (const std::string fileName) const
-//----------------------------------------------------------------------
-{
-    writeVTK (fileName,true);
-}
-
-//----------------------------------------------------------------------
-void
-Field::writeVTK (const std::string fileName, bool fromScratch) const
+Field::writeVTK (std::string fileName, bool fromScratch) const
 //----------------------------------------------------------------------
 {
     string fname=fileName+".pvd";
@@ -578,16 +641,7 @@ Field::writeCSV ( const std::string fileName ) const
 
 //----------------------------------------------------------------------
 void
-Field::writeMED ( const std::string fileName ) const
-//----------------------------------------------------------------------
-{
-    string fname=fileName+".med";
-    writeMED(fileName,true);
-}
-
-//----------------------------------------------------------------------
-void
-Field::writeMED ( const std::string fileName, bool fromScratch ) const
+Field::writeMED ( const std::string fileName, bool fromScratch) const
 //----------------------------------------------------------------------
 {
     string fname=fileName+".med";

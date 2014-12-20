@@ -4,20 +4,24 @@ CC = g++
 # Adapt the following line to your own system:
 CDMATHDIR = ../..
 IFLAG = -I$(CDMATHDIR)/include -I.
-LFLAG = -L$(CDMATHDIR)/lib
-LIBS  = -linterpkernel -lmedC -lmedloader -lmedcoupling -lbase -lmesh -llinearsolver
-OBJ = main.o
+LFLAG = -L$(CDMATHDIR)/lib -L$(PETSC_DIR)/$(PETSC_ARCH)/lib
+LIBS  = -linterpkernel -lmedC -lmedloader -lmedcoupling -lbase -lmesh -llinearsolver -lpetsc
 
-all: $(OBJ)
-	$(CC) -o main $^ $(IFLAG) $(LFLAG) $(LIBS)
-	
+all: main main2
+
+main: main.cxx 
+	$(CC) -g -o $@ $^ $(IFLAG) $(LFLAG) $(LIBS)
+
+main2: main2.cxx 
+	$(CC) -g -o $@ $^ $(IFLAG) $(LFLAG) $(LIBS)
+
 %.o: %.cxx
-	$(CC) -c -o $@ $< $(CFLAGS) $(IFLAG) $(LFLAG) $(LIBS)
-	
+	$(CC) -c -g -o $@ $< $(CFLAGS) $(IFLAG) $(LFLAG) $(LIBS)
+
 .PHONY: clean
 
 clean:
-	rm -f *.o *~ core $(INCDIR)/*~
+	rm -f main main2 *.o *~ core $(INCDIR)/*~
 
 sweep:
 	rm -f *.vtu
