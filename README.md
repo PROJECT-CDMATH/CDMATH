@@ -72,3 +72,5 @@ After popular request, here is how you can create an Ubuntu 14.04 package:
 4. Compile with `make package`.
 
 You will then find a Debian package in the build directory. You may install it on Ubuntu 14.04.
+
+Unfortunately, the package may be said to be of “bad quality” for Debian standards as far as ownership is concerned. This is true and due to limitations in CMake/CPack. The package should still install nonetheless.

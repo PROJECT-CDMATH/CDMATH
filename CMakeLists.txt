@@ -72,13 +72,5 @@ add_subdirectory (${examples_dir})
 
 # Packaging
 if (CMAKE_CDMATH_DEB)
-  set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "CFD toolbox")
-  set (CPACK_PACKAGE_VENDOR "CDMATH workgroup")
-  set (CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
-  set (CPACK_PACKAGE_VERSION_MAJOR "${CDMATH_VERSION_MAJOR}")
-  set (CPACK_PACKAGE_VERSION_MINOR "${CDMATH_VERSION_MINOR}")
-  set (CPACK_GENERATOR "DEB")
-  set (CPACK_DEBIAN_PACKAGE_MAINTAINER "Arthur Talpaert") #required
-  set (CPACK_PACKAGE_INSTALL_DIRECTORY cdmath)
-  include (CPack)
+  include (CPackLists.txt)
 endif (CMAKE_CDMATH_DEB)
