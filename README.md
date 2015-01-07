@@ -39,10 +39,10 @@ Generate makefiles for a minimum version:
 * `cmake -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release ../cdmath_src/`
 
 Or generate makefiles for an all-options version:
-* `cmake -G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3 -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCMAKE_CDMATH_SWIG=ON -DCMAKE_CDMATH_TESTS=ON -DCMAKE_CDMATH_DOCUMENTATION=ON -DMEDFILE_USE_MPI=ON ../cdmath_src/`
+* `cmake -G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3 -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCMAKE_CDMATH_SWIG=ON -DCMAKE_CDMATH_TESTS=ON -DCMAKE_CDMATH_DOCUMENTATION=ON -DMEDFILE_USE_MPI=ON -DCMAKE_CDMATH_DEB=ON ../cdmath_src/`
 
 Compile and install:
-* `make -j4` # Where “4” is the number of processors you have.
+* `make -j4`, where “4” is the number of processors you have.
 * `make -j4 install`
 
 Notes for compilation options:
@@ -63,3 +63,12 @@ To use CDMATH with your Python code `main.py`:
  * Python libraries: `export PYTHONPATH=~/workspace/cdmath/cdmath_install/lib/cdmath:~/workspace/cdmath/cdmath_install/bin/cdmath`
 
 
+Create an Ubuntu 14.04 package for CDMATH
+-----------------------------------------
+After popular request, here is how you can create an Ubuntu 14.04 package:
+1. Download CDMATH as explained hereabove.
+2. Set the environment as explained hereabove.
+3. Generate a makefile with `cmake -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCMAKE_CDMATH_DEB=ON ../cdmath_src/` and eventually other options (documentation, tests, swig, etc).
+4. Compile with `make package`.
+
+You will then find a Debian package in the build directory. You may install it on Ubuntu 14.04.

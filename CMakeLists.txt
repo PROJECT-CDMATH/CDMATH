@@ -48,7 +48,7 @@ if (CMAKE_CDMATH_DOCUMENTATION)
   find_package (Doxygen)
   if (NOT DOXYGEN_FOUND)
     message (FATAL_ERROR "Doxygen is needed to build the documentation. Please install it correctly.")
-  endif ()
+  endif (NOT DOXYGEN_FOUND)
 
   configure_file (Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile  @ONLY IMMEDIATE)
 
@@ -56,14 +56,14 @@ if (CMAKE_CDMATH_DOCUMENTATION)
   							  SOURCES ${PROJECT_BINARY_DIR}/Doxyfile)
 
   install (DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html DESTINATION share/doc/cdmath)
-endif ()
+endif (CMAKE_CDMATH_DOCUMENTATION)
  
 # Tests
 if (CMAKE_CDMATH_TESTS)
-    set (CMAKE_EXE_LINKER_FLAGS "-pg -fprofile-arcs -ftest-coverage -lgcov")
-    enable_testing ()
-    find_package (CPPUNIT REQUIRED)
-    add_subdirectory (${TESTS_DIR})
+  set (CMAKE_EXE_LINKER_FLAGS "-pg -fprofile-arcs -ftest-coverage -lgcov")
+  enable_testing ()
+  find_package (CPPUNIT REQUIRED)
+  add_subdirectory (${TESTS_DIR})
 endif (CMAKE_CDMATH_TESTS)
 
 # Examples
@@ -71,12 +71,14 @@ set (examples_dir ${CDMATH_SOURCE_DIR}/examples)
 add_subdirectory (${examples_dir})
 
 # Packaging
-set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "CFD toolbox")
-set (CPACK_PACKAGE_VENDOR "CDMATH workgroup")
-set (CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
-set (CPACK_PACKAGE_VERSION_MAJOR "${CDMATH_VERSION_MAJOR}")
-set (CPACK_PACKAGE_VERSION_MINOR "${CDMATH_VERSION_MINOR}")
-set (CPACK_GENERATOR "DEB")
-set (CPACK_DEBIAN_PACKAGE_MAINTAINER "Arthur Talpaert") #required
-set (CPACK_PACKAGE_INSTALL_DIRECTORY cdmath)
-include (CPack)
+if (CMAKE_CDMATH_DEB)
+  set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "CFD toolbox")
+  set (CPACK_PACKAGE_VENDOR "CDMATH workgroup")
+  set (CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+  set (CPACK_PACKAGE_VERSION_MAJOR "${CDMATH_VERSION_MAJOR}")
+  set (CPACK_PACKAGE_VERSION_MINOR "${CDMATH_VERSION_MINOR}")
+  set (CPACK_GENERATOR "DEB")
+  set (CPACK_DEBIAN_PACKAGE_MAINTAINER "Arthur Talpaert") #required
+  set (CPACK_PACKAGE_INSTALL_DIRECTORY cdmath)
+  include (CPack)
+endif (CMAKE_CDMATH_DEB)
