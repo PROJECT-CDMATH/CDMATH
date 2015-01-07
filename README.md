@@ -20,7 +20,7 @@ Dependencies. The following packages list is sufficient on Ubuntu 14.04:
  - `cmake`
  - `g++` or another C++ compiler
  - `libhdf5-dev`
- - `petsc-dev` (mandatorily version 3.4, that is to say *not* more recent). This should already include `libopenmpi-dev`, which is necessary if you use the compilation option `-DMEDFILE_USE_MPI=ON`. We have chose the version 3.4 of Petsc (released on 13 May 2013), as it is easily installable from the main distributions repositories.
+ - `petsc-dev` (mandatorily a minor subversion of version 3.4. * , that is to say *not* more recent). This should already include `libopenmpi-dev`, which is necessary if you use the compilation option `-DMEDFILE_USE_MPI=ON`. We have chosen the version 3.4 of Petsc (released on 13 May 2013), as it is easily installable from the main distributions repositories.
  - `python-dev` and `swig`, if you want to generate Python executables and libraries of CDMATH. Use the compilation option `-DCMAKE_CDMATH_SWIG=ON`.
  - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCMAKE_CDMATH_TESTS=ON`.
  - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCMAKE_CDMATH_DOCUMENTATION=ON`.
