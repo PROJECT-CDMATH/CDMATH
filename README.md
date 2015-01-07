@@ -69,7 +69,7 @@ After popular request, here is how you can create an Ubuntu 14.04 package:
 1. Download CDMATH as explained hereabove.
 2. Set the environment as explained hereabove.
 3. Generate a makefile with `cmake -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCMAKE_CDMATH_DEB=ON ../cdmath_src/` and eventually other options (documentation, tests, swig, etc).
-4. Compile with `make package`.
+4. Compile with `make install package`.
 
 You will then find a Debian package in the build directory. You may install it on Ubuntu 14.04.
 

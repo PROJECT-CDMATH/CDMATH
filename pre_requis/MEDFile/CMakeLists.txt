@@ -116,7 +116,7 @@ ADD_SUBDIRECTORY(src)
 
 ## Installation of the doc
 #IF(MEDFILE_INSTALL_DOC)
-#  INSTALL(DIRECTORY doc DESTINATION ${CMAKE_INSTALL_PREFIX}/share)
+#  INSTALL(DIRECTORY doc DESTINATION share)
 #ENDIF()
 
 #######################
@@ -171,7 +171,7 @@ CONFIGURE_PACKAGE_CONFIG_FILE(config/cmake_files/${PROJECT_NAME}Config.cmake.in
 #   - in the install tree:
 #       Get the relative path of the include directory so 
 #       we can register it in the generated configuration files:
-SET(CONF_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/${INSTALL_INCLUDE_DIR}")
+SET(CONF_INCLUDE_DIRS "${INSTALL_INCLUDE_DIR}")
 CONFIGURE_PACKAGE_CONFIG_FILE(config/cmake_files/${PROJECT_NAME}Config.cmake.in 
     ${PROJECT_BINARY_DIR}/to_install/${PROJECT_NAME}Config.cmake
     INSTALL_DESTINATION "${INSTALL_CMAKE_CONFIG_DIR}"

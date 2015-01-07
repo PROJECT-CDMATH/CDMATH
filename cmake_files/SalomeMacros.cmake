@@ -142,8 +142,8 @@ MACRO(INSTALL_AND_COMPILE_PYTHON_FILE PYFILE2COMPINST PYFILELOC)
   FOREACH(input ${PYFILE2COMPINST})
     GET_FILENAME_COMPONENT(inputname ${input} NAME)
     INSTALL(FILES ${input} DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYFILELOC})
-    INSTALL(CODE "MESSAGE(STATUS \"py compiling ${CMAKE_INSTALL_PREFIX}/${PYFILELOC}/${inputname}\")")
-    INSTALL(CODE "SET(CMD \"import py_compile ; py_compile.compile('${CMAKE_INSTALL_PREFIX}/${PYFILELOC}/${inputname}')\")")
+    INSTALL(CODE "MESSAGE(STATUS \"py compiling ${CMAKE_CURRENT_BINARY_DIR}/${PYFILELOC}/${inputname}\")")
+    INSTALL(CODE "SET(CMD \"import py_compile ; py_compile.compile('${CMAKE_CURRENT_BINARY_DIR}/${PYFILELOC}/${inputname}')\")")
     INSTALL(CODE "EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c \"\${CMD}\")")
     INSTALL(CODE "EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -O -c \"\${CMD}\")")
   ENDFOREACH(input ${PYFILE2COMPINST})
@@ -840,7 +840,7 @@ MACRO(SALOME_GENERATE_TESTS_ENVIRONMENT output)
 
  # Get module name as substring of "Salome<ModuleName>"
  STRING(SUBSTRING "${PROJECT_NAME}" 6 -1 PRNAME) 
- SET(_env "${PRNAME}_ROOT_DIR=${CMAKE_INSTALL_PREFIX}${sep}${_env}")
+ SET(_env "${PRNAME}_ROOT_DIR=${sep}${_env}")
   
  # Creating follow string for Windows environement:
  # "VAR1_ENV=1\;2\;3\;...\;...\;...;VAR2_ENV=1\;2\;3\;...\;...\;...;VAR3_ENV=1\;2\;3\;...\;...\;...;..."
