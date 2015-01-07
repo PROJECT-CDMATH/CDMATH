@@ -14,4 +14,4 @@ ENDIF (CMAKE_CDMATH_TESTS)
 FILE(GLOB src_linearsolver_CXX . *.cxx)
 ADD_LIBRARY(linearsolver SHARED ${src_linearsolver_CXX} ${PETSC_LIBRARIES})
 
-INSTALL(TARGETS linearsolver DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+INSTALL(TARGETS linearsolver DESTINATION lib)

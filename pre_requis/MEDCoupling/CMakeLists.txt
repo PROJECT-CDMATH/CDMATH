@@ -62,12 +62,12 @@ SET(medcouplingremapper_SOURCES
 
 ADD_LIBRARY(medcoupling SHARED ${medcoupling_SOURCES})
 TARGET_LINK_LIBRARIES(medcoupling interpkernel)
-INSTALL(TARGETS medcoupling DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+INSTALL(TARGETS medcoupling DESTINATION lib)
 
 ADD_LIBRARY(medcouplingremapper SHARED ${medcouplingremapper_SOURCES})
 TARGET_LINK_LIBRARIES(medcouplingremapper medcoupling)
-INSTALL(TARGETS medcouplingremapper DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+INSTALL(TARGETS medcouplingremapper DESTINATION lib)
 
 FILE(GLOB medcoupling_HEADERS_HXX "${CMAKE_CURRENT_SOURCE_DIR}/*.hxx")
 FILE(GLOB medcoupling_HEADERS_TXX "${CMAKE_CURRENT_SOURCE_DIR}/*.txx")
-INSTALL(FILES ${medcoupling_HEADERS_HXX} ${medcoupling_HEADERS_TXX} MEDCouplingNatureOfFieldEnum DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+INSTALL(FILES ${medcoupling_HEADERS_HXX} ${medcoupling_HEADERS_TXX} MEDCouplingNatureOfFieldEnum DESTINATION include)
