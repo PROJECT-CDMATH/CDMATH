@@ -28,7 +28,7 @@ SET(MESH_MED
   mesh.med
   )
 
-file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests) 
+file(COPY ${MESH_MED} DESTINATION tests) 
 
 FILE(GLOB TestMesh_SOURCES . *.cxx)
 ADD_LIBRARY(TestMesh SHARED ${TestMesh_SOURCES})
