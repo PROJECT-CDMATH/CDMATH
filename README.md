@@ -66,6 +66,7 @@ To use CDMATH with your Python code `main.py`:
 Create an Ubuntu 14.04 package for CDMATH
 -----------------------------------------
 After popular request, here is how you can create an Ubuntu 14.04 package:
+
 1. Download CDMATH as explained hereabove.
 2. Set the environment as explained hereabove.
 3. Generate a makefile with `cmake -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCMAKE_CDMATH_DEB=ON ../cdmath_src/` and eventually other options (documentation, tests, swig, etc).
