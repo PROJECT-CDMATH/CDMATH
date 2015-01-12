@@ -62,7 +62,9 @@ Mesh::Mesh( const ParaMEDMEM::MEDCouplingIMesh* mesh )
     vector<int> nxyz=mesh->getCellGridStructure();
     double* Box0=new double[2*_dim];
     mesh->getBoundingBox(Box0);
-    _nxyz = nxyz ;
+    _nxyz = nxyz;
+    for (int i=0; i<_dim; i++)
+    	_nxyz[i] = nxyz[i] + 1;
 
     _xMin=Box0[0];
     _xSup=Box0[1];
