@@ -44,6 +44,7 @@ Mesh::Mesh( void )
     _zMin=0.;
     _zSup=0.;
     _groups.resize(0);
+	cout << "TTTTTTTT : " << _zSup << endl;
 }
 
 //----------------------------------------------------------------------
@@ -59,14 +60,9 @@ Mesh::Mesh( const ParaMEDMEM::MEDCouplingIMesh* mesh )
 {
     _dim=mesh->getSpaceDimension();
     vector<double> dxyz=mesh->getDXYZ();
-    vector<int> nxyzMED=mesh->getCellGridStructure();
+    _nxyz=mesh->getCellGridStructure();
     double* Box0=new double[2*_dim];
     mesh->getBoundingBox(Box0);
-    _nxyz = nxyzMED;
-    /*
-    for (int i=0; i<_dim; i++)
-		_nxyz[i]--;
-	*/
 
     _xMin=Box0[0];
     _xSup=Box0[1];
@@ -89,10 +85,9 @@ Mesh::Mesh( const ParaMEDMEM::MEDCouplingIMesh* mesh )
     for(int i=0;i<_dim;i++)
     {
         originPtr[i]=Box0[2*i];
-        nodeStrctPtr[i]=nxyzMED[i]+1;
+        nodeStrctPtr[i]=_nxyz[i]+1;
         dxyzPtr[i]=dxyz[i];
     }
-
     _mesh=MEDCouplingIMesh::New("MESH2D",
                                 _dim,
                                 nodeStrctPtr,
@@ -101,6 +96,7 @@ Mesh::Mesh( const ParaMEDMEM::MEDCouplingIMesh* mesh )
                                 originPtr+_dim,
                                 dxyzPtr,
                                 dxyzPtr+_dim);
+	cout << "TTTTTTTT : " << _mesh->getNumberOfCells() << endl;
     delete [] originPtr;
     delete [] dxyzPtr;
     delete [] nodeStrctPtr;
