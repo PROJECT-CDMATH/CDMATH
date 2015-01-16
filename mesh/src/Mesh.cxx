@@ -63,8 +63,10 @@ Mesh::Mesh( const ParaMEDMEM::MEDCouplingIMesh* mesh )
     double* Box0=new double[2*_dim];
     mesh->getBoundingBox(Box0);
     _nxyz = nxyzMED;
+    /*
     for (int i=0; i<_dim; i++)
 		_nxyz[i]--;
+	*/
 
     _xMin=Box0[0];
     _xSup=Box0[1];
