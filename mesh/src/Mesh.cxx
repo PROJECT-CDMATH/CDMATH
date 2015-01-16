@@ -89,7 +89,7 @@ Mesh::Mesh( const ParaMEDMEM::MEDCouplingIMesh* mesh )
     for(int i=0;i<_dim;i++)
     {
         originPtr[i]=Box0[2*i];
-        nodeStrctPtr[i]=nxyzMED[i];
+        nodeStrctPtr[i]=nxyzMED[i]+1;
         dxyzPtr[i]=dxyz[i];
     }
 
