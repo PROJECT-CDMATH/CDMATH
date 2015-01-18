@@ -2,7 +2,7 @@
  * meshtests.cxx
  *
  *  Created on: 24 janv. 2012
- *      Authors: CDMAT
+ *      Authors: CDMATH
  */
 
 #include "MeshTests.hxx"
@@ -100,18 +100,6 @@ MeshTests::testClassMesh( void )
         if (y==0.5 && x==1.)
             CPPUNIT_ASSERT_EQUAL( -1, M2.getIndexFacePeriodic(i) );
     }
-    M2.writeMED("TestMesh");
-    Mesh M22("TestMesh.med");
-    CPPUNIT_ASSERT_EQUAL( 2, M22.getSpaceDimension() );
-    CPPUNIT_ASSERT_EQUAL( 25, M22.getNumberOfNodes() );
-    CPPUNIT_ASSERT_EQUAL( 16, M22.getNumberOfCells() );
-    CPPUNIT_ASSERT_EQUAL( 40, M22.getNumberOfFaces() );
-
-    Mesh M23("mesh.med");
-    CPPUNIT_ASSERT(M23.getNamesOfGroups()[0].compare("BORD1")==0);
-    CPPUNIT_ASSERT(M23.getNamesOfGroups()[1].compare("BORD2")==0);
-    CPPUNIT_ASSERT(M23.getNamesOfGroups()[2].compare("BORD3")==0);
-    CPPUNIT_ASSERT(M23.getNamesOfGroups()[3].compare("BORD4")==0);
 
     Mesh M3(M1);
     CPPUNIT_ASSERT_EQUAL( 1, M3.getSpaceDimension() );
@@ -135,13 +123,33 @@ MeshTests::testClassMesh( void )
     Mesh M5(0.0,1.0,4,0.0,1.0,4,0.0,1.0,4);
     CPPUNIT_ASSERT_EQUAL( 3, M5.getSpaceDimension() );
 
+
+    // Connection with MED
     string fileNameVTK="TestMesh";
-    M4.writeVTK(fileNameVTK) ;
     string fileNameMED="TestMesh";
-    M4.writeMED(fileNameMED) ;
-    Mesh M6(fileNameMED+".med");
+
+    M2.writeMED(fileNameMED);
+    Mesh M22(fileNameMED + ".med");
+    CPPUNIT_ASSERT_EQUAL( 2, M22.getSpaceDimension() );
+    CPPUNIT_ASSERT_EQUAL( 25, M22.getNumberOfNodes() );
+    CPPUNIT_ASSERT_EQUAL( 16, M22.getNumberOfCells() );
+    CPPUNIT_ASSERT_EQUAL( 40, M22.getNumberOfFaces() );
+
+    Mesh M23("mesh.med");
+    CPPUNIT_ASSERT(M23.getNamesOfGroups()[0].compare("BORD1")==0);
+    CPPUNIT_ASSERT(M23.getNamesOfGroups()[1].compare("BORD2")==0);
+    CPPUNIT_ASSERT(M23.getNamesOfGroups()[2].compare("BORD3")==0);
+    CPPUNIT_ASSERT(M23.getNamesOfGroups()[3].compare("BORD4")==0);
+
+    M4.writeVTK(fileNameVTK);
+    M4.writeMED(fileNameMED);
+    Mesh M6(fileNameMED + ".med");
     CPPUNIT_ASSERT_EQUAL( 2, M6.getSpaceDimension() );
     CPPUNIT_ASSERT_EQUAL( 25, M6.getNumberOfNodes() );
     CPPUNIT_ASSERT_EQUAL( 16, M6.getNumberOfCells() );
     CPPUNIT_ASSERT_EQUAL( 40, M6.getNumberOfFaces() );
+
+    /*
+    const MEDCouplingMesh* M1MEDMesh = M2.getMEDCouplingMesh();
+    */
 }
