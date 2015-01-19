@@ -22,6 +22,7 @@ void
 MeshTests::testClassMesh( void )
 //----------------------------------------------------------------------
 {
+    // Testing Mesh(xinf, xsup, nx)
     Mesh M1(0.0,4.0,4);
     CPPUNIT_ASSERT_EQUAL( 1, M1.getSpaceDimension() );
     CPPUNIT_ASSERT_EQUAL( 5, M1.getNumberOfNodes() );
@@ -52,6 +53,7 @@ MeshTests::testClassMesh( void )
     CPPUNIT_ASSERT(M1.getNamesOfGroups()[1].compare("RightEdge")==0);
 
 
+	// Testing Mesh(xinf, xsup, nx, yinf, ysup, ny)
     double xinf=0.0;
     double xsup=4.0;
     double yinf=0.0;
@@ -101,27 +103,31 @@ MeshTests::testClassMesh( void )
             CPPUNIT_ASSERT_EQUAL( -1, M2.getIndexFacePeriodic(i) );
     }
 
-    Mesh M3(M1);
-    CPPUNIT_ASSERT_EQUAL( 1, M3.getSpaceDimension() );
-    CPPUNIT_ASSERT_EQUAL( 5, M3.getNumberOfNodes() );
-    CPPUNIT_ASSERT_EQUAL( 4, M3.getNumberOfCells() );
-    CPPUNIT_ASSERT_EQUAL( 5, M3.getNumberOfFaces() );
 
-    M3=M2;
-    CPPUNIT_ASSERT_EQUAL( 2, M3.getSpaceDimension() );
-    CPPUNIT_ASSERT_EQUAL( 25, M3.getNumberOfNodes() );
-    CPPUNIT_ASSERT_EQUAL( 16, M3.getNumberOfCells() );
-    CPPUNIT_ASSERT_EQUAL( 40, M3.getNumberOfFaces() );
+	// Testing Mesh(xinf, xsup, nx, yinf, ysup, ny, zinf, zsup, nz)
+    Mesh M3(0.0,1.0,4,0.0,1.0,4,0.0,1.0,4);
+    CPPUNIT_ASSERT_EQUAL( 3, M3.getSpaceDimension() );
+    
+    
+    // Testing copies
+	Mesh Mcopy1(M1);
+    CPPUNIT_ASSERT_EQUAL( 1, Mcopy1.getSpaceDimension() );
+    CPPUNIT_ASSERT_EQUAL( 5, Mcopy1.getNumberOfNodes() );
+    CPPUNIT_ASSERT_EQUAL( 4, Mcopy1.getNumberOfCells() );
+    CPPUNIT_ASSERT_EQUAL( 5, Mcopy1.getNumberOfFaces() );
 
-    Mesh M4;
-    M4=M3;
-    CPPUNIT_ASSERT_EQUAL( 2, M4.getSpaceDimension() );
-    CPPUNIT_ASSERT_EQUAL( 25, M4.getNumberOfNodes() );
-    CPPUNIT_ASSERT_EQUAL( 16, M4.getNumberOfCells() );
-    CPPUNIT_ASSERT_EQUAL( 40, M4.getNumberOfFaces() );
+    Mcopy1=M2;
+    CPPUNIT_ASSERT_EQUAL( 2, Mcopy1.getSpaceDimension() );
+    CPPUNIT_ASSERT_EQUAL( 25, Mcopy1.getNumberOfNodes() );
+    CPPUNIT_ASSERT_EQUAL( 16, Mcopy1.getNumberOfCells() );
+    CPPUNIT_ASSERT_EQUAL( 40, Mcopy1.getNumberOfFaces() );
 
-    Mesh M5(0.0,1.0,4,0.0,1.0,4,0.0,1.0,4);
-    CPPUNIT_ASSERT_EQUAL( 3, M5.getSpaceDimension() );
+    Mesh Mcopy2;
+    Mcopy2=Mcopy1;
+    CPPUNIT_ASSERT_EQUAL( 2, Mcopy2.getSpaceDimension() );
+    CPPUNIT_ASSERT_EQUAL( 25, Mcopy2.getNumberOfNodes() );
+    CPPUNIT_ASSERT_EQUAL( 16, Mcopy2.getNumberOfCells() );
+    CPPUNIT_ASSERT_EQUAL( 40, Mcopy2.getNumberOfFaces() );
 
 
     // Connection with MED
@@ -141,8 +147,8 @@ MeshTests::testClassMesh( void )
     CPPUNIT_ASSERT(M23.getNamesOfGroups()[2].compare("BORD3")==0);
     CPPUNIT_ASSERT(M23.getNamesOfGroups()[3].compare("BORD4")==0);
 
-    M4.writeVTK(fileNameVTK);
-    M4.writeMED(fileNameMED);
+    Mcopy2.writeVTK(fileNameVTK);
+    Mcopy2.writeMED(fileNameMED);
     Mesh M6(fileNameMED + ".med");
     CPPUNIT_ASSERT_EQUAL( 2, M6.getSpaceDimension() );
     CPPUNIT_ASSERT_EQUAL( 25, M6.getNumberOfNodes() );
