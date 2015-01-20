@@ -44,7 +44,6 @@ Mesh::Mesh( void )
     _zMin=0.;
     _zSup=0.;
     _groups.resize(0);
-	cout << "TTTTTTTT : " << _zSup << endl;
 }
 
 //----------------------------------------------------------------------
@@ -96,7 +95,6 @@ Mesh::Mesh( const ParaMEDMEM::MEDCouplingIMesh* mesh )
                                 originPtr+_dim,
                                 dxyzPtr,
                                 dxyzPtr+_dim);
-	cout << "TTTTTTTT : " << _mesh->getNumberOfCells() << endl;
     delete [] originPtr;
     delete [] dxyzPtr;
     delete [] nodeStrctPtr;
