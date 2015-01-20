@@ -5,7 +5,7 @@ CC = g++
 # Adapt the following lines to your own system:
 PETSCDIR = /usr/lib/petscdir/3.4.2
 MPIDIR = /usr/lib/openmpi
-CDMATHDIR = ../..
+CDMATHDIR = ../../../../..
 
 IFLAG = -I$(PETSCDIR)/include -I$(MPIDIR)/include -I$(CDMATHDIR)/include -I.
 LFLAG = -L$(CDMATHDIR)/lib
