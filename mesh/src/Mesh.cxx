@@ -2,7 +2,7 @@
  * mesh.cxx
  *
  *  Created on: 22 janv. 2012
- *      Authors: CDMAT
+ *      Authors: CDMATH
  */
 
 #include "Mesh.hxx"
@@ -59,14 +59,9 @@ Mesh::Mesh( const ParaMEDMEM::MEDCouplingIMesh* mesh )
 {
     _dim=mesh->getSpaceDimension();
     vector<double> dxyz=mesh->getDXYZ();
-    vector<int> nxyz=mesh->getCellGridStructure();
+    _nxyz=mesh->getCellGridStructure();
     double* Box0=new double[2*_dim];
     mesh->getBoundingBox(Box0);
-    _nxyz = nxyz;
-    /*
-    for (int i=0; i<_dim; i++)
-    	_nxyz[i] = nxyz[i] - 1;
-    */ 
 
     _xMin=Box0[0];
     _xSup=Box0[1];
@@ -89,10 +84,9 @@ Mesh::Mesh( const ParaMEDMEM::MEDCouplingIMesh* mesh )
     for(int i=0;i<_dim;i++)
     {
         originPtr[i]=Box0[2*i];
-        nodeStrctPtr[i]=nxyz[i]+1;
+        nodeStrctPtr[i]=_nxyz[i]+1;
         dxyzPtr[i]=dxyz[i];
     }
-
     _mesh=MEDCouplingIMesh::New("MESH2D",
                                 _dim,
                                 nodeStrctPtr,
@@ -518,12 +512,12 @@ Mesh::setMesh( void )
 Mesh::Mesh( double xinf, double xsup, int nx )
 //----------------------------------------------------------------------
 {
-	if(nx<=0)
-	    throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : nx <= 0");
-	if(xinf>=xsup)
-	    throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : xinf <= xsup");
+    if(nx<=0)
+        throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : nx <= 0");
+    if(xinf>=xsup)
+        throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : xinf <= xsup");
 
-	double dx = (xsup - xinf)/nx ;
+    double dx = (xsup - xinf)/nx ;
 
     _dim = 1 ;
     _xMin=xinf;
@@ -536,7 +530,7 @@ Mesh::Mesh( double xinf, double xsup, int nx )
     _dxyz.resize(_dim);
     _dxyz[0]=dx;
     _nxyz.resize(_dim);
-    _nxyz[0]=nx+1;
+    _nxyz[0]=nx;
 
     double *originPtr = new double[_dim];
     double *dxyzPtr = new double[_dim];
@@ -650,10 +644,10 @@ Mesh::Mesh( double xinf, double xsup, int nx )
 Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny)
 //----------------------------------------------------------------------
 {
-	if(nx<=0 || ny<=0)
-	    throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : nx <= 0 or ny <= 0");
-	if(xinf>=xsup || yinf>=ysup)
-	    throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : xinf <= xsup or yinf <= ysup");
+    if(nx<=0 || ny<=0)
+        throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : nx <= 0 or ny <= 0");
+    if(xinf>=xsup || yinf>=ysup)
+        throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : xinf <= xsup or yinf <= ysup");
     _xMin=xinf;
     _xSup=xsup;
     _yMin=yinf;
@@ -667,8 +661,8 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny)
 
     _dim = 2 ;
     _nxyz.resize(_dim);
-    _nxyz[0]=nx+1;
-    _nxyz[1]=ny+1;
+    _nxyz[0]=nx;
+    _nxyz[1]=ny;
 
     _dxyz.resize(_dim);
     _dxyz[0]=dx;
@@ -704,10 +698,10 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny)
 Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz)
 //----------------------------------------------------------------------
 {
-	if(nx<=0 || ny<=0 || nz<=0)
-	    throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : nx <= 0 or ny <= 0 or nz <= 0");
-	if(xinf>=xsup || yinf>=ysup)
-	    throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : xinf <= xsup or yinf <= ysup or zinf <= zsup");
+    if(nx<=0 || ny<=0 || nz<=0)
+        throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : nx <= 0 or ny <= 0 or nz <= 0");
+    if(xinf>=xsup || yinf>=ysup)
+        throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : xinf <= xsup or yinf <= ysup or zinf <= zsup");
     _dim=3;
     _xMin=xinf;
     _xSup=xsup;
@@ -726,9 +720,9 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, 
     _dxyz[2]=dz;
 
     _nxyz.resize(_dim);
-    _nxyz[0]=nx+1;
-    _nxyz[1]=ny+1;
-    _nxyz[2]=nz+1;
+    _nxyz[0]=nx;
+    _nxyz[1]=ny;
+    _nxyz[2]=nz;
 
     double *originPtr = new double[_dim];
     double *dxyzPtr = new double[_dim];
@@ -784,7 +778,7 @@ int
 Mesh::getNx( void )  const
 //----------------------------------------------------------------------
 {
-    return _nxyz[0]-1 ;
+    return _nxyz[0];
 }
 
 //----------------------------------------------------------------------
@@ -794,7 +788,7 @@ Mesh::getNy( void )  const
 {
     if(_dim < 2)
         throw CdmathException("int double& Field::operator[ielem] : Ny is not defined in dimension < 2!");
-    return _nxyz[1]-1 ;
+    return _nxyz[1];
 }
 
 //----------------------------------------------------------------------
@@ -804,7 +798,7 @@ Mesh::getNz( void )  const
 {
     if(_dim < 3)
         throw CdmathException("int double& Field::operator[ielem] : Nz is not defined in dimension < 3!");
-    return _nxyz[2]-1 ;
+    return _nxyz[2];
 }
 
 //----------------------------------------------------------------------

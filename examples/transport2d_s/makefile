@@ -2,8 +2,8 @@
 
 CC = g++
 # Adapt the following line to your own system:
-CDMATHDIR = ../..
-IFLAG = -I$(ICDMATHDIR)/include -I.
+CDMATHDIR = ../../../../..
+IFLAG = -I$(CDMATHDIR)/include -I.
 LFLAG = -L$(CDMATHDIR)/lib
 LIBS  =-linterpkernel -lmedC -lmedloader -lmedcoupling -lbase -lmesh -llinearsolver
 OBJ = main.o
