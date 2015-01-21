@@ -318,194 +318,260 @@ Mesh::setMesh( void )
     MEDCouplingUMesh *m2=mu->buildDescendingConnectivity(desc,descI,revDesc,revDescI);
     m2->setName(mu->getName());
 
-    DataArrayInt *desc2=DataArrayInt::New();
-    DataArrayInt *descI2=DataArrayInt::New();
-    DataArrayInt *revDesc2=DataArrayInt::New();
-    DataArrayInt *revDescI2=DataArrayInt::New();
-    MEDCouplingUMesh *m3=mu->buildDescendingConnectivity2(desc2,descI2,revDesc2,revDescI2);
-    m3->setName(mu->getName());
+	const int *tmp=desc->getConstPointer();
+	const int *tmpI=descI->getConstPointer();
 
-    MEDCouplingFieldDouble* fields=mu->getMeasureField(true);
-    DataArrayDouble *surface = fields->getArray();
-    const double *surf=surface->getConstPointer();
+	DataArrayDouble *baryCell = mu->getBarycenterAndOwner() ;
+	const double *coorBary=baryCell->getConstPointer();
 
-    const int *tmp=desc->getConstPointer();
-    const int *tmpI=descI->getConstPointer();
-    DataArrayDouble *baryCell = mu->getBarycenterAndOwner() ;
-    const double *coorBary=baryCell->getConstPointer();
+	MEDCouplingFieldDouble* fields=mu->getMeasureField(true);
+	DataArrayDouble *surface = fields->getArray();
+	const double *surf=surface->getConstPointer();
 
-    const int *tmp2=desc2->getConstPointer();
-    const int *tmpI2=descI2->getConstPointer();
+	DataArrayDouble *coo = mu->getCoords() ;
+	const double *cood=coo->getConstPointer();
 
-    DataArrayDouble *baryCellF = m2->getBarycenterAndOwner() ;
+	DataArrayInt *revNode=DataArrayInt::New();
+	DataArrayInt *revNodeI=DataArrayInt::New();
+	mu->getReverseNodalConnectivity(revNode,revNodeI) ;
+	const int *tmpN=revNode->getConstPointer();
+	const int *tmpNI=revNodeI->getConstPointer();
 
-    MEDCouplingFieldDouble* fieldn=m2->buildOrthogonalField();
-    DataArrayDouble *normal = fieldn->getArray();
-    const double *tmpNormal=normal->getConstPointer();
+	DataArrayInt *revCell=DataArrayInt::New();
+	DataArrayInt *revCellI=DataArrayInt::New();
+	m2->getReverseNodalConnectivity(revCell,revCellI) ;
+	const int *tmpC=revCell->getConstPointer();
+	const int *tmpCI=revCellI->getConstPointer();
 
-    _numberOfCells = mu->getNumberOfCells() ;
-    _cells    = new Cell[_numberOfCells] ;
+	const DataArrayInt *nodal = m2->getNodalConnectivity() ;
+	const DataArrayInt *nodalI = m2->getNodalConnectivityIndex() ;
+	const int *tmpNE=nodal->getConstPointer();
+	const int *tmpNEI=nodalI->getConstPointer();
 
-    int k=0;
-    for( int id=0;id<_numberOfCells;id++ )
-    {
-        const int *work=tmp+tmpI[id];
-        const int *work2=tmp2+tmpI2[id];
-        int nbFaces=tmpI[id+1]-tmpI[id];
-        int nbVertices=mu->getNumberOfNodesInCell(id) ;
+	const int *tmpA=revDesc->getConstPointer();
+	const int *tmpAI=revDescI->getConstPointer();
 
-        double coorBaryY=0.;
-        double coorBaryZ=0.;
-        double coef=0;
-        double coorBaryX=coorBary[k];
-        if (_dim==2)
-            coorBaryY = coorBary[k+1];
-        if (_dim==3)
-            coorBaryZ = coorBary[k+2];
+	_numberOfCells = mu->getNumberOfCells() ;
+	_cells    = new Cell[_numberOfCells] ;
 
-        Point p(coorBaryX,coorBaryY,coorBaryZ) ;
-        Cell ci( nbVertices, nbFaces, surf[id], p ) ;
-        for( int el=0;el<nbFaces;el++ )
-        {
-            double xn=0.;
-            double yn=0.;
-            double zn=0.;
-            if (work2[el]<0)
-            {
-                xn=-tmpNormal[_dim*work[el]];
-                if (_dim==2)
-                    yn=-tmpNormal[_dim*work[el]+1];
-                if (_dim==3)
-                    zn=-tmpNormal[_dim*work[el]+2];
-            }else
-            {
-                xn=tmpNormal[_dim*work[el]];
-                if (_dim==2)
-                    yn=tmpNormal[_dim*work[el]+1];
-                if (_dim==3)
-                    zn=tmpNormal[_dim*work[el]+2];
-            }
-            ci.addNormalVector(el,xn,yn,zn) ;
-            ci.addFaceId(el,work[el]) ;
-        }
-        std::vector<int> nodeIdsOfCell ;
-        mu->getNodeIdsOfCell(id,nodeIdsOfCell) ;
-        for( int el=0;el<nbVertices;el++ )
-            ci.addNodeId(el,nodeIdsOfCell[el]) ;
-        _cells[id] = ci ;
-        k+=_dim;
-    }
+	_numberOfNodes = mu->getNumberOfNodes() ;
+	_nodes    = new Node[_numberOfNodes] ;
 
-    DataArrayInt *revNode=DataArrayInt::New();
-    DataArrayInt *revNodeI=DataArrayInt::New();
-    mu->getReverseNodalConnectivity(revNode,revNodeI) ;
-    const int *tmpN=revNode->getConstPointer();
-    const int *tmpNI=revNodeI->getConstPointer();
+	_numberOfFaces = m2->getNumberOfCells();
+	_faces    = new Face[_numberOfFaces] ;
 
-    DataArrayInt *revCell=DataArrayInt::New();
-    DataArrayInt *revCellI=DataArrayInt::New();
-    m2->getReverseNodalConnectivity(revCell,revCellI) ;
-    const int *tmpC=revCell->getConstPointer();
-    const int *tmpCI=revCellI->getConstPointer();
+	if (_dim == 1) {
 
-    _numberOfNodes = mu->getNumberOfNodes() ;
-    _nodes    = new Node[_numberOfNodes] ;
+		for( int id=0;id<_numberOfCells;id++ )
+		{
+			int nbFaces=tmpI[id+1]-tmpI[id];
+			int nbVertices=mu->getNumberOfNodesInCell(id) ;
+			const int *work=tmp+tmpI[id];
 
-    DataArrayDouble *coo = mu->getCoords() ;
-    const double *cood=coo->getConstPointer();
-    k=0;
-    for( int id=0;id<_numberOfNodes;id++,k+=_dim)
-    {
-        double zc=0.;
-        if (_dim==3)
-            zc=cood[k+2];
-        Point p(cood[k],cood[k+1],zc) ;
-        const int *workc=tmpN+tmpNI[id];
-        int nbCells=tmpNI[id+1]-tmpNI[id];
-        const int *workf=tmpC+tmpCI[id];
-        int nbFaces=tmpCI[id+1]-tmpCI[id];
-        Node vi( nbCells, nbFaces, p ) ;
+			Cell ci( nbVertices, nbFaces, surf[id], Point(coorBary[id], 0.0, 0.0) ) ;
 
-        for( int el=0;el<nbCells;el++ )
-            vi.addCellId(el,workc[el]) ;
-        for( int el=0;el<nbFaces;el++ )
-            vi.addFaceId(el,workf[el]) ;
-        _nodes[id] = vi ;
-    }
+			std::vector<int> nodeIdsOfCell ;
+			mu->getNodeIdsOfCell(id,nodeIdsOfCell) ;
+			for( int el=0;el<nbVertices;el++ )
+				ci.addNodeId(el,nodeIdsOfCell[el]) ;
 
-    coo->decrRef();
-    const DataArrayInt *nodal = m2->getNodalConnectivity() ;
-    const DataArrayInt *nodalI = m2->getNodalConnectivityIndex() ;
-    const int *tmpNE=nodal->getConstPointer();
-    const int *tmpNEI=nodalI->getConstPointer();
+			double xn = (cood[nodeIdsOfCell[nbVertices-1]] - cood[nodeIdsOfCell[0]] > 0.0) ? -1.0 : 1.0;
 
+			for( int el=0;el<nbFaces;el++ )
+			{
+				ci.addNormalVector(el,xn,0.0,0.0) ;
+				ci.addFaceId(el,work[el]) ;
+				xn = - xn;
+			}
+			_cells[id] = ci ;
+		}
 
-    const int *tmpA=revDesc->getConstPointer();
-    const int *tmpAI=revDescI->getConstPointer();
+		int k=0;
+		for( int id=0;id<_numberOfNodes;id++,k+=_dim)
+		{
+			Point p(cood[k], 0.0, 0.0) ;
+			const int *workc=tmpN+tmpNI[id];
+			int nbCells=tmpNI[id+1]-tmpNI[id];
+			const int *workf=tmpC+tmpCI[id];
+			int nbFaces=tmpCI[id+1]-tmpCI[id];
+			Node vi( nbCells, nbFaces, p ) ;
 
-    _numberOfFaces = m2->getNumberOfCells();
-    _faces = new Face[_numberOfFaces] ;
+			for( int el=0;el<nbCells;el++ )
+				vi.addCellId(el,workc[el]) ;
+			for( int el=0;el<nbFaces;el++ )
+				vi.addFaceId(el,workf[el]) ;
+			_nodes[id] = vi ;
+		}
 
-    MEDCouplingFieldDouble* fieldl=m2->getMeasureField(true);
-    DataArrayDouble *longueur = fieldl->getArray();
-    const double *lon=longueur->getConstPointer();
+		k=0;
+		for(int id=0;id<_numberOfFaces;id++)
+		{
+			Point p(cood[k], 0.0, 0.0) ;
+			const int *workc=tmpA+tmpAI[id];
+			int nbCells=tmpAI[id+1]-tmpAI[id];
 
-    DataArrayDouble *barySeg = m2->getBarycenterAndOwner() ;
-    const double *coorBarySeg=barySeg->getConstPointer();
-    DataArrayDouble *normalFaces1 = m2->buildOrthogonalField()->getArray() ;
-    const double *normalFaces2=normalFaces1->getConstPointer();
+			const int *workv=tmpNE+tmpNEI[id]+1;
+			Face fi( 1, nbCells, 1.0, p, 1.0, 0.0, 0.0) ;
+			fi.addNodeId(0,workv[0]) ;
 
-    k=0;
-    for(int id=0;id<_numberOfFaces;id++)
-    {
-        double coorBarySegX=coorBarySeg[k];
-        double coorBarySegY=0.;
-        double coorBarySegZ=0.;
-        if (_dim==2)
-        {
-            coorBarySegY = coorBarySeg[k+1];
-        }
-        if (_dim==3)
-        {
-            coorBarySegZ = coorBarySeg[k+2];
-        }
-        Point p(coorBarySegX,coorBarySegY,coorBarySegZ) ;
-        const int *workc=tmpA+tmpAI[id];
-        int nbCells=tmpAI[id+1]-tmpAI[id];
+			fi.addCellId(0,workc[0]) ;
+			if (nbCells==2)
+				fi.addCellId(1,workc[1]) ;
 
-        const int *workv=tmpNE+tmpNEI[id]+1;
-        Face fi( 2, nbCells, lon[id], p, normalFaces2[k], normalFaces2[k+1], 0.0) ;
-        fi.addNodeId(0,workv[0]) ;
-        fi.addNodeId(1,workv[1]) ;
+			_faces[id] = fi ;
+			k+=_dim;
+		}
+	}
+	else {
+		DataArrayInt *desc2=DataArrayInt::New();
+		DataArrayInt *descI2=DataArrayInt::New();
+		DataArrayInt *revDesc2=DataArrayInt::New();
+		DataArrayInt *revDescI2=DataArrayInt::New();
+		MEDCouplingUMesh *m3=mu->buildDescendingConnectivity2(desc2,descI2,revDesc2,revDescI2);
+		m3->setName(mu->getName());
 
-        fi.addCellId(0,workc[0]) ;
-        if (nbCells==2)
-            fi.addCellId(1,workc[1]) ;
+		const int *tmp2=desc2->getConstPointer();
+		const int *tmpI2=descI2->getConstPointer();
 
-        _faces[id] = fi ;
-        k+=_dim;
-    }
-    fieldl->decrRef();
-    fields->decrRef();
-    fieldn->decrRef();
-    revCell->decrRef();
-    revCellI->decrRef();
-    revNode->decrRef();
-    revNodeI->decrRef();
-    baryCell->decrRef();
-    baryCellF->decrRef();
-    barySeg->decrRef();
-    desc->decrRef();
-    descI->decrRef();
-    revDesc->decrRef();
-    revDescI->decrRef();
-    desc2->decrRef();
-    descI2->decrRef();
-    revDesc2->decrRef();
-    revDescI2->decrRef();
-    m2->decrRef();
-    m3->decrRef();
-    mu->decrRef();
+		DataArrayDouble *baryCellF = m2->getBarycenterAndOwner() ;
+
+		MEDCouplingFieldDouble* fieldn = m2->buildOrthogonalField();
+		DataArrayDouble *normal = fieldn->getArray();
+		const double *tmpNormal = normal->getConstPointer();
+
+		int k=0;
+		for( int id=0;id<_numberOfCells;id++ )
+		{
+			const int *work=tmp+tmpI[id];
+			const int *work2=tmp2+tmpI2[id];
+
+			int nbFaces=tmpI[id+1]-tmpI[id];
+			int nbVertices=mu->getNumberOfNodesInCell(id) ;
+
+			double coorBaryY=0.;
+			double coorBaryZ=0.;
+			double coef=0;
+			double coorBaryX=coorBary[k];
+			if (_dim>=2)
+				coorBaryY = coorBary[k+1];
+			if (_dim>=3)
+				coorBaryZ = coorBary[k+2];
+
+			Point p(coorBaryX,coorBaryY,coorBaryZ) ;
+			Cell ci( nbVertices, nbFaces, surf[id], p ) ;
+			for( int el=0;el<nbFaces;el++ )
+			{
+				double xn=0.;
+				double yn=0.;
+				double zn=0.;
+				if (work2[el]<0)
+				{
+					xn=-tmpNormal[_dim*work[el]];
+					if (_dim==2)
+						yn=-tmpNormal[_dim*work[el]+1];
+					if (_dim==3)
+						zn=-tmpNormal[_dim*work[el]+2];
+				}else
+				{
+					xn=tmpNormal[_dim*work[el]];
+					if (_dim==2)
+						yn=tmpNormal[_dim*work[el]+1];
+					if (_dim==3)
+						zn=tmpNormal[_dim*work[el]+2];
+				}
+				ci.addNormalVector(el,xn,yn,zn) ;
+				ci.addFaceId(el,work[el]) ;
+			}
+			std::vector<int> nodeIdsOfCell ;
+			mu->getNodeIdsOfCell(id,nodeIdsOfCell) ;
+			for( int el=0;el<nbVertices;el++ )
+				ci.addNodeId(el,nodeIdsOfCell[el]) ;
+			_cells[id] = ci ;
+			k+=_dim;
+		}
+
+		k=0;
+		for( int id=0;id<_numberOfNodes;id++,k+=_dim)
+		{
+			double zc=0.;
+			if (_dim==3)
+				zc=cood[k+2];
+			Point p(cood[k],cood[k+1],zc) ;
+			const int *workc=tmpN+tmpNI[id];
+			int nbCells=tmpNI[id+1]-tmpNI[id];
+			const int *workf=tmpC+tmpCI[id];
+			int nbFaces=tmpCI[id+1]-tmpCI[id];
+			Node vi( nbCells, nbFaces, p ) ;
+
+			for( int el=0;el<nbCells;el++ )
+				vi.addCellId(el,workc[el]) ;
+			for( int el=0;el<nbFaces;el++ )
+				vi.addFaceId(el,workf[el]) ;
+			_nodes[id] = vi ;
+		}
+
+		MEDCouplingFieldDouble* fieldl=m2->getMeasureField(true);
+		DataArrayDouble *longueur = fieldl->getArray();
+		const double *lon=longueur->getConstPointer();
+
+		DataArrayDouble *barySeg = m2->getBarycenterAndOwner() ;
+		const double *coorBarySeg=barySeg->getConstPointer();
+		DataArrayDouble *normalFaces1 = m2->buildOrthogonalField()->getArray() ;
+		const double *normalFaces2=normalFaces1->getConstPointer();
+
+		k=0;
+		for(int id=0;id<_numberOfFaces;id++)
+		{
+			double coorBarySegX=coorBarySeg[k];
+			double coorBarySegY=0.;
+			double coorBarySegZ=0.;
+			if (_dim==2)
+			{
+				coorBarySegY = coorBarySeg[k+1];
+			}
+			if (_dim==3)
+			{
+				coorBarySegZ = coorBarySeg[k+2];
+			}
+			Point p(coorBarySegX,coorBarySegY,coorBarySegZ) ;
+			const int *workc=tmpA+tmpAI[id];
+			int nbCells=tmpAI[id+1]-tmpAI[id];
+
+			const int *workv=tmpNE+tmpNEI[id]+1;
+			Face fi( 2, nbCells, lon[id], p, normalFaces2[k], normalFaces2[k+1], 0.0) ;
+			fi.addNodeId(0,workv[0]) ;
+			fi.addNodeId(1,workv[1]) ;
+
+			fi.addCellId(0,workc[0]) ;
+			if (nbCells==2)
+				fi.addCellId(1,workc[1]) ;
+
+			_faces[id] = fi ;
+			k+=_dim;
+		}
+		fieldl->decrRef();
+		baryCellF->decrRef();
+		barySeg->decrRef();
+		fieldn->decrRef();
+		revCell->decrRef();
+		revCellI->decrRef();
+		revNode->decrRef();
+		revNodeI->decrRef();
+		baryCell->decrRef();
+		desc2->decrRef();
+		descI2->decrRef();
+		revDesc2->decrRef();
+		revDescI2->decrRef();
+		m3->decrRef();
+	}
+	coo->decrRef();
+	fields->decrRef();
+	desc->decrRef();
+	descI->decrRef();
+	revDesc->decrRef();
+	revDescI->decrRef();
+	m2->decrRef();
+	mu->decrRef();
 }
 
 //----------------------------------------------------------------------
