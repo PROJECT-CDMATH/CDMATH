@@ -197,5 +197,6 @@ int main()
     myMesh.setGroupAtPlan(ysup,1,eps,"TopEdge");
     string fileOutPutCart="Exercie1";
     EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,myMesh,fileOutPutCart);
+    cout << "CDMATH calculation done." << endl;
     return 0;
 }

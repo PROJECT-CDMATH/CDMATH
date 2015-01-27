@@ -164,6 +164,7 @@ def main():
     my_mesh=cdmath.Mesh("MeshTri.med");
     output_filename="Exercie2PyTest"
     EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,my_mesh,output_filename)
+    print("CDMATH calculation done.")
     return
 
 

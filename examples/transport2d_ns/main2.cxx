@@ -175,7 +175,7 @@ void EquationTransport2D(int &iter, double tmin, double & tmax,
     yField.writeCSV(p.outFile);
 
     tmax = time;
-    cout << "end of EquationTransport2D" << endl;
+    cout << "End of EquationTransport2D." << endl;
 }
 
 void compute_onepass(double tmin, double tmax, const Mesh & M, const parameters & p)
@@ -183,7 +183,7 @@ void compute_onepass(double tmin, double tmax, const Mesh & M, const parameters 
 	int iter = 0;
 
     /* Initial conditions */
-    cout << "Construction de la condition initiale ... " << endl;
+    cout << "Construction of initial condition…" << endl;
     Field f("Y field",CELLS,M,1) ;
     conditions_initiales(f);
 
@@ -197,7 +197,7 @@ void compute_twopass(double tmin, double tmax, const Mesh & M, const parameters 
 	double tstep = 0.5 * (tmin + tmax);
 
     /* Initial conditions */
-    cout << "Construction de la condition initiale ... " << endl;
+    cout << "Construction of initial condition…" << endl;
     Field f("Y field",CELLS,M,1) ;
     conditions_initiales(f);
 
@@ -229,15 +229,15 @@ int main()
     p.freqSortie=50;
     p.outFile="res2D";
 
-    cout << "Construction of Cartesian mesh ... " << endl;
+    cout << "Construction of Cartesian mesh…" << endl;
     Mesh M("MeshTri.med");
 
     double tmin = 0;
     double tmax = 0.1;
     
     compute_onepass(tmin, tmax, M, p);
-
     compute_twopass(tmin, tmax, M, p);
+    cout << "CDMATH calculation done." << endl;
 
     return 0;
 }
