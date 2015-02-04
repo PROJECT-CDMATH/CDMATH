@@ -304,7 +304,7 @@ DataArrayDoubleCollection::DataArrayDoubleCollection(const std::vector< std::pai
       _arrs[i].first=DataArrayDouble::New();
       _arrs[i].first->alloc(0,info.second);
       _arrs[i].first->setName(info.first);
-      names[i]=info.second;
+      names[i]=info.first;
       _arrs[i].second=ConservativeVolumic;
     }
   CheckDiscriminantNames(names);
