@@ -250,11 +250,11 @@ void EquationTransport1D_entree(double tmax, double VitesseX, int ntmax, double 
 
 int Equation_Transport()
 {
-    cout << "RESOLUTION EQUATION DE TRANSPORT 1D : " << endl;
+    cout << "RESOLUTION EQUATION DE TRANSPORT 1D :" << endl;
     cout << "- DOMAINE : Segment 0,10" << endl;
     cout << "- MAILLAGE CARTESIEN : GENERATION INTERNE CDMATH " << endl;
 
-    // donnees du probleme
+    // Problem data
     double VitesseX=1.0;
     double tmax=100.;
     int freqSortie=1;
@@ -269,17 +269,15 @@ int Equation_Transport()
     double TempLeft=300;//285.;
     double TempRight=300;//315.;
 
-    cout << "Début Construction du maillage Cartesien ... " << endl;
-
+    cout << "Début Construction du maillage Cartesien…" << endl;
     Mesh M(xinf,xsup,nx);
-
-    cout << "Fin Construction du maillage Cartesien ... " << endl;
+    cout << "Fin Construction du maillage Cartesien…" << endl;
 
     //  theta=1;
     EquationTransport1D_entree(tmax, VitesseX, ntmax, dt, cfl, freqSortie, M, "TemperatureEntreeImplicitTVD50CellsSourceUpwind", (xsup+xinf)/2, TempLeft, TempRight);
     //EquationTransport1D_entree(tmax, VitesseX, ntmax, dt, cfl, freqSortie, M, "TemperatureEntreeImplicitUpwindCreneau50Cells", (xsup+xinf)/4, TempLeft, TempRight);
 
-    cout << "Fin du calcul, bye bye ... " << endl;
+    cout << "CDMATH calculation done." << endl;
     return 0;
 }
 

@@ -175,6 +175,7 @@ def main():
     my_mesh.setGroupAtPlan(ysup,1,eps,"TopEdge")
     fileOutPutCart="Exercie1PyTest"
     EquationTransport2D(tmax,VitesseX,VitesseY,cfl,output_freq,my_mesh,fileOutPutCart)
+    print("CDMATH calculation done.")
     return
 
 

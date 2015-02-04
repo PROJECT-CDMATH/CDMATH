@@ -58,6 +58,7 @@ def main():
             conc.writeCSV(output_filename);
             pass
         pass
+    print("CDMATH calculation done.")
     return
 
 

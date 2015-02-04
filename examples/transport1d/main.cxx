@@ -70,6 +70,7 @@ int main( void )
        conc.writeCSV(fileOutPut);
    }
   }
+  cout << "CDMATH calculation done." << endl;
   return 0;
 }
 

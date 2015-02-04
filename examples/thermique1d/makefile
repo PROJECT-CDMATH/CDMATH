@@ -3,7 +3,7 @@
 CC = g++
 
 # Adapt the following lines to your own system:
-PETSCDIR = /usr/lib/petscdir/3.4.2
+PETSCDIR = /usr/lib/petscdir/3.4.5
 MPIDIR = /usr/lib/openmpi
 CDMATHDIR = ../../../../..
 

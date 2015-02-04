@@ -39,7 +39,7 @@ void conditions_initiales(Field& yField)
 
 void sigma_flux(double VitesseX, double VitesseY, double cfl, const Field& yField, const IntTab indexFacesPerio, double& dt, Field& SumFlux)
 {
-    /* Calcul des flux */
+    // Calculation of fluxes
     Mesh myMesh=yField.getMesh();
     int nbCells=myMesh.getNumberOfCells();
     double normU=sqrt(VitesseX*VitesseX+VitesseY*VitesseY);
@@ -124,7 +124,7 @@ void sigma_flux(double VitesseX, double VitesseY, double cfl, const Field& yFiel
 void EquationTransport2D(double tmax, double VitesseX, double VitesseY, double cfl, int freqSortie, const Mesh& myMesh, const string file)
 {
     /* Initial conditions */
-    cout << "Construction de la condition initiale ... " << endl;
+    cout << "Construction of the initial condition…" << endl;
     Field yField("Y field",CELLS,myMesh,1) ;
     conditions_initiales(yField);
 
@@ -175,7 +175,7 @@ int main()
     cout << "- PERIODIC BC ON TOP AND BOTTOM" << endl;
     cout << "- HOMOGENEOUS NEUMANN BC ON LEFT AND RIGHT" << endl;
 
-    // donnees du probleme
+    // Problem data
     double cfl=0.4;
     double VitesseX=1.0;
     double VitesseY=1.0;
@@ -186,6 +186,7 @@ int main()
     Mesh myMesh("MeshTri.med");
     string fileOutPut="Exercie2";
     EquationTransport2D(tmax,VitesseX,VitesseY,cfl,freqSortie,myMesh,fileOutPut);
+    cout << "CDMATH calculation done." << endl;
 
     return 0;
 }
