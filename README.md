@@ -1,7 +1,7 @@
 CDMATH
 ======
 
-CDMATH is a CFD toolbox designed for numerical analysts who work on the representation of thermal-hydraulics and who would prefer to focus on high-level computation.
+CDMATH is a CFD toolbox designed for numerical analysts who work on the representation of thermal-hydraulics and who would prefer to focus on high-level computation. The software is maintained and used by [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name.
 
 
 Download CDMATH
