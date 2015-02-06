@@ -16,7 +16,7 @@ Download from GitHub. For instance:
 
 Set environment for the compilation of CDMATH
 ---------------------------------------------
-Dependencies. The following packages list is sufficient on Ubuntu 14.04:
+Dependencies. The following packages list is sufficient on Ubuntu 14.04 and Debian Jessie:
  - `cmake`
  - `g++` or another C++ compiler
  - `libhdf5-dev`
