@@ -24,7 +24,8 @@ Dependencies. The following packages list is sufficient on Ubuntu 14.04 and Debi
  - `python-dev`, `python-numpy` and `swig`, if you want to generate Python executables and libraries of CDMATH. Use the compilation option `-DCMAKE_CDMATH_SWIG=ON`.
  - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCMAKE_CDMATH_TESTS=ON`.
  - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCMAKE_CDMATH_DOCUMENTATION=ON`.
-Some users reported that they need `valgrind-dev` and `numpy` on other systems (Fedora), but this has not been confirmed.
+ - `rpm`, if you want to generate RPM installation packages. Use the compilation option `-DCMAKE_CDMATH_PACKAGE=ON`.
+Some users reported that they need `valgrind-dev` on other systems (Fedora), but this has not been confirmed.
 
 Create the suggested build and installation folders:
 * `cd ~/workspace/cdmath`
@@ -65,13 +66,13 @@ To use CDMATH with your Python code `main.py`:
 
 Create an Ubuntu 14.04 package for CDMATH
 -----------------------------------------
-After popular request, here is how you can create an Ubuntu 14.04 package:
+After popular request, here is how you can create packages for Ubuntu 14.04 and Red Hat-based Linux distributions:
 
 1. Download CDMATH as explained hereabove.
-2. Set the environment as explained hereabove.
-3. Generate a makefile with `cmake -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCMAKE_CDMATH_DEB=ON ../cdmath_src/` and eventually other options (documentation, tests, swig, etc).
+2. Set the environment as explained hereabove (in particular, make sure you have `rpm` installed).
+3. Generate a makefile with `cmake -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCMAKE_CDMATH_PACKAGE=ON ../cdmath_src/` and eventually other options (documentation, tests, swig, etc).
 4. Compile with `make package`.
 
-You will then find a Debian package in the build directory. You may install it on Ubuntu 14.04.
+You will then find a Debian package in the build directory; you may install it on Ubuntu 14.04. You will also find an RPM package, which you may install on Red Hat-based distributions.
 
-Unfortunately, the package may be said to be of “bad quality” for Debian standards as far as ownership is concerned. This is true and due to limitations in CMake/CPack. The package should still install nonetheless.
+Unfortunately, the Debian package may be said to be of “bad quality” for Debian standards as far as ownership is concerned. This is true and due to limitations in CMake/CPack. The package should still install nonetheless.

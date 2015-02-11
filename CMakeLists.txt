@@ -71,6 +71,6 @@ set (examples_dir ${CDMATH_SOURCE_DIR}/examples)
 add_subdirectory (${examples_dir})
 
 # Packaging
-if (CMAKE_CDMATH_DEB)
+if (CMAKE_CDMATH_PACKAGE)
   include (CPackLists.txt)
-endif (CMAKE_CDMATH_DEB)
+endif (CMAKE_CDMATH_PACKAGE)
