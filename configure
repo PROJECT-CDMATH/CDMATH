@@ -2,8 +2,9 @@
 # -*-coding:utf-8 -*
 
 import os
+import sys
 import errno
-
+import getopt
 
 def mkdir_p(path):
     try:
@@ -13,11 +14,26 @@ def mkdir_p(path):
             pass
         else: raise
 
-if __name__ == """__main__""":
+def main(argv):
+    """The main function treats the arguments given to our script."""
+
     src_directory = os.getcwd()
     build_directory = """./build"""
     install_directory = """/tmp/cdmath_install"""
-    
+
+    try:
+        opts, args = getopt.getopt(argv, """h""",
+            ["""help""", """prefix="""])
+    except getopt.GetoptError:
+        print("""You gave incorrect arguments.""")
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt in ("-h", "--help"):
+            print("""Possible options: h, help, prefix.""")
+            sys.exit()
+        elif opt in ("prefix"""):
+            install_directory = str(arg)
+
     mkdir_p(build_directory)
     #os.chdir(build_directory)
 
@@ -26,3 +42,7 @@ if __name__ == """__main__""":
         """ -DCMAKE_BUILD_TYPE=Release """ + \
         src_directory
     os.system(command)
+
+
+if __name__ == """__main__""":
+    main(sys.argv[1:])
