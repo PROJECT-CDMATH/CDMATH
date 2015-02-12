@@ -35,7 +35,7 @@ def main(argv):
         elif opt in ("prefix"""):
             install_directory = str(arg)
 
-    mkdir_p(build_directory)
+    #mkdir_p(build_directory)
     #os.chdir(build_directory)
     subprocess.call(["""cmake""",
         """-DCMAKE_INSTALL_PREFIX=""" + install_directory,
