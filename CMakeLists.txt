@@ -27,16 +27,18 @@ set (MED3_LIB ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/MEDFile/src/libmedC.so)
 set (MED3_LIBS ${MED3_LIB})
 
 find_package (HDF5 REQUIRED)
-set (CPACK_ALL_PACKAGE_DEPENDS "libhdf5-dev")
+set (CPACK_DEBIAN_PACKAGE_DEPENDS "libhdf5-dev")
+set (CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
 find_package (PETSc 3.4 EXACT REQUIRED)
-set (CPACK_DEBIAN_PACKAGE_DEPENDS "petsc-dev (>= 3.4), petsc-dev (<< 3.5)")
-set (CPACK_RPM_PACKAGE_REQUIRES "petsc-dev >= 3.4, petsc-dev < 3.5")
+set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, petsc-dev (>= 3.4), petsc-dev (<< 3.5)")
+set (CPACK_RPM_PACKAGE_REQUIRES "${CPACK_RPM_PACKAGE_REQUIRES}, petsc >= 3.4, petsc < 3.5") # This is not fully working yet.
 
 # Swig interface
 if (CMAKE_CDMATH_SWIG)
    find_package (PYTHON REQUIRED)
    find_package (SWIG REQUIRED)
-   set (CPACK_ALL_PACKAGE_DEPENDS "${CPACK_ALL_PACKAGE_DEPENDS}, python-dev, python-numpy, swig")
+   set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, python-dev, python-numpy, swig")
+   set (CPACK_RPM_PACKAGE_REQUIRES "${CPACK_RPM_PACKAGE_REQUIRES}, python-devel, numpy, swig")
    add_subdirectory (${CDMATH_SWIG_DIR})
 endif (CMAKE_CDMATH_SWIG)
 
@@ -49,7 +51,8 @@ add_subdirectory (${LINEARSOLVER_DIR})
 # Documentation
 if (CMAKE_CDMATH_DOCUMENTATION)
   find_package (Doxygen)
-  set (CPACK_ALL_PACKAGE_DEPENDS "${CPACK_ALL_PACKAGE_DEPENDS}, doxygen, graphviz, mscgen")
+  set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, doxygen, graphviz, mscgen")
+  set (CPACK_RPM_PACKAGE_REQUIRES "${CPACK_RPM_PACKAGE_REQUIRES}, doxygen, graphviz, mscgen")
   if (NOT DOXYGEN_FOUND)
     message (FATAL_ERROR "Doxygen is needed to build the documentation. Please install it correctly.")
   endif (NOT DOXYGEN_FOUND)
