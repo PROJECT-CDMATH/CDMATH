@@ -19,8 +19,8 @@ def main(argv):
     """The main function treats the arguments given to our script."""
 
     src_directory = os.getcwd()
-    build_directory = """./build"""
-    install_directory = """/tmp/cdmath_install"""
+    #build_directory = """./build"""
+    install_directory = """/usr"""
 
     try:
         opts, args = getopt.getopt(argv, """h""",
