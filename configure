@@ -2,6 +2,7 @@
 # -*-coding:utf-8 -*
 
 import os
+import subprocess
 import sys
 import errno
 import getopt
@@ -36,12 +37,10 @@ def main(argv):
 
     mkdir_p(build_directory)
     #os.chdir(build_directory)
-
-    command = """cmake -DCMAKE_INSTALL_PREFIX=""" + \
-        install_directory + \
-        """ -DCMAKE_BUILD_TYPE=Release """ + \
-        src_directory
-    os.system(command)
+    subprocess.call(["""cmake""",
+        """-DCMAKE_INSTALL_PREFIX=""" + install_directory,
+        """-DCMAKE_BUILD_TYPE=Release""",
+        src_directory])
 
 
 if __name__ == """__main__""":
