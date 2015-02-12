@@ -27,13 +27,16 @@ set (MED3_LIB ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/MEDFile/src/libmedC.so)
 set (MED3_LIBS ${MED3_LIB})
 
 find_package (HDF5 REQUIRED)
+set (CPACK_ALL_PACKAGE_DEPENDS "libhdf5-dev")
 find_package (PETSc 3.4 EXACT REQUIRED)
+set (CPACK_DEBIAN_PACKAGE_DEPENDS "petsc-dev (>= 3.4), petsc-dev (<< 3.5)")
+set (CPACK_RPM_PACKAGE_REQUIRES "petsc-dev >= 3.4, petsc-dev < 3.5")
 
 # Swig interface
 if (CMAKE_CDMATH_SWIG)
    find_package (PYTHON REQUIRED)
    find_package (SWIG REQUIRED)
-   
+   set (CPACK_ALL_PACKAGE_DEPENDS "${CPACK_ALL_PACKAGE_DEPENDS}, python-dev, python-numpy, swig")
    add_subdirectory (${CDMATH_SWIG_DIR})
 endif (CMAKE_CDMATH_SWIG)
 
@@ -46,15 +49,13 @@ add_subdirectory (${LINEARSOLVER_DIR})
 # Documentation
 if (CMAKE_CDMATH_DOCUMENTATION)
   find_package (Doxygen)
+  set (CPACK_ALL_PACKAGE_DEPENDS "${CPACK_ALL_PACKAGE_DEPENDS}, doxygen, graphviz, mscgen")
   if (NOT DOXYGEN_FOUND)
     message (FATAL_ERROR "Doxygen is needed to build the documentation. Please install it correctly.")
   endif (NOT DOXYGEN_FOUND)
-
   configure_file (Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile  @ONLY IMMEDIATE)
-
   add_custom_target (doc ALL COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_BINARY_DIR}/Doxyfile
   							  SOURCES ${PROJECT_BINARY_DIR}/Doxyfile)
-
   install (DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html DESTINATION share/doc/cdmath)
 endif (CMAKE_CDMATH_DOCUMENTATION)
  

@@ -25,6 +25,7 @@ Dependencies. The following packages list is sufficient on Ubuntu 14.04 and Debi
  - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCMAKE_CDMATH_TESTS=ON`.
  - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCMAKE_CDMATH_DOCUMENTATION=ON`.
  - `rpm`, if you want to generate RPM installation packages. Use the compilation option `-DCMAKE_CDMATH_PACKAGE=ON`.
+ 
 Some users reported that they need `valgrind-dev` on other systems (Fedora), but this has not been confirmed.
 
 Create the suggested build and installation folders:
