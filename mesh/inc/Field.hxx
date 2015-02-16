@@ -114,7 +114,7 @@ class Field
 
     const std::string getName ( void ) const;
 
-    Mesh getMesh ( void ) const ;
+    const Mesh& getMesh ( void ) const ;
 
     int getNumberOfElements ( void ) const ;
 
