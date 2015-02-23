@@ -65,12 +65,12 @@ Mesh::Mesh( const ParaMEDMEM::MEDCouplingIMesh* mesh )
 
     _xMin=Box0[0];
     _xSup=Box0[1];
-    if (_dim==2)
+    if (_dim>=2)
     {
         _yMin=Box0[2];
         _ySup=Box0[3];
     }
-    if (_dim==3)
+    if (_dim>=3)
     {
         _zMin=Box0[4];
         _zSup=Box0[5];
