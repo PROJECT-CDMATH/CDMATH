@@ -579,9 +579,9 @@ Mesh::Mesh( double xinf, double xsup, int nx )
 //----------------------------------------------------------------------
 {
     if(nx<=0)
-        throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : nx <= 0");
+        throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx) : nx <= 0");
     if(xinf>=xsup)
-        throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : xinf <= xsup");
+        throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx) : xinf >= xsup");
 
     double dx = (xsup - xinf)/nx ;
 
@@ -712,8 +712,10 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny)
 {
     if(nx<=0 || ny<=0)
         throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : nx <= 0 or ny <= 0");
-    if(xinf>=xsup || yinf>=ysup)
-        throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : xinf <= xsup or yinf <= ysup");
+    if(xinf>=xsup)
+        throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : xinf >= xsup");
+    if(yinf>=ysup)
+            throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : yinf >= ysup");
     _xMin=xinf;
     _xSup=xsup;
     _yMin=yinf;
@@ -765,9 +767,13 @@ Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, 
 //----------------------------------------------------------------------
 {
     if(nx<=0 || ny<=0 || nz<=0)
-        throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : nx <= 0 or ny <= 0 or nz <= 0");
-    if(xinf>=xsup || yinf>=ysup)
-        throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny) : xinf <= xsup or yinf <= ysup or zinf <= zsup");
+        throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) : nx <= 0 or ny <= 0 or nz <= 0");
+    if(xinf>=xsup)
+        throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) : xinf >= xsup");
+    if(yinf>=ysup)
+		throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) : yinf >= ysup");
+    if(zinf>=zsup)
+		throw CdmathException("Mesh::Mesh( double xinf, double xsup, int nx, double yinf, double ysup, int ny, double zinf, double zsup, int nz) : zinf >= zsup");
     _dim=3;
     _xMin=xinf;
     _xSup=xsup;
