@@ -5,6 +5,10 @@ project (CDMATH)
 set (CDMATH_VERSION_MAJOR 0)
 set (CDMATH_VERSION_MINOR 2)
 
+# Project options
+option(CDMATH_WITH_PETSC "Compile CDMATH with PETSc linking" OFF)
+
+# Base directories
 set (BASE_DIR ${CDMATH_SOURCE_DIR}/base)
 set (MESH_DIR ${CDMATH_SOURCE_DIR}/mesh)
 set (LINEARSOLVER_DIR ${CDMATH_SOURCE_DIR}/linearsolver)
@@ -29,9 +33,12 @@ set (MED3_LIBS ${MED3_LIB})
 find_package (HDF5 REQUIRED)
 set (CPACK_DEBIAN_PACKAGE_DEPENDS "libhdf5-dev")
 set (CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
-find_package (PETSc 3.4 EXACT REQUIRED)
-set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, petsc-dev (>= 3.4), petsc-dev (<< 3.5)")
-set (CPACK_RPM_PACKAGE_REQUIRES "${CPACK_RPM_PACKAGE_REQUIRES}, petsc >= 3.4, petsc < 3.5") # This is not fully working yet.
+
+if (CDMATH_WITH_PETSC)
+  find_package (PETSc 3.4 EXACT REQUIRED)
+  set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, petsc-dev (>= 3.4), petsc-dev (<< 3.5)")
+  set (CPACK_RPM_PACKAGE_REQUIRES "${CPACK_RPM_PACKAGE_REQUIRES}, petsc >= 3.4, petsc < 3.5") # This is not fully working yet.
+endif()
 
 # Swig interface
 if (CMAKE_CDMATH_SWIG)
@@ -46,7 +53,9 @@ add_subdirectory (${PRE_REQUIS_DIR})
 add_subdirectory (${BASE_DIR})
 add_subdirectory (${MESH_DIR})
 
-add_subdirectory (${LINEARSOLVER_DIR})
+if(CDMATH_WITH_PETSC)
+    add_subdirectory (${LINEARSOLVER_DIR})
+endif()
 
 # Documentation
 if (CMAKE_CDMATH_DOCUMENTATION)
