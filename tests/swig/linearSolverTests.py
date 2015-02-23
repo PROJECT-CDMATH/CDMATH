@@ -1,7 +1,7 @@
 # coding: latin-1
 
 import unittest
-from math import sqrt
+
 from cdmath import *
 
 class TestsLinearSolverSwig(unittest.TestCase):

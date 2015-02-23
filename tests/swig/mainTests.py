@@ -1,8 +1,10 @@
 # coding: latin-1
 
-from cdmath import *
 import unittest
-from math import sqrt
+import math
+
+from cdmath import *
+
 
 class TestsCDMATHSwig(unittest.TestCase):
     def testClassPoint(self):   
@@ -56,14 +58,14 @@ class TestsCDMATHSwig(unittest.TestCase):
         self.assertTrue( 9., P10.z());
 
         norm=P1.norm();
-        self.assertTrue( sqrt(14.), norm);
+        self.assertTrue( math.sqrt(14.), norm);
 
         P11=Point(1., 2., 3.);
         P12=Point(4., 5., 6.);
         dx=P12.x()-P11.x();
         dy=P12.y()-P11.y();
         dz=P12.z()-P11.z();
-        distance=sqrt(dx*dx+dy*dy+dz*dz);
+        distance=math.sqrt(dx*dx+dy*dy+dz*dz);
         self.assertTrue( distance, P11.distance(P12));
 
         P13=Point(3., 6., 9.);
@@ -992,7 +994,7 @@ class TestsCDMATHSwig(unittest.TestCase):
         A[1]=2.;
         self.assertTrue( 1.0==A[0] );
         self.assertTrue( 2.0==A[1] );
-        self.assertTrue( sqrt(5.)==A.norm() );
+        self.assertTrue( math.sqrt(5.)==A.norm() );
 
         B=A;
         self.assertTrue( 1.0==B[0] );

@@ -2,7 +2,7 @@
  * facetests.cxx
  *
  *  Created on: 24 janv. 2012
- *      Authors: CDMAT
+ *      Authors: CDMATH
  */
 
 #include "FaceTests.hxx"
