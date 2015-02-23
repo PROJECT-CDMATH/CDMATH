@@ -92,7 +92,9 @@ def VectorIdiv(self,*args):
 #include "Face.hxx"
 #include "Mesh.hxx"
 #include "Field.hxx"
-#include "LinearSolver.hxx"
+# ifdef _CDMATH_WITH_PYTHON
+  #include "LinearSolver.hxx"
+# endif
 
 #include <sstream>
 
@@ -118,7 +120,9 @@ def VectorIdiv(self,*args):
 %include "Face.hxx"
 %include "Mesh.hxx"
 %include "Field.hxx"
+# ifdef _CDMATH_WITH_PYTHON
 %include "LinearSolver.hxx"
+# endif
 
 %extend IntTab
 {

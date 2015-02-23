@@ -21,10 +21,10 @@ Dependencies. The following packages list is sufficient on Ubuntu 14.04 and Debi
  - `g++` or another C++ compiler
  - `libhdf5-dev`
  - `petsc-dev` (mandatorily a minor subversion of version 3.4. * , that is to say *not* more recent). This should already include `libopenmpi-dev`, which is necessary if you use the compilation option `-DMEDFILE_USE_MPI=ON`. We have chosen the version 3.4 of Petsc (released on 13 May 2013), as it is easily installable from the main distributions repositories.
- - `python-dev`, `python-numpy` and `swig`, if you want to generate Python executables and libraries of CDMATH. Use the compilation option `-DCMAKE_CDMATH_SWIG=ON`.
- - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCMAKE_CDMATH_TESTS=ON`.
- - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCMAKE_CDMATH_DOCUMENTATION=ON`.
- - `rpm`, if you want to generate RPM installation packages. Use the compilation option `-DCMAKE_CDMATH_PACKAGE=ON`.
+ - `python-dev`, `python-numpy` and `swig`, if you want to generate Python executables and libraries of CDMATH. Use the compilation option `-DCDMATH_WITH_SWIG=ON`.
+ - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCDMATH_WITH_TESTS=ON`.
+ - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON`.
+ - `rpm`, if you want to generate RPM installation packages. Use the compilation option `-DCDMATH_WITH_PACKAGE=ON`.
  
 Some users reported that they need `valgrind-dev` on other systems (Fedora), but this has not been confirmed.
 
@@ -41,7 +41,7 @@ Generate makefiles for a minimum version:
 * `cmake -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release ../cdmath_src/`
 
 Or generate makefiles for an all-options version:
-* `cmake -G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3 -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCMAKE_CDMATH_SWIG=ON -DCMAKE_CDMATH_TESTS=ON -DCMAKE_CDMATH_DOCUMENTATION=ON -DMEDFILE_USE_MPI=ON -DCMAKE_CDMATH_DEB=ON ../cdmath_src/`
+* `cmake -G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3 -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCDMATH_WITH_SWIG=ON -DCDMATH_WITH_TESTS=ON -DCDMATH_WITH_DOCUMENTATION=ON -DMEDFILE_USE_MPI=ON -DCDMATH_WITH_PACKAGE=ON -DCDMATH_WITH_PETSC=ON ../cdmath_src/`
 
 Compile and install:
 * `make -j4`, where “4” is the number of processors you have.
@@ -71,7 +71,7 @@ After popular request, here is how you can create packages for Ubuntu 14.04 and 
 
 1. Download CDMATH as explained hereabove.
 2. Set the environment as explained hereabove (in particular, make sure you have `rpm` installed).
-3. Generate a makefile with `cmake -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCMAKE_CDMATH_PACKAGE=ON ../cdmath_src/` and eventually other options (documentation, tests, swig, etc).
+3. Generate a makefile with `cmake -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCDMATH_WITH_PACKAGE=ON ../cdmath_src/` and eventually other options (documentation, tests, swig, etc).
 4. Compile with `make package`.
 
 You will then find a Debian package in the build directory; you may install it on Ubuntu 14.04. You will also find an RPM package, which you may install on Red Hat-based distributions.
