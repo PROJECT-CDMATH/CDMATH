@@ -24,7 +24,7 @@ Dependencies. The following packages list is sufficient on Ubuntu 14.04, Ubuntu 
  - `libhdf5-dev`
  - `libopenmpi-dev`, in particular if you need to use the compilation option `-DMEDFILE_USE_MPI=ON`.
  - `petsc-dev`, if you want to compile a CDMATH-based linear solver. Petsc should mandatorily be at a minor subversion of version 3.4. * , that is to say *not* more recent. We have chosen the version 3.4 of Petsc (released on 13 May 2013), as it is easily installable from the main distributions repositories. Use the compilation option `-DCDMATH_WITH_PETSC=ON`.
- - `python-dev`, `python-numpy` and `swig`, if you want to generate Python executables and libraries of CDMATH. Use the compilation option `-DCDMATH_WITH_SWIG=ON`.
+ - `python-dev`, `python-numpy` and `swig`, if you want to generate Python executables and libraries of CDMATH. Use the compilation option `-DCDMATH_WITH_PYTHON=ON`.
  - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCDMATH_WITH_TESTS=ON`.
  - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON`.
  - `rpm`, if you want to generate RPM installation packages. Use the compilation option `-DCDMATH_WITH_PACKAGE=ON`.
@@ -42,7 +42,7 @@ Generate makefiles for a minimum version:
 * `cmake ../cdmath_src/ -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release`
 
 Or generate makefiles for an all-options version:
-* `cmake ../cdmath_src/ -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3 -DMEDFILE_USE_MPI=ON -DCDMATH_WITH_PETSC=ON -DCDMATH_WITH_SWIG=ON -DCDMATH_WITH_TESTS=ON -DCDMATH_WITH_DOCUMENTATION=ON -DCDMATH_WITH_PACKAGE=ON`
+* `cmake ../cdmath_src/ -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3 -DMEDFILE_USE_MPI=ON -DCDMATH_WITH_PETSC=ON -DCDMATH_WITH_PYTHON=ON -DCDMATH_WITH_TESTS=ON -DCDMATH_WITH_DOCUMENTATION=ON -DCDMATH_WITH_PACKAGE=ON`
 
 Compile and install:
 * `make`
