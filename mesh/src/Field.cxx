@@ -33,8 +33,8 @@ Field::Field( void )
 Field::~Field( void )
 //----------------------------------------------------------------------
 {
-	std::cerr << "dtor Field, _field = " <<_field << std::endl;
-	if (_field) _field->decrRef();
+	//std::cerr << "dtor Field, _field = " <<_field << std::endl;
+	//if (_field) _field->decrRef();
 }
 
   

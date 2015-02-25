@@ -360,8 +360,8 @@ Mesh::setMesh( void )
 	_numberOfFaces = m2->getNumberOfCells();
 	_faces    = new Face[_numberOfFaces] ;
 
-	if (_dim == 1) {
-
+	if (_dim == 1)
+	{
 		for( int id=0;id<_numberOfCells;id++ )
 		{
 			int nbFaces=tmpI[id+1]-tmpI[id];
@@ -387,7 +387,7 @@ Mesh::setMesh( void )
 		}
 
 		int k=0;
-		for( int id=0;id<_numberOfNodes;id++,k+=_dim)
+		for( int id=0, k=0; id<_numberOfNodes; id++, k+=_dim)
 		{
 			Point p(cood[k], 0.0, 0.0) ;
 			const int *workc=tmpN+tmpNI[id];
@@ -403,8 +403,7 @@ Mesh::setMesh( void )
 			_nodes[id] = vi ;
 		}
 
-		k=0;
-		for(int id=0;id<_numberOfFaces;id++)
+		for(int id=0, k=0; id<_numberOfFaces; id++, k+=_dim)
 		{
 			Point p(cood[k], 0.0, 0.0) ;
 			const int *workc=tmpA+tmpAI[id];
@@ -419,10 +418,10 @@ Mesh::setMesh( void )
 				fi.addCellId(1,workc[1]) ;
 
 			_faces[id] = fi ;
-			k+=_dim;
 		}
 	}
-	else {
+	else
+	{
 		DataArrayInt *desc2=DataArrayInt::New();
 		DataArrayInt *descI2=DataArrayInt::New();
 		DataArrayInt *revDesc2=DataArrayInt::New();
@@ -440,7 +439,7 @@ Mesh::setMesh( void )
 		const double *tmpNormal = normal->getConstPointer();
 
 		int k=0;
-		for( int id=0;id<_numberOfCells;id++ )
+		for(int id=0, k=0; id<_numberOfCells; id++, k+=_dim)
 		{
 			const int *work=tmp+tmpI[id];
 			const int *work2=tmp2+tmpI2[id];
@@ -475,16 +474,17 @@ Mesh::setMesh( void )
 			for( int el=0;el<nbVertices;el++ )
 				ci.addNodeId(el,nodeIdsOfCell[el]) ;
 			_cells[id] = ci ;
-			k+=_dim;
 		}
 
-		k=0;
-		for( int id=0;id<_numberOfNodes;id++,k+=_dim)
+		for(int id=0, k=0; id<_numberOfNodes; id++, k+=_dim)
 		{
-			double zc=0.;
-			if (_dim==3)
-				zc=cood[k+2];
-			Point p(cood[k],cood[k+1],zc) ;
+			vector<double> coorP(3);
+			for (int d=0; d<3; d++)
+				coorP[d] = 0.;
+			for (int d=0; d<_dim; d++)
+				coorP[d] = cood[k+d];
+			Point p(coorP[0],coorP[1],coorP[2]) ;
+
 			const int *workc=tmpN+tmpNI[id];
 			int nbCells=tmpNI[id+1]-tmpNI[id];
 			const int *workf=tmpC+tmpCI[id];
@@ -509,8 +509,7 @@ Mesh::setMesh( void )
 		const DataArrayDouble *normalFaces1 = orthoField->getArray() ;
 		const double *normalFaces2=normalFaces1->getConstPointer();
 
-		k=0;
-		for(int id=0;id<_numberOfFaces;id++)
+		for(int id=0, k=0; id<_numberOfFaces; id++, k+=_dim)
 		{
 			vector<double> coorBarySegXyz(3);
 			for (int d=0; d<3; d++)
@@ -531,33 +530,30 @@ Mesh::setMesh( void )
 				fi.addCellId(1,workc[1]) ;
 
 			_faces[id] = fi ;
-			k+=_dim;
 		}
-		//orthoField->decrRef();
-		//normalFaces1->decrRef();
-		barySeg->decrRef();
-		fieldl->decrRef();
-		baryCellF->decrRef();
-		fieldn->decrRef();
-		revCell->decrRef();
-		revCellI->decrRef();
-		revNode->decrRef();
-		revNodeI->decrRef();
-		baryCell->decrRef();
 		desc2->decrRef();
 		descI2->decrRef();
 		revDesc2->decrRef();
 		revDescI2->decrRef();
 		m3->decrRef();
+		baryCellF->decrRef();
+		fieldn->decrRef();
+		fieldl->decrRef();
+		barySeg->decrRef();
+		orthoField->decrRef();
 	}
-	coo->decrRef();
-	fields->decrRef();
 	desc->decrRef();
 	descI->decrRef();
 	revDesc->decrRef();
 	revDescI->decrRef();
-	m2->decrRef();
 	mu->decrRef();
+	m2->decrRef();
+	baryCell->decrRef();
+	fields->decrRef();
+	revNode->decrRef();
+	revNodeI->decrRef();
+	revCell->decrRef();
+	revCellI->decrRef();
 }
 
 //----------------------------------------------------------------------
