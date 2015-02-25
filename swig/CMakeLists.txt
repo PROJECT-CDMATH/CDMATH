@@ -18,14 +18,20 @@ INCLUDE_DIRECTORIES(
   ${INTERP_KERNEL_DIR}/ExprEval
   ${INTERP_KERNEL_DIR}/GaussPoints
   ${MED_LOADER_DIR}
-  ${PETSC_INCLUDES}
-  ${LINEARSOLVER_DIR}/inc
 )
+
+SET(_extra_lib_SWIG)
+if (CDMATH_WITH_PETSC)
+    INCLUDE_DIRECTORIES(
+      ${PETSC_INCLUDES}
+      ${LINEARSOLVER_DIR}/inc
+    )
+    SET(_extra_lib_SWIG linearsolver ${PETSC_LIBRARIES})   
+endif (CDMATH_WITH_PETSC)
 
 
 SWIG_ADD_MODULE(cdmath python cdmath.i)
-
-SWIG_LINK_LIBRARIES(cdmath ${PYTHON_LIBS} base mesh linearsolver medcoupling ${MED3_LIBS} medloader ${PETSC_LIBRARIES})
+SWIG_LINK_LIBRARIES(cdmath ${PYTHON_LIBS} base mesh medcoupling ${MED3_LIBS} medloader ${_extra_lib_SWIG})
 
 INSTALL(TARGETS _cdmath DESTINATION lib/cdmath)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/cdmath.py DESTINATION bin/cdmath)

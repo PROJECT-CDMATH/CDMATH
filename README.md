@@ -1,11 +1,13 @@
 CDMATH
 ======
 
-CDMATH is a CFD toolbox designed for numerical analysts who work on the representation of thermal-hydraulics and who would prefer to focus on high-level computation. The software is maintained and used by [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name.
+CDMATH is a CFD toolbox designed for numerical analysts who work on the representation of thermal-hydraulics and who would prefer to focus on high-level computation. The software is maintained and used by [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. The software is easiest to install on Fedora 19, 20 and 21, as well as on Ubuntu 14.04, 14.10 and Debian Jessie.
 
 
 Download CDMATH
 ---------------
+If you are on Fedora 19, 20 or 21, then you can simply download an RPM package from our [repositories](https://build.opensuse.org/project/repositories/home:ArthurTalpaert). Otherwise, or if you prefer to compile the latest sources to benefit from our continuous improvement, please follow the instructions hereunder.
+
 Create your source directory. For instance:
 * `mkdir ~/workspace/cdmath`
 * `cd ~/workspace/cdmath`
@@ -16,19 +18,18 @@ Download from GitHub. For instance:
 
 Set environment for the compilation of CDMATH
 ---------------------------------------------
-Dependencies. The following packages list is sufficient on Ubuntu 14.04 and Debian Jessie:
+Dependencies. The following packages list is sufficient on Ubuntu 14.04, Ubuntu 14.10 and Debian Jessie:
  - `cmake`
  - `g++` or another C++ compiler
  - `libhdf5-dev`
- - `petsc-dev` (mandatorily a minor subversion of version 3.4. * , that is to say *not* more recent). This should already include `libopenmpi-dev`, which is necessary if you use the compilation option `-DMEDFILE_USE_MPI=ON`. We have chosen the version 3.4 of Petsc (released on 13 May 2013), as it is easily installable from the main distributions repositories.
- - `python-dev`, `python-numpy` and `swig`, if you want to generate Python executables and libraries of CDMATH. Use the compilation option `-DCMAKE_CDMATH_SWIG=ON`.
- - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCMAKE_CDMATH_TESTS=ON`.
- - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCMAKE_CDMATH_DOCUMENTATION=ON`.
- - `rpm`, if you want to generate RPM installation packages. Use the compilation option `-DCMAKE_CDMATH_PACKAGE=ON`.
- 
-Some users reported that they need `valgrind-dev` on other systems (Fedora), but this has not been confirmed.
+ - `libopenmpi-dev`, in particular if you need to use the compilation option `-DMEDFILE_USE_MPI=ON`.
+ - `petsc-dev`, if you want to compile a CDMATH-based linear solver. Petsc should mandatorily be at a minor subversion of version 3.4. * , that is to say *not* more recent. We have chosen the version 3.4 of Petsc (released on 13 May 2013), as it is easily installable from the main distributions repositories. Use the compilation option `-DCDMATH_WITH_PETSC=ON`.
+ - `python-dev`, `python-numpy` and `swig`, if you want to generate Python executables and libraries of CDMATH. Use the compilation option `-DCDMATH_WITH_PYTHON=ON`.
+ - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCDMATH_WITH_TESTS=ON`.
+ - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON`.
+ - `rpm`, if you want to generate RPM installation packages. Use the compilation option `-DCDMATH_WITH_PACKAGE=ON`.
 
-Create the suggested build and installation folders:
+Directories. Create the suggested build and installation folders:
 * `cd ~/workspace/cdmath`
 * `mkdir cdmath_build`
 * `mkdir cdmath_install`
@@ -38,20 +39,20 @@ Create the suggested build and installation folders:
 Compile and install CDMATH
 --------------------------
 Generate makefiles for a minimum version:
-* `cmake -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release ../cdmath_src/`
+* `cmake ../cdmath_src/ -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release`
 
 Or generate makefiles for an all-options version:
-* `cmake -G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3 -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCMAKE_CDMATH_SWIG=ON -DCMAKE_CDMATH_TESTS=ON -DCMAKE_CDMATH_DOCUMENTATION=ON -DMEDFILE_USE_MPI=ON -DCMAKE_CDMATH_PACKAGE=ON ../cdmath_src/`
+* `cmake ../cdmath_src/ -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3 -DMEDFILE_USE_MPI=ON -DCDMATH_WITH_PETSC=ON -DCDMATH_WITH_PYTHON=ON -DCDMATH_WITH_TESTS=ON -DCDMATH_WITH_DOCUMENTATION=ON -DCDMATH_WITH_PACKAGE=ON`
 
 Compile and install:
-* `make -j4`, where “4” is the number of processors you have.
-* `make -j4 install`
+* `make`
+* `make install`
 
 Notes for compilation options:
+* Eclipse: The Cmake options `-G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3` create project files if you want to develop CDMATH with Eclipse Kepler or higher.
 * HDF5: On some systems (not Ubuntu 14.04), you may have to use the compilation option `-DHDF5_ROOT_DIR=/path/to/hdf5/library` too.
 * MPI: On some systems (not Ubuntu 14.04), you may have to use the compilation option `-DMPI_ROOT_DIR=/path/to/mpi/library` too. You may also have to set the environment variable `export MPI_ROOT_DIR=/path/to/mpi/library`. Moreover, on some systems (not Ubuntu 14.04), the compilation option `-DMEDFILE_USE_MPI=ON` may be mandatory and be set to `ON`.
 * PETSc: On some systems (not Ubuntu 14.04), you may have to use the compilation options `-DPETSC_DIR=/path/to/petsc/installation/petsc-3.4.5/ -DPETSC_ARCH=arch-linux2-c-opt`. Adapt according to your system, as it can also be `-DPETSC_DIR=/path/to/petsc/installation/petsc-3.4.5_install/` for instance. You may also have to use `export PETSC_DIR=/path/to/compiled/source/petsc-3.4.5/bin/` if you compiled PETSc from the sources as explained on [the official documentation](http://www.mcs.anl.gov/petsc/documentation/installation.html).
-* Eclipse: The Cmake options `-G"Eclipse CDT4 - Unix Makefiles" -D_ECLIPSE_VERSION=4.3` create project files if you want to develop CDMATH with Eclipse Kepler or higher.
 
 
 Use CDMATH
@@ -65,13 +66,13 @@ To use CDMATH with your Python code `main.py`:
  * Python libraries: `export PYTHONPATH=~/workspace/cdmath/cdmath_install/lib/cdmath:~/workspace/cdmath/cdmath_install/bin/cdmath`
 
 
-Create an Ubuntu 14.04 package for CDMATH
------------------------------------------
+Create Linux installation packages for CDMATH
+---------------------------------------------
 After popular request, here is how you can create packages for Ubuntu 14.04 and Red Hat-based Linux distributions:
 
 1. Download CDMATH as explained hereabove.
 2. Set the environment as explained hereabove (in particular, make sure you have `rpm` installed).
-3. Generate a makefile with `cmake -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCMAKE_CDMATH_PACKAGE=ON ../cdmath_src/` and eventually other options (documentation, tests, swig, etc).
+3. Generate a makefile with `cmake -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCDMATH_WITH_PACKAGE=ON ../cdmath_src/` and eventually other options (documentation, tests, swig, etc).
 4. Compile with `make package`.
 
 You will then find a Debian package in the build directory; you may install it on Ubuntu 14.04. You will also find an RPM package, which you may install on Red Hat-based distributions.
