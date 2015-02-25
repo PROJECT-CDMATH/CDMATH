@@ -33,6 +33,8 @@ Field::Field( void )
 Field::~Field( void )
 //----------------------------------------------------------------------
 {
+	std::cerr << "dtor Field, _field = " <<_field << std::endl;
+	if (_field) _field->decrRef();
 }
 
   
@@ -42,6 +44,7 @@ Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh, int 
     MEDCouplingUMesh* mu=mesh.getMEDCouplingMesh()->buildUnstructured();
     DataArrayDouble *array=DataArrayDouble::New();
     _typeField=type;
+    _field = NULL;
     if (type==CELLS)
     {
         _field=MEDCouplingFieldDouble::New(ON_CELLS);
@@ -80,7 +83,8 @@ Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh, int 
 Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh, int numberOfComponents)
 {
     _mesh=mesh ;
-    MEDCouplingUMesh* mu=mesh.getMEDCouplingMesh()->buildUnstructured();
+    _field = NULL;
+   MEDCouplingUMesh* mu=mesh.getMEDCouplingMesh()->buildUnstructured();
     DataArrayDouble *array=DataArrayDouble::New();
     _typeField=type;
     if (type==CELLS)
@@ -121,6 +125,7 @@ Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh, int 
 Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh)
 {
     _mesh=mesh ;
+    _field = NULL;
     MEDCouplingUMesh* mu=mesh.getMEDCouplingMesh()->buildUnstructured();
     DataArrayDouble *array=DataArrayDouble::New();
     _typeField=type;
@@ -165,6 +170,7 @@ Field::Field( const std::string filename, TypeField type,
               int iteration, int order) : _mesh(filename + ".med"), _typeField(type)
   
 {
+   _field = NULL;
   readFieldMed(filename, type, fieldName, iteration, order);
 }
 
@@ -178,6 +184,7 @@ void Field::readFieldMed( const std::string & fileName,
   std::vector<std::string> fNames = MEDLoader::GetAllFieldNames(fName);
   size_t iField = 0;
   std::string theFieldName;
+  _field = NULL;
   
   if (fieldName == "") {
     if (fNames.size() > 0)

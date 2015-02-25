@@ -41,6 +41,7 @@ LinearSolver::~LinearSolver ( void )
     MatDestroy(&_mat);
     VecDestroy(&_smb);
     KSPDestroy(&_ksp);
+    //PetscFinalize();
 }
 
 void

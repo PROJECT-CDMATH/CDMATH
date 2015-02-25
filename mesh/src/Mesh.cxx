@@ -504,7 +504,9 @@ Mesh::setMesh( void )
 
 		DataArrayDouble *barySeg = m2->getBarycenterAndOwner() ;
 		const double *coorBarySeg=barySeg->getConstPointer();
-		DataArrayDouble *normalFaces1 = m2->buildOrthogonalField()->getArray() ;
+		//DataArrayDouble *normalFaces1 = m2->buildOrthogonalField()->getArray() ;
+		MEDCouplingFieldDouble * orthoField = m2->buildOrthogonalField();
+		const DataArrayDouble *normalFaces1 = orthoField->getArray() ;
 		const double *normalFaces2=normalFaces1->getConstPointer();
 
 		k=0;
@@ -531,7 +533,8 @@ Mesh::setMesh( void )
 			_faces[id] = fi ;
 			k+=_dim;
 		}
-		normalFaces1->decrRef();
+		//orthoField->decrRef();
+		//normalFaces1->decrRef();
 		barySeg->decrRef();
 		fieldl->decrRef();
 		baryCellF->decrRef();
