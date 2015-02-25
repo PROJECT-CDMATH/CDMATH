@@ -510,14 +510,12 @@ Mesh::setMesh( void )
 		k=0;
 		for(int id=0;id<_numberOfFaces;id++)
 		{
-			double coorBarySegX=coorBarySeg[k];
-			double coorBarySegY=0.;
-			double coorBarySegZ=0.;
-			if (_dim>=2)
-				coorBarySegY = coorBarySeg[k+1];
-			if (_dim==3)
-				coorBarySegZ = coorBarySeg[k+2];
-			Point p(coorBarySegX,coorBarySegY,coorBarySegZ) ;
+			vector<double> coorBarySegXyz(3);
+			for (int d=0; d<3; d++)
+				coorBarySegXyz[d] = 0.;
+			for (int d=0; d<_dim; d++)
+				coorBarySegXyz[d] = coorBarySeg[k+d];
+			Point p(coorBarySegXyz[0],coorBarySegXyz[1],coorBarySegXyz[2]) ;
 			const int *workc=tmpA+tmpAI[id];
 			int nbCells=tmpAI[id+1]-tmpAI[id];
 
@@ -534,9 +532,9 @@ Mesh::setMesh( void )
 			k+=_dim;
 		}
 		normalFaces1->decrRef();
+		barySeg->decrRef();
 		fieldl->decrRef();
 		baryCellF->decrRef();
-		barySeg->decrRef();
 		fieldn->decrRef();
 		revCell->decrRef();
 		revCellI->decrRef();
