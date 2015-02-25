@@ -448,38 +448,26 @@ Mesh::setMesh( void )
 			int nbFaces=tmpI[id+1]-tmpI[id];
 			int nbVertices=mu->getNumberOfNodesInCell(id) ;
 
-			double coorBaryY=0.;
-			double coorBaryZ=0.;
-			double coef=0;
-			double coorBaryX=coorBary[k];
-			if (_dim>=2)
-				coorBaryY = coorBary[k+1];
-			if (_dim>=3)
-				coorBaryZ = coorBary[k+2];
+			vector<double> coorBaryXyz(3);
+			for (int d=0; d<3; d++)
+				coorBaryXyz[d] = 0.;
+			for (int d=0; d<_dim; d++)
+				coorBaryXyz[d] = coorBary[k+d];
 
-			Point p(coorBaryX,coorBaryY,coorBaryZ) ;
+			Point p(coorBaryXyz[0],coorBaryXyz[1],coorBaryXyz[2]) ;
 			Cell ci( nbVertices, nbFaces, surf[id], p ) ;
 			for( int el=0;el<nbFaces;el++ )
 			{
-				double xn=0.;
-				double yn=0.;
-				double zn=0.;
+				vector<double> xyzn(3);
+				for (int d=0; d<3; d++)
+					xyzn[d] = 0.;
 				if (work2[el]<0)
-				{
-					xn=-tmpNormal[_dim*work[el]];
-					if (_dim==2)
-						yn=-tmpNormal[_dim*work[el]+1];
-					if (_dim==3)
-						zn=-tmpNormal[_dim*work[el]+2];
-				}else
-				{
-					xn=tmpNormal[_dim*work[el]];
-					if (_dim==2)
-						yn=tmpNormal[_dim*work[el]+1];
-					if (_dim==3)
-						zn=tmpNormal[_dim*work[el]+2];
-				}
-				ci.addNormalVector(el,xn,yn,zn) ;
+					for (int d=0; d<_dim; d++)
+						xyzn[d] = -tmpNormal[_dim*work[el]+d];
+				else
+					for (int d=0; d<_dim; d++)
+						xyzn[d] = +tmpNormal[_dim*work[el]+d];
+				ci.addNormalVector(el,xyzn[0],xyzn[1],xyzn[2]) ;
 				ci.addFaceId(el,work[el]) ;
 			}
 			std::vector<int> nodeIdsOfCell ;
@@ -525,14 +513,10 @@ Mesh::setMesh( void )
 			double coorBarySegX=coorBarySeg[k];
 			double coorBarySegY=0.;
 			double coorBarySegZ=0.;
-			if (_dim==2)
-			{
+			if (_dim>=2)
 				coorBarySegY = coorBarySeg[k+1];
-			}
 			if (_dim==3)
-			{
 				coorBarySegZ = coorBarySeg[k+2];
-			}
 			Point p(coorBarySegX,coorBarySegY,coorBarySegZ) ;
 			const int *workc=tmpA+tmpAI[id];
 			int nbCells=tmpAI[id+1]-tmpAI[id];
@@ -549,6 +533,7 @@ Mesh::setMesh( void )
 			_faces[id] = fi ;
 			k+=_dim;
 		}
+		normalFaces1->decrRef();
 		fieldl->decrRef();
 		baryCellF->decrRef();
 		barySeg->decrRef();
