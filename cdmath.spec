@@ -7,9 +7,9 @@ Release:        1
 License:        Open Source
 Group:          Development/Science
 Vendor:         CDMATH workgroup
-Packager:		    Arthur Talpaert <firstname.lastname_cdmath@m4x.org>
-Source:		      master.zip
-URL:			      https://github.com/PROJECT-CDMATH/CDMATH/archive/master.zip
+Packager:       Arthur Talpaert <firstname.lastname_cdmath@m4x.org>
+Source:         CDMATH-master.zip
+URL:            https://github.com/PROJECT-CDMATH/CDMATH/archive/master.zip
 
 BuildRequires: 	cmake, gcc-c++, hdf5-devel, openmpi-devel
 Requires: 		hdf5, openmpi
@@ -19,8 +19,6 @@ CDMATH is a CFD toolbox designed for numerical analysts who work on the represen
 
 %prep
 %setup -q
-#gzip -dc cdmath-%{version}.tar.gz
-#cd cdmath-%{version}
 
 %build
 cmake -DCMAKE_INSTALL_PREFIX=/opt -DCMAKE_BUILD_TYPE=Release .
