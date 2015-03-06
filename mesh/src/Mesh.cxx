@@ -386,8 +386,7 @@ Mesh::setMesh( void )
 			_cells[id] = ci ;
 		}
 
-		int k=0;
-		for( int id=0, k=0; id<_numberOfNodes; id++, k+=_dim)
+		for( int id(0), k(0); id<_numberOfNodes; id++, k+=_dim)
 		{
 			Point p(cood[k], 0.0, 0.0) ;
 			const int *workc=tmpN+tmpNI[id];
@@ -403,7 +402,7 @@ Mesh::setMesh( void )
 			_nodes[id] = vi ;
 		}
 
-		for(int id=0, k=0; id<_numberOfFaces; id++, k+=_dim)
+		for(int id(0), k(0); id<_numberOfFaces; id++, k+=_dim)
 		{
 			Point p(cood[k], 0.0, 0.0) ;
 			const int *workc=tmpA+tmpAI[id];
@@ -438,8 +437,7 @@ Mesh::setMesh( void )
 		DataArrayDouble *normal = fieldn->getArray();
 		const double *tmpNormal = normal->getConstPointer();
 
-		int k=0;
-		for(int id=0, k=0; id<_numberOfCells; id++, k+=_dim)
+		for(int id(0), k(0); id<_numberOfCells; id++, k+=_dim)
 		{
 			const int *work=tmp+tmpI[id];
 			const int *work2=tmp2+tmpI2[id];
@@ -476,7 +474,7 @@ Mesh::setMesh( void )
 			_cells[id] = ci ;
 		}
 
-		for(int id=0, k=0; id<_numberOfNodes; id++, k+=_dim)
+		for(int id(0), k(0); id<_numberOfNodes; id++, k+=_dim)
 		{
 			vector<double> coorP(3);
 			for (int d=0; d<3; d++)
@@ -509,7 +507,7 @@ Mesh::setMesh( void )
 		const DataArrayDouble *normalFaces1 = orthoField->getArray() ;
 		const double *normalFaces2=normalFaces1->getConstPointer();
 
-		for(int id=0, k=0; id<_numberOfFaces; id++, k+=_dim)
+		for(int id(0), k(0); id<_numberOfFaces; id++, k+=_dim)
 		{
 			vector<double> coorBarySegXyz(3);
 			for (int d=0; d<3; d++)
