@@ -360,6 +360,7 @@ Mesh::setMesh( void )
 	_numberOfFaces = m2->getNumberOfCells();
 	_faces    = new Face[_numberOfFaces] ;
 
+	// _cells, _nodes and _faces initialization:
 	if (_dim == 1)
 	{
 		for( int id=0;id<_numberOfCells;id++ )

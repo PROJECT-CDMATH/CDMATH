@@ -8,7 +8,7 @@ License:        Open Source
 Group:          Development/Science
 Vendor:         CDMATH workgroup
 Packager:       Arthur Talpaert <firstname.lastname_cdmath@m4x.org>
-Source:         CDMATH-master.zip
+Source:         cdmath-%{version}.tar.gz
 URL:            https://github.com/PROJECT-CDMATH/CDMATH/archive/master.zip
 
 BuildRequires: 	cmake, gcc-c++, hdf5-devel, openmpi-devel
