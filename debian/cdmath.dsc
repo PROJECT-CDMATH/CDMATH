@@ -1,4 +1,4 @@
-Format: 1.0
+Format: 3.0 (quilt)
 Source: cdmath
 Version: 0.3-1
 Binary: cdmath
