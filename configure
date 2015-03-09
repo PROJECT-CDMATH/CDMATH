@@ -21,25 +21,30 @@ def main(argv):
     src_directory = os.getcwd()
     #build_directory = """./build"""
     install_directory = """/usr"""
+    mpi_option=""""""
 
     try:
         opts, args = getopt.getopt(argv, """h""",
-            ["""help""", """prefix="""])
+            ["""help""", """prefix=""", """MPI_ROOT_DIR="""])
     except getopt.GetoptError:
         print("""You gave incorrect arguments.""")
         sys.exit(2)
     for opt, arg in opts:
         if opt in ("-h", "--help"):
-            print("""Possible options: h, help, prefix.""")
+            print("""Possible options: h, help, prefix, MPI_ROOT_DIR.""")
             sys.exit()
-        elif opt in ("prefix"""):
+        elif opt in ("""prefix"""):
             install_directory = str(arg)
+        elif opt in ("""MPI_ROOT_DIR"""):
+            mpi_directory = str(arg)
+            mpi_option = """-DMPI_ROOT_DIR=""" + mpi_directory
 
     #mkdir_p(build_directory)
     #os.chdir(build_directory)
     subprocess.call(["""cmake""",
         """-DCMAKE_INSTALL_PREFIX=""" + install_directory,
         """-DCMAKE_BUILD_TYPE=Release""",
+        mpi_option,
         src_directory])
 
 
