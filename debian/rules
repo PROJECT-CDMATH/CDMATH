@@ -20,9 +20,8 @@ build-stamp:
 	dh_testdir
 
 	# Add here commands to compile the package.
-	export MPI_ROOT_DIR=/usr/lib/openmpi/
-	/usr/bin/python ./configure --MPI_ROOT_DIR=/usr/lib/openmpi/
-	make all
+	/usr/bin/python ./configure
+	make -j all
 	# --- end custom part for compiling
 
 	touch build-stamp

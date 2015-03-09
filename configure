@@ -25,17 +25,18 @@ def main(argv):
 
     try:
         opts, args = getopt.getopt(argv, """h""",
-            ["""help""", """prefix=""", """MPI_ROOT_DIR="""])
+            ["""help""", """prefix=""", """MPI_ROOT_DIR=""", """make"""])
     except getopt.GetoptError:
         print("""You gave incorrect arguments.""")
         sys.exit(2)
     for opt, arg in opts:
         if opt in ("-h", "--help"):
             print("""Possible options: h, help, prefix, MPI_ROOT_DIR.""")
+            # Notice that the make option is hidden.
             sys.exit()
-        elif opt in ("""prefix"""):
+        elif opt in ("""--prefix"""):
             install_directory = str(arg)
-        elif opt in ("""MPI_ROOT_DIR"""):
+        elif opt in ("""--MPI_ROOT_DIR"""):
             mpi_directory = str(arg)
             mpi_option = """-DMPI_ROOT_DIR=""" + mpi_directory
 

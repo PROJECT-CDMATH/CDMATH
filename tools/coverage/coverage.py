@@ -14,7 +14,7 @@ def launchCoverage(cdmath_build,src_cdmath,step,module_cdmath,coverage):
     else:
         extention="cpp"
         pass
-        
+
     if not os.path.isdir(directory_object):
         sys.stderr.write('Error:  cdmath directory objects '+directory_object+' does not exist \n')
         sys.exit(1)
@@ -36,12 +36,12 @@ def launchCoverage(cdmath_build,src_cdmath,step,module_cdmath,coverage):
         proc=subprocess.Popen('genhtml --title \"CDMATH COVERAGE TESTS\" --show-details --highlight --legend --output-directory html_'+extention+' '+module_cdmath+'_'+extention+'.info',shell=True,stdout=sys.stdout,stderr=sys.stderr)
         so,se=proc.communicate()
     return
-  
+
 def main(argv):
     cdmath_build,src_cdmath,step,module_cdmath,coverage=options_script(argv)
     launchCoverage(cdmath_build,src_cdmath,step,module_cdmath,coverage)
-    return  
-  
+    return
+
 def options_script(argv):
 
     parser = OptionParser(usage="usage: %prog [options]")
@@ -83,7 +83,7 @@ def options_script(argv):
         sys.stderr.write('Error: build cdmath directory '+build_cdmath+' does not exist \n')
         sys.exit(1)
         pass
-    
+
     src_cdmath = os.path.expanduser(options.src_cdmath)
     src_cdmath = os.path.expandvars(src_cdmath)
     src_cdmath = os.path.abspath(src_cdmath)
