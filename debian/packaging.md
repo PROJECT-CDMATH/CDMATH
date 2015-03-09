@@ -10,6 +10,7 @@ Here is how to create `cdmath_0.3-1.dsc` and `cdmath_0.3-1.tar.gz`, necessary fo
 Here is how to create files, necessary for the Launchpad.net build service (provided by Canonical):
  * be on a Debian-based system,
  * copy the source directory of CDMATH (`cdmath_src` probably) and name this copy `cdmath_0.3`,
- * compress `cdmath_0.3` to `cdmath_0.3.orig.tar.gz`,
+ * compress `cdmath_0.3` to `cdmath_0.3-1.orig.tar.gz`,
  * move to the `cdmath_0.3` directory,
- * run `debuild`.
+ * run `debuild -S`,
+ * upload with `dput ppa:cdmath/ppa cdmath_0.3-1-trusty_source.changes`.

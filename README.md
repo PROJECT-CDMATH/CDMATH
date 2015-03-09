@@ -1,12 +1,19 @@
 CDMATH
 ======
 
-CDMATH is a CFD toolbox designed for numerical analysts who work on the representation of thermal-hydraulics and who would prefer to focus on high-level computation. The software is maintained and used by [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. The software is easiest to install on Fedora 19, 20 and 21, as well as on Ubuntu 14.04, 14.10 and Debian Jessie.
+CDMATH is a CFD toolbox designed for numerical analysts who work on the representation of thermal-hydraulics and who would prefer to focus on high-level computation. The software is maintained and used by [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. The software is easiest to install on Ubuntu 12.04, 14.04 and 14.10, on Debian Jessie, as well as on Fedora 19, 20 and 21.
 
 
-Download CDMATH
----------------
-If you are on Fedora 19, 20 or 21, then you can simply download an RPM package from our [repositories](https://build.opensuse.org/project/repositories/home:ArthurTalpaert). Otherwise, or if you prefer to compile the latest sources to benefit from our continuous improvement, please follow the instructions hereunder.
+Download binary CDMATH from repositories
+----------------------------------------
+If you are on Ubuntu 12.04 or 14.04, you can simply add our [Ubuntu repository](https://launchpad.net/~cdmath/+archive/ubuntu/ppa) to your system.
+
+Similarly, if you are on Fedora 19, 20 or 21, then you can also simply download an RPM package from our [Fedora repository](https://build.opensuse.org/project/repositories/home:ArthurTalpaert).
+
+
+Download CDMATH sources to compile
+----------------------------------
+If you are on another system, or if you prefer to compile the latest sources to benefit from our continuous improvement, please follow the instructions hereunder.
 
 Create your source directory. For instance:
 * `mkdir ~/workspace/cdmath`
@@ -75,6 +82,6 @@ After popular request, here is how you can create packages for Ubuntu 14.04 and 
 3. Generate a makefile with `cmake -DCMAKE_INSTALL_PREFIX=../cdmath_install -DCMAKE_BUILD_TYPE=Release -DCDMATH_WITH_PACKAGE=ON ../cdmath_src/` and eventually other options (documentation, tests, swig, etc).
 4. Compile with `make package`.
 
-You will then find a Debian package in the build directory; you may install it on Ubuntu 14.04. You will also find an RPM package, which you may install on Red Hat-based distributions.
+You will then find a Debian package in the build directory; you may install it on Ubuntu 14.04. You will also find an RPM package, which you may install on Red Hat-based distributions. This way, the packages you generate may include all the compilation options you want.
 
 Unfortunately, the Debian package may be said to be of “bad quality” for Debian standards as far as ownership is concerned. This is true and due to limitations in CMake/CPack. The package should still install nonetheless.
