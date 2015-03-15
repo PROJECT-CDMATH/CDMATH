@@ -20,7 +20,7 @@ build-stamp:
 	dh_testdir
 
 	# Add here commands to compile the package.
-	/usr/bin/python ./configure
+	/usr/bin/python ./configure --prefix=.
 	make -j all
 	# --- end custom part for compiling
 

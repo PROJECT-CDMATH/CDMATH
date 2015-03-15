@@ -6,7 +6,7 @@ CDMATH is a CFD toolbox designed for numerical analysts who work on the represen
 
 Download binary CDMATH from repositories
 ----------------------------------------
-If you are on Ubuntu 12.04 or 14.04, you can simply add our [Ubuntu repository](https://launchpad.net/~cdmath/+archive/ubuntu/ppa) to your system.
+If you are on Ubuntu 14.04, you can simply add our [Ubuntu repository](https://launchpad.net/~cdmath/+archive/ubuntu/ppa) to your system.
 
 Similarly, if you are on Fedora 19, 20 or 21, then you can also simply download an RPM package from our [Fedora repository](https://build.opensuse.org/project/repositories/home:ArthurTalpaert).
 
@@ -30,7 +30,7 @@ Dependencies. The following packages list is sufficient on Ubuntu 14.04, Ubuntu 
  - `g++` or another C++ compiler
  - `libhdf5-dev`
  - `libopenmpi-dev`, in particular if you need to use the compilation option `-DMEDFILE_USE_MPI=ON`.
- - `petsc-dev`, if you want to compile a CDMATH-based linear solver. Petsc should mandatorily be at a minor subversion of version 3.4. * , that is to say *not* more recent. We have chosen the version 3.4 of Petsc (released on 13 May 2013), as it is easily installable from the main distributions repositories. Use the compilation option `-DCDMATH_WITH_PETSC=ON`.
+ - `petsc-dev`, if you want to compile a CDMATH-based linear solver. PETSc should mandatorily be at a minor subversion of version 3.4. * , that is to say *not* more recent. We have chosen the version 3.4 of PETSc (released on 13 May 2013), as it is easily installable from the main distributions repositories. Use the compilation option `-DCDMATH_WITH_PETSC=ON`.
  - `python-dev`, `python-numpy` and `swig`, if you want to generate Python executables and libraries of CDMATH. Use the compilation option `-DCDMATH_WITH_PYTHON=ON`.
  - `libcppunit-dev`, if you want to generate unit tests. Use the compilation option `-DCDMATH_WITH_TESTS=ON`.
  - `doxygen`, `graphviz` and `mscgen`, if you want to generate a nice documentation in `~/workspace/cdmath/cdmath_install/doc/`. Use the compilation option `-DCDMATH_WITH_DOCUMENTATION=ON`.

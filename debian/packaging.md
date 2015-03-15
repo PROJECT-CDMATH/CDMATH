@@ -13,4 +13,4 @@ Here is how to create files, necessary for the Launchpad.net build service (prov
  * compress `cdmath_0.3` to `cdmath_0.3-1.orig.tar.gz`,
  * move to the `cdmath_0.3` directory,
  * run `debuild -S`,
- * upload with `dput ppa:cdmath/ppa cdmath_0.3-1-trusty_source.changes`.
+ * upload with `dput ppa:cdmath/cdmath cdmath_0.3-1trusty_source.changes`.
