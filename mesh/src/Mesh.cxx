@@ -1005,7 +1005,7 @@ Mesh::operator= ( const Mesh& mesh )
     _zSup=mesh.getZSup();
     _groups = mesh.getNamesOfGroups() ;
     _nxyz = mesh.getCellGridStructure() ;
-
+    _dxyz = mesh.getDXYZ();
     if (_nodes)
     {
         delete [] _nodes ;
