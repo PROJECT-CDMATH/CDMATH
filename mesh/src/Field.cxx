@@ -33,11 +33,11 @@ Field::Field( void )
 Field::~Field( void )
 //----------------------------------------------------------------------
 {
-	//std::cerr << "dtor Field, _field = " <<_field << std::endl;
-	//if (_field) _field->decrRef();
+    //std::cerr << "dtor Field, _field = " <<_field << std::endl;
+    //if (_field) _field->decrRef();
 }
 
-  
+ 
 Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh, int numberOfComponents, double time)
 {
     _mesh=mesh ;
@@ -168,7 +168,7 @@ Field::Field(const std::string fieldName, TypeField type, const Mesh& mesh)
 Field::Field( const std::string filename, TypeField type,
               const std::string & fieldName,
               int iteration, int order) : _mesh(filename + ".med"), _typeField(type)
-  
+ 
 {
    _field = NULL;
   readFieldMed(filename, type, fieldName, iteration, order);
@@ -185,7 +185,7 @@ void Field::readFieldMed( const std::string & fileName,
   size_t iField = 0;
   std::string theFieldName;
   _field = NULL;
-  
+ 
   if (fieldName == "") {
     if (fNames.size() > 0)
       theFieldName = fNames[0];
@@ -207,7 +207,7 @@ void Field::readFieldMed( const std::string & fileName,
       throw CdmathException(message.str().c_str());
     }
   }
-  
+ 
   std::vector<std::string> meshNames
     = MEDLoader::GetMeshNamesOnField(fName, theFieldName);
   if (meshNames.size() == 0) {
@@ -246,13 +246,13 @@ Field::getNormEuclidean() const
 string
 Field::getInfoOnComponent(int icomp) const
 {
-	return _field->getArray()->getInfoOnComponent(icomp);
+    return _field->getArray()->getInfoOnComponent(icomp);
 }
 
 void
 Field::setInfoOnComponent(int icomp, string nameCompo)
 {
-	_field.retn()->getArray()->setInfoOnComponent(icomp,nameCompo);
+    _field.retn()->getArray()->setInfoOnComponent(icomp,nameCompo);
 }
 
 //----------------------------------------------------------------------
@@ -609,25 +609,25 @@ Field::writeCSV ( const std::string fileName ) const
 
     if (dim==1)
     {
-        file << "x," << _field->getName() << endl;
+        file << "x " << _field->getName() << endl;
         for (int i=0;i<nbElements;i++)
             if (getTypeOfField()==CELLS)
-                file << _mesh.getCell(i).x() << "," << getValues()[i] << endl;
+                file << _mesh.getCell(i).x() << " " << getValues()[i] << endl;
             else
-                file << _mesh.getNode(i).x() << "," << getValues()[i] << endl;
+                file << _mesh.getNode(i).x() << " " << getValues()[i] << endl;
     }else if (dim==2)
     {
         int nbCompo=getNumberOfComponents();
         if (nbCompo==1)
-            file << "x,y," << _field->getName() << endl;
+            file << "x y " << _field->getName() << endl;
         else if (nbCompo>1)
         {
-            file << "x,y";
+            file << "x y";
             for (int i=0;i<nbCompo;i++)
             {
                 ostringstream numCompo;
                 numCompo << i+1 ;
-                file << "," << _field->getName() << " Compo " << numCompo;
+                file << " " << _field->getName() << " Compo " << numCompo;
 
             }
             file << endl;
@@ -635,11 +635,38 @@ Field::writeCSV ( const std::string fileName ) const
         for (int i=0;i<nbElements;i++)
         {
             if (getTypeOfField()==CELLS)
-                file << _mesh.getCell(i).x() << "," << _mesh.getCell(i).y() ;
+                file << _mesh.getCell(i).x() << " " << _mesh.getCell(i).y() ;
             else
-                file << _mesh.getNode(i).x() << "," << _mesh.getNode(i).y() ;
+                file << _mesh.getNode(i).x() << " " << _mesh.getNode(i).y() ;
             for (int j=0;j<nbCompo;j++)
-                file << "," << getValues()[i+j*nbCompo] ;
+                file << " " << getValues()[i+j*nbCompo] ;
+            file << endl;
+        }
+    }else
+    {
+        int nbCompo=getNumberOfComponents();
+        if (nbCompo==1)
+            file << "x y z " << _field->getName() << endl;
+        else if (nbCompo>1)
+        {
+            file << "x y z";
+            for (int i=0;i<nbCompo;i++)
+            {
+                ostringstream numCompo;
+                numCompo << i+1 ;
+                file << " " << _field->getName() << " Compo " << numCompo;
+
+            }
+            file << endl;
+        }
+        for (int i=0;i<nbElements;i++)
+        {
+            if (getTypeOfField()==CELLS)
+                file << _mesh.getCell(i).x() << " " << _mesh.getCell(i).y() << " " << _mesh.getCell(i).z();
+            else
+                file << _mesh.getNode(i).x() << " " << _mesh.getNode(i).y() << " " << _mesh.getNode(i).z();
+            for (int j=0;j<nbCompo;j++)
+                file << " " << getValues()[i+j*nbCompo] ;
             file << endl;
         }
     }
@@ -696,24 +723,24 @@ Field operator/ (const Field& field, double value)
 Vector
 Field::getValuesOnAllComponents(int elem) const
 {
-	Vector v(getNumberOfComponents());
-	for(int i=0;i<getNumberOfComponents();i++)
-		v[i]=(*this)(elem,i);
-	return v;
+    Vector v(getNumberOfComponents());
+    for(int i=0;i<getNumberOfComponents();i++)
+        v[i]=(*this)(elem,i);
+    return v;
 }
 
 Vector
 Field::getValuesOnComponent(int compo) const
 {
-	Vector v(getNumberOfElements());
-	for(int i=0;i<getNumberOfElements();i++)
-		v[i]=(*this)(i,compo);
-	return v;
+    Vector v(getNumberOfElements());
+    for(int i=0;i<getNumberOfElements();i++)
+        v[i]=(*this)(i,compo);
+    return v;
 }
 
 std::ostream& operator<<(std::ostream& out, const Field& field )
 {
-	cout << "Field " << field.getName() << " : " << endl ;
-	out<< field.getField().retn()->getArray()->repr();
-	return out;
+    cout << "Field " << field.getName() << " : " << endl ;
+    out<< field.getField().retn()->getArray()->repr();
+    return out;
 }
