@@ -34,6 +34,7 @@ LinearSolver::LinearSolver ( void )
     _smb=NULL;
     _ksp=NULL;
     _prec=NULL;
+    _isSparseMatrix=false;
 }
 
 LinearSolver::~LinearSolver ( void )
@@ -71,17 +72,10 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, i
     setLinearSolver(matrix,vector);
 }
 
-LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string nameOfMethod, std::string pc )
+void
+LinearSolver::setPreconditioner(std::string pc)
 {
-    _tol=tol;
-    _nameOfMethod=nameOfMethod;
     _nameOfPc=pc;
-    _numberMaxOfIter=numberMaxOfIter;
-    _residu=1.E30;
-    _convergence=false;
-    _numberOfIter=0;
-    _isSingular=false;
-
     if ((_nameOfPc.compare("LU")==0 && (_nameOfMethod.compare("GMRES")!=0 && _nameOfMethod.compare("BICG")!=0)))
     {
         string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not yet implemented.\n";
@@ -89,7 +83,7 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, i
         throw CdmathException(msg);
     }
 
-    if (_nameOfPc.compare("ILU")==0 && matrix.isSparseMatrix()==false)
+    if (_nameOfPc.compare("ILU")==0 && _isSparseMatrix==false)
     {
         string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not compatible with dense matrix.\n";
         throw CdmathException(msg);
@@ -101,16 +95,81 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, i
         throw CdmathException(msg);
     }
 
+}
+
+void
+LinearSolver::setMethod(std::string nameOfMethod)
+{
+    _nameOfMethod=nameOfMethod;
+    if ((_nameOfPc.compare("LU")==0 && (_nameOfMethod.compare("GMRES")!=0 && _nameOfMethod.compare("BICG")!=0)))
+    {
+        string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not yet implemented.\n";
+        msg+="The preconditioners implemented are : LU for GMRES and BICG methods.";
+        throw CdmathException(msg);
+    }
+
+    if (_nameOfPc.compare("ILU")==0 && _isSparseMatrix==false)
+    {
+        string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not compatible with dense matrix.\n";
+        throw CdmathException(msg);
+    }
+
+    if (_nameOfPc.compare("ILU")==0 && (_nameOfMethod.compare("LU")==0 || _nameOfMethod.compare("CHOLESKY")==0) )
+    {
+        string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not compatible with "+_nameOfMethod+".\n";
+        throw CdmathException(msg);
+    }
+
+}
+
+LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string nameOfMethod, std::string pc )
+{
+    _tol=tol;
+    _nameOfMethod=nameOfMethod;
+    _nameOfPc=pc;
+    _numberMaxOfIter=numberMaxOfIter;
+    _residu=1.E30;
+    _convergence=false;
+    _numberOfIter=0;
+    _isSingular=false;
+    
     setLinearSolver(matrix,vector);
 }
 
 void
 LinearSolver::setLinearSolver(const GenericMatrix& matrix, const Vector& vector)
 {
+    _isSparseMatrix=matrix.isSparseMatrix();
+    if ((_nameOfPc.compare("LU")==0 && (_nameOfMethod.compare("GMRES")!=0 && _nameOfMethod.compare("BICG")!=0)))
+    {
+        string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not yet implemented.\n";
+        msg+="The preconditioners implemented are : LU for GMRES and BICG methods.";
+        throw CdmathException(msg);
+    }
+
+    if (_nameOfPc.compare("ILU")==0 && _isSparseMatrix==false)
+    {
+        string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not compatible with dense matrix.\n";
+        throw CdmathException(msg);
+    }
+
+    if (_nameOfPc.compare("ILU")==0 && (_nameOfMethod.compare("LU")==0 || _nameOfMethod.compare("CHOLESKY")==0) )
+    {
+        string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not compatible with "+_nameOfMethod+".\n";
+        throw CdmathException(msg);
+    }
+
     PetscInitialize(0,(char ***)"", PETSC_NULL, PETSC_NULL);
     setMatrix(matrix);
     setSndMember(vector);
 
+}
+
+
+bool
+LinearSolver::isSparseMatrix( void ) const
+{
+    return _isSparseMatrix;
 }
 
 bool
@@ -255,6 +314,7 @@ LinearSolver::LinearSolver ( const LinearSolver& LS )
     _smb=LS.getPetscVector();
     _ksp=LS.getPetscKsp();
     _prec=LS.getPetscPc();
+    _isSparseMatrix=LS.isSparseMatrix();
 }
 
 KSP
@@ -290,10 +350,7 @@ LinearSolver::solve( void )
 
 
     if (_nameOfMethod.compare("GMRES")==0)
-    {
        KSPSetType(_ksp,KSPGMRES);
-       if (_nameOfPc.compare("LU")==0) PCSetType(_prec,PCLU);
-    }
     else if (_nameOfMethod.compare("LGMRES")==0)
         KSPSetType(_ksp,KSPLGMRES);
     else if (_nameOfMethod.compare("CG")==0)
@@ -305,10 +362,7 @@ LinearSolver::solve( void )
     else if (_nameOfMethod.compare("CGS")==0)
         KSPSetType(_ksp,KSPCGS);
     else if (_nameOfMethod.compare("BICG")==0)
-    {
         KSPSetType(_ksp,KSPBICG);
-        if (_nameOfPc.compare("LU")==0) PCSetType(_prec,PCLU);
-    }
     else if (_nameOfMethod.compare("GCR")==0)
         KSPSetType(_ksp,KSPGCR);
     else if (_nameOfMethod.compare("LSQR")==0)
@@ -325,7 +379,8 @@ LinearSolver::solve( void )
         throw CdmathException(msg);
     }
 
-   if (_nameOfPc.compare("ILU")==0 && (_nameOfMethod.compare("LU")!=0 && _nameOfMethod.compare("CHOLESKY")!=0) ) PCSetType(_prec,PCILU);
+   if (_nameOfPc.compare("ILU")) PCSetType(_prec,PCILU);
+   if (_nameOfPc.compare("LU")) PCSetType(_prec,PCLU);
 
     PetscInt its;
     PetscReal rtol,abstol,dtol;
@@ -419,5 +474,6 @@ LinearSolver::operator= ( const LinearSolver& linearSolver )
     _smb=linearSolver.getPetscVector();
     _ksp=linearSolver.getPetscKsp();
     _prec=linearSolver.getPetscPc();
+    _isSparseMatrix=linearSolver.isSparseMatrix();
     return *this;
 }

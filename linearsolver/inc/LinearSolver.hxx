@@ -30,6 +30,10 @@ class LinearSolver
 
 	LinearSolver ( const LinearSolver& LS ) ;
 
+        void setMethod(std::string nameOfMethod) ;
+
+        void setPreconditioner(std::string pc) ;
+
 	int getNumberOfIter( void ) const ;
 
 	bool getStatus( void ) const ;
@@ -64,6 +68,8 @@ class LinearSolver
 
 	bool isSingular( void ) const;
 
+        bool isSparseMatrix( void ) const ;
+
 	Mat getPetscMatrix() const ;
 	Vec getPetscVector() const ;
 
@@ -80,6 +86,7 @@ class LinearSolver
 	double _residu;
 	bool _convergence;
 	bool _isSingular;
+        bool _isSparseMatrix;
 	int _numberOfIter;
 //	GenericMatrix* _matrix;
 	Vector _vector;
