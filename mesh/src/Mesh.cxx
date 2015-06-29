@@ -270,39 +270,44 @@ Mesh::getIndexFacePeriodic(int indexFace) const
 void
 Mesh::setGroups( const MEDFileUMesh* medmesh)
 {
-    vector<string> groups=medmesh->getGroupsNames() ;
-    for (unsigned int i=0;i<groups.size();i++ )
-    {
-        string groupName=groups[i];
-        _groups.push_back(groupName);
-        MEDCouplingUMesh *m=medmesh->getGroup(-1,groupName.c_str());
-        DataArrayDouble *baryCell = m->getBarycenterAndOwner() ;
-        const double *coorBary=baryCell->getConstPointer();
-        int nb=m->getNumberOfCells();
-        int k=0;
-        for (int ic=0;ic<nb;ic++)
-        {
-            double xb=coorBary[k];
-            double yb=coorBary[k+1];
-            int flag=0;
-            for (int iface=0;iface<_numberOfFaces;iface++ )
-            {
-                double xx=_faces[iface].x();
-                double yy=_faces[iface].y();
-                if(abs(xx-xb)<1.E-10 && abs(yy-yb)<1.E-10)
-                {
-                    _faces[iface].setGroupName(groupName);
-                    flag=1;
-                    break;
-                }
-            }
-            if (flag==0)
-                assert("face non trouve");
-            k+=2;
-        }
-        baryCell->decrRef();
-        m->decrRef();
-    }
+	vector<string> groups=medmesh->getGroupsNames() ;
+	for (unsigned int i=0;i<groups.size();i++ )
+	{
+		string groupName=groups[i];
+		vector<int> nonEmptyGrp(medmesh->getGrpNonEmptyLevels(groupName));
+		//We verify that the group has a relative dimension equal to -1 before calling the function getGroup(-1,groupName.c_str())
+		vector<int>::iterator it = find(nonEmptyGrp.begin(), nonEmptyGrp.end(), -1);
+		if (it != nonEmptyGrp.end()){
+			_groups.push_back(groupName);
+			MEDCouplingUMesh *m=medmesh->getGroup(-1,groupName.c_str());
+			DataArrayDouble *baryCell = m->getBarycenterAndOwner() ;
+			const double *coorBary=baryCell->getConstPointer();
+			int nb=m->getNumberOfCells();
+			int k=0;
+			for (int ic=0;ic<nb;ic++)
+			{
+				double xb=coorBary[k];
+				double yb=coorBary[k+1];
+				int flag=0;
+				for (int iface=0;iface<_numberOfFaces;iface++ )
+				{
+					double xx=_faces[iface].x();
+					double yy=_faces[iface].y();
+					if(abs(xx-xb)<1.E-10 && abs(yy-yb)<1.E-10)
+					{
+						_faces[iface].setGroupName(groupName);
+						flag=1;
+						break;
+					}
+				}
+				if (flag==0)
+					assert("face non trouve");
+				k+=2;
+			}
+			baryCell->decrRef();
+			m->decrRef();
+		}
+	}
 }
 
 //----------------------------------------------------------------------
@@ -413,9 +418,8 @@ Mesh::setMesh( void )
 			Face fi( 1, nbCells, 1.0, p, 1.0, 0.0, 0.0) ;
 			fi.addNodeId(0,workv[0]) ;
 
-			fi.addCellId(0,workc[0]) ;
-			if (nbCells==2)
-				fi.addCellId(1,workc[1]) ;
+			for(int idCell=0; idCell<nbCells; idCell++)
+				fi.addCellId(idCell,workc[idCell]) ;
 
 			_faces[id] = fi ;
 		}
