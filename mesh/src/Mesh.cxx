@@ -418,9 +418,8 @@ Mesh::setMesh( void )
 			Face fi( 1, nbCells, 1.0, p, 1.0, 0.0, 0.0) ;
 			fi.addNodeId(0,workv[0]) ;
 
-			fi.addCellId(0,workc[0]) ;
-			if (nbCells==2)
-				fi.addCellId(1,workc[1]) ;
+			for(int idCell=0; idCell<nbCells; idCell++)
+				fi.addCellId(idCell,workc[idCell]) ;
 
 			_faces[id] = fi ;
 		}
