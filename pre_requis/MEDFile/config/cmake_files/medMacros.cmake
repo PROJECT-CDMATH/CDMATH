@@ -195,7 +195,6 @@ ENDMACRO(MED_C_FORTRAN_INTERFACE)
 
 ###############################################################################
 ## Macro to check possibility include time.h and sys/time.h headers together
-## Anouar : #ifdef __cplusplus extern "C" #endif
 ###############################################################################
 MACRO(MED_TIME_SYS_TIME)
 
@@ -206,6 +205,9 @@ FILE( WRITE ${_TEST_FILE}
 #include <sys/time.h>
 #include <time.h>
 
+#  ifdef __cplusplus
+     extern \"C\"
+#  endif
 
 int
 main ()
@@ -385,11 +387,10 @@ MACRO(INSTALL_AND_COMPILE_PYTHON_FILE PYFILE2COMPINST PYFILELOC)
   INSTALL(CODE "SET(PYTHON_FILE ${f})")
   FOREACH(input ${PYFILE2COMPINST})
     GET_FILENAME_COMPONENT(inputname ${input} NAME)
-    INSTALL(FILES ${input} DESTINATION ${PYFILELOC})
-    INSTALL(CODE "MESSAGE(STATUS \"py compiling ${CMAKE_CURRENT_BINARY_DIR}/${inputname}\")")
-    INSTALL(CODE "SET(CMD \"import py_compile ; py_compile.compile('${CMAKE_CURRENT_BINARY_DIR}/${inputname}')\")")
+    INSTALL(FILES ${input} DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYFILELOC})
+    INSTALL(CODE "MESSAGE(STATUS \"py compiling ${CMAKE_INSTALL_PREFIX}/${PYFILELOC}/${inputname}\")")
+    INSTALL(CODE "SET(CMD \"import py_compile ; py_compile.compile('${CMAKE_INSTALL_PREFIX}/${PYFILELOC}/${inputname}')\")")
     INSTALL(CODE "EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c \"\${CMD}\")")
     INSTALL(CODE "EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -O -c \"\${CMD}\")")
-    install (FILES ${input}c ${input}o DESTINATION ${PYFILELOC})
   ENDFOREACH(input ${PYFILE2COMPINST})
 ENDMACRO(INSTALL_AND_COMPILE_PYTHON_FILE PYFILE2COMPINST PYFILELOC)

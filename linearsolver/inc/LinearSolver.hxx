@@ -73,6 +73,11 @@ class LinearSolver
 	Mat getPetscMatrix() const ;
 	Vec getPetscVector() const ;
 
+	void kspDuplicate(const KSP source, const Mat mat, KSP* destination) const;
+
+	void precDuplicate(const PC source, const KSP ksp, PC* destination) const;
+
+
     private: //----------------------------------------------------------------
 
 	void setLinearSolver(const GenericMatrix& matrix, const Vector& vector) ;
@@ -86,7 +91,7 @@ class LinearSolver
 	double _residu;
 	bool _convergence;
 	bool _isSingular;
-        bool _isSparseMatrix;
+    bool _isSparseMatrix;
 	int _numberOfIter;
 //	GenericMatrix* _matrix;
 	Vector _vector;
