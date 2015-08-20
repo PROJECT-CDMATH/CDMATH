@@ -82,12 +82,13 @@ LinearSolver::setNumberMaxOfIter(int numberMaxOfIter)
 LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string nameOfMethod )
 {
     _tol=tol;
-    _nameOfMethod=nameOfMethod;
     _numberMaxOfIter=numberMaxOfIter;
     _residu=1.E30;
     _convergence=false;
     _numberOfIter=0;
     _isSingular=false;
+    _isSparseMatrix=matrix.isSparseMatrix();
+    setMethod(nameOfMethod);
     _nameOfPc="";
     setLinearSolver(matrix,vector);
 }
@@ -95,7 +96,7 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, i
 void
 LinearSolver::setPreconditioner(std::string pc)
 {
-    if ((pc.compare("ILU") != 0) || (pc.compare("") != 0))
+    if ((pc.compare("ILU") != 0) && (pc.compare("") != 0))
     {
         string msg="LinearSolver::LinearSolver : preconditioner "+pc+" does not exist.\n";
         throw CdmathException(msg);
@@ -141,6 +142,8 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, i
     _convergence=false;
     _numberOfIter=0;
     _isSingular=false;
+    _isSparseMatrix=matrix.isSparseMatrix();
+    setMethod(nameOfMethod);
     _nameOfPc="";
     setPreconditioner(pc);
     setLinearSolver(matrix,vector);
@@ -149,7 +152,6 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, i
 void
 LinearSolver::setLinearSolver(const GenericMatrix& matrix, const Vector& vector)
 {
-    _isSparseMatrix=matrix.isSparseMatrix();
     if (_nameOfPc.compare("ILU")==0 && _isSparseMatrix==false)
     {
         string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not compatible with dense matrix.\n";
@@ -159,7 +161,6 @@ LinearSolver::setLinearSolver(const GenericMatrix& matrix, const Vector& vector)
     PetscInitialize(0,(char ***)"", PETSC_NULL, PETSC_NULL);
     setMatrix(matrix);
     setSndMember(vector);
-
 }
 
 
@@ -469,6 +470,7 @@ LinearSolver::operator= ( const LinearSolver& linearSolver )
     _numberOfIter=linearSolver.getNumberOfIter();
     _isSingular=linearSolver.isSingular();
     _vector=linearSolver.getSndMember();
+    _isSparseMatrix=linearSolver.isSparseMatrix();
     _nameOfPc=linearSolver.getNameOfPc();
 
     _mat=NULL;
@@ -479,7 +481,6 @@ LinearSolver::operator= ( const LinearSolver& linearSolver )
     kspDuplicate(linearSolver.getPetscKsp(),_mat,&_ksp);
     _prec=NULL;
     precDuplicate(linearSolver.getPetscPc(),_ksp,&_prec);
-
-    _isSparseMatrix=linearSolver.isSparseMatrix();
     return *this;
 }
+
