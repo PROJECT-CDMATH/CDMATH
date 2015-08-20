@@ -46,6 +46,12 @@ LinearSolver::kspDuplicate(const KSP source, const Mat mat, KSP* destination) co
     KSPType type;
     KSPGetType(source,&type);
     KSPSetType(*destination,type);
+	/*
+    PetscReal tol1,tol2,tol3;
+    PetscInt maxIter;
+    KSPGetTolerances(source,&tol1,&tol2,&tol3,&maxIter);
+    KSPSetTolerances(*destination,tol1,tol2,tol3,maxIter);
+	//*/
 }
 
 void
@@ -82,7 +88,15 @@ LinearSolver::setNumberMaxOfIter(int numberMaxOfIter)
 LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string nameOfMethod )
 {
     _tol=tol;
+	/*
+	_tol=0.;
+    setTolerance(tol);
+	//*/
     _numberMaxOfIter=numberMaxOfIter;
+	/*
+	_numberMaxOfIter=0;
+    setNumberMaxOfIter(numberMaxOfIter);
+	//*/
     _residu=1.E30;
     _convergence=false;
     _numberOfIter=0;
@@ -136,8 +150,15 @@ LinearSolver::setMethod(std::string nameOfMethod)
 LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string nameOfMethod, std::string pc )
 {
     _tol=tol;
-    _nameOfMethod=nameOfMethod;
+	/*
+	_tol=0.;
+    setTolerance(tol);
+	//*/
     _numberMaxOfIter=numberMaxOfIter;
+	/*
+	_numberMaxOfIter=0;
+    setNumberMaxOfIter(numberMaxOfIter);
+	//*/
     _residu=1.E30;
     _convergence=false;
     _numberOfIter=0;
@@ -471,8 +492,8 @@ LinearSolver::operator= ( const LinearSolver& linearSolver )
     _isSingular=linearSolver.isSingular();
     _vector=linearSolver.getSndMember();
     _isSparseMatrix=linearSolver.isSparseMatrix();
-    _nameOfPc=linearSolver.getNameOfPc();
-
+    _nameOfPc="";
+    setPreconditioner(linearSolver.getNameOfPc());
     _mat=NULL;
     MatDuplicate(linearSolver.getPetscMatrix(),MAT_COPY_VALUES,&_mat);
     _smb=NULL;
