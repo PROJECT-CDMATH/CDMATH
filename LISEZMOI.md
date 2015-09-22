@@ -1,7 +1,7 @@
 CDMATH
 ======
 
-CDMATH est une boîte à outils conçue pour les numériciens travaillant sur la modélisation thermo-hydraulique et désirant se concentrer sur un calcul de plus haut niveau. La bibliothèque est maintenue et utilisée par [CDMATH](http://cdmath.jimdo.com), un groupe de travail portant le même nom. La bibliothèque est le plus facile à installer sur Ubuntu 12.04, 14.04 et 14.10, sur Debian Jessie, ainsi que sur Fedora 19, 20 et 21.
+CDMATH est une boîte à outils conçue pour les numériciens travaillant sur la modélisation thermo-hydraulique et désirant se concentrer sur un calcul de plus haut niveau. La bibliothèque est maintenue et utilisée par [CDMATH](http://cdmath.jimdo.com), un groupe de travail portant le même nom. La bibliothèque est le plus facile à installer sur Ubuntu 12.04, 14.04 et 14.10, sur Debian Jessie, ainsi que sur Fedora 20 et 21.
 
 
 Télécharger les binaires de CDMATH depuis les dépôts
