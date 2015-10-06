@@ -90,7 +90,7 @@ class Field
            const std::string & fieldName = "",
            int iteration = -1, int order = -1);
   
-    void readFieldMed( const std::string & filename,
+    void readFieldMed( const std::string & fileNameRadical,
                        TypeField type,
                        const std::string & fieldName = "",
                        int iteration = -1,

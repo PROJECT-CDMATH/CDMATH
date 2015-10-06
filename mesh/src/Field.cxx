@@ -170,67 +170,78 @@ Field::Field( const std::string filename, TypeField type,
               int iteration, int order) : _mesh(filename + ".med"), _typeField(type)
  
 {
-   _field = NULL;
-  readFieldMed(filename, type, fieldName, iteration, order);
+    _field = NULL;
+    readFieldMed(filename, type, fieldName, iteration, order);
 }
 
-void Field::readFieldMed( const std::string & fileName,
+
+void
+Field::readFieldMed( const std::string & fileNameRadical,
                           TypeField type,
                           const std::string & fieldName,
                           int iteration,
                           int order)
 {
-  std::string fName = fileName + ".med";
-  std::vector<std::string> fNames = MEDLoader::GetAllFieldNames(fName);
+	/**
+	 * Reads the file fileNameRadical.med and creates a Field from it.
+	 */
+  std::string completeFileName = fileNameRadical + ".med";
+  std::vector<std::string> fieldNames = MEDLoader::GetAllFieldNames(completeFileName);
   size_t iField = 0;
-  std::string theFieldName;
+  std::string attributedFieldName;
   _field = NULL;
- 
+
+  // Get the name of the right field that we will attribute to the Field.
   if (fieldName == "") {
-    if (fNames.size() > 0)
-      theFieldName = fNames[0];
+    if (fieldNames.size() > 0)
+      attributedFieldName = fieldNames[0];
     else {
       std::ostringstream message;
-      message << "no field in file " << fName;
+      message << "No field in file " << completeFileName;
       throw CdmathException(message.str().c_str());
     }
   }
   else {
-    for (; iField < fNames.size(); iField++)
-      if (fieldName == fNames[iField]) break;
+    for (; iField < fieldNames.size(); iField++)
+      if (fieldName == fieldNames[iField]) break;
 
-    if (iField < fNames.size())
-      theFieldName = fieldName;
+    if (iField < fieldNames.size())
+      attributedFieldName = fieldName;
     else {
       std::ostringstream message;
-      message << "no field named " << fieldName << " in file " << fName;
+      message << "No field named " << fieldName << " in file " << completeFileName;
       throw CdmathException(message.str().c_str());
     }
   }
  
+  // Get the name of the right mesh that we will attribute to the Field.
   std::vector<std::string> meshNames
-    = MEDLoader::GetMeshNamesOnField(fName, theFieldName);
+    = MEDLoader::GetMeshNamesOnField(completeFileName, attributedFieldName);
   if (meshNames.size() == 0) {
     std::ostringstream message;
-    message << "no mesh associated to " << fieldName
-            << " in file " << fName;
+    message << "No mesh associated to " << fieldName
+            << " in file " << completeFileName;
     throw CdmathException(message.str().c_str());
   }
-  std::cerr << meshNames[0] << std::endl;
+  std::string attributedMeshName = meshNames[0];
 
+  // Create Field.
   ParaMEDMEM::TypeOfField medFieldType[3] = { ON_CELLS, ON_NODES, ON_CELLS };
   switch (type) {
   case CELLS:
-    _field = MEDLoader::ReadField(medFieldType[type], fName, meshNames[0], 0,
-                                  theFieldName, iteration, order);
+    _field = MEDLoader::ReadField(medFieldType[type], completeFileName,
+    		attributedMeshName, 0,
+            attributedFieldName, iteration, order);
     break;
-  case   NODES:
-    _field = MEDLoader::ReadField(medFieldType[type], fName, meshNames[0], 0,
-                                  theFieldName, iteration, order);
+  case NODES:
+    _field = MEDLoader::ReadField(medFieldType[type], completeFileName,
+    		attributedMeshName, 0,
+            attributedFieldName, iteration, order);
     break;
-  case   FACES:
-    _field = MEDLoader::ReadField(medFieldType[type], fName, meshNames[0],-1,
-                                  theFieldName, iteration, order);
+  case FACES:
+    _field = MEDLoader::ReadField(medFieldType[type], completeFileName,
+    		attributedMeshName, -1,
+            attributedFieldName, iteration, order);
     break;
   }
 }
