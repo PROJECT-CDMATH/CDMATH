@@ -6,6 +6,7 @@
  */
 
 #include "Cell.hxx"
+#include "CdmathException.hxx"
 
 #include <assert.h>
 
@@ -151,10 +152,7 @@ Cell::getNormalVector( int numNormalVector, int numComposant ) const
 	else if (numComposant==1)
 		return _normalVectors(2*numNormalVector+1);
 	else
-	{
-		assert("Error : error dans getNormalVector");
-		return 1.E30;
-	}
+		throw CdmathException("Cell::getNormalVector, numComposant should be 0 or 1.");
 }
 
 //----------------------------------------------------------------------
