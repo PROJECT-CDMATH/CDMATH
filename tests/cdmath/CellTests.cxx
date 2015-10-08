@@ -17,6 +17,7 @@ CellTests::testClassCell( void )
     c1.addNormalVector(0,0.2,0.3,0.0);
 	CPPUNIT_ASSERT_EQUAL( 0.2, c1.getNormalVector(0,0) );
 	CPPUNIT_ASSERT_EQUAL( 0.3, c1.getNormalVector(0,1) );
+	CPPUNIT_ASSERT_EQUAL( 0.0, c1.getNormalVector(0,2) );
 	Cell c(c1);
 	CPPUNIT_ASSERT_EQUAL( 1.0, c.getMeasure() );
 	CPPUNIT_ASSERT_EQUAL( 4, c.getNumberOfNodes() );
@@ -32,8 +33,10 @@ CellTests::testClassCell( void )
     c2.addNormalVector(1,0.4,0.6,0.0);
 	CPPUNIT_ASSERT_EQUAL( 0.2, c2.getNormalVector(0,0) );
 	CPPUNIT_ASSERT_EQUAL( 0.3, c2.getNormalVector(0,1) );
+	CPPUNIT_ASSERT_EQUAL( 0.0, c2.getNormalVector(0,2) );
 	CPPUNIT_ASSERT_EQUAL( 0.4, c2.getNormalVector(1,0) );
 	CPPUNIT_ASSERT_EQUAL( 0.6, c2.getNormalVector(1,1) );
+	CPPUNIT_ASSERT_EQUAL( 0.0, c2.getNormalVector(1,2) );
 
 	c2=c1;
     c2.addFaceId(0,10);
