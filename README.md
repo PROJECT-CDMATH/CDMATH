@@ -6,7 +6,7 @@ CDMATH is a CFD toolbox designed for numerical analysts who work on the represen
 
 Download binary CDMATH from repositories
 ----------------------------------------
-If you are on Ubuntu 14.04, you can simply add our [Ubuntu repository](https://launchpad.net/~cdmath/+archive/ubuntu/ppa) to your system.
+If you are on Ubuntu 14.04, you can simply add our [Ubuntu repository](https://launchpad.net/~cdmath/+archive/ubuntu/cdmath) to your system.
 
 Similarly, if you are on Fedora 19, 20 or 21, then you can also simply download an RPM package from our [Fedora repository](https://build.opensuse.org/project/repositories/home:ArthurTalpaert).
 

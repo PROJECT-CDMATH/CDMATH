@@ -6,7 +6,7 @@ CDMATH est une boîte à outils conçue pour les numériciens travaillant sur la
 
 Télécharger les binaires de CDMATH depuis les dépôts
 ----------------------------------------------------
-Si vous êtes sous Ubuntu 14.04, vous pouvez simplement ajouter notre  [dépôt Ubuntu](https://launchpad.net/~cdmath/+archive/ubuntu/ppa) à votre système.
+Si vous êtes sous Ubuntu 14.04, vous pouvez simplement ajouter notre  [dépôt Ubuntu](https://launchpad.net/~cdmath/+archive/ubuntu/cdmath) à votre système.
 
 De façon similaire, si vous êtes sous Fedora 19, 20 ou 21, alors vous pouvez simplement télécharger un paquet RPM depuis notre [dépôt Fedora](https://build.opensuse.org/project/repositories/home:ArthurTalpaert).
 
