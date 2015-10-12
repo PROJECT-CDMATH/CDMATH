@@ -31,7 +31,7 @@ LinearSolverTests::testClassLinearSolver( void )
 
     Vector B=A*Xana;
 
-    LinearSolver LS(A,B,500,1.E-10,"GMRES","LU");
+    LinearSolver LS(A,B,500,1.E-10,"GMRES","ILU");
 
     Vector X=LS.solve();
 	CPPUNIT_ASSERT_DOUBLES_EQUAL(Xana(0), X(0), 1.E-10);
@@ -44,7 +44,7 @@ LinearSolverTests::testClassLinearSolver( void )
 	CPPUNIT_ASSERT_EQUAL(LS.getNameOfMethod(),(string)"GMRES");
 	CPPUNIT_ASSERT_EQUAL(LS.getNumberOfIter(),1);
 	CPPUNIT_ASSERT_EQUAL(LS.isSingular(),false);
-	CPPUNIT_ASSERT_EQUAL(LS.getNameOfPc(),(string)"LU");
+	CPPUNIT_ASSERT_EQUAL(LS.getNameOfPc(),(string)"ILU");
 
 	LinearSolver LS2(A,B,500,1.E-10,"CG");
 	Matrix A1(2,2);
