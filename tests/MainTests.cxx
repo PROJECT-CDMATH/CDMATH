@@ -25,7 +25,7 @@
 #include "MeshTests.hxx"
 #include "DoubleTabTests.hxx"
 #include "IntTabTests.hxx"
-#ifdef _CDMATH_WITH_PETSC
+#ifdef CDMATH_WITH_PETSC
     #include "LinearSolverTests.hxx"
 #endif
 
@@ -57,7 +57,7 @@ int main( int argc, char* argv[] )
     runner.addTest( FieldTests::suite() );
     runner.addTest( MeshTests::suite() );
     runner.addTest( VectorTests::suite() );
-    #ifdef _CDMATH_WITH_PETSC
+    #ifdef CDMATH_WITH_PETSC
         runner.addTest( LinearSolverTests::suite() );
     #endif
 

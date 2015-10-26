@@ -1,8 +1,22 @@
 INCLUDE(${SWIG_USE_FILE})
 
-SET_SOURCE_FILES_PROPERTIES(cdmath.i PROPERTIES CPLUSPLUS ON)
-SET_SOURCE_FILES_PROPERTIES(cdmath.i PROPERTIES C OFF)
-SET_SOURCE_FILES_PROPERTIES(cdmath.i PROPERTIES SWIG_DEFINITIONS "-shadow")
+SET(_extra_lib_SWIG)
+if (CDMATH_WITH_PETSC)
+    INCLUDE_DIRECTORIES(
+      ${PETSC_INCLUDES}
+      ${LINEARSOLVER_DIR}/inc
+    )
+    SET(_extra_lib_SWIG linearsolver ${PETSC_LIBRARIES})   
+    file(COPY cdmath_with_petsc.i DESTINATION ${CMAKE_BINARY_DIR}/swig)
+    file(RENAME ${CMAKE_BINARY_DIR}/swig/cdmath_with_petsc.i ${CMAKE_BINARY_DIR}/swig/cdmath.i) 
+else (CDMATH_WITH_PETSC)
+    file(COPY cdmath_without_petsc.i DESTINATION ${CMAKE_BINARY_DIR}/swig) 
+    file(RENAME ${CMAKE_BINARY_DIR}/swig/cdmath_without_petsc.i ${CMAKE_BINARY_DIR}/swig/cdmath.i) 
+endif (CDMATH_WITH_PETSC)
+
+SET_SOURCE_FILES_PROPERTIES(${CMAKE_BINARY_DIR}/swig/cdmath.i PROPERTIES CPLUSPLUS ON)
+SET_SOURCE_FILES_PROPERTIES(${CMAKE_BINARY_DIR}/swig/cdmath.i PROPERTIES C OFF)
+SET_SOURCE_FILES_PROPERTIES(${CMAKE_BINARY_DIR}/swig/cdmath.i PROPERTIES SWIG_DEFINITIONS "-shadow")
 
 INCLUDE_DIRECTORIES(
   ${PYTHON_INCLUDE_DIRS}
@@ -20,17 +34,7 @@ INCLUDE_DIRECTORIES(
   ${MED_LOADER_DIR}
 )
 
-SET(_extra_lib_SWIG)
-if (CDMATH_WITH_PETSC)
-    INCLUDE_DIRECTORIES(
-      ${PETSC_INCLUDES}
-      ${LINEARSOLVER_DIR}/inc
-    )
-    SET(_extra_lib_SWIG linearsolver ${PETSC_LIBRARIES})   
-endif (CDMATH_WITH_PETSC)
-
-
-SWIG_ADD_MODULE(cdmath python cdmath.i)
+SWIG_ADD_MODULE(cdmath python ${CMAKE_BINARY_DIR}/swig/cdmath.i)
 SWIG_LINK_LIBRARIES(cdmath ${PYTHON_LIBS} base mesh medcoupling ${MED3_LIBS} medloader ${_extra_lib_SWIG})
 
 INSTALL(TARGETS _cdmath DESTINATION lib/cdmath)
