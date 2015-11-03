@@ -34,6 +34,7 @@ set (MED3_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/pre_requis/MEDFile/include ${
 set (MED3_LIB ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/MEDFile/src/libmedC.so)
 set (MED3_LIBS ${MED3_LIB})
 
+# HDF5
 find_package (HDF5 REQUIRED)
 set (CPACK_DEBIAN_PACKAGE_DEPENDS "libhdf5-dev")
 set (CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
