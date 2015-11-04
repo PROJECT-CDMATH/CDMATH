@@ -1,14 +1,14 @@
-CDMATH
-======
+![logo](logo/cdmath_logo.png) CDMATH
+====================================
 
-CDMATH is a CFD toolbox designed for numerical analysts who work on the representation of thermal-hydraulics and who would prefer to focus on high-level computation. The software is maintained and used by [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. The software is easiest to install on Ubuntu 12.04, 14.04 and 14.10, on Debian Jessie, as well as on Fedora 20 and 21.
+CDMATH is a CFD toolbox designed for numerical analysts who work on the representation of thermal-hydraulics and who would prefer to focus on high-level computation. The software is maintained and used by [CDMATH](http://cdmath.jimdo.com), a collaborative workgroup with the same name. The software is easiest to install on Ubuntu 14.04 LTS, on Debian Jessie, as well as on Fedora 20, 21 and 22.
 
 
 Download binary CDMATH from repositories
 ----------------------------------------
-If you are on Ubuntu 14.04, you can simply add our [Ubuntu repository](https://launchpad.net/~cdmath/+archive/ubuntu/ppa) to your system.
+If you are on Ubuntu 14.04, you can simply add our [Ubuntu repository](https://launchpad.net/~cdmath/+archive/ubuntu/cdmath) to your system.
 
-Similarly, if you are on Fedora 19, 20 or 21, then you can also simply download an RPM package from our [Fedora repository](https://build.opensuse.org/project/repositories/home:ArthurTalpaert).
+Similarly, if you are on Fedora 20, 21 or 22, then you can also simply download an RPM package from our [Fedora repository](https://build.opensuse.org/project/repositories/home:ArthurTalpaert).
 
 
 Download CDMATH sources to compile
