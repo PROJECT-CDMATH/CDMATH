@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # -*-coding:utf-8 -*
 
-from math import sqrt
-from math import exp
-from math import pow
+import math
 
 import cdmath
 
@@ -24,10 +22,10 @@ def main():
     conc=cdmath.Field("Concentration",cdmath.CELLS,my_mesh,1);
 
     # Initial conditions
-    sigma=sqrt(0.2);
+    sigma=math.sqrt(0.2);
     for i in xrange(my_mesh.getNumberOfCells()):
         x=my_mesh.getCell(i).x();
-        conc[i] = 0.5/(sigma*sqrt(2*pi))*exp(-0.5*pow((x/sigma),2));
+        conc[i] = 0.5/(sigma*math.sqrt(2*pi))*math.exp(-0.5*math.pow((x/sigma),2));
         pass
 
     time=0.;

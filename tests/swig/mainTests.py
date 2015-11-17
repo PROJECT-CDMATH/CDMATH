@@ -1,7 +1,7 @@
 # coding: latin-1
 
-import unittest
 import math
+import unittest
 
 from cdmath import *
 

@@ -4,6 +4,7 @@ import unittest
 
 from cdmath import *
 
+
 class TestsLinearSolverSwig(unittest.TestCase):
     def testClassLinearSolver(self):
         A=Matrix(2,2);

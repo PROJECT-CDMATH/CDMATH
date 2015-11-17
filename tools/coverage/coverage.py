@@ -1,8 +1,8 @@
 import os
-import sys
-
-from optparse import OptionParser
 import subprocess
+import sys
+from optparse import OptionParser
+
 
 def launchCoverage(cdmath_build,src_cdmath,step,module_cdmath,coverage):
     directory_object=os.path.join(cdmath_build,module_cdmath,"src","CMakeFiles",module_cdmath+".dir")

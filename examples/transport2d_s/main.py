@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*-coding:utf-8 -*
 
-from math import sqrt
+import math
 
 import cdmath
 
@@ -17,7 +17,7 @@ def initial_conditions(my_mesh):
         y = my_mesh.getCell(j).y()
         valX=(x-xcentre)*(x-xcentre)
         valY=(y-ycentre)*(y-ycentre)
-        val=sqrt(valX+valY)
+        val=math.sqrt(valX+valY)
         if val<rayon:
             y_field[j] = 1.0
             pass
@@ -32,7 +32,7 @@ def sigma_flux(VitesseX,VitesseY,cfl,y_field,indexFacesPerio):
     SumFlux=cdmath.Field("Fluxes",cdmath.CELLS,y_field.getMesh(),1)
     my_mesh=y_field.getMesh();
     nbCells=my_mesh.getNumberOfCells();
-    normU=sqrt(VitesseX*VitesseX+VitesseY*VitesseY);
+    normU=math.sqrt(VitesseX*VitesseX+VitesseY*VitesseY);
     for j in range(nbCells):
         Cj=my_mesh.getCell(j);
         nbFace=Cj.getNumberOfFaces();
