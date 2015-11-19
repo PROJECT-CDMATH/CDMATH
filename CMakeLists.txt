@@ -2,8 +2,8 @@ cmake_minimum_required (VERSION 2.8)
 
 # Project name
 project (CDMATH)
-set (CDMATH_VERSION_MAJOR 0)
-set (CDMATH_VERSION_MINOR 2)
+set (CDMATH_VERSION_MAJOR 1)
+set (CDMATH_VERSION_MINOR 0)
 
 # Project options
 option (CDMATH_WITH_PETSC "Compile CDMATH with PETSc linking." OFF)
