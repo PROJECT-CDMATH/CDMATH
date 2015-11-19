@@ -117,7 +117,7 @@ ADD_SUBDIRECTORY(src)
 ## Installation of the doc
 ## If issue with this option, just create a "doc" directory here in the MEDFile directory
 IF(MEDFILE_INSTALL_DOC)
-  INSTALL(DIRECTORY doc DESTINATION ${CMAKE_INSTALL_PREFIX}/share)
+  INSTALL(DIRECTORY doc DESTINATION share)
 ENDIF()
 
 #######################
