@@ -26,7 +26,7 @@ SparseMatrix::SparseMatrix()
 }
 
 //----------------------------------------------------------------------
-SparseMatrix::SparseMatrix( int numberOfRows, int numberOfColumns):_blocNNZ(5)
+SparseMatrix::SparseMatrix( int numberOfRows, int numberOfColumns):_blocNNZ(10000)
 //----------------------------------------------------------------------
 {
 	_flagNNZ=false;
