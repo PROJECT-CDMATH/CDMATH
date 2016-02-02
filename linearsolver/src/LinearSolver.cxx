@@ -188,43 +188,43 @@ LinearSolver::setLinearSolver(const GenericMatrix& matrix, const Vector& vector)
 bool
 LinearSolver::isSparseMatrix( void ) const
 {
-    return _isSparseMatrix;
+    return (_isSparseMatrix);
 }
 
 bool
 LinearSolver::isSingular( void ) const
 {
-    return _isSingular;
+    return (_isSingular);
 }
 
 int
 LinearSolver::getNumberOfIter( void ) const
 {
-    return _numberOfIter;
+    return (_numberOfIter);
 }
 
 bool
 LinearSolver::getStatus( void ) const
 {
-    return _convergence;
+    return (_convergence);
 }
 
 double
 LinearSolver::getResidu( void ) const
 {
-    return _residu;
+    return (_residu);
 }
 
 double
 LinearSolver::getTolerance(void) const
 {
-    return _tol;
+    return (_tol);
 }
 
 int
 LinearSolver::getNumberMaxOfIter(void) const
 {
-    return _numberMaxOfIter;
+    return (_numberMaxOfIter);
 }
 
 void
@@ -303,19 +303,19 @@ LinearSolver::setSingularity(bool sing)
 Vector
 LinearSolver::getSndMember(void) const
 {
-    return _vector;
+    return (_vector);
 }
 
 string
 LinearSolver::getNameOfMethod(void) const
 {
-    return _nameOfMethod;
+    return (_nameOfMethod);
 }
 
 string
 LinearSolver::getNameOfPc(void) const
 {
-    return _nameOfPc;
+    return (_nameOfPc);
 }
 
 LinearSolver::LinearSolver ( const LinearSolver& LS )
@@ -345,25 +345,25 @@ LinearSolver::LinearSolver ( const LinearSolver& LS )
 KSP
 LinearSolver::getPetscKsp() const
 {
-    return _ksp;
+    return (_ksp);
 }
 
 Mat
 LinearSolver::getPetscMatrix() const
 {
-    return _mat;
+    return (_mat);
 }
 
 Vec
 LinearSolver::getPetscVector() const
 {
-    return _smb;
+    return (_smb);
 }
 
 PC
 LinearSolver::getPetscPc() const
 {
-    return _prec;
+    return (_prec);
 }
 
 Vector
@@ -433,7 +433,7 @@ LinearSolver::solve( void )
 
     Vector X1=vecToVector(X);
 
-    return X1;
+    return (X1);
 }
 
 Vec
@@ -455,7 +455,7 @@ LinearSolver::vectorToVec(const Vector& vec) const
     VecAssemblyBegin(X);
     VecAssemblyEnd(X);
 
-    return X;
+    return (X);
 }
 
 Vector
@@ -475,7 +475,7 @@ LinearSolver::vecToVector(const Vec& vec) const
         X(i)=value;
     }
 
-    return X;
+    return (X);
 }
 
 //----------------------------------------------------------------------
@@ -502,6 +502,6 @@ LinearSolver::operator= ( const LinearSolver& linearSolver )
     kspDuplicate(linearSolver.getPetscKsp(),_mat,&_ksp);
     _prec=NULL;
     precDuplicate(linearSolver.getPetscPc(),_ksp,&_prec);
-    return *this;
+    return (*this);
 }
 
