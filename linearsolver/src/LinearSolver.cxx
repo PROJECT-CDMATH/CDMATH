@@ -51,7 +51,7 @@ LinearSolver::kspDuplicate(const KSP source, const Mat mat, KSP* destination) co
     PetscInt maxIter;
     KSPGetTolerances(source,&tol1,&tol2,&tol3,&maxIter);
     KSPSetTolerances(*destination,tol1,tol2,tol3,maxIter);
-	//*/
+	// */
 }
 
 void
@@ -91,12 +91,12 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, i
 	/*
 	_tol=0.;
     setTolerance(tol);
-	//*/
+	// */
     _numberMaxOfIter=numberMaxOfIter;
 	/*
 	_numberMaxOfIter=0;
     setNumberMaxOfIter(numberMaxOfIter);
-	//*/
+	// */
     _residu=1.E30;
     _convergence=false;
     _numberOfIter=0;
@@ -153,12 +153,12 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, i
 	/*
 	_tol=0.;
     setTolerance(tol);
-	//*/
+	// */
     _numberMaxOfIter=numberMaxOfIter;
 	/*
 	_numberMaxOfIter=0;
     setNumberMaxOfIter(numberMaxOfIter);
-	//*/
+	// */
     _residu=1.E30;
     _convergence=false;
     _numberOfIter=0;
