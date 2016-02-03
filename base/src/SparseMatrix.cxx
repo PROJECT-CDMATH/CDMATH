@@ -259,7 +259,7 @@ operator+ (const SparseMatrix& matrix1, const SparseMatrix& matrix2)
 
 	  if(numberOfRows2!=numberOfRows || numberOfColumns2!=numberOfColumns)
 	  {
-			string msg="Matrix Matrix::operator()+(const Matrix& matrix1, const Matrix& matrix2) : number of rows or columns of the matrices is diffrerent!";
+			string msg="Matrix Matrix::operator()+(const Matrix& matrix1, const Matrix& matrix2) : number of rows or columns of the matrices is different!";
 		    throw CdmathException(msg);
 	  }
 	  SparseMatrix res(numberOfRows, numberOfColumns);
@@ -279,7 +279,7 @@ operator- (const SparseMatrix& matrix1, const SparseMatrix& matrix2)
 
 	  if(numberOfRows2!=numberOfRows || numberOfColumns2!=numberOfColumns)
 	  {
-			string msg="Matrix Matrix::operator()-(const Matrix& matrix1, const Matrix& matrix2) : number of rows or columns of the matrices is diffrerent!";
+			string msg="Matrix Matrix::operator()-(const Matrix& matrix1, const Matrix& matrix2) : number of rows or columns of the matrices is different!";
 		    throw CdmathException(msg);
 	  }
 	  SparseMatrix res(numberOfRows, numberOfColumns);
@@ -329,7 +329,7 @@ operator*(const SparseMatrix& matrix1, const SparseMatrix& matrix2)
 
 	  if(numberOfColumns!=numberOfRows2)
 	  {
-			string msg="Matrix Matrix::operator()*(const Matrix& matrix1, const Matrix& matrix2) : dimensions of the matrices is incompatible!";
+			string msg="Matrix Matrix::operator()*(const Matrix& matrix1, const Matrix& matrix2) : dimensions of the matrices are incompatible!";
 		    throw CdmathException(msg);
 	  }
 	  SparseMatrix res(numberOfRows, numberOfColumns2);
@@ -354,7 +354,7 @@ SparseMatrix::operator*= (const SparseMatrix& matrix)
 
 	  if(_numberOfColumns!=numberOfRows2)
 	  {
-			string msg="Matrix Matrix::operator()*(const Matrix& matrix1, const Matrix& matrix2) : dimensions of the matrices is incompatible!";
+			string msg="Matrix Matrix::operator()*(const Matrix& matrix1, const Matrix& matrix2) : dimensions of the matrices are incompatible!";
 		    throw CdmathException(msg);
 	  }
 	  SparseMatrix res(_numberOfRows, numberOfColumns2);
