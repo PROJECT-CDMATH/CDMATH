@@ -8,11 +8,14 @@ SET(MESH_MED
   mesh.med
   )
 
-file(COPY ${MESH_MED} DESTINATION tests/swig) 
-file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests/swig) 
+#file(COPY ${MESH_MED} DESTINATION tests/swig)
+file(COPY ${MESH_MED} DESTINATION ${CMAKE_BINARY_DIR}/tests/swig)
 ADD_TEST(TestsCDMATHSwig ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/mainTests.py)
 
 # Some users have to set environment variables manually before launching tests.
+# On Ubuntu:
+# export LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib/:/usr/lib/petsc/lib
+# export PYTHONPATH=${CMAKE_INSTALL_PREFIX}/lib/cdmath:${CMAKE_INSTALL_PREFIX}/bin/cdmath
 if (CDMATH_WITH_PETSC)
     ADD_TEST(TestsLinearSolverSwig ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/linearSolverTests.py)
     SET_PROPERTY(TEST TestsCDMATHSwig PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_INSTALL_PREFIX}/lib:${PETSC_DIR}/lib")
@@ -27,4 +30,3 @@ endif (CDMATH_WITH_PETSC)
 
 INSTALL(FILES mesh.med DESTINATION bin/tests)
 INSTALL(FILES mainTests.py DESTINATION bin/tests)
-

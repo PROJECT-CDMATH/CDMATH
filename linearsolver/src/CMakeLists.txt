@@ -1,7 +1,7 @@
 INCLUDE_DIRECTORIES(
-${BASE_DIR}/inc 
+${BASE_DIR}/inc
 ${MED_COUPLING_DIR}
-${LINEARSOLVER_DIR}/inc 
+${LINEARSOLVER_DIR}/inc
 ${PETSC_INCLUDES}
 ${INTERP_KERNEL_DIR}
 ${INTERP_KERNEL_DIR}/Bases
@@ -12,6 +12,6 @@ SET(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
 ENDIF (CMAKE_CDMATH_TESTS)
 
 FILE(GLOB src_linearsolver_CXX . *.cxx)
-ADD_LIBRARY(linearsolver SHARED ${src_linearsolver_CXX} ${PETSC_LIBRARIES})
+ADD_LIBRARY(linearsolver SHARED ${src_linearsolver_CXX} ${PETSC_LIBRARIES} ${MPI_LIBRARIES})
 
 INSTALL(TARGETS linearsolver DESTINATION lib)
