@@ -12,6 +12,6 @@ SET(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
 ENDIF (CMAKE_CDMATH_TESTS)
 
 FILE(GLOB src_linearsolver_CXX . *.cxx)
-ADD_LIBRARY(linearsolver SHARED ${src_linearsolver_CXX} ${PETSC_LIBRARIES} ${MPI_LIBRARIES})
+ADD_LIBRARY(linearsolver SHARED ${src_linearsolver_CXX} ${PETSC_LIBRARIES} ${MPI_CXX_LIBRARIES})
 
 INSTALL(TARGETS linearsolver DESTINATION lib)

@@ -173,7 +173,7 @@ def VectorIdiv(self,*args):
          oss << "# " << i << " : " << (*self)(i) << std::endl;
      return oss.str();
   }
-  
+
   int __getitem__(int i)
   {
     const int& tmp=(*self)(i);

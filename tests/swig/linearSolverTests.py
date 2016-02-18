@@ -1,4 +1,5 @@
-# coding: latin-1
+#!/usr/bin/env python
+# -*-coding:utf-8 -*-
 
 import unittest
 
@@ -268,5 +269,6 @@ class TestsLinearSolverSwig(unittest.TestCase):
         self.assertEqual(LS11.getTolerance(), 1.E-10)
         self.assertEqual(LS11.getNumberOfIter(), 6)
 
-if __name__ == '__main__':
+
+if __name__ == """__main__""":
     unittest.main()

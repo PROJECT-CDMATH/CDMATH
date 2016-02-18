@@ -6,12 +6,12 @@ if (CDMATH_WITH_PETSC)
       ${PETSC_INCLUDES}
       ${LINEARSOLVER_DIR}/inc
     )
-    SET(_extra_lib_SWIG linearsolver ${PETSC_LIBRARIES})   
+    SET(_extra_lib_SWIG linearsolver ${PETSC_LIBRARIES})
     file(COPY cdmath_with_petsc.i DESTINATION ${CMAKE_BINARY_DIR}/swig)
-    file(RENAME ${CMAKE_BINARY_DIR}/swig/cdmath_with_petsc.i ${CMAKE_BINARY_DIR}/swig/cdmath.i) 
+    file(RENAME ${CMAKE_BINARY_DIR}/swig/cdmath_with_petsc.i ${CMAKE_BINARY_DIR}/swig/cdmath.i)
 else (CDMATH_WITH_PETSC)
-    file(COPY cdmath_without_petsc.i DESTINATION ${CMAKE_BINARY_DIR}/swig) 
-    file(RENAME ${CMAKE_BINARY_DIR}/swig/cdmath_without_petsc.i ${CMAKE_BINARY_DIR}/swig/cdmath.i) 
+    file(COPY cdmath_without_petsc.i DESTINATION ${CMAKE_BINARY_DIR}/swig)
+    file(RENAME ${CMAKE_BINARY_DIR}/swig/cdmath_without_petsc.i ${CMAKE_BINARY_DIR}/swig/cdmath.i)
 endif (CDMATH_WITH_PETSC)
 
 SET_SOURCE_FILES_PROPERTIES(${CMAKE_BINARY_DIR}/swig/cdmath.i PROPERTIES CPLUSPLUS ON)

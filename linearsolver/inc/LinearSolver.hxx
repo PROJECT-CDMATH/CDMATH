@@ -8,11 +8,13 @@
 #ifndef LINEARSOLVER_HXX_
 #define LINEARSOLVER_HXX_
 
+#include <string>
+
 #include <petsc.h>
+
 #include "GenericMatrix.hxx"
 #include "Vector.hxx"
 
-#include <string>
 
 class LinearSolver
 {
@@ -103,4 +105,3 @@ class LinearSolver
 };
 
 #endif /* LINEARSOLVER_HXX_ */
-

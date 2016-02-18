@@ -1,16 +1,16 @@
-/*
+/**
  * LinearSolver.cxx
  *
  *  Created on: 15 avr. 2013
  *      Author: mekkas
  */
 
-#include <string>
 #include <cmath>
+#include <string>
 
-#include <petscvec.h>
-#include <petscmat.h>
 #include <petscksp.h>
+#include <petscmat.h>
+#include <petscvec.h>
 
 #include "CdmathException.hxx"
 #include "LinearSolver.hxx"
@@ -504,4 +504,3 @@ LinearSolver::operator= ( const LinearSolver& linearSolver )
     precDuplicate(linearSolver.getPetscPc(),_ksp,&_prec);
     return (*this);
 }
-
