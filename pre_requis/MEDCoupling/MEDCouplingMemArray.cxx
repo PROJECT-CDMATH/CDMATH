@@ -429,9 +429,8 @@ std::string DataArray::GetUnitFromInfo(const std::string& info)
  */
 std::string DataArray::BuildInfoFromVarAndUnit(const std::string& var, const std::string& unit)
 {
-  std::ostringstream oss;
-  oss << var << " [" << unit << "]";
-  return oss.str();
+  std::string ret = var + " [" + unit + "]";
+  return ret;
 }
 
 /*!
