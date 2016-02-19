@@ -1351,9 +1351,8 @@ std::vector<std::string> MEDCouplingIMesh::buildInfoOnComponents() const
   std::vector<std::string> ret(dim);
   for(int i=0;i<dim;i++)
     {
-      std::ostringstream oss;
-      char tmp('X'+i); oss << tmp;
-      ret[i]=DataArray::BuildInfoFromVarAndUnit(oss.str(),_axis_unit);
+	  std::string name = "X" + std::to_string(i);
+	  ret[i]=DataArray::BuildInfoFromVarAndUnit(name,_axis_unit);
     }
   return ret;
 }
