@@ -19,6 +19,26 @@
 using namespace std;
 
 
+void
+LinearSolver::initializePetsc( void )
+{
+	/**
+	 * Use this function before computing anything.
+	 */
+	PetscInitialize(0,(char ***)"", PETSC_NULL, PETSC_NULL);
+}
+
+
+void
+LinearSolver::finalizePetsc( void )
+{
+	/**
+	 * Use this functions after being done with your solving.
+	 */
+	PetscFinalize();
+}
+
+
 LinearSolver::LinearSolver ( void )
 {
     _tol=1.E-15;
@@ -68,7 +88,6 @@ LinearSolver::~LinearSolver ( void )
     MatDestroy(&_mat);
     VecDestroy(&_smb);
     KSPDestroy(&_ksp);
-    //PetscFinalize();
 }
 
 void
