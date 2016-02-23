@@ -20,9 +20,6 @@ class LinearSolver
 {
     public: //----------------------------------------------------------------
 
-	static void initializePetsc( void );
-	static void finalizePetsc( void );
-
 	LinearSolver ( void ) ;
 
 	~LinearSolver ( void ) ;
