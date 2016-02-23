@@ -61,8 +61,6 @@ SET(medcouplingremapper_SOURCES
   )
 
 ADD_LIBRARY(medcoupling SHARED ${medcoupling_SOURCES})
-# Arthur Talpaert, 2016-02-19, to use to_string
-set_property(TARGET medcoupling PROPERTY CXX_STANDARD 11)
 TARGET_LINK_LIBRARIES(medcoupling interpkernel)
 INSTALL(TARGETS medcoupling DESTINATION lib)
 
