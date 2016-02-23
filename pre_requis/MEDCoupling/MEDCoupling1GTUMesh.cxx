@@ -493,8 +493,8 @@ MEDCoupling1SGTUMesh *MEDCoupling1SGTUMesh::New(const std::string& name, INTERP_
   const INTERP_KERNEL::CellModel& cm=INTERP_KERNEL::CellModel::GetCellModel(type);
   if(cm.isDynamic())
     {
-	  std::string exceptionString = "MEDCoupling1SGTUMesh::New: the input geometric type " + std::string(cm.getRepr()) + " is dynamic! Only static types are allowed here!";
-      throw INTERP_KERNEL::Exception(exceptionString.c_str());
+      std::ostringstream oss; oss << "MEDCoupling1SGTUMesh::New : the input geometric type " << cm.getRepr() << " is dynamic ! Only static types are allowed here !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
     }
   return new MEDCoupling1SGTUMesh(name,cm);
 }
@@ -522,14 +522,14 @@ MEDCoupling1SGTUMesh *MEDCoupling1SGTUMesh::New(const MEDCouplingUMesh *m)
             c=std::copy(cin+ciin[0]+1,cin+ciin[1],c);
           else
             {
-        	  std::string exceptionString =  "MEDCoupling1SGTUMesh::New(const MEDCouplingUMesh *m): something is wrong in the input mesh at cell #" + std::to_string(i) + "! The size of cell is not those expected (" + std::to_string(nbOfNodesPerCell) + ")!";
-              throw INTERP_KERNEL::Exception(exceptionString.c_str());
+              std::ostringstream oss; oss << "MEDCoupling1SGTUMesh::New(const MEDCouplingUMesh *m) : something is wrong in the input mesh at cell #" << i << " ! The size of cell is not those expected (" << nbOfNodesPerCell << ") !";
+              throw INTERP_KERNEL::Exception(oss.str().c_str());
             }
         }
       else
         {
-    	  std::string exceptionString = "MEDCoupling1SGTUMesh::New(const MEDCouplingUMesh *m): something is wrong in the input mesh at cell #" + std::to_string(i) + "! The geometric type is not those expected!";
-          throw INTERP_KERNEL::Exception(exceptionString.c_str());
+          std::ostringstream oss; oss << "MEDCoupling1SGTUMesh::New(const MEDCouplingUMesh *m) : something is wrong in the input mesh at cell #" << i << " ! The geometric type is not those expected !";
+          throw INTERP_KERNEL::Exception(oss.str().c_str());
         }
     }
   ret->setNodalConnectivity(conn);
@@ -674,8 +674,8 @@ void MEDCoupling1SGTUMesh::checkCoherency1(double eps) const
   int nbOfNodesPerCell=(int)_cm->getNumberOfNodes();
   if(nbOfTuples%nbOfNodesPerCell!=0)
     {
-	  std::string exceptionString = "MEDCoupling1SGTUMesh::checkCoherency1: the nb of tuples in conn is " + std::to_string(nbOfTuples) + " and number of nodes per cell is " + std::to_string(nbOfNodesPerCell) + ". But " + std::to_string(nbOfTuples) + "%" + std::to_string(nbOfNodesPerCell) + " != 0!";
-      throw INTERP_KERNEL::Exception(exceptionString.c_str());
+      std::ostringstream oss; oss << "MEDCoupling1SGTUMesh::checkCoherency1 : the nb of tuples in conn is " << nbOfTuples << " and number of nodes per cell is " << nbOfNodesPerCell << ". But " << nbOfTuples << "%" << nbOfNodesPerCell << " !=0 !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
     }
   int nbOfNodes=getNumberOfNodes();
   int nbOfCells=nbOfTuples/nbOfNodesPerCell;
@@ -685,8 +685,8 @@ void MEDCoupling1SGTUMesh::checkCoherency1(double eps) const
       {
         if(*w<0 || *w>=nbOfNodes)
           {
-        	std::string exceptionString = "At node #" + std::to_string(j) + " of  cell #" + std::to_string(i) + ", is equal to " + std::to_string(*w) + " must be in [0," + std::to_string(nbOfNodes) + ")!";
-            throw INTERP_KERNEL::Exception(exceptionString.c_str());
+            std::ostringstream oss; oss << "At node #" << j << " of  cell #" << i << ", is equal to " << *w << " must be in [0," << nbOfNodes << ") !";
+            throw INTERP_KERNEL::Exception(oss.str().c_str());
           }
       }
 }
@@ -702,8 +702,8 @@ int MEDCoupling1SGTUMesh::getNumberOfCells() const
   int nbOfNodesPerCell=getNumberOfNodesPerCell();
   if(nbOfTuples%nbOfNodesPerCell!=0)
     {
-	  std::string exceptionString = "MEDCoupling1SGTUMesh:getNumberOfCells: the nb of tuples in conn is " + std::to_string(nbOfTuples) + " and number of nodes per cell is " + std::to_string(nbOfNodesPerCell) + ". But " + std::to_string(nbOfTuples) + "%" + std::to_string(nbOfNodesPerCell) + " !=0 !";
-      throw INTERP_KERNEL::Exception(exceptionString.c_str());
+      std::ostringstream oss; oss << "MEDCoupling1SGTUMesh:getNumberOfCells: : the nb of tuples in conn is " << nbOfTuples << " and number of nodes per cell is " << nbOfNodesPerCell << ". But " << nbOfTuples << "%" << nbOfNodesPerCell << " !=0 !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
     }
   return nbOfTuples/nbOfNodesPerCell;
 }
@@ -762,8 +762,8 @@ void MEDCoupling1SGTUMesh::getNodeIdsOfCell(int cellId, std::vector<int>& conn) 
     std::copy(_conn->begin()+cellId*sz,_conn->begin()+(cellId+1)*sz,conn.begin());
   else
     {
-	  std::string exceptionString = "MEDCoupling1SGTUMesh::getNodeIdsOfCell: request for cellId #" + std::to_string(cellId) + " must be in [0," + std::to_string(getNumberOfCells()) + ")!";
-      throw INTERP_KERNEL::Exception(exceptionString.c_str());
+      std::ostringstream oss; oss << "MEDCoupling1SGTUMesh::getNodeIdsOfCell : request for cellId #" << cellId << " must be in [0," << getNumberOfCells() << ") !";
+      throw INTERP_KERNEL::Exception(oss.str().c_str());
     }
 }
 
