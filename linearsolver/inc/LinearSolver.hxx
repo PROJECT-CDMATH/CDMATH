@@ -24,9 +24,12 @@ class LinearSolver
 
 	~LinearSolver ( void ) ;
 
-	LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string method  );
-
-	LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string method, std::string pc  );
+	LinearSolver( const GenericMatrix& matrix,
+			const Vector& secondMember,
+			int numberMaxOfIter,
+			double tol,
+			std::string nameOfMethod,
+			std::string nameOfPc="" );
 
 	const LinearSolver& operator= ( const LinearSolver& linearSolver ) ;
 
@@ -58,13 +61,13 @@ class LinearSolver
 
 	Vector solve( void ) ;
 
-	Vec vectorToVec( const Vector& vector ) const ;
+	Vec vectorToVec( const Vector& myVector ) const ;
 
 	Vector vecToVector(const Vec& vec) const ;
 
 	void setMatrix(const GenericMatrix& matrix) ;
 
-	void setSndMember(const Vector& vector) ;
+	void setSndMember(const Vector& secondMember) ;
 
 	void setSingularity(bool sing) ;
 
@@ -82,21 +85,20 @@ class LinearSolver
 
     private: //----------------------------------------------------------------
 
-	void setLinearSolver(const GenericMatrix& matrix, const Vector& vector) ;
+	void setLinearSolver(const GenericMatrix& matrix, const Vector& secondMember) ;
 	KSP getPetscKsp() const ;
 	PC getPetscPc() const ;
 
 	double _tol;
 	int _numberMaxOfIter;
-	std::string _nameOfMethod;
-	std::string _nameOfPc;
 	double _residu;
 	bool _convergence;
-	bool _isSingular;
-    bool _isSparseMatrix;
 	int _numberOfIter;
-//	GenericMatrix* _matrix;
-	Vector _vector;
+	bool _isSingular;
+	bool _isSparseMatrix;
+	std::string _nameOfPc;
+	std::string _nameOfMethod;
+	Vector _secondMember;
 	Mat _mat;
 	Vec _smb;
 	PC _prec;

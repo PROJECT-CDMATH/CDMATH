@@ -23,12 +23,12 @@ LinearSolver::LinearSolver ( void )
 {
     _tol=1.E-15;
     _numberMaxOfIter=0;
-    _nameOfMethod="";
     _residu=1.E30;
     _convergence=false;
     _numberOfIter=0;
     _isSingular=false;
     _nameOfPc="";
+    _nameOfMethod="";
     _mat=NULL;
     _smb=NULL;
     _ksp=NULL;
@@ -85,103 +85,91 @@ LinearSolver::setNumberMaxOfIter(int numberMaxOfIter)
     KSPSetTolerances(_ksp,getTolerance(),PETSC_DEFAULT,PETSC_DEFAULT,numberMaxOfIter);
 }
 
-LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string nameOfMethod )
+LinearSolver::LinearSolver( const GenericMatrix& matrix,
+		const Vector& secondMember,
+		int numberMaxOfIter,
+		double tol,
+		string nameOfMethod,
+		string nameOfPc )
 {
-    _tol=tol;
-	/*
-	_tol=0.;
-    setTolerance(tol);
-	// */
-    _numberMaxOfIter=numberMaxOfIter;
-	/*
-	_numberMaxOfIter=0;
-    setNumberMaxOfIter(numberMaxOfIter);
-	// */
-    _residu=1.E30;
-    _convergence=false;
-    _numberOfIter=0;
-    _isSingular=false;
-    _isSparseMatrix=matrix.isSparseMatrix();
+    _tol = tol;
+    _numberMaxOfIter = numberMaxOfIter;
+    _residu = 1.E30;
+    _convergence = false;
+    _numberOfIter = 0;
+    _isSingular = false;
+    _isSparseMatrix = matrix.isSparseMatrix();
+    _nameOfPc = nameOfPc;
+    _nameOfMethod = nameOfMethod;
+    _secondMember = secondMember;
+	_mat = NULL;
+	_smb = NULL;
+	_prec = NULL;
+	_ksp = NULL;
+
+	//setTolerance(tol);
+	//setNumberMaxOfIter(numberMaxOfIter);
+    setPreconditioner(nameOfPc);
     setMethod(nameOfMethod);
-    _nameOfPc="";
-    setLinearSolver(matrix,vector);
+    setLinearSolver(matrix, secondMember);
 }
 
+
 void
-LinearSolver::setPreconditioner(std::string pc)
+LinearSolver::setPreconditioner(string pc)
 {
     if ((pc.compare("ILU") != 0) && (pc.compare("") != 0))
     {
-        string msg="LinearSolver::LinearSolver : preconditioner "+pc+" does not exist.\n";
+        string msg="LinearSolver::LinearSolver: preconditioner "+pc+" does not exist.\n";
         throw CdmathException(msg);
     }
     if (pc.compare("ILU")==0 && _isSparseMatrix==false)
     {
-        string msg="LinearSolver::LinearSolver : preconditioner "+pc+" is not compatible with dense matrix.\n";
+        string msg="LinearSolver::LinearSolver: preconditioner "+pc+" is not compatible with dense matrix.\n";
         throw CdmathException(msg);
     }
 
     if (pc.compare("ILU")==0 && _nameOfMethod.compare("CHOLESKY")==0 )
     {
-        string msg="LinearSolver::LinearSolver : preconditioner "+pc+" is not compatible with "+_nameOfMethod+".\n";
+        string msg="LinearSolver::LinearSolver: preconditioner "+pc+" is not compatible with "+_nameOfMethod+".\n";
         throw CdmathException(msg);
     }
     _nameOfPc=pc;
 }
 
+
 void
-LinearSolver::setMethod(std::string nameOfMethod)
+LinearSolver::setMethod(string nameOfMethod)
 {
-    _nameOfMethod=nameOfMethod;
+    _nameOfMethod = nameOfMethod;
+
     if (_nameOfPc.compare("ILU")==0 && _isSparseMatrix==false)
     {
-        string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not compatible with dense matrix.\n";
+        string msg="LinearSolver::LinearSolver: preconditioner "+_nameOfPc+" is not compatible with dense matrix.\n";
         throw CdmathException(msg);
     }
 
     if (_nameOfPc.compare("ILU")==0 && (_nameOfMethod.compare("LU")==0 || _nameOfMethod.compare("CHOLESKY")==0) )
     {
-        string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not compatible with "+_nameOfMethod+".\n";
+        string msg="LinearSolver::LinearSolver: preconditioner "+_nameOfPc+" is not compatible with "+_nameOfMethod+".\n";
         throw CdmathException(msg);
     }
 
 }
 
-LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string nameOfMethod, std::string pc )
-{
-    _tol=tol;
-	/*
-	_tol=0.;
-    setTolerance(tol);
-	// */
-    _numberMaxOfIter=numberMaxOfIter;
-	/*
-	_numberMaxOfIter=0;
-    setNumberMaxOfIter(numberMaxOfIter);
-	// */
-    _residu=1.E30;
-    _convergence=false;
-    _numberOfIter=0;
-    _isSingular=false;
-    _isSparseMatrix=matrix.isSparseMatrix();
-    setMethod(nameOfMethod);
-    _nameOfPc="";
-    setPreconditioner(pc);
-    setLinearSolver(matrix,vector);
-}
 
 void
-LinearSolver::setLinearSolver(const GenericMatrix& matrix, const Vector& vector)
+LinearSolver::setLinearSolver(const GenericMatrix& matrix, const Vector& secondMember)
 {
     if (_nameOfPc.compare("ILU")==0 && _isSparseMatrix==false)
     {
-        string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not compatible with dense matrix.\n";
+        string msg="LinearSolver::LinearSolver: preconditioner "+_nameOfPc+" is not compatible with dense matrix.\n";
         throw CdmathException(msg);
     }
 
-    PetscInitialize(0,(char ***)"", PETSC_NULL, PETSC_NULL);
+    PetscInitialize(0, (char ***)"", PETSC_NULL, PETSC_NULL);
     setMatrix(matrix);
-    setSndMember(vector);
+    setSndMember(secondMember);
 }
 
 
@@ -237,10 +225,10 @@ LinearSolver::setMatrix(const GenericMatrix& matrix)
     if (matrix.isSparseMatrix())
     {
         const SparseMatrix& Smat = dynamic_cast<const SparseMatrix&>(matrix);
-//        int numberOfNonZeros=Smat.getNumberOfNonZeros();
-    PetscInt    nnz[numberOfRows];
+        //int numberOfNonZeros=Smat.getNumberOfNonZeros();
+        PetscInt nnz[numberOfRows];
         IntTab iRows=Smat.getIndexRows();
-    IntTab iColumns=Smat.getIndexColumns();
+        IntTab iColumns=Smat.getIndexColumns();
         for (int i=0;i<numberOfRows;i++)
             nnz[i]=iRows[i+1]-iRows[i];
         MatCreateSeqAIJ(MPI_COMM_SELF,numberOfRows,numberOfColumns,PETSC_DEFAULT,nnz,&_mat);
@@ -287,10 +275,10 @@ LinearSolver::setMatrix(const GenericMatrix& matrix)
 }
 
 void
-LinearSolver::setSndMember(const Vector& vector)
+LinearSolver::setSndMember(const Vector& secondMember)
 {
-    _vector=vector;
-    _smb=vectorToVec(vector);
+    _secondMember=secondMember;
+    _smb=vectorToVec(secondMember);
 
 }
 
@@ -303,7 +291,7 @@ LinearSolver::setSingularity(bool sing)
 Vector
 LinearSolver::getSndMember(void) const
 {
-    return (_vector);
+    return (_secondMember);
 }
 
 string
@@ -323,7 +311,7 @@ LinearSolver::LinearSolver ( const LinearSolver& LS )
     _tol=LS.getTolerance();
     _nameOfMethod=LS.getNameOfMethod();
     _numberMaxOfIter=LS.getNumberMaxOfIter();
-    _vector=LS.getSndMember();
+    _secondMember=LS.getSndMember();
     _residu=LS.getResidu();
     _convergence=LS.getStatus();
     _numberOfIter=LS.getNumberOfIter();
@@ -437,10 +425,10 @@ LinearSolver::solve( void )
 }
 
 Vec
-LinearSolver::vectorToVec(const Vector& vec) const
+LinearSolver::vectorToVec(const Vector& myVector) const
 {
-    PetscInitialize(0,(char ***)"", PETSC_NULL, PETSC_NULL);
-    int numberOfRows=vec.getNumberOfRows();
+    PetscInitialize(0, (char ***)"", PETSC_NULL, PETSC_NULL);
+    int numberOfRows=myVector.getNumberOfRows();
     Vec X;
 
     VecCreate(PETSC_COMM_WORLD,&X);
@@ -448,7 +436,7 @@ LinearSolver::vectorToVec(const Vector& vec) const
     VecSetFromOptions(X);
     for (PetscInt i=0; i<numberOfRows; i++)
     {
-        double value = vec(i);
+        double value = myVector(i);
         VecSetValues(X,1,&i,&value,ADD_VALUES);
     }
 
@@ -490,7 +478,7 @@ LinearSolver::operator= ( const LinearSolver& linearSolver )
     _convergence=linearSolver.getStatus();
     _numberOfIter=linearSolver.getNumberOfIter();
     _isSingular=linearSolver.isSingular();
-    _vector=linearSolver.getSndMember();
+    _secondMember=linearSolver.getSndMember();
     _isSparseMatrix=linearSolver.isSparseMatrix();
     _nameOfPc="";
     setPreconditioner(linearSolver.getNameOfPc());
