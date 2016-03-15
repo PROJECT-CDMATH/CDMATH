@@ -88,14 +88,13 @@ class LinearSolver
 
 	double _tol;
 	int _numberMaxOfIter;
-	std::string _nameOfMethod;
-	std::string _nameOfPc;
 	double _residu;
 	bool _convergence;
-	bool _isSingular;
-    bool _isSparseMatrix;
 	int _numberOfIter;
-//	GenericMatrix* _matrix;
+	bool _isSingular;
+	bool _isSparseMatrix;
+	std::string _nameOfPc;
+	std::string _nameOfMethod;
 	Vector _secondMember;
 	Mat _mat;
 	Vec _smb;

@@ -23,12 +23,12 @@ LinearSolver::LinearSolver ( void )
 {
     _tol=1.E-15;
     _numberMaxOfIter=0;
-    _nameOfMethod="";
     _residu=1.E30;
     _convergence=false;
     _numberOfIter=0;
     _isSingular=false;
     _nameOfPc="";
+    _nameOfMethod="";
     _mat=NULL;
     _smb=NULL;
     _ksp=NULL;
@@ -87,31 +87,31 @@ LinearSolver::setNumberMaxOfIter(int numberMaxOfIter)
 
 LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& secondMember, int numberMaxOfIter, double tol, std::string nameOfMethod )
 {
-    _tol=tol;
+    _tol = tol;
 	/*
 	_tol=0.;
     setTolerance(tol);
 	// */
-    _numberMaxOfIter=numberMaxOfIter;
+    _numberMaxOfIter = numberMaxOfIter;
 	/*
-	_numberMaxOfIter=0;
+	_numberMaxOfIter = 0;
     setNumberMaxOfIter(numberMaxOfIter);
 	// */
-    _residu=1.E30;
-    _convergence=false;
-    _numberOfIter=0;
-    _isSingular=false;
-    _isSparseMatrix=matrix.isSparseMatrix();
-    setMethod(nameOfMethod);
-    _nameOfPc="";
+    _residu = 1.E30;
+    _convergence = false;
+    _numberOfIter = 0;
+    _isSingular = false;
+    _isSparseMatrix = matrix.isSparseMatrix();
+    _nameOfPc = "";
+    _nameOfMethod = nameOfMethod;
+    _secondMember = secondMember;
+	_mat = NULL;
+	_smb = NULL;
+	_prec = NULL;
+	_ksp = NULL;
 
-    //TODO: dbg
-    _mat = NULL;
-    _smb = NULL;
-    _secondMember = NULL;
-    //*
-    setLinearSolver(matrix,secondMember);
-    // */
+    setMethod(nameOfMethod);
+    setLinearSolver(matrix, secondMember);
 }
 
 void
@@ -139,7 +139,8 @@ LinearSolver::setPreconditioner(std::string pc)
 void
 LinearSolver::setMethod(std::string nameOfMethod)
 {
-    _nameOfMethod=nameOfMethod;
+    _nameOfMethod = nameOfMethod;
+
     if (_nameOfPc.compare("ILU")==0 && _isSparseMatrix==false)
     {
         string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not compatible with dense matrix.\n";
