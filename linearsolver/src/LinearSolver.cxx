@@ -120,18 +120,18 @@ LinearSolver::setPreconditioner(string pc)
 {
     if ((pc.compare("ILU") != 0) && (pc.compare("") != 0))
     {
-        string msg="LinearSolver::LinearSolver : preconditioner "+pc+" does not exist.\n";
+        string msg="LinearSolver::LinearSolver: preconditioner "+pc+" does not exist.\n";
         throw CdmathException(msg);
     }
     if (pc.compare("ILU")==0 && _isSparseMatrix==false)
     {
-        string msg="LinearSolver::LinearSolver : preconditioner "+pc+" is not compatible with dense matrix.\n";
+        string msg="LinearSolver::LinearSolver: preconditioner "+pc+" is not compatible with dense matrix.\n";
         throw CdmathException(msg);
     }
 
     if (pc.compare("ILU")==0 && _nameOfMethod.compare("CHOLESKY")==0 )
     {
-        string msg="LinearSolver::LinearSolver : preconditioner "+pc+" is not compatible with "+_nameOfMethod+".\n";
+        string msg="LinearSolver::LinearSolver: preconditioner "+pc+" is not compatible with "+_nameOfMethod+".\n";
         throw CdmathException(msg);
     }
     _nameOfPc=pc;
@@ -145,13 +145,13 @@ LinearSolver::setMethod(string nameOfMethod)
 
     if (_nameOfPc.compare("ILU")==0 && _isSparseMatrix==false)
     {
-        string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not compatible with dense matrix.\n";
+        string msg="LinearSolver::LinearSolver: preconditioner "+_nameOfPc+" is not compatible with dense matrix.\n";
         throw CdmathException(msg);
     }
 
     if (_nameOfPc.compare("ILU")==0 && (_nameOfMethod.compare("LU")==0 || _nameOfMethod.compare("CHOLESKY")==0) )
     {
-        string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not compatible with "+_nameOfMethod+".\n";
+        string msg="LinearSolver::LinearSolver: preconditioner "+_nameOfPc+" is not compatible with "+_nameOfMethod+".\n";
         throw CdmathException(msg);
     }
 
@@ -163,13 +163,15 @@ LinearSolver::setLinearSolver(const GenericMatrix& matrix, const Vector& secondM
 {
     if (_nameOfPc.compare("ILU")==0 && _isSparseMatrix==false)
     {
-        string msg="LinearSolver::LinearSolver : preconditioner "+_nameOfPc+" is not compatible with dense matrix.\n";
+        string msg="LinearSolver::LinearSolver: preconditioner "+_nameOfPc+" is not compatible with dense matrix.\n";
         throw CdmathException(msg);
     }
 
-    PetscInitialize(0,(char ***)"", PETSC_NULL, PETSC_NULL);
+    PetscInitialize(0, (char ***)"", PETSC_NULL, PETSC_NULL);
+    /*
     setMatrix(matrix);
     setSndMember(secondMember);
+    */
 }
 
 
