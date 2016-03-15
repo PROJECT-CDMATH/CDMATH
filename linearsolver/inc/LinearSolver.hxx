@@ -24,9 +24,9 @@ class LinearSolver
 
 	~LinearSolver ( void ) ;
 
-	LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string method  );
+	LinearSolver( const GenericMatrix& matrix, const Vector& secondMember, int numberMaxOfIter, double tol, std::string method  );
 
-	LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string method, std::string pc  );
+	LinearSolver( const GenericMatrix& matrix, const Vector& secondMember, int numberMaxOfIter, double tol, std::string method, std::string pc  );
 
 	const LinearSolver& operator= ( const LinearSolver& linearSolver ) ;
 
@@ -64,7 +64,7 @@ class LinearSolver
 
 	void setMatrix(const GenericMatrix& matrix) ;
 
-	void setSndMember(const Vector& vector) ;
+	void setSndMember(const Vector& secondMember) ;
 
 	void setSingularity(bool sing) ;
 
@@ -82,7 +82,7 @@ class LinearSolver
 
     private: //----------------------------------------------------------------
 
-	void setLinearSolver(const GenericMatrix& matrix, const Vector& vector) ;
+	void setLinearSolver(const GenericMatrix& matrix, const Vector& secondMember) ;
 	KSP getPetscKsp() const ;
 	PC getPetscPc() const ;
 
@@ -96,7 +96,7 @@ class LinearSolver
     bool _isSparseMatrix;
 	int _numberOfIter;
 //	GenericMatrix* _matrix;
-	Vector _vector;
+	Vector _secondMember;
 	Mat _mat;
 	Vec _smb;
 	PC _prec;

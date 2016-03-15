@@ -85,7 +85,7 @@ LinearSolver::setNumberMaxOfIter(int numberMaxOfIter)
     KSPSetTolerances(_ksp,getTolerance(),PETSC_DEFAULT,PETSC_DEFAULT,numberMaxOfIter);
 }
 
-LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string nameOfMethod )
+LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& secondMember, int numberMaxOfIter, double tol, std::string nameOfMethod )
 {
     _tol=tol;
 	/*
@@ -104,7 +104,14 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, i
     _isSparseMatrix=matrix.isSparseMatrix();
     setMethod(nameOfMethod);
     _nameOfPc="";
-    setLinearSolver(matrix,vector);
+
+    //TODO: dbg
+    _mat = NULL;
+    _smb = NULL;
+    _secondMember = NULL;
+    //*
+    setLinearSolver(matrix,secondMember);
+    // */
 }
 
 void
@@ -147,7 +154,7 @@ LinearSolver::setMethod(std::string nameOfMethod)
 
 }
 
-LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, int numberMaxOfIter, double tol, std::string nameOfMethod, std::string pc )
+LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& secondMember, int numberMaxOfIter, double tol, std::string nameOfMethod, std::string pc )
 {
     _tol=tol;
 	/*
@@ -167,11 +174,11 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& vector, i
     setMethod(nameOfMethod);
     _nameOfPc="";
     setPreconditioner(pc);
-    setLinearSolver(matrix,vector);
+    setLinearSolver(matrix,secondMember);
 }
 
 void
-LinearSolver::setLinearSolver(const GenericMatrix& matrix, const Vector& vector)
+LinearSolver::setLinearSolver(const GenericMatrix& matrix, const Vector& secondMember)
 {
     if (_nameOfPc.compare("ILU")==0 && _isSparseMatrix==false)
     {
@@ -181,7 +188,7 @@ LinearSolver::setLinearSolver(const GenericMatrix& matrix, const Vector& vector)
 
     PetscInitialize(0,(char ***)"", PETSC_NULL, PETSC_NULL);
     setMatrix(matrix);
-    setSndMember(vector);
+    setSndMember(secondMember);
 }
 
 
@@ -287,10 +294,10 @@ LinearSolver::setMatrix(const GenericMatrix& matrix)
 }
 
 void
-LinearSolver::setSndMember(const Vector& vector)
+LinearSolver::setSndMember(const Vector& secondMember)
 {
-    _vector=vector;
-    _smb=vectorToVec(vector);
+    _secondMember=secondMember;
+    _smb=vectorToVec(secondMember);
 
 }
 
@@ -303,7 +310,7 @@ LinearSolver::setSingularity(bool sing)
 Vector
 LinearSolver::getSndMember(void) const
 {
-    return (_vector);
+    return (_secondMember);
 }
 
 string
@@ -323,7 +330,7 @@ LinearSolver::LinearSolver ( const LinearSolver& LS )
     _tol=LS.getTolerance();
     _nameOfMethod=LS.getNameOfMethod();
     _numberMaxOfIter=LS.getNumberMaxOfIter();
-    _vector=LS.getSndMember();
+    _secondMember=LS.getSndMember();
     _residu=LS.getResidu();
     _convergence=LS.getStatus();
     _numberOfIter=LS.getNumberOfIter();
@@ -490,7 +497,7 @@ LinearSolver::operator= ( const LinearSolver& linearSolver )
     _convergence=linearSolver.getStatus();
     _numberOfIter=linearSolver.getNumberOfIter();
     _isSingular=linearSolver.isSingular();
-    _vector=linearSolver.getSndMember();
+    _secondMember=linearSolver.getSndMember();
     _isSparseMatrix=linearSolver.isSparseMatrix();
     _nameOfPc="";
     setPreconditioner(linearSolver.getNameOfPc());
