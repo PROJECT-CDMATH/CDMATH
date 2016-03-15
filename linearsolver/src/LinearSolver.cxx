@@ -170,7 +170,7 @@ LinearSolver::setLinearSolver(const GenericMatrix& matrix, const Vector& secondM
     PetscInitialize(0, (char ***)"", PETSC_NULL, PETSC_NULL);
     //* TODO
     setMatrix(matrix);
-    //setSndMember(secondMember);
+    setSndMember(secondMember);
     // */
 }
 
