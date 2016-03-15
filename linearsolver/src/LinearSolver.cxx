@@ -85,7 +85,12 @@ LinearSolver::setNumberMaxOfIter(int numberMaxOfIter)
     KSPSetTolerances(_ksp,getTolerance(),PETSC_DEFAULT,PETSC_DEFAULT,numberMaxOfIter);
 }
 
-LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& secondMember, int numberMaxOfIter, double tol, std::string nameOfMethod, std::string nameOfPc )
+LinearSolver::LinearSolver( const GenericMatrix& matrix,
+		const Vector& secondMember,
+		int numberMaxOfIter,
+		double tol,
+		string nameOfMethod,
+		string nameOfPc )
 {
     _tol = tol;
     _numberMaxOfIter = numberMaxOfIter;
@@ -109,8 +114,9 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& secondMem
     setLinearSolver(matrix, secondMember);
 }
 
+
 void
-LinearSolver::setPreconditioner(std::string pc)
+LinearSolver::setPreconditioner(string pc)
 {
     if ((pc.compare("ILU") != 0) && (pc.compare("") != 0))
     {
@@ -133,7 +139,7 @@ LinearSolver::setPreconditioner(std::string pc)
 
 
 void
-LinearSolver::setMethod(std::string nameOfMethod)
+LinearSolver::setMethod(string nameOfMethod)
 {
     _nameOfMethod = nameOfMethod;
 
