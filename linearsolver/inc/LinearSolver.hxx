@@ -61,7 +61,7 @@ class LinearSolver
 
 	Vector solve( void ) ;
 
-	Vec vectorToVec( const Vector& vector ) const ;
+	Vec vectorToVec( const Vector& myVector ) const ;
 
 	Vector vecToVector(const Vec& vec) const ;
 

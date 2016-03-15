@@ -168,10 +168,10 @@ LinearSolver::setLinearSolver(const GenericMatrix& matrix, const Vector& secondM
     }
 
     PetscInitialize(0, (char ***)"", PETSC_NULL, PETSC_NULL);
-    /*
+    //* TODO
     setMatrix(matrix);
-    setSndMember(secondMember);
-    */
+    //setSndMember(secondMember);
+    // */
 }
 
 
@@ -227,10 +227,10 @@ LinearSolver::setMatrix(const GenericMatrix& matrix)
     if (matrix.isSparseMatrix())
     {
         const SparseMatrix& Smat = dynamic_cast<const SparseMatrix&>(matrix);
-//        int numberOfNonZeros=Smat.getNumberOfNonZeros();
-    PetscInt    nnz[numberOfRows];
+        //int numberOfNonZeros=Smat.getNumberOfNonZeros();
+        PetscInt nnz[numberOfRows];
         IntTab iRows=Smat.getIndexRows();
-    IntTab iColumns=Smat.getIndexColumns();
+        IntTab iColumns=Smat.getIndexColumns();
         for (int i=0;i<numberOfRows;i++)
             nnz[i]=iRows[i+1]-iRows[i];
         MatCreateSeqAIJ(MPI_COMM_SELF,numberOfRows,numberOfColumns,PETSC_DEFAULT,nnz,&_mat);
@@ -427,10 +427,10 @@ LinearSolver::solve( void )
 }
 
 Vec
-LinearSolver::vectorToVec(const Vector& vec) const
+LinearSolver::vectorToVec(const Vector& myVector) const
 {
-    PetscInitialize(0,(char ***)"", PETSC_NULL, PETSC_NULL);
-    int numberOfRows=vec.getNumberOfRows();
+    PetscInitialize(0, (char ***)"", PETSC_NULL, PETSC_NULL);
+    int numberOfRows=myVector.getNumberOfRows();
     Vec X;
 
     VecCreate(PETSC_COMM_WORLD,&X);
@@ -438,7 +438,7 @@ LinearSolver::vectorToVec(const Vector& vec) const
     VecSetFromOptions(X);
     for (PetscInt i=0; i<numberOfRows; i++)
     {
-        double value = vec(i);
+        double value = myVector(i);
         VecSetValues(X,1,&i,&value,ADD_VALUES);
     }
 
