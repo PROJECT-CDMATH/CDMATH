@@ -24,9 +24,12 @@ class LinearSolver
 
 	~LinearSolver ( void ) ;
 
-	LinearSolver( const GenericMatrix& matrix, const Vector& secondMember, int numberMaxOfIter, double tol, std::string method  );
-
-	LinearSolver( const GenericMatrix& matrix, const Vector& secondMember, int numberMaxOfIter, double tol, std::string method, std::string pc  );
+	LinearSolver( const GenericMatrix& matrix,
+			const Vector& secondMember,
+			int numberMaxOfIter,
+			double tol,
+			std::string nameOfMethod,
+			std::string nameOfPc="" );
 
 	const LinearSolver& operator= ( const LinearSolver& linearSolver ) ;
 

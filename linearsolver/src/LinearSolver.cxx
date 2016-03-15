@@ -85,24 +85,16 @@ LinearSolver::setNumberMaxOfIter(int numberMaxOfIter)
     KSPSetTolerances(_ksp,getTolerance(),PETSC_DEFAULT,PETSC_DEFAULT,numberMaxOfIter);
 }
 
-LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& secondMember, int numberMaxOfIter, double tol, std::string nameOfMethod )
+LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& secondMember, int numberMaxOfIter, double tol, std::string nameOfMethod, std::string nameOfPc )
 {
     _tol = tol;
-	/*
-	_tol=0.;
-    setTolerance(tol);
-	// */
     _numberMaxOfIter = numberMaxOfIter;
-	/*
-	_numberMaxOfIter = 0;
-    setNumberMaxOfIter(numberMaxOfIter);
-	// */
     _residu = 1.E30;
     _convergence = false;
     _numberOfIter = 0;
     _isSingular = false;
     _isSparseMatrix = matrix.isSparseMatrix();
-    _nameOfPc = "";
+    _nameOfPc = nameOfPc;
     _nameOfMethod = nameOfMethod;
     _secondMember = secondMember;
 	_mat = NULL;
@@ -110,6 +102,9 @@ LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& secondMem
 	_prec = NULL;
 	_ksp = NULL;
 
+	//setTolerance(tol);
+	//setNumberMaxOfIter(numberMaxOfIter);
+    setPreconditioner(nameOfPc);
     setMethod(nameOfMethod);
     setLinearSolver(matrix, secondMember);
 }
@@ -136,6 +131,7 @@ LinearSolver::setPreconditioner(std::string pc)
     _nameOfPc=pc;
 }
 
+
 void
 LinearSolver::setMethod(std::string nameOfMethod)
 {
@@ -155,28 +151,6 @@ LinearSolver::setMethod(std::string nameOfMethod)
 
 }
 
-LinearSolver::LinearSolver( const GenericMatrix& matrix, const Vector& secondMember, int numberMaxOfIter, double tol, std::string nameOfMethod, std::string pc )
-{
-    _tol=tol;
-	/*
-	_tol=0.;
-    setTolerance(tol);
-	// */
-    _numberMaxOfIter=numberMaxOfIter;
-	/*
-	_numberMaxOfIter=0;
-    setNumberMaxOfIter(numberMaxOfIter);
-	// */
-    _residu=1.E30;
-    _convergence=false;
-    _numberOfIter=0;
-    _isSingular=false;
-    _isSparseMatrix=matrix.isSparseMatrix();
-    setMethod(nameOfMethod);
-    _nameOfPc="";
-    setPreconditioner(pc);
-    setLinearSolver(matrix,secondMember);
-}
 
 void
 LinearSolver::setLinearSolver(const GenericMatrix& matrix, const Vector& secondMember)
