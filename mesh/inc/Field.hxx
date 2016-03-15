@@ -18,7 +18,7 @@ typedef enum
   {
     CELLS = 0,
     NODES = 1,
-    FACES = 2,
+    FACES = 2
   } TypeField;
 
 #include "DoubleTab.hxx"
