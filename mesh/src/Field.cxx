@@ -620,12 +620,26 @@ Field::writeCSV ( const std::string fileName ) const
 
     if (dim==1)
     {
-        file << "x " << _field->getName() << endl;
+        int nbCompo=getNumberOfComponents();
+        if (nbCompo==1)
+	        file << "x " << _field->getName() << endl;
+        else if (nbCompo>1)
+        {
+            file << "x";
+            for (int i=0;i<nbCompo;i++)
+                file << " " << _field->getName() << " Compo " << i+1 << " "<< getInfoOnComponent(i);
+            file << endl;
+        }
         for (int i=0;i<nbElements;i++)
+	{
             if (getTypeOfField()==CELLS)
-                file << _mesh.getCell(i).x() << " " << getValues()[i] << endl;
+                file << _mesh.getCell(i).x() ;
             else
-                file << _mesh.getNode(i).x() << " " << getValues()[i] << endl;
+                file << _mesh.getNode(i).x() ;
+            for (int j=0;j<nbCompo;j++)
+                file << " " << getValues()[j+i*nbCompo] ;
+            file << endl;
+	}
     }else if (dim==2)
     {
         int nbCompo=getNumberOfComponents();
