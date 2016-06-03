@@ -40,9 +40,11 @@ void
 LinearSolver::kspDuplicate(const KSP source, const Mat mat, KSP* destination) const
 {
     KSPCreate(PETSC_COMM_WORLD,&(*destination));
-    KSPSetOperators(*destination,mat,mat,SAME_NONZERO_PATTERN);
-    // If Petsc is 3.5 or higher:
-    //KSPSetOperators(destination,mat,mat);
+    #if PETSC_VERSION_GREATER_3_5
+        KSPSetOperators(destination,mat,mat);
+    #else
+        KSPSetOperators(*destination,mat,mat,SAME_NONZERO_PATTERN);
+    #endif
     KSPType type;
     KSPGetType(source,&type);
     KSPSetType(*destination,type);
@@ -267,9 +269,11 @@ LinearSolver::setMatrix(const GenericMatrix& matrix)
     MatAssemblyEnd(_mat, MAT_FINAL_ASSEMBLY);
 
     KSPCreate(PETSC_COMM_WORLD, &_ksp);
-    KSPSetOperators(_ksp,_mat,_mat,SAME_NONZERO_PATTERN);
-    // If Petsc is 3.5 or higher:
-    //KSPSetOperators(_ksp,_mat,_mat);
+    #if PETSC_VERSION_GREATER_3_5
+        KSPSetOperators(_ksp,_mat,_mat);
+    #else
+        KSPSetOperators(_ksp,_mat,_mat,SAME_NONZERO_PATTERN);
+    #endif
 
     KSPGetPC(_ksp,&_prec);
 }

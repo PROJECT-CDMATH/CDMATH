@@ -45,9 +45,12 @@ set (CPACK_DEBIAN_PACKAGE_DEPENDS "libhdf5-dev")
 set (CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
 
 if (CDMATH_WITH_PETSC)
-  find_package (PETSc 3.4 EXACT REQUIRED)
-  set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, petsc-dev (>= 3.4), petsc-dev (<< 3.5)")
-  set (CPACK_RPM_PACKAGE_REQUIRES "${CPACK_RPM_PACKAGE_REQUIRES}, petsc >= 3.4, petsc < 3.5") # This is not fully working yet.
+  find_package (PETSc 3.4 REQUIRED)
+  if (${PETSC_VERSION} VERSION_GREATER 3.5)
+    add_definitions(-DPETSC_VERSION_GREATER_3_5)
+  endif ()
+  set (CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, petsc-dev (>= 3.4)")
+  set (CPACK_RPM_PACKAGE_REQUIRES "${CPACK_RPM_PACKAGE_REQUIRES}, petsc >= 3.4") # This is not fully working yet.
 endif ()
 
 # Swig interface
