@@ -664,7 +664,7 @@ Field::writeCSV ( const std::string fileName ) const
             else
                 file << _mesh.getNode(i).x() << " " << _mesh.getNode(i).y() ;
             for (int j=0;j<nbCompo;j++)
-                file << " " << getValues()[i+j*nbCompo] ;
+                file << " " << getValues()[i*nbCompo+j] ;
             file << endl;
         }
     }else
@@ -691,7 +691,7 @@ Field::writeCSV ( const std::string fileName ) const
             else
                 file << _mesh.getNode(i).x() << " " << _mesh.getNode(i).y() << " " << _mesh.getNode(i).z();
             for (int j=0;j<nbCompo;j++)
-                file << " " << getValues()[i+j*nbCompo] ;
+                file << " " << getValues()[i*nbCompo+j] ;
             file << endl;
         }
     }
