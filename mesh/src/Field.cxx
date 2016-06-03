@@ -649,12 +649,7 @@ Field::writeCSV ( const std::string fileName ) const
         {
             file << "x y";
             for (int i=0;i<nbCompo;i++)
-            {
-                ostringstream numCompo;
-                numCompo << i+1 ;
-                file << " " << _field->getName() << " Compo " << numCompo;
-
-            }
+                file << " " << _field->getName() << " Compo " << i+1<< " "<< getInfoOnComponent(i);
             file << endl;
         }
         for (int i=0;i<nbElements;i++)
@@ -676,12 +671,7 @@ Field::writeCSV ( const std::string fileName ) const
         {
             file << "x y z";
             for (int i=0;i<nbCompo;i++)
-            {
-                ostringstream numCompo;
-                numCompo << i+1 ;
-                file << " " << _field->getName() << " Compo " << numCompo;
-
-            }
+                file << " " << _field->getName() << " Compo " << i+1<< " "<< getInfoOnComponent(i);
             file << endl;
         }
         for (int i=0;i<nbElements;i++)
