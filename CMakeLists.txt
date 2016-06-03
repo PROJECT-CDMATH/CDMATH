@@ -46,6 +46,7 @@ set (CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
 
 if (CDMATH_WITH_PETSC)
   find_package (PETSc 3.4 REQUIRED)
+  petsc_get_version ()
   if (${PETSC_VERSION} VERSION_GREATER 3.5)
     add_definitions(-DPETSC_VERSION_GREATER_3_5)
   endif ()
