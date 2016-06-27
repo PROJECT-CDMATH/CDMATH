@@ -41,7 +41,7 @@ LinearSolver::kspDuplicate(const KSP source, const Mat mat, KSP* destination) co
 {
     KSPCreate(PETSC_COMM_WORLD,&(*destination));
     #if PETSC_VERSION_GREATER_3_5
-        KSPSetOperators(destination,mat,mat);
+        KSPSetOperators(*destination,mat,mat);
     #else
         KSPSetOperators(*destination,mat,mat,SAME_NONZERO_PATTERN);
     #endif
