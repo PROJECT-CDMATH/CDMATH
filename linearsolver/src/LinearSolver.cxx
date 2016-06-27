@@ -407,7 +407,11 @@ LinearSolver::solve( void )
     {
         MatNullSpace nullsp;
         MatNullSpaceCreate(PETSC_COMM_WORLD, PETSC_TRUE, 0, PETSC_NULL, &nullsp);
-        KSPSetNullSpace(_ksp, nullsp);
+        #if PETSC_VERSION_GREATER_3_6
+            MatSetNullSpace(_mat, nullsp);
+        #else
+            KSPSetNullSpace(_ksp, nullsp);
+        #endif
         MatNullSpaceDestroy(&nullsp);
     }
     KSPSolve(_ksp,_smb,X);
