@@ -109,6 +109,7 @@ Face::isBorder(void)
 	else
 		return false;
 }
+
 //----------------------------------------------------------------------
 Point
 Face::getBarryCenter( void ) const
@@ -188,6 +189,7 @@ Face::addCellId(const int numCell, const int cellId )
 {
 	_cellsId(numCell) = cellId ;
 }
+
 //----------------------------------------------------------------------
 void
 Face::addNodeId(const int numNode, const int nodeId )

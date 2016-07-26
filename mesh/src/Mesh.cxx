@@ -268,7 +268,7 @@ Mesh::getIndexFacePeriodic(int indexFace) const
 }
 
 void
-Mesh::setGroups( const MEDFileUMesh* medmesh)
+Mesh::setGroups(const MEDFileUMesh* medmesh)
 {
 	vector<string> groups=medmesh->getGroupsNames() ;
 	for (unsigned int i=0;i<groups.size();i++ )
