@@ -189,3 +189,19 @@ Cell::operator= ( const Cell& cell )
 	_normalVectors=cell.getNormalVectors();
 	return *this;
 }
+
+//----------------------------------------------------------------------
+int 
+Cell::getFaceId(int localId) const
+//----------------------------------------------------------------------
+{
+	return _facesId[localId];
+}
+
+//----------------------------------------------------------------------
+int 
+Cell::getNodeId(int localId) const
+//----------------------------------------------------------------------
+{
+	return _nodesId[localId];
+}

@@ -156,6 +156,10 @@ class Face
 
     double _zN;
 
+    int getNodeId(int localId) const ;
+    
+    int getCellId(int localId) const ;
+
     private: //----------------------------------------------------------------
 
     /*

@@ -131,6 +131,10 @@ class Cell
 	 */
 	void addNormalVector ( int numNormalVector, double x, double y, double z ) ;
 
+	int getFaceId(int localId) const ;
+
+	int getNodeId(int localId) const ;
+
     private: //----------------------------------------------------------------
 
 	/*

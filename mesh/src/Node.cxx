@@ -146,3 +146,11 @@ Node::operator= ( const Node& node )
 	_numberOfFaces = node.getNumberOfFaces() ;
 	return *this;
 }
+int
+//----------------------------------------------------------------------
+Node::getFaceId(int localId) const
+//----------------------------------------------------------------------
+{
+	return _facesId[localId];
+}
+

@@ -119,6 +119,8 @@ class Node
      */
     double distance( const Node& n ) const ;
 
+    int getFaceId(int localId) const ;
+
     private: //----------------------------------------------------------------
 
     /*
