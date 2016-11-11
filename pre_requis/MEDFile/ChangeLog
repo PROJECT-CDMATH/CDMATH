@@ -1,3 +1,35 @@
+Modifications dans la version 3.2.0 :
+
+- Gestion rapide d'un grand nombre de famille/groupes (chgt modèle interne).
+- Mise en conformité de l'outil medimport (3.1 -> 3.2)
+- Diverses corrections liées à l'utilisation des grilles polaires
+- Mises à jour des usecases grilles
+- Réecriture des usescases polyèdres avec un cas plus réaliste
+- Mises à jour de la documentation polyedres + polygones
+- Réecriture en .svg du schema explicatif de la connectivité des polyèdres
+- Modification des destructeurs cxx pour éviter la défintion de symboles Weak dans la bibliothèque
+
+Modifications dans la version 3.1.0 :
+
+- Ajout de la fonctionalité de gestion des fichiers en mémoire.  Transferts possibles entre processus.
+- Correction d'une lenteur d'execution de MEDfieldComputingStepInfo pour des champs ayant de nombreuses étapes de calcul (>1000)
+- Correction d'une erreur de comptage des Py_None en sortie des appels MED en python.
+- Correction d'une impossibilité d'écriture de MEDmeshGridIndexCoorinateWr en mode MED_ACC_RDEXT à partir d'un n°axe >1
+- Patch CMakeLists pour gérer la detection MPI/HDF5par
+- Ajout de la fonction MEDfileName en C/F/python qui renvoie le nom du fichier (avec le chemin d'accès) à partir du fid.
+
+Modifications dans la version 3.0.8p1 :
+
+- MAJ du numero de version 3.0.7 en 3.0.8 dans le CMakeLists.txt de la racine
+
+Modifications dans la version 3.0.8 :
+
+- Correction d'un débordement d'accès à la mémoire concernant l'utilisation des filtres par blocs sur les noms des entites quelque soit le mode d'entrelacement et de stockage 
+- Correction d'un bug concernant les filtres par entités en mode MED_FULL_INTERLACE et MED_COMPAQ
+- Correction d'un bug concernant les filtres par entités en mode MED_NO_INTERLACE et MED_COMPAQ
+- Corrections docs
+- Corrections d'indiçage dans quelques tests C
+
 Modifications dans la version 3.0.7 :
 
 - Correction d'un bug de comptage des informations secondaires noms,numéros optionnels dans le cas d'une grille curvilinear (MEDmeshnEntity)

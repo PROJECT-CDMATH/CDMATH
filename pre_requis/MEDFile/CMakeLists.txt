@@ -15,9 +15,9 @@ ELSE()
 ENDIF()
 
 ## Version number 
-SET(MED_NUM_MAJEUR 3)
-SET(MED_NUM_MINEUR 0)
-SET(MED_NUM_RELEASE 7)
+SET(MED_NUM_MAJEUR  3)
+SET(MED_NUM_MINEUR  2)
+SET(MED_NUM_RELEASE 0)
 
 SET(MED_STR_VERSION "${MED_NUM_MAJEUR}.${MED_NUM_MINEUR}.${MED_NUM_RELEASE}")
 
@@ -25,12 +25,12 @@ SET(LONG_OR_INT int)
 
 ## User options:
 OPTION (MEDFILE_BUILD_TESTS "Build MED-file tests" ON)
-#IF (MEDFILE_BUILD_TESTS)
-#  ENABLE_TESTING()
-#ENDIF()
+IF (MEDFILE_BUILD_TESTS)
+  ENABLE_TESTING()
+ENDIF()
 OPTION (MEDFILE_BUILD_SHARED_LIBS "Build MED-file shared libraries" ON)
 OPTION (MEDFILE_BUILD_STATIC_LIBS "Build MED-file static libraries" OFF)
-OPTION (MEDFILE_INSTALL_DOC "Install pre-built documentation" OFF)
+OPTION (MEDFILE_INSTALL_DOC "Install pre-built documentation" ON)
 OPTION (MEDFILE_BUILD_PYTHON "Build Python bindings (needs SWIG)" OFF)
 
 # Option checking.
@@ -52,6 +52,10 @@ ENDIF()
 ## Useful macros
 LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/config/cmake_files")
 INCLUDE(medMacros)
+
+## Version number
+#MED_EXTRACT_AUTOTOOLS_VERSION(${PROJECT_SOURCE_DIR}/configure.ac MED_NUM_MAJEUR MED_NUM_MINEUR MED_NUM_RELEASE)
+#SET(MED_STR_VERSION "${MED_NUM_MAJEUR}.${MED_NUM_MINEUR}.${MED_NUM_RELEASE}")
 
 ## Platform specific flags (windows)
 IF(WIN32)
@@ -106,18 +110,17 @@ CONFIGURE_FILE("${PROJECT_BINARY_DIR}/include/2.3.6/med_config.h.cmake" "${PROJE
 ## Sources 
 ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(src)
-#	ADD_SUBDIRECTORY(tools)
-#IF(MEDFILE_BUILD_TESTS)
-#  ADD_SUBDIRECTORY(tests)
-#ENDIF()
-#IF(MEDFILE_BUILD_PYTHON)
-#  ADD_SUBDIRECTORY(python)
-#ENDIF()
+ADD_SUBDIRECTORY(tools)
+IF(MEDFILE_BUILD_TESTS)
+  ADD_SUBDIRECTORY(tests)
+ENDIF()
+IF(MEDFILE_BUILD_PYTHON)
+  ADD_SUBDIRECTORY(python)
+ENDIF()
 
 ## Installation of the doc
-## If issue with this option, just create a "doc" directory here in the MEDFile directory
 IF(MEDFILE_INSTALL_DOC)
-  INSTALL(DIRECTORY doc DESTINATION share)
+  INSTALL(DIRECTORY doc DESTINATION ${CMAKE_INSTALL_PREFIX}/share)
 ENDIF()
 
 #######################

@@ -19,10 +19,9 @@
 /* %cstring_bounded_mutable(const char * const comment,MED_COMMENT_SIZE); */
 
 // Définir les tableaux de chaînes agrégées avant les définitions d'un typemap char *
-
+// Définition des typemaps char * :
 %med_char_typemaps(medmesh,\           ,MED_NAME_SIZE)
 %med_char_typemaps(medmesh,comment ,MED_COMMENT_SIZE)
-
 
 %include "medlibrary_exception.i"
 

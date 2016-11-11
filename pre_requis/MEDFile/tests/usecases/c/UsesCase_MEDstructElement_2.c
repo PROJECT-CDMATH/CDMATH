@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -115,7 +115,7 @@ int main (int argc, char **argv) {
   
     /* ... In this case, we suppose that we have only MED_SEG2
      *     as cell elements in our support meshes 
-     *     a real code working would check ...  */
+     *     a real code would check ...  */
     if ((nseg2 = MEDmeshnEntity(fid, supportmeshname, MED_NO_DT, MED_NO_IT, MED_CELL,MED_SEG2,
 				MED_CONNECTIVITY, MED_NODAL, &coordinatechangement,
 				&geotransformation)) < 0) {
@@ -197,7 +197,7 @@ int main (int argc, char **argv) {
 
   /* 
    * ... In this case, we know that the MED file has only one mesh, 
-   * a real code working would check ... 
+   * a real code would check ... 
    */
   /* read mesh informations : mesh dimension, space dimension ... */
   if (MEDmeshInfoByName(fid, computmeshname, &spacedim, &meshdim, &meshtype, description, 

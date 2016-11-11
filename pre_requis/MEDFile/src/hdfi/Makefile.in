@@ -100,7 +100,8 @@ am__libhdfi_la_SOURCES_DIST = _MEDfilterEntityFullIGlobalCr.c \
 	_MEDfilterBlockOfEntityNoIGlobalCr.c \
 	_MEDfilterBlockOfEntityFullICompactCr.c \
 	_MEDfilterBlockOfEntityNoICompactCr.c _MEDdatasetWr.c \
-	_MEDdatasetRd.c _MEDfileOpen.c _MEDfileCreate.c _MEDnObjects.c \
+	_MEDdatasetRd.c _MEDfileOpen.c _MEDfileName.c \
+	_MEDmemFileOpen.c _MEDfileCreate.c _MEDnObjects.c \
 	__MEDobjectGetName.c _MEDobjectCrOrderGetName.c \
 	_MEDobjectGetName.c _MEDcopyName.c _MEDvisit.c _MEDlinkObjs.c \
 	_MEDgetComputationStepName.c _MEDdatagroupCrOrderCr.c \
@@ -129,27 +130,28 @@ am_libhdfi_la_OBJECTS = _MEDfilterEntityFullIGlobalCr.lo \
 	_MEDfilterBlockOfEntityNoIGlobalCr.lo \
 	_MEDfilterBlockOfEntityFullICompactCr.lo \
 	_MEDfilterBlockOfEntityNoICompactCr.lo _MEDdatasetWr.lo \
-	_MEDdatasetRd.lo _MEDfileOpen.lo _MEDfileCreate.lo \
-	_MEDnObjects.lo __MEDobjectGetName.lo \
-	_MEDobjectCrOrderGetName.lo _MEDobjectGetName.lo \
-	_MEDcopyName.lo _MEDvisit.lo _MEDlinkObjs.lo \
-	_MEDgetComputationStepName.lo _MEDdatagroupCrOrderCr.lo \
-	_MEDdatagroupOpen.lo _MEDsoftlinkDel.lo _MEDisasoftlink.lo \
-	_MEDgetDatasetChgt.lo _MEDdatasetExistByMedtype.lo \
-	_MEDattributeStringRdByName.lo _MEDattributeNumRdByName.lo \
-	_MEDattributeStringWrByName.lo _MEDattributeStringWr.lo \
-	_MEDattributeNumWrByName.lo _MEDattributeNumWr.lo \
-	_MEDcheckAttributeStringInit.lo _MEDcheckAttributeStringFin.lo \
-	_MEDcheckAttributeStringFunc.lo _MEDchecknSublinkFunc.lo \
-	_MEDiterate.lo _MEDobjectGetRank.lo _MEDdatagroupExist.lo \
-	_MEDdatasetExist.lo _MEDattributeExist.lo $(am__objects_1) \
-	MEDattrFermer.lo MEDattrNumLire.lo MEDattrOuvrir.lo \
-	MEDattrStringLire.lo MEDdatagroupCreer.lo \
-	MEDdatagroupFermer.lo MEDdatagroupOuvrir.lo \
-	MEDdatagroupLienSupprimer.lo MEDdatagroupLienCreer.lo \
-	MEDdatasetFermer.lo MEDdatasetOuvrir.lo MEDfichierFermer.lo \
-	MEDfichierNo.lo MEDmodeErreurVerrouiller.lo \
-	MEDfichierMonter.lo MEDfichierDemonter.lo MEDobjetsOuverts.lo
+	_MEDdatasetRd.lo _MEDfileOpen.lo _MEDfileName.lo \
+	_MEDmemFileOpen.lo _MEDfileCreate.lo _MEDnObjects.lo \
+	__MEDobjectGetName.lo _MEDobjectCrOrderGetName.lo \
+	_MEDobjectGetName.lo _MEDcopyName.lo _MEDvisit.lo \
+	_MEDlinkObjs.lo _MEDgetComputationStepName.lo \
+	_MEDdatagroupCrOrderCr.lo _MEDdatagroupOpen.lo \
+	_MEDsoftlinkDel.lo _MEDisasoftlink.lo _MEDgetDatasetChgt.lo \
+	_MEDdatasetExistByMedtype.lo _MEDattributeStringRdByName.lo \
+	_MEDattributeNumRdByName.lo _MEDattributeStringWrByName.lo \
+	_MEDattributeStringWr.lo _MEDattributeNumWrByName.lo \
+	_MEDattributeNumWr.lo _MEDcheckAttributeStringInit.lo \
+	_MEDcheckAttributeStringFin.lo _MEDcheckAttributeStringFunc.lo \
+	_MEDchecknSublinkFunc.lo _MEDiterate.lo _MEDobjectGetRank.lo \
+	_MEDdatagroupExist.lo _MEDdatasetExist.lo \
+	_MEDattributeExist.lo $(am__objects_1) MEDattrFermer.lo \
+	MEDattrNumLire.lo MEDattrOuvrir.lo MEDattrStringLire.lo \
+	MEDdatagroupCreer.lo MEDdatagroupFermer.lo \
+	MEDdatagroupOuvrir.lo MEDdatagroupLienSupprimer.lo \
+	MEDdatagroupLienCreer.lo MEDdatasetFermer.lo \
+	MEDdatasetOuvrir.lo MEDfichierFermer.lo MEDfichierNo.lo \
+	MEDmodeErreurVerrouiller.lo MEDfichierMonter.lo \
+	MEDfichierDemonter.lo MEDobjetsOuverts.lo
 libhdfi_la_OBJECTS = $(am_libhdfi_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -424,7 +426,8 @@ libhdfi_la_SOURCES = _MEDfilterEntityFullIGlobalCr.c \
 	_MEDfilterBlockOfEntityNoIGlobalCr.c \
 	_MEDfilterBlockOfEntityFullICompactCr.c \
 	_MEDfilterBlockOfEntityNoICompactCr.c _MEDdatasetWr.c \
-	_MEDdatasetRd.c _MEDfileOpen.c _MEDfileCreate.c _MEDnObjects.c \
+	_MEDdatasetRd.c _MEDfileOpen.c _MEDfileName.c \
+	_MEDmemFileOpen.c _MEDfileCreate.c _MEDnObjects.c \
 	__MEDobjectGetName.c _MEDobjectCrOrderGetName.c \
 	_MEDobjectGetName.c _MEDcopyName.c _MEDvisit.c _MEDlinkObjs.c \
 	_MEDgetComputationStepName.c _MEDdatagroupCrOrderCr.c \
@@ -536,6 +539,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDdatasetRd.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDdatasetWr.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDfileCreate.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDfileName.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDfileOpen.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDfilterBlockOfEntityFullICompactCr.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDfilterBlockOfEntityFullIGlobalCr.Plo@am__quote@
@@ -550,6 +554,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDisasoftlink.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDiterate.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDlinkObjs.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDmemFileOpen.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDnObjects.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDobjectCrOrderGetName.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/_MEDobjectGetName.Plo@am__quote@

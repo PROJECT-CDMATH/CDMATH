@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -156,7 +156,7 @@ med_err MAJ_236_300_fieldOnEntity(med_idt fid, const char * const nomcha, const 
 	    /*Ne pose pas de problème de taille de chaîne car MED_NAME_SIZE a doublé en 3.0 */
 	    _fieldname[_fieldnamelen]='_';strcpy(&_fieldname[_fieldnamelen+1],_meshname);
 
-	    MAJ_version(fid);
+	    MAJ_version_num(fid,3,0,8);
 	    /*Sauvegarde du champ initial dans _pathtmp*/
 	    EXIT_IF( H5Gmove(fid, _pathi, _pathtmp  ) < 0,"Switch to ",_pathtmp);
 	    EXIT_IF( H5Gmove(fid, _pathf, _pathi  ) < 0  ,"Switch to ",_pathi);
@@ -225,7 +225,7 @@ med_err MAJ_236_300_fieldOnEntity(med_idt fid, const char * const nomcha, const 
 	  }
 
 	  /* Ecriture du champ destination */
-	  MAJ_version(fid);
+	  MAJ_version_num(fid,3,0,8);
 	  /*Sauvegarde du champ initial dans _pathtmp*/
 	  EXIT_IF( H5Gmove(fid, _pathi, _pathtmp  ) < 0,"Switch to ",_pathtmp);
 	

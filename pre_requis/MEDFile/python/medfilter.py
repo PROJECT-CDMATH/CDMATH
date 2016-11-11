@@ -402,6 +402,52 @@ class med_file_version(_object):
 med_file_version_swigregister = _medfilter.med_file_version_swigregister
 med_file_version_swigregister(med_file_version)
 
+class med_memfile(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, med_memfile, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, med_memfile, name)
+    __repr__ = _swig_repr
+    __swig_setmethods__["app_image_ptr"] = _medfilter.med_memfile_app_image_ptr_set
+    __swig_getmethods__["app_image_ptr"] = _medfilter.med_memfile_app_image_ptr_get
+    if _newclass:app_image_ptr = _swig_property(_medfilter.med_memfile_app_image_ptr_get, _medfilter.med_memfile_app_image_ptr_set)
+    __swig_setmethods__["app_image_size"] = _medfilter.med_memfile_app_image_size_set
+    __swig_getmethods__["app_image_size"] = _medfilter.med_memfile_app_image_size_get
+    if _newclass:app_image_size = _swig_property(_medfilter.med_memfile_app_image_size_get, _medfilter.med_memfile_app_image_size_set)
+    __swig_setmethods__["ref_count"] = _medfilter.med_memfile_ref_count_set
+    __swig_getmethods__["ref_count"] = _medfilter.med_memfile_ref_count_get
+    if _newclass:ref_count = _swig_property(_medfilter.med_memfile_ref_count_get, _medfilter.med_memfile_ref_count_set)
+    __swig_setmethods__["fapl_image_ptr"] = _medfilter.med_memfile_fapl_image_ptr_set
+    __swig_getmethods__["fapl_image_ptr"] = _medfilter.med_memfile_fapl_image_ptr_get
+    if _newclass:fapl_image_ptr = _swig_property(_medfilter.med_memfile_fapl_image_ptr_get, _medfilter.med_memfile_fapl_image_ptr_set)
+    __swig_setmethods__["fapl_image_size"] = _medfilter.med_memfile_fapl_image_size_set
+    __swig_getmethods__["fapl_image_size"] = _medfilter.med_memfile_fapl_image_size_get
+    if _newclass:fapl_image_size = _swig_property(_medfilter.med_memfile_fapl_image_size_get, _medfilter.med_memfile_fapl_image_size_set)
+    __swig_setmethods__["fapl_ref_count"] = _medfilter.med_memfile_fapl_ref_count_set
+    __swig_getmethods__["fapl_ref_count"] = _medfilter.med_memfile_fapl_ref_count_get
+    if _newclass:fapl_ref_count = _swig_property(_medfilter.med_memfile_fapl_ref_count_get, _medfilter.med_memfile_fapl_ref_count_set)
+    __swig_setmethods__["vfd_image_ptr"] = _medfilter.med_memfile_vfd_image_ptr_set
+    __swig_getmethods__["vfd_image_ptr"] = _medfilter.med_memfile_vfd_image_ptr_get
+    if _newclass:vfd_image_ptr = _swig_property(_medfilter.med_memfile_vfd_image_ptr_get, _medfilter.med_memfile_vfd_image_ptr_set)
+    __swig_setmethods__["vfd_image_size"] = _medfilter.med_memfile_vfd_image_size_set
+    __swig_getmethods__["vfd_image_size"] = _medfilter.med_memfile_vfd_image_size_get
+    if _newclass:vfd_image_size = _swig_property(_medfilter.med_memfile_vfd_image_size_get, _medfilter.med_memfile_vfd_image_size_set)
+    __swig_setmethods__["vfd_ref_count"] = _medfilter.med_memfile_vfd_ref_count_set
+    __swig_getmethods__["vfd_ref_count"] = _medfilter.med_memfile_vfd_ref_count_get
+    if _newclass:vfd_ref_count = _swig_property(_medfilter.med_memfile_vfd_ref_count_get, _medfilter.med_memfile_vfd_ref_count_set)
+    __swig_setmethods__["flags"] = _medfilter.med_memfile_flags_set
+    __swig_getmethods__["flags"] = _medfilter.med_memfile_flags_get
+    if _newclass:flags = _swig_property(_medfilter.med_memfile_flags_get, _medfilter.med_memfile_flags_set)
+    def __init__(self): 
+        """__init__(self) -> med_memfile"""
+        this = _medfilter.new_med_memfile()
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _medfilter.delete_med_memfile
+    __del__ = lambda self : None;
+med_memfile_swigregister = _medfilter.med_memfile_swigregister
+med_memfile_swigregister(med_memfile)
+
 MED_PARTICLE_NAME = _medfilter.MED_PARTICLE_NAME
 MED_BALL_NAME = _medfilter.MED_BALL_NAME
 MED_BEAM_NAME = _medfilter.MED_BEAM_NAME

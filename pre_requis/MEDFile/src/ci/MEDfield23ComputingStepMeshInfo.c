@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -54,7 +54,7 @@ MEDfield23ComputingStepMeshInfo(const med_idt         fid,
 
 
 {
-  char *  name = "_MEDfield23ComputingStepMeshInfo";
+  const char *  const name = "_MEDfield23ComputingStepMeshInfo";
   int     dummy=0;
   med_err fret=-1;
   med_int majeur, mineur, release;

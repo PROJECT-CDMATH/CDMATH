@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -21,6 +21,7 @@
 #include <med_outils.h>
 #include <hdf5.h>
 
+#include <assert.h>
 
 med_err _MEDdatasetRd(const med_idt               id,
 		      const char * const          datasetname,
@@ -39,6 +40,10 @@ med_err _MEDdatasetRd(const med_idt               id,
 
   hsize_t   _sizespace   [H5S_MAX_RANK];
   hsize_t   _maxsizespace[H5S_MAX_RANK];
+  hsize_t   _memspacesizetmp[H5S_MAX_RANK];
+  hsize_t   _maxmemspacesize[H5S_MAX_RANK];
+  hsize_t   _memspacesize=0;
+
   hsize_t   _dim=0;
 
 
@@ -88,7 +93,7 @@ med_err _MEDdatasetRd(const med_idt               id,
     }
 
 
-  /* Calculate dataset size*/
+  /* Calculate dataset size for checking */
   _nvaluesperentity     = (*filter).nvaluesperentity;
   _nconstituentpervalue = (*filter).nconstituentpervalue;
   if ( (!_nvaluesperentity)  || (!_nconstituentpervalue) ) {
@@ -161,7 +166,21 @@ med_err _MEDdatasetRd(const med_idt               id,
  case MED_INTERNAL_SNAME:
  case MED_INTERNAL_NAME:
  case MED_INTERNAL_LNAME:
-   value[_datasetsize[0]*_dim]='\0';
+   /* for (_i=0; _i < (*filter).nspaces; ++_i) { */
+   /*   H5Sget_simple_extent_dims((*filter).memspace[_i], _memspacesizetmp, _maxmemspacesize); */
+   /*   if (_i > 0) assert( _memspacesize == _memspacesizetmp[0]); */
+   /*   _memspacesize = _memspacesizetmp[0]; */
+   /* } */
+   H5Sget_simple_extent_dims((*filter).memspace[0],  &_memspacesize, _maxmemspacesize);
+
+   /* ISCRUTE_size(_memspacesize); */
+   /* ISCRUTE_size((*filter).nspaces); */
+   /* ISCRUTE_size(_memspacesize*(*filter).nspaces*_dim); */
+   /* Le calcul : _memspacesize*(*filter).nspaces*_dim est faux
+      car seule une composante est selectionnée par memspace de taille memspacesize comprenant 
+      les n composantes */
+
+   value[_memspacesize*_dim]='\0';
    break;
  default:
    break;

@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -44,7 +44,8 @@ MEDmeshGridTypeWr(const med_idt fid,
   med_mesh_type _meshtype;
   med_int       _intmeshtype=MED_UNDEF_MESH_TYPE;
   med_int       _intgridtype=gridtype;
-
+  med_int       _intaxistype=0;
+  med_axis_type _axistype=MED_UNDEF_AXIS_TYPE;
   /*
    * On inhibe le gestionnaire d'erreur
    */
@@ -74,7 +75,30 @@ MEDmeshGridTypeWr(const med_idt fid,
     SSCRUTE(meshname);SSCRUTE(MED_NOM_TYP);ISCRUTE_int(_meshtype); goto ERROR;
   }
 
- /*
+  /* - Une grille MED_CARTESIAN_GRID doit utiliser un système de coordonnées
+   *  MED_CARTESIAN
+   *  - Une grille MED_POLAR_GRID peut utiliser un système de coordonnées
+   *  MED_CYLINDRICAL ou MED_SPHERICAL
+   *  - Une Grille MED_CURVILINEAR_GRID peut utiliser un système de coordonnées
+   *  quelconque.
+   */
+  if ( _MEDattrEntierLire(_meshid,MED_NOM_REP,&_intaxistype) < 0) {
+    MED_ERR_(_ret,MED_ERR_READ,MED_ERR_ATTRIBUTE,MED_ERR_MESH_MSG);
+    SSCRUTE(meshname);SSCRUTE(MED_NOM_REP); goto ERROR;
+  }
+  _axistype = (med_axis_type) (_intaxistype);
+
+  if (
+      ( (gridtype == MED_CARTESIAN_GRID) &&  (_axistype != MED_CARTESIAN  )     ) ||
+      ( (gridtype == MED_POLAR_GRID    ) && ((_axistype != MED_CYLINDRICAL) && 
+					     (_axistype != MED_SPHERICAL  )    ))
+      ) {
+    MED_ERR_(_ret,MED_ERR_RANGE,MED_ERR_AXISTYPE,MED_ERR_MESH_MSG);
+    SSCRUTE(meshname);ISCRUTE(_intaxistype);goto ERROR;
+  }
+
+
+  /*
    * Creation de l'attribut correspondant au type de grille
    * L'attribut "GTY"
    */

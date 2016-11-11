@@ -17,6 +17,10 @@ SET(cfi_SOURCES
   MEDversionedApi3F.cxx
   )
 
+IF(MEDFILE_USE_MPI)
+  LIST(APPEND cfi_SOURCES parfilecf.c)
+ENDIF(MEDFILE_USE_MPI)
+
 ADD_DEFINITIONS(-DNOGDI)
   
 # Intermediary target

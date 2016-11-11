@@ -1,5 +1,7 @@
 %MedException(MEDfileOpen)
+%MedException(MEDmemFileOpen)
 %MedException(MEDparFileOpen)
+%MedException(MEDfileName)
 %MedException(MEDfileClose)
 %MedException(MEDfileCommentWr)
 %MedException(MEDfileCommentRd)

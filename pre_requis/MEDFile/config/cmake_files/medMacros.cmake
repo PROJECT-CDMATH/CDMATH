@@ -56,6 +56,21 @@ MACRO(MED_CREATE_CONFIG_FILES)
     FILE(WRITE ${PROJECT_BINARY_DIR}/include/2.3.6/med_config.h.cmake "${f_content_new}")
 ENDMACRO(MED_CREATE_CONFIG_FILES)
 
+##
+## Macro to extract version numbers from Autotools file
+##
+MACRO(MED_EXTRACT_AUTOTOOLS_VERSION filename major minor release)
+  FILE(READ ${filename} _f_content)
+  STRING(REGEX MATCH "MED_NUM_MAJEUR=([0-9]+)" _output_unused ${_f_content})
+  SET(${major} ${CMAKE_MATCH_1})
+  
+  STRING(REGEX MATCH "MED_NUM_MINEUR=([0-9]+)" _output_unused ${_f_content})
+  SET(${minor} ${CMAKE_MATCH_1})
+  
+  STRING(REGEX MATCH "MED_NUM_RELEASE=([0-9]+)" _output_unused ${_f_content})
+  SET(${release} ${CMAKE_MATCH_1})
+ENDMACRO(MED_EXTRACT_AUTOTOOLS_VERSION)
+
 ###############################################################################
 ## Macro to set compilation flag for target
 ###############################################################################

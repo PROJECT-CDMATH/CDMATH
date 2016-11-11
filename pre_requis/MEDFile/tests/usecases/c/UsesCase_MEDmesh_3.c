@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -173,7 +173,7 @@ int main (int argc, char **argv) {
   }
   
   /* 
-   * ... we know that the family number of nodes and elements is 0, a real working would check ...
+   * ... we know that the family number of nodes and elements is 0, a real code would check ...
    */
   ret=0;
  ERROR:

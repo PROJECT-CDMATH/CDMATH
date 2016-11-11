@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -210,7 +210,7 @@ void MAJ_236_300_champs(med_idt fid)
     ret = MEDlinkRd(fid, nomlien, lien );
     EXIT_IF(ret,"Erreur a la lecture du lien : ",nomlien);
 
-    MAJ_version(fid);
+    MAJ_version_num(fid,3,0,8);
     ret = MED30linkWr(fid,nomlien,lien);
     EXIT_IF(ret,"Erreur a l'écrtiure du lien : ",nomlien);
     MAJ_version_num(fid,2,3,6);
@@ -247,7 +247,7 @@ void MAJ_236_300_champs(med_idt fid)
     MED_ERR_EXIT_IF(ret,MED_ERR_ACCESS,MED_ERR_FIELD,nomcha);
 
     /* creation du champ destination */
-    MAJ_version(fid);
+    MAJ_version_num(fid,3,0,8);
 
     EXIT_IF( H5Gmove(fid, _pathi, _pathtmp  ) < 0,"Switch to ",_pathtmp);
     _datasetexist=H5Lexists( fid, _pathf, H5P_DEFAULT );

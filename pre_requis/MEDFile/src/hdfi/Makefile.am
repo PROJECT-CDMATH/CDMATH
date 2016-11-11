@@ -18,6 +18,8 @@ _MEDfilterBlockOfEntityNoICompactCr.c \
 _MEDdatasetWr.c \
 _MEDdatasetRd.c \
 _MEDfileOpen.c \
+_MEDfileName.c \
+_MEDmemFileOpen.c \
 _MEDfileCreate.c \
 _MEDnObjects.c \
 __MEDobjectGetName.c \

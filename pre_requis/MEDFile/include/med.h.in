@@ -1,7 +1,7 @@
 /* -*- mode:C; coding:utf-8 -*- */
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -52,7 +52,7 @@ extern "C" {
 #define MED_NUM_RELEASE @MED_NUM_RELEASE@
 
 #define STR(x) #x
-#define _MED_VERSION(x,y,z) STR(x)"."STR(y)"."STR(z)
+#define _MED_VERSION(x,y,z) STR(x) "." STR(y) "." STR(z)
 #define MED_VERSION_STR _MED_VERSION(MED_NUM_MAJEUR,MED_NUM_MINEUR,MED_NUM_RELEASE)
 
 @MED_DEFINE_MED_HAVE_MPI@
@@ -79,8 +79,10 @@ extern "C" {
     \details Indique le mode d'entrelacement utilisé en mémoire par l'application.
 */
 /* 2.3v3.0 ok*/
-typedef enum {MED_FULL_INTERLACE, /**<Exemple avec 3 composantes X,Y,Z : X1Y1Z1X2Y2Z2X3Y3Z3...*/
-	      MED_NO_INTERLACE,    /**<Exemple avec 3 composantes X,Y,Z : X1X2X3Y1Y2Y3Z1Z2Z3...*/
+typedef enum {MED_FULL_INTERLACE, /**<Exemple avec 3 composantes X,Y,Z : X1Y1Z1X2Y2Z2X3Y3Z3...
+				      Exemple avec 3 MED_TRIA3 T1,T2,T3 : N11N12N13 N21N22N23 N31N32N33 */
+	      MED_NO_INTERLACE,    /**<Exemple avec 3 composantes X,Y,Z : X1X2X3Y1Y2Y3Z1Z2Z3...
+				       Exemple avec 3 MED_TRIA3 T1,T2,T3 : N11N21N31 N12N22N32 N13N23N33 */
               MED_UNDEF_INTERLACE=-1/**<Mode d'entelacement non défini */
 	}  med_switch_mode;
 
@@ -249,28 +251,36 @@ typedef enum {MED_FALSE, MED_TRUE} med_bool ;
 
 #define MED_NO_IPOINT_INTERNAL 1       /**< \internal */
 
-#define MED_NO_PROFILE ""                     /**<Indique l'absence de profil. 
-					       Ceci est équivalent à un profil qui sélectionne tous les éléments 
-					      \internal L'utilisation d'une chaine vide permet de tester rapidement la taille*/
+#define MED_NO_PROFILE ""                     /**< Indique l'absence de profil. 
+						 Ce profil est équivalent à celui qui sélectionne 
+						 tous les éléments #MED_ALLENTITIES_PROFILE 
+						 \internal L'utilisation d'une chaine vide permet de tester rapidement la taille*/
 
 #define MED_NO_GROUP ""                 /**< Indique l'absence de groupe dans la famille 0 */
 
 #define MED_ALLENTITIES_PROFILE MED_NO_PROFILE /**<Indique qu'il s'agit d'un profil qui selectionne toutes les entités.
-					       Ceci est équivalent à #MED_NO_PROFILE . */	 
+						  Ce profil est équivalent à #MED_NO_PROFILE . */	 
 
 
 #define MED_NO_PROFILE_INTERNAL   "MED_NO_PROFILE_INTERNAL"   /**< \internal*/
 #define MED_SAME_PROFILE_INTERNAL "MED_SAME_PROFILE_INTERNAL" /**< \internal*/
 
-#define MED_ALL_CONSTITUENT 0                 /**<Nombre de constituants par valeur.
-                                               Celà peut être le nombre de coordonnées des noeuds, le nombre de noeuds d'une connectivité, 
-	                                       le nombre de composantes d'un champ résultat.*/
+#define MED_ALL_CONSTITUENT 0                 /**<Selectionne tous les constituants d'une valeur.
+						 Les constituants d'une valeur peuvent être les composantes
+						 des coordonnées des noeuds, les noeuds d'une connectivité nodal, 
+						 les composantes d'un champ. */
 #define MED_UNDEF_SIZE 0
 #define MED_NO_PROFILE_SIZE 0  /**<Fourni une valeur de taille de profil par défaut d'utilisation de la notion de profil.*/
 
-typedef enum {MED_SORT_DTIT,MED_SORT_ITDT,MED_SORT_UNDEF=-1 } med_sorting_type; /**<Indique l'ordre de tri des séquences d'évolution d'un maillage.
-                                                                                    Cette ordre est important pour la gestion des informations d'un maillage qui ont changés
-                                                                                    d'une séquence d'évolution à une autre. */
+typedef enum {MED_SORT_DTIT,MED_SORT_ITDT,MED_SORT_UNDEF=-1 } med_sorting_type; /**<Indique l'ordre de tri des séquences de calcul d'un maillage.
+                                                                                    Cette ordre, fixé à la création du maillage 
+										    est important pour comparer l'évolution du maillage
+                                                                                    d'une séquence de calcul à une autre.
+										    Utilisé conjointement avec les profils, 
+										    il permet de réduire les écritures aux 
+										    seules informations modifiées  par rapport 
+										    à la séquence de calcul précédente. */
+
 #define MED_NO_DT -1 /**<Indique que l'on n'utilise pas la notion de date.*/
 #define MED_NO_IT -1 /**<Indique que l'on n'utilise pas la notion d'itération.*/
 #define MED_UNDEF_DT 0 /**<Fourni une valeur de date par défaut d'utilisation de la notion de date.*/
@@ -333,6 +343,25 @@ typedef struct {
   med_int majeur; med_int mineur; med_int release;
 } med_file_version;
 #define MED_FILE_VERSION_INIT {0, 0, 0};
+
+/** \struct med_memfile
+    \brief  Structure d'acceuil du buffer d'un fichier MED en mémoire.
+*/
+typedef struct {
+  void *app_image_ptr; /**< Pointeur de l'emplacement contenant l'image mémoire au format MED */ 
+  size_t app_image_size; /**< La taille  de l'image mémoire*/
+  int ref_count; /**< Counteur de référence sur le nombre d'utilisation d'une image mémoire */
+
+  void *fapl_image_ptr; /**< \internal Pointer to FAPL buffer */
+  size_t fapl_image_size;/**< \internal Size of FAPL buffer */
+  int fapl_ref_count; /**< \internal Reference counter for FAPL buffer */
+  void *vfd_image_ptr; /**< \internal Pointer to VFD buffer */
+  size_t vfd_image_size; /**< \internal Size of VFD buffer */
+  int vfd_ref_count; /**< \internal Reference counter for VFD buffer */
+  med_access_mode flags; /**< \internal Flags indicate how the file image will be open */
+} med_memfile ;
+
+#define MED_MEMFILE_INIT {NULL, 0, 1, NULL, 0, 0, NULL, 0, 0, MED_ACC_RDONLY}
 
 
 #include "med_proto.h"

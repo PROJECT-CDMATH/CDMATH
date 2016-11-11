@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -29,6 +29,10 @@ MEDC_EXPORT med_idt
 MEDfileOpen(const char* const filename,
 	    const med_access_mode accessmode);
 
+MEDC_EXPORT med_idt
+MEDmemFileOpen(const char* const filename, med_memfile * const memfile, const med_bool filesync,
+	       const med_access_mode accessmode);
+
 #ifdef MED_HAVE_MPI
 MEDC_EXPORT med_idt
 MEDparFileOpen(const char* const filename,
@@ -36,6 +40,9 @@ MEDparFileOpen(const char* const filename,
 	       const MPI_Comm comm, const MPI_Info info);
 
 #endif
+
+MEDC_EXPORT med_int
+MEDfileName(med_idt fid, char * const filename, const med_int filenamesize);
 
 MEDC_EXPORT med_err
 MEDfileClose(med_idt fid);

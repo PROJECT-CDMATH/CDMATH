@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -68,7 +68,7 @@ med_err MAJ_236_300_equivalence(med_idt fid,const char * const maa)
 /*     printf("Nombre d'étapes de calcul : %d \n",nstep); */
 /*     printf("Nombre de correspondances pour l'étape de calcul MED_NO_DT,MED_NO_IT : %d \n",nocstpncor); */
 
-    MAJ_version(fid);
+    MAJ_version_num(fid,3,0,8);
     /* Creation de l'equivalence */
     if (MEDequivalenceCr(fid,maa,equ,des) < 0) {
       MESSAGE("Erreur a la creation de l'equivalence");
@@ -97,7 +97,7 @@ med_err MAJ_236_300_equivalence(med_idt fid,const char * const maa)
 /* 		 *(cor+2*j+1)); */
 
 	/* Ecriture des equivalences sur les noeuds */
-	MAJ_version(fid);
+	MAJ_version_num(fid,3,0,8);
 	if (MEDequivalenceCorrespondenceWr(fid,maa,equ,MED_NO_DT,MED_NO_IT,
 					   MED_NODE,MED_NONE,ncor,cor) < 0) {
 	  MESSAGE("Erreur a l'ecriture du tableau des correspondances");
@@ -132,7 +132,7 @@ med_err MAJ_236_300_equivalence(med_idt fid,const char * const maa)
 /* 	      printf("Correspondance %d : "IFORMAT" et "IFORMAT" \n",k+1,*(cor+2*k), */
 /* 		     *(cor+2*k+1)); */
 	    /* Ecriture des equivalences sur les mailles */
-	    MAJ_version(fid);
+	    MAJ_version_num(fid,3,0,8);
 	    if (MEDequivalenceCorrespondenceWr(fid,maa,equ,MED_NO_DT,MED_NO_IT,
 					       MED_CELL,typmai[j],ncor,cor) < 0) {
 	      MESSAGE("Erreur a l'ecriture du tableau des correspondances");
@@ -169,7 +169,7 @@ med_err MAJ_236_300_equivalence(med_idt fid,const char * const maa)
 /* 		     *(cor+2*k+1)); */
 
 	    /* Ecriture des equivalences sur les mailles */
-	    MAJ_version(fid);
+	    MAJ_version_num(fid,3,0,8);
 	    if (MEDequivalenceCorrespondenceWr(fid,maa,equ,MED_NO_DT,MED_NO_IT,
 					       MED_DESCENDING_FACE,typfac[j],ncor,cor) < 0) {
 	      MESSAGE("Erreur a l'ecriture du tableau des correspondances");
@@ -206,7 +206,7 @@ med_err MAJ_236_300_equivalence(med_idt fid,const char * const maa)
 /* 		     *(cor+2*k+1)); */
 
 	    /* Ecriture des equivalences sur les mailles */
-	    MAJ_version(fid);
+	    MAJ_version_num(fid,3,0,8);
 	    if (MEDequivalenceCorrespondenceWr(fid,maa,equ,MED_NO_DT,MED_NO_IT,
 					       MED_DESCENDING_EDGE,typare[j],ncor,cor) < 0) {
 	      MESSAGE("Erreur a l'ecriture du tableau des correspondances");

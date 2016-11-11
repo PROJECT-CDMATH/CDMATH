@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -85,11 +85,6 @@ void _MEDmeshGridIndexCoordinateRd30(int dummy, ...) {
     MED_ERR_(_ret,MED_ERR_READ,MED_ERR_ATTRIBUTE,MED_ERR_MESH_MSG);
     SSCRUTE(meshname);SSCRUTE(MED_NOM_REP);
     ISCRUTE(_intaxistype);goto ERROR;
-  }
-
-  if ((med_mesh_type)( _intaxistype) != MED_CARTESIAN ) {
-    MED_ERR_(_ret,MED_ERR_RANGE,MED_ERR_AXISTYPE,MED_ERR_MESH_MSG);
-    SSCRUTE(meshname);ISCRUTE(_intaxistype);goto ERROR;
   }
 
   /* Lecture de l'attribut MED_NOM_DIM  */

@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -85,7 +85,7 @@ _MEDfield23ComputingStepMeshInfo30(int dummy,...)
   }
 
   /*
-   * On recupere le nom du champ
+   * On recupere le nom de la séquence de calcul 
    */
   if ( _MEDobjectGetName(fid, _path ,_num, _cstpname) < 0 ) {
     MED_ERR_(_ret,MED_ERR_ACCESS,MED_ERR_DATAGROUP,_path);ISCRUTE_int(_num);

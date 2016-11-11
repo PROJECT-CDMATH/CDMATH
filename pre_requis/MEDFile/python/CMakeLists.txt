@@ -5,6 +5,7 @@ INCLUDE_DIRECTORIES(
   ${PROJECT_SOURCE_DIR}/include
   ${PROJECT_BINARY_DIR}/include
   ${HDF5_INCLUDE_DIRS}
+  ${MPI_INCLUDE_DIRS}
   )
 
 SET(_swig_files 

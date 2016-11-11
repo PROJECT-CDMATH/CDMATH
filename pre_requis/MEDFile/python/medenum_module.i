@@ -91,7 +91,7 @@
   const enum_ MED_AXIS_TYPE_init[] = {
     enum_(0 ,"MED_CARTESIAN"),
     enum_(1 ,"MED_CYLINDRICAL"),
-    enum_(1 ,"MED_SPHERICAL"),
+    enum_(2 ,"MED_SPHERICAL"),
     enum_(-1,"MED_UNDEF_AXIS_TYPE")
   };
 %}

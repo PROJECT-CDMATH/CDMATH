@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -123,6 +123,7 @@
 #define MED_ERR_CORRESPONDENCE -43
 #define MED_ERR_DIMENSION -44
 #define MED_ERR_FILEVERSION -45
+#define MED_ERR_MEMFILE -46
 
 #define MED_ERR_FILE_MSG "du fichier "
 #define MED_ERR_MESH_MSG "du maillage "
@@ -170,6 +171,7 @@
 #define MED_ERR_CORRESPONDENCE_MSG "de la correspondance "
 #define MED_ERR_DIMENSION_MSG "de dimension"
 #define MED_ERR_FILEVERSION_MSG "de version de fichier"
+#define MED_ERR_MEMFILE_MSG "de fichier mémoire"
 
 /*COMPLEMENTS*/
 #define MED_ERR_VALUE_MSG "de valeur "

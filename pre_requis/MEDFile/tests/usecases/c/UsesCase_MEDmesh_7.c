@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -62,7 +62,7 @@ int main (int argc, char **argv) {
 
   /* 
    * ... we know that the MED file has only one mesh, 
-   * a real code working would check ... 
+   * a real code would check ... 
    */
 
   /* read mesh informations : mesh dimension, space dimension ... */
@@ -82,7 +82,7 @@ int main (int argc, char **argv) {
   
   /* 
    * ... we know that we only have MED_TRIA3 and MED_QUAD4 in the mesh, 
-   * a real code working would check all MED geometry cell types ... 
+   * a real code would check all MED geometry cell types ... 
    */
 
   /* read how many triangular cells in the mesh */
@@ -140,7 +140,7 @@ int main (int argc, char **argv) {
   free(quadconnectivity);
 
   /* 
-   * ... we know that the family number of nodes and elements is 0, a real working would check ...
+   * ... we know that the family number of nodes and elements is 0, a real code would check ...
    */
 
   /* read nodes coordinates changements step by step */

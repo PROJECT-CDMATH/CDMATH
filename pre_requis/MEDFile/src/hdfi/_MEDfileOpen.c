@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -52,6 +52,16 @@ H5AC_cache_config_t config;
     goto ERROR;
   }
 
+
+  /* Ce ligne présente depuis la 3.0 impose l'utilisation du modèle
+   de données HDF 1.8 pour :
+  - Utiliser les nouvelles représentations plus efficaces que dans
+  les versions précédentes
+  - Empêcher l'utilisation de nvlle représentations d'une future bibliothèque hdf 1.9 :
+  qui posèrerait d'eventuels problèmes de relecture aux bibliothèques med
+  utilisant encore la 1.8 (ce choix doit être manuel) :
+  Les fichier HDF 1.8 utilisent la nouvelle représentation des liens au sein des groupes :
+  compact (header) ou dense (hors header)  */
   if ( H5Pset_libver_bounds( _fapl, H5F_LIBVER_18, H5F_LIBVER_18 ) ) {
     MED_ERR_(_fid,MED_ERR_INIT,MED_ERR_PROPERTY,MED_ERR_FILEVERSION_MSG);
     goto ERROR;
@@ -60,7 +70,7 @@ H5AC_cache_config_t config;
   if ((_fid = H5Fopen(filename,_hdf_mode,_fapl)) < 0) {
     MED_ERR_(_fid,MED_ERR_OPEN,MED_ERR_FILE,"");
     ISCRUTE_int(accessmode);
-/* Ne pas active la ligne suivante en production, car certains code utlisent MEDfileOpen
+/* Ne pas activer la ligne suivante en production, car certains code utlisent MEDfileOpen
 pour tester la présence d'un fichier */
 /*    H5Eprint1(stderr); */
     goto ERROR;

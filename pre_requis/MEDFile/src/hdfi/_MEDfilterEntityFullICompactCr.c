@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -98,11 +98,9 @@ med_err _MEDfilterEntityFullICompactCr(const med_idt          fid,
     _filterarraysize = filterarraysize;
   }
 
-  _fltmemsize[0] = _filterarraysize*nvaluesperentity*_dimutil;
-  _fltmem        = (med_size *) malloc (sizeof(med_size)*_fltmemsize[0]);
-
-  /*Il s'agit bien de la taille du profile et nom du filtre*/
-  _memspacesize[0]  = _profilearraysize*nvaluesperentity*nconstituentpervalue;
+  _fltmemsize[0]    = _filterarraysize*nvaluesperentity*_dimutil;
+  _fltmem           = (med_size *) malloc (sizeof(med_size)*_fltmemsize[0]);
+  _memspacesize[0]  = _filterarraysize*nvaluesperentity*nconstituentpervalue;
 
   if ( (_memspace[0] = H5Screate_simple (1, _memspacesize, NULL)) <0) {
     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_MEMSPACE,MED_ERR_ID_MSG);
@@ -113,9 +111,8 @@ med_err _MEDfilterEntityFullICompactCr(const med_idt          fid,
   }
 
   /*Dimensionement profil interne et diskspace */
-  _pfldisksize[0] = _fltmemsize[0];
-  _pfldisk        = (med_size *) malloc (sizeof(med_size)*_pfldisksize[0]);
-
+  _pfldisksize[0]            = _fltmemsize[0];
+  _pfldisk                   = (med_size *) malloc (sizeof(med_size)*_pfldisksize[0]);
   _onedimallvaluesdiskoffset = _profilearraysize*nvaluesperentity;
   _diskspacesize[0]          = _onedimallvaluesdiskoffset*nconstituentpervalue;
 
@@ -127,12 +124,12 @@ med_err _MEDfilterEntityFullICompactCr(const med_idt          fid,
 
   _index=0;
   for (_dim=_firstdim; _dim < _lastdim; ++_dim) {
-    for (_i=0; _i < _filterarraysize; _i++) {              /* i balaye les élements du profil */
+    for (_i=0; _i < _filterarraysize; _i++) {              /* i balaye les élements du filtre */
       for (_j=0; _j < nvaluesperentity; _j++) {
 	/*On peut remplacer nconstituentpervalue par _dimutil si lorsque l'on demande qu'une composante
 	  on suppose qu'en stockage compact on ne réserve pas les différentes composantes */
-	_fltmem[_index] = _filterarrayfunc(filterarray,_i)*nvaluesperentity*nconstituentpervalue
-	  + _j*nconstituentpervalue+_dim;
+	_fltmem[_index] = _i*nvaluesperentity*nconstituentpervalue
+	                                     + _j*nconstituentpervalue+_dim;
 	_pfldisk[_index] = _dim*_onedimallvaluesdiskoffset + _filterarrayfunc(filterarray,_i)*nvaluesperentity+_j;
 #ifdef _DEBUG_
 	printf("FullCmq :_fltmem[%d]=%llu -- _pfldisk[%d]=%llu \n",_index,_fltmem[_index],_index,_pfldisk[_index]);
@@ -166,7 +163,6 @@ med_err _MEDfilterEntityFullICompactCr(const med_idt          fid,
     MED_ERR_(_ret,MED_ERR_INIT,MED_ERR_FILTER,"");
     goto ERROR;
   }
-
   _ret = 0;
 
  ERROR:

@@ -1,7 +1,7 @@
-//Gestion des chaînes de caractères
+// Gestion des chaînes de caractères
 // Les  lignes suivantes evitent à SWIG de mapper les const char * const avec
 // les règles cstring_bounded_output des char * const
-// Rem : Le paramètre ParamLength n'est utile que pour le char *
+// Rem : Le paramètre ParamLength n'est utile que pour le char * const (OUT)
 %define %med_char_typemaps(Module,ParamName,ParamLength)
 %typemap(in,noblock=1) (const char * const ParamName) (int res, char *buf = 0, int alloc = 0)  {
   res = SWIG_AsCharPtrAndSize($input, &buf, NULL, &alloc);

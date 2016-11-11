@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -23,7 +23,7 @@
 #include <stdlib.h>
 
 /**\ingroup MEDmesh
-  \brief \MEDmeshEntityAttributeAdvancedRdBrief
+  \brief \MEDmeshEntityAttributeAdvancedBrief{de lire}
   \param fid \fid
   \param meshname \meshname
   \param datatype \datatype
@@ -34,9 +34,9 @@
   \param filter \filter
   \param attval \attributevalue
   \retval med_err \error
-  \details \MEDmeshEntityAttributeAdvancedRdDetails
+  \details \MEDmeshEntityAttributeAdvancedDetails{de lire}
   \remarks
-  \MEDmeshEntityAttributeAdvancedRdRem
+  \MEDmeshEntityAttributeAdvancedRem
  */
 
 med_err MEDmeshEntityAttributeAdvancedRd(const med_idt               fid,

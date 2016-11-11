@@ -2985,14 +2985,16 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_med_filter swig_types[22]
 #define SWIGTYPE_p_med_grid_type swig_types[23]
 #define SWIGTYPE_p_med_internal_type swig_types[24]
-#define SWIGTYPE_p_med_mesh_type swig_types[25]
-#define SWIGTYPE_p_med_sorting_type swig_types[26]
-#define SWIGTYPE_p_med_storage_mode swig_types[27]
-#define SWIGTYPE_p_med_switch_mode swig_types[28]
-#define SWIGTYPE_p_p_char swig_types[29]
-#define SWIGTYPE_p_unsigned_long_long swig_types[30]
-static swig_type_info *swig_types[32];
-static swig_module_info swig_module = {swig_types, 31, 0, 0, 0, 0};
+#define SWIGTYPE_p_med_memfile swig_types[25]
+#define SWIGTYPE_p_med_mesh_type swig_types[26]
+#define SWIGTYPE_p_med_sorting_type swig_types[27]
+#define SWIGTYPE_p_med_storage_mode swig_types[28]
+#define SWIGTYPE_p_med_switch_mode swig_types[29]
+#define SWIGTYPE_p_p_char swig_types[30]
+#define SWIGTYPE_p_unsigned_long_long swig_types[31]
+#define SWIGTYPE_p_void swig_types[32]
+static swig_type_info *swig_types[34];
+static swig_module_info swig_module = {swig_types, 33, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3385,6 +3387,81 @@ SWIG_AsCharArray(PyObject * obj, char *val, size_t size)
 }
 
 
+SWIGINTERN int
+SWIG_AsVal_unsigned_SS_long (PyObject *obj, unsigned long *val) 
+{
+#if PY_VERSION_HEX < 0x03000000
+  if (PyInt_Check(obj)) {
+    long v = PyInt_AsLong(obj);
+    if (v >= 0) {
+      if (val) *val = v;
+      return SWIG_OK;
+    } else {
+      return SWIG_OverflowError;
+    }
+  } else
+#endif
+  if (PyLong_Check(obj)) {
+    unsigned long v = PyLong_AsUnsignedLong(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_OK;
+    } else {
+      PyErr_Clear();
+    }
+  }
+#ifdef SWIG_PYTHON_CAST_MODE
+  {
+    int dispatch = 0;
+    unsigned long v = PyLong_AsUnsignedLong(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_AddCast(SWIG_OK);
+    } else {
+      PyErr_Clear();
+    }
+    if (!dispatch) {
+      double d;
+      int res = SWIG_AddCast(SWIG_AsVal_double (obj,&d));
+      if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, 0, ULONG_MAX)) {
+	if (val) *val = (unsigned long)(d);
+	return res;
+      }
+    }
+  }
+#endif
+  return SWIG_TypeError;
+}
+
+
+SWIGINTERNINLINE int
+SWIG_AsVal_size_t (PyObject * obj, size_t *val)
+{
+  unsigned long v;
+  int res = SWIG_AsVal_unsigned_SS_long (obj, val ? &v : 0);
+  if (SWIG_IsOK(res) && val) *val = static_cast< size_t >(v);
+  return res;
+}
+
+
+  #define SWIG_From_long   PyLong_FromLong 
+
+
+SWIGINTERNINLINE PyObject* 
+SWIG_From_unsigned_SS_long  (unsigned long value)
+{
+  return (value > LONG_MAX) ?
+    PyLong_FromUnsignedLong(value) : PyLong_FromLong(static_cast< long >(value)); 
+}
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_From_size_t  (size_t value)
+{    
+  return SWIG_From_unsigned_SS_long  (static_cast< unsigned long >(value));
+}
+
+
   typedef std::pair<int,const char * const> enum_;
 
 
@@ -3699,7 +3776,7 @@ SWIGINTERN char *MED_ATTRIBUTE_TYPE___str__(MED_ATTRIBUTE_TYPE *self){
   const enum_ MED_AXIS_TYPE_init[] = {
     enum_(0 ,"MED_CARTESIAN"),
     enum_(1 ,"MED_CYLINDRICAL"),
-    enum_(1 ,"MED_SPHERICAL"),
+    enum_(2 ,"MED_SPHERICAL"),
     enum_(-1,"MED_UNDEF_AXIS_TYPE")
   };
 
@@ -4681,6 +4758,561 @@ SWIGINTERN PyObject *med_file_version_swigregister(PyObject *SWIGUNUSEDPARM(self
   PyObject *obj;
   if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
   SWIG_TypeNewClientData(SWIGTYPE_p_med_file_version, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_med_memfile_app_image_ptr_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  void *arg2 = (void *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:med_memfile_app_image_ptr_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_app_image_ptr_set" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1,SWIG_as_voidptrptr(&arg2), 0, SWIG_POINTER_DISOWN);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "med_memfile_app_image_ptr_set" "', argument " "2"" of type '" "void *""'"); 
+  }
+  if (arg1) (arg1)->app_image_ptr = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_app_image_ptr_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  void *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:med_memfile_app_image_ptr_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_app_image_ptr_get" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  result = (void *) ((arg1)->app_image_ptr);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_app_image_size_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  size_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:med_memfile_app_image_size_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_app_image_size_set" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "med_memfile_app_image_size_set" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  if (arg1) (arg1)->app_image_size = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_app_image_size_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  size_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:med_memfile_app_image_size_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_app_image_size_get" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  result =  ((arg1)->app_image_size);
+  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_ref_count_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:med_memfile_ref_count_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_ref_count_set" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "med_memfile_ref_count_set" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  if (arg1) (arg1)->ref_count = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_ref_count_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:med_memfile_ref_count_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_ref_count_get" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  result = (int) ((arg1)->ref_count);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_fapl_image_ptr_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  void *arg2 = (void *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:med_memfile_fapl_image_ptr_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_fapl_image_ptr_set" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1,SWIG_as_voidptrptr(&arg2), 0, SWIG_POINTER_DISOWN);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "med_memfile_fapl_image_ptr_set" "', argument " "2"" of type '" "void *""'"); 
+  }
+  if (arg1) (arg1)->fapl_image_ptr = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_fapl_image_ptr_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  void *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:med_memfile_fapl_image_ptr_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_fapl_image_ptr_get" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  result = (void *) ((arg1)->fapl_image_ptr);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_fapl_image_size_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  size_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:med_memfile_fapl_image_size_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_fapl_image_size_set" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "med_memfile_fapl_image_size_set" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  if (arg1) (arg1)->fapl_image_size = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_fapl_image_size_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  size_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:med_memfile_fapl_image_size_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_fapl_image_size_get" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  result =  ((arg1)->fapl_image_size);
+  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_fapl_ref_count_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:med_memfile_fapl_ref_count_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_fapl_ref_count_set" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "med_memfile_fapl_ref_count_set" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  if (arg1) (arg1)->fapl_ref_count = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_fapl_ref_count_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:med_memfile_fapl_ref_count_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_fapl_ref_count_get" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  result = (int) ((arg1)->fapl_ref_count);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_vfd_image_ptr_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  void *arg2 = (void *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:med_memfile_vfd_image_ptr_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_vfd_image_ptr_set" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  res2 = SWIG_ConvertPtr(obj1,SWIG_as_voidptrptr(&arg2), 0, SWIG_POINTER_DISOWN);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "med_memfile_vfd_image_ptr_set" "', argument " "2"" of type '" "void *""'"); 
+  }
+  if (arg1) (arg1)->vfd_image_ptr = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_vfd_image_ptr_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  void *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:med_memfile_vfd_image_ptr_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_vfd_image_ptr_get" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  result = (void *) ((arg1)->vfd_image_ptr);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_vfd_image_size_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  size_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:med_memfile_vfd_image_size_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_vfd_image_size_set" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "med_memfile_vfd_image_size_set" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  if (arg1) (arg1)->vfd_image_size = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_vfd_image_size_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  size_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:med_memfile_vfd_image_size_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_vfd_image_size_get" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  result =  ((arg1)->vfd_image_size);
+  resultobj = SWIG_From_size_t(static_cast< size_t >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_vfd_ref_count_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  int arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:med_memfile_vfd_ref_count_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_vfd_ref_count_set" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "med_memfile_vfd_ref_count_set" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  if (arg1) (arg1)->vfd_ref_count = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_vfd_ref_count_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:med_memfile_vfd_ref_count_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_vfd_ref_count_get" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  result = (int) ((arg1)->vfd_ref_count);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_flags_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  med_access_mode arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:med_memfile_flags_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_flags_set" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "med_memfile_flags_set" "', argument " "2"" of type '" "med_access_mode""'");
+  } 
+  arg2 = static_cast< med_access_mode >(val2);
+  if (arg1) (arg1)->flags = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_med_memfile_flags_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  med_access_mode result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:med_memfile_flags_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "med_memfile_flags_get" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  result = (med_access_mode) ((arg1)->flags);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_med_memfile(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_med_memfile")) SWIG_fail;
+  result = (med_memfile *)new med_memfile();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_med_memfile, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_med_memfile(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  med_memfile *arg1 = (med_memfile *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_med_memfile",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_med_memfile, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_med_memfile" "', argument " "1"" of type '" "med_memfile *""'"); 
+  }
+  arg1 = reinterpret_cast< med_memfile * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *med_memfile_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_med_memfile, SWIG_NewClientData(obj));
   return SWIG_Py_Void();
 }
 
@@ -6383,6 +7015,29 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"new_med_file_version", _wrap_new_med_file_version, METH_VARARGS, NULL},
 	 { (char *)"delete_med_file_version", _wrap_delete_med_file_version, METH_VARARGS, NULL},
 	 { (char *)"med_file_version_swigregister", med_file_version_swigregister, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_app_image_ptr_set", _wrap_med_memfile_app_image_ptr_set, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_app_image_ptr_get", _wrap_med_memfile_app_image_ptr_get, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_app_image_size_set", _wrap_med_memfile_app_image_size_set, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_app_image_size_get", _wrap_med_memfile_app_image_size_get, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_ref_count_set", _wrap_med_memfile_ref_count_set, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_ref_count_get", _wrap_med_memfile_ref_count_get, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_fapl_image_ptr_set", _wrap_med_memfile_fapl_image_ptr_set, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_fapl_image_ptr_get", _wrap_med_memfile_fapl_image_ptr_get, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_fapl_image_size_set", _wrap_med_memfile_fapl_image_size_set, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_fapl_image_size_get", _wrap_med_memfile_fapl_image_size_get, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_fapl_ref_count_set", _wrap_med_memfile_fapl_ref_count_set, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_fapl_ref_count_get", _wrap_med_memfile_fapl_ref_count_get, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_vfd_image_ptr_set", _wrap_med_memfile_vfd_image_ptr_set, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_vfd_image_ptr_get", _wrap_med_memfile_vfd_image_ptr_get, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_vfd_image_size_set", _wrap_med_memfile_vfd_image_size_set, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_vfd_image_size_get", _wrap_med_memfile_vfd_image_size_get, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_vfd_ref_count_set", _wrap_med_memfile_vfd_ref_count_set, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_vfd_ref_count_get", _wrap_med_memfile_vfd_ref_count_get, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_flags_set", _wrap_med_memfile_flags_set, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_flags_get", _wrap_med_memfile_flags_get, METH_VARARGS, NULL},
+	 { (char *)"new_med_memfile", _wrap_new_med_memfile, METH_VARARGS, NULL},
+	 { (char *)"delete_med_memfile", _wrap_delete_med_memfile, METH_VARARGS, NULL},
+	 { (char *)"med_memfile_swigregister", med_memfile_swigregister, METH_VARARGS, NULL},
 	 { (char *)"MED_MESH_TYPE_val_set", _wrap_MED_MESH_TYPE_val_set, METH_VARARGS, NULL},
 	 { (char *)"MED_MESH_TYPE_val_get", _wrap_MED_MESH_TYPE_val_get, METH_VARARGS, NULL},
 	 { (char *)"new_MED_MESH_TYPE", _wrap_new_MED_MESH_TYPE, METH_VARARGS, NULL},
@@ -6456,12 +7111,14 @@ static swig_type_info _swigt__p_med_file_version = {"_p_med_file_version", "med_
 static swig_type_info _swigt__p_med_filter = {"_p_med_filter", "med_filter *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_med_grid_type = {"_p_med_grid_type", "enum med_grid_type *|med_grid_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_med_internal_type = {"_p_med_internal_type", "enum med_internal_type *|med_internal_type *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_med_memfile = {"_p_med_memfile", "med_memfile *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_med_mesh_type = {"_p_med_mesh_type", "enum med_mesh_type *|med_mesh_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_med_sorting_type = {"_p_med_sorting_type", "enum med_sorting_type *|med_sorting_type *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_med_storage_mode = {"_p_med_storage_mode", "enum med_storage_mode *|med_storage_mode *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_med_switch_mode = {"_p_med_switch_mode", "enum med_switch_mode *|med_switch_mode *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_p_char = {"_p_p_char", "char **", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_long_long = {"_p_unsigned_long_long", "med_size *|hsize_t *|unsigned long long *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_void = {"_p_void", "void *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_Get__str__,
@@ -6489,12 +7146,14 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_med_filter,
   &_swigt__p_med_grid_type,
   &_swigt__p_med_internal_type,
+  &_swigt__p_med_memfile,
   &_swigt__p_med_mesh_type,
   &_swigt__p_med_sorting_type,
   &_swigt__p_med_storage_mode,
   &_swigt__p_med_switch_mode,
   &_swigt__p_p_char,
   &_swigt__p_unsigned_long_long,
+  &_swigt__p_void,
 };
 
 static swig_cast_info _swigc__p_Get__str__[] = {  {&_swigt__p_Get__str__, 0, 0, 0},{0, 0, 0, 0}};
@@ -6522,12 +7181,14 @@ static swig_cast_info _swigc__p_med_file_version[] = {  {&_swigt__p_med_file_ver
 static swig_cast_info _swigc__p_med_filter[] = {  {&_swigt__p_med_filter, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_med_grid_type[] = {  {&_swigt__p_med_grid_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_med_internal_type[] = {  {&_swigt__p_med_internal_type, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_med_memfile[] = {  {&_swigt__p_med_memfile, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_med_mesh_type[] = {  {&_swigt__p_med_mesh_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_med_sorting_type[] = {  {&_swigt__p_med_sorting_type, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_med_storage_mode[] = {  {&_swigt__p_med_storage_mode, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_med_switch_mode[] = {  {&_swigt__p_med_switch_mode, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_p_char[] = {  {&_swigt__p_p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_long_long[] = {  {&_swigt__p_unsigned_long_long, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_Get__str__,
@@ -6555,12 +7216,14 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_med_filter,
   _swigc__p_med_grid_type,
   _swigc__p_med_internal_type,
+  _swigc__p_med_memfile,
   _swigc__p_med_mesh_type,
   _swigc__p_med_sorting_type,
   _swigc__p_med_storage_mode,
   _swigc__p_med_switch_mode,
   _swigc__p_p_char,
   _swigc__p_unsigned_long_long,
+  _swigc__p_void,
 };
 
 
@@ -7245,8 +7908,8 @@ SWIG_init(void) {
   
   SWIG_InstallConstants(d,swig_const_table);
   
-  SWIG_Python_SetConstant(d, "ABSOLUTE_H5IPUBLIC_H",SWIG_FromCharPtr("///local/hdf5-1.8.8.bin//include/H5Ipublic.h"));
-  SWIG_Python_SetConstant(d, "ABSOLUTE_H5PUBLIC_H",SWIG_FromCharPtr("///local/hdf5-1.8.8.bin//include/H5public.h"));
+  SWIG_Python_SetConstant(d, "ABSOLUTE_H5IPUBLIC_H",SWIG_FromCharPtr("///local/hdf5-1.8.14.bin//include/H5Ipublic.h"));
+  SWIG_Python_SetConstant(d, "ABSOLUTE_H5PUBLIC_H",SWIG_FromCharPtr("///local/hdf5-1.8.14.bin//include/H5public.h"));
   SWIG_Python_SetConstant(d, "HAVE_CC_C99",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "HAVE_CUSERID",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "HAVE_DLFCN_H",SWIG_From_int(static_cast< int >(1)));
@@ -7282,24 +7945,24 @@ SWIG_init(void) {
   SWIG_Python_SetConstant(d, "PACKAGE",SWIG_FromCharPtr("med"));
   SWIG_Python_SetConstant(d, "PACKAGE_BUGREPORT",SWIG_FromCharPtr("eric.fayolle@edf.fr"));
   SWIG_Python_SetConstant(d, "PACKAGE_NAME",SWIG_FromCharPtr("MED Fichier"));
-  SWIG_Python_SetConstant(d, "PACKAGE_STRING",SWIG_FromCharPtr("MED Fichier 3.0.7"));
+  SWIG_Python_SetConstant(d, "PACKAGE_STRING",SWIG_FromCharPtr("MED Fichier 3.2.0"));
   SWIG_Python_SetConstant(d, "PACKAGE_TARNAME",SWIG_FromCharPtr("med"));
   SWIG_Python_SetConstant(d, "PACKAGE_URL",SWIG_FromCharPtr(""));
-  SWIG_Python_SetConstant(d, "PACKAGE_VERSION",SWIG_FromCharPtr("3.0.7"));
+  SWIG_Python_SetConstant(d, "PACKAGE_VERSION",SWIG_FromCharPtr("3.2.0"));
   SWIG_Python_SetConstant(d, "SIZEOF_FORTRAN_INTEGER",SWIG_From_int(static_cast< int >(4)));
   SWIG_Python_SetConstant(d, "SIZEOF_INT",SWIG_From_int(static_cast< int >(4)));
   SWIG_Python_SetConstant(d, "SIZEOF_LONG",SWIG_From_int(static_cast< int >(8)));
   SWIG_Python_SetConstant(d, "STDC_HEADERS",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "TIME_WITH_SYS_TIME",SWIG_From_int(static_cast< int >(1)));
-  SWIG_Python_SetConstant(d, "VERSION",SWIG_FromCharPtr("3.0.7"));
+  SWIG_Python_SetConstant(d, "VERSION",SWIG_FromCharPtr("3.2.0"));
   SWIG_Python_SetConstant(d, "H5F_LIBVER_18",SWIG_From_int(static_cast< int >(1)));
   SWIG_Python_SetConstant(d, "MED_MAJOR_NUM",SWIG_From_int(static_cast< int >(3)));
-  SWIG_Python_SetConstant(d, "MED_MINOR_NUM",SWIG_From_int(static_cast< int >(0)));
-  SWIG_Python_SetConstant(d, "MED_RELEASE_NUM",SWIG_From_int(static_cast< int >(7)));
+  SWIG_Python_SetConstant(d, "MED_MINOR_NUM",SWIG_From_int(static_cast< int >(2)));
+  SWIG_Python_SetConstant(d, "MED_RELEASE_NUM",SWIG_From_int(static_cast< int >(0)));
   SWIG_Python_SetConstant(d, "MED_NUM_MAJEUR",SWIG_From_int(static_cast< int >(3)));
-  SWIG_Python_SetConstant(d, "MED_NUM_MINEUR",SWIG_From_int(static_cast< int >(0)));
-  SWIG_Python_SetConstant(d, "MED_NUM_RELEASE",SWIG_From_int(static_cast< int >(7)));
-  SWIG_Python_SetConstant(d, "MED_VERSION_STR",SWIG_FromCharPtr("3.0.7"));
+  SWIG_Python_SetConstant(d, "MED_NUM_MINEUR",SWIG_From_int(static_cast< int >(2)));
+  SWIG_Python_SetConstant(d, "MED_NUM_RELEASE",SWIG_From_int(static_cast< int >(0)));
+  SWIG_Python_SetConstant(d, "MED_VERSION_STR",SWIG_FromCharPtr("3.2.0"));
   SWIG_Python_SetConstant(d, "MED_MAX_PARA",SWIG_From_int(static_cast< int >(20)));
   SWIG_Python_SetConstant(d, "MED_COMMENT_SIZE",SWIG_From_int(static_cast< int >(200)));
   SWIG_Python_SetConstant(d, "MED_IDENT_SIZE",SWIG_From_int(static_cast< int >(8)));

@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -32,7 +32,7 @@
   \param numit \numit
   \param entitype \entitype
   \param geotype \geotype
-  \param nentity \nentity
+  \param nentity \nentityMEDequiv
   \param correspondence \correspondence
   \retval med_err  \error
   \details \MEDequivalenceCorrespondenceWrDetails

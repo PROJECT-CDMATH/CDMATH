@@ -3,7 +3,7 @@
 ## Initialize Autoconf & defined package name...
 ##Lors de la sortie d'une nouvelle release mettre à jour les champs suivants
 ##Mettre à jour le numéro de package
-AC_INIT([MED Fichier],3.0.7,[eric.fayolle@edf.fr],med)
+AC_INIT([MED Fichier],3.2.0,[eric.fayolle@edf.fr],med)
 
 ##Lors de la sortie d'une nouvelle release mettre à jour les champs suivants
 ##Ne pas oubliez de modifier  -version-info x:y:z dans src/Makefile.am tools/medimport/Makefile.am
@@ -13,13 +13,13 @@ AC_INIT([MED Fichier],3.0.7,[eric.fayolle@edf.fr],med)
 ##Mettre à jour la table de versionement des APIs internes (en C et en F)
 ##Mettre à jour les tests de compatibilité dans MEDfileCompatibility (chgt de majeur/mineur)
 MED_NUM_MAJEUR=3
-MED_NUM_MINEUR=0
-MED_NUM_RELEASE=7
+MED_NUM_MINEUR=2
+MED_NUM_RELEASE=0
 AC_SUBST(MED_NUM_MAJEUR)
 AC_SUBST(MED_NUM_MINEUR)
 AC_SUBST(MED_NUM_RELEASE)
 
-HDF_VERSION_REF=5-1.8.8
+HDF_VERSION_REF=5-1.8.10
 AC_SUBST(HDF_VERSION_REF)
 
 ## Require Automake 1.7.9 or better.
@@ -246,6 +246,10 @@ AC_CONFIG_FILES([Makefile
            tests/python/atlocal
            tests/c/Makefile
 	   tests/c/dumps.ref/Makefile
+           tests/c/3.1.0/Makefile
+           tests/c/3.1.0/dumps.ref/Makefile
+           tests/c/3.0.8/Makefile
+           tests/c/3.0.8/dumps.ref/Makefile
            tests/c/2.3.1/Makefile
 	   tests/c/2.3.1/dumps.ref/Makefile
            tests/c/2.3.2/Makefile
@@ -260,6 +264,10 @@ AC_CONFIG_FILES([Makefile
            tests/c/2.3v3.0/dumps.ref/Makefile
 	   tests/f/Makefile
 	   tests/f/dumps.ref/Makefile
+           tests/f/3.1.0/Makefile
+           tests/f/3.1.0/dumps.ref/Makefile
+           tests/f/3.0.8/Makefile
+           tests/f/3.0.8/dumps.ref/Makefile
            tests/f/2.3.1/Makefile
            tests/f/2.3.1/dumps.ref/Makefile
            tests/f/2.3.2/Makefile
@@ -299,6 +307,8 @@ AC_CONFIG_FILES([Makefile
            tools/medimport/2.3.1/Makefile
            tools/medimport/2.1.x/Makefile
            tools/medimport/2.3.6/Makefile
+           tools/medimport/3.0.0/Makefile
+           tools/medimport/3.1.0/Makefile
            doc/Makefile
            doc/dox/Makefile
            doc/dox/aliases.als
@@ -309,7 +319,8 @@ AC_CONFIG_FILES([Makefile
 	   doc/html.dox/Makefile
 	   doc/jpg/Makefile
 	   doc/png/Makefile
-	   python/Makefile])
+	   python/Makefile
+	   CMakeLists.txt])
 
 
 AC_OUTPUT

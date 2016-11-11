@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -111,7 +111,7 @@ void MAJ_236_300_maillages(med_idt fid)
 			  _description, _dtunit, &_sortingtype, &_nstep,
 			  &_axistype, _axisname, _axisunit, &_fret);
     MED_ERR_EXIT_IF(_fret < 0, MED_ERR_CALL, MED_ERR_API, "MEDmeshInfoByName236");
-    MAJ_version(fid);
+    MAJ_version_num(fid,3,0,8);
 
     MED_ERR_EXIT_IF( _spacedim > MAX_SPACE_DIM ,
 		     MED_ERR_INVALID,MED_ERR_PARAMETER,"_spacedim");
@@ -171,7 +171,7 @@ void MAJ_236_300_maillages(med_idt fid)
 	H5Adelete_by_name( fid, _pathgridi,MED_NOM_UNI, H5P_DEFAULT  );
 	H5Adelete_by_name( fid, _pathgridi,MED_NOM_NOM, H5P_DEFAULT  );
 
-	MAJ_version(fid);
+	MAJ_version_num(fid,3,0,8);
 
       } else {
 	MED_ERR_EXIT_IF( MEDstructureCoordLire(fid,_meshname,_meshdim,_gridstruct) < 0
@@ -181,7 +181,7 @@ void MAJ_236_300_maillages(med_idt fid)
 	H5Adelete_by_name( fid, _pathgridi,MED_NOM_IN2, H5P_DEFAULT  );
 	H5Adelete_by_name( fid, _pathgridi,MED_NOM_IN3, H5P_DEFAULT  );
 
-	MAJ_version(fid);
+	MAJ_version_num(fid,3,0,8);
 
 	_mustwrite_gridstruct= MED_TRUE;
 

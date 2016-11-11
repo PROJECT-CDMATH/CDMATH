@@ -452,8 +452,8 @@ am__tty_colors = { \
     std='[m'; \
   fi; \
 }
-DIST_SUBDIRS = dumps.ref . 2.3.6 2.3.1 2.3.2 2.3v3.0 2.3.1v3.0 \
-	2.3.2v3.0
+DIST_SUBDIRS = dumps.ref . 3.1.0 3.0.8 2.3.6 2.3.1 2.3.2 2.3v3.0 \
+	2.3.1v3.0 2.3.2v3.0
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 am__relativize = \
   dir0=`pwd`; \
@@ -783,7 +783,7 @@ DEFAULT_INCLUDES = -I. -I$(srcdir)
 @ENABLE_FORTRAN_TRUE@./test29.dump\
 @ENABLE_FORTRAN_TRUE@./test31.dump
 
-@ENABLE_FORTRAN_TRUE@SUBDIRS = dumps.ref . 2.3.6 2.3.1 2.3.2 2.3v3.0 2.3.1v3.0 2.3.2v3.0
+@ENABLE_FORTRAN_TRUE@SUBDIRS = dumps.ref . 3.1.0 3.0.8 2.3.6 2.3.1 2.3.2 2.3v3.0 2.3.1v3.0 2.3.2v3.0
 all: all-recursive
 
 .SUFFIXES:

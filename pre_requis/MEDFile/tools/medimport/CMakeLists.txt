@@ -16,6 +16,8 @@ INCLUDE_DIRECTORIES("${PROJECT_BINARY_DIR}/include"
     "${PROJECT_SOURCE_DIR}/include")
 
 ADD_SUBDIRECTORY("2.3.6")
+ADD_SUBDIRECTORY("3.0.0")
+ADD_SUBDIRECTORY("3.1.0")
 
 SET(medimporttop_SOURCES
   libmedimport.c
@@ -26,6 +28,8 @@ SET(medimport_SOURCES
   $<TARGET_OBJECTS:_medimport21x>
   $<TARGET_OBJECTS:_medimport231>
   $<TARGET_OBJECTS:_medimport236>
+  $<TARGET_OBJECTS:_medimport300>
+  $<TARGET_OBJECTS:_medimport310>
   ${medimporttop_SOURCES}
 )
 
@@ -33,6 +37,8 @@ SET(medimport_static_SOURCES
   $<TARGET_OBJECTS:_medimport21x_static>
   $<TARGET_OBJECTS:_medimport231_static>
   $<TARGET_OBJECTS:_medimport236_static>
+  $<TARGET_OBJECTS:_medimport300_static>
+  $<TARGET_OBJECTS:_medimport310_static>
   ${medimporttop_SOURCES}
 )
 

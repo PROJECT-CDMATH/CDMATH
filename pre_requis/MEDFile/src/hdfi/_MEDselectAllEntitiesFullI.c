@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -46,13 +46,14 @@ med_err _MEDselectAllEntitiesFullI(const med_idt          fid,
 
   med_idt    _memspace[MED_MAX_FILTER_SPACES]= MED_MAX_FILTER_SPACES_INIT;
   med_idt    _diskspace[MED_MAX_FILTER_SPACES]= MED_MAX_FILTER_SPACES_INIT;
-  med_size   _memspacesize[1],_diskspacesize[1];
+  med_size   _memspacesize[1]={0},_diskspacesize[1]={0};
   med_size   _stride[1]={0};
   med_size   _start_mem[1]={0},_start_disk[1]={0};
   med_err    _ret=-1;
   int        _dim=0, _firstdim=0, _dimutil=0, _lastdim=0, _index=0 ;
   med_size   _onedimallvaluesdiskoffset[1]={0};
 
+  /* Crée un filtre vide valide */
   if ( ! nentity) {
     _memspace[0]  = H5Screate(H5S_NULL);
     _diskspace[0] = H5Screate(H5S_NULL);
@@ -70,14 +71,14 @@ med_err _MEDselectAllEntitiesFullI(const med_idt          fid,
   }
 
   _onedimallvaluesdiskoffset[0] = nentity*nvaluesperentity;
-  _memspacesize[0]  = *_onedimallvaluesdiskoffset*nconstituentpervalue;
-  _diskspacesize[0] = *_memspacesize;
+  _memspacesize[0]              = _onedimallvaluesdiskoffset[0]*nconstituentpervalue;
+  _diskspacesize[0]             = _memspacesize[0];
+  _stride[0]                    = nconstituentpervalue;
 
-
-  _stride[0] = nconstituentpervalue;
-
+  /*On réalise les selections par composantes pour placer  */
   for (_dim=_firstdim; _dim < _lastdim; _dim++) {
 
+    /*On crée un espace qui contient l'ensemble des composantes*/
     if ( (_memspace[_index] = H5Screate_simple (1, _memspacesize, NULL)) <0) {
       MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_MEMSPACE,MED_ERR_ID_MSG);
       ISCRUTE_id(_memspace[_index]);
@@ -86,6 +87,7 @@ med_err _MEDselectAllEntitiesFullI(const med_idt          fid,
       goto ERROR;
     }
 
+    /*Mais on selectionne uniquement la composante a placer dans l'espace mémoire*/
     _start_mem[0] = _dim;
     if ( H5Sselect_hyperslab (_memspace[_index], H5S_SELECT_SET, _start_mem, _stride,
 			      _onedimallvaluesdiskoffset, NULL) <0 ) {
@@ -132,16 +134,16 @@ med_err _MEDselectAllEntitiesFullI(const med_idt          fid,
     goto ERROR;
   }
 
-
-/*   ISCRUTE((*filter).nentity              ); */
-/*   ISCRUTE((*filter).nvaluesperentity     ); */
-/*   ISCRUTE((*filter).nconstituentpervalue ); */
-/*   ISCRUTE((*filter).constituentselect       ); */
-/*   ISCRUTE((*filter).switchmode              ); */
-/*   ISCRUTE((*filter).filterarraysize         ); */
-/*   ISCRUTE((*filter).profilearraysize        ); */
-/*   ISCRUTE((*filter).storagemode             ); */
-/*   SSCRUTE((*filter).profilename             ); */
+  /* ISCRUTE_size(_memspacesize[0]); */
+  /* ISCRUTE((*filter).nentity              ); */
+  /* ISCRUTE((*filter).nvaluesperentity     ); */
+  /* ISCRUTE((*filter).nconstituentpervalue ); */
+  /* ISCRUTE((*filter).constituentselect       ); */
+  /* ISCRUTE((*filter).switchmode              ); */
+  /* ISCRUTE((*filter).filterarraysize         ); */
+  /* ISCRUTE((*filter).profilearraysize        ); */
+  /* ISCRUTE((*filter).storagemode             ); */
+  /* SSCRUTE((*filter).profilename             ); */
 
   _ret = 0;
 
