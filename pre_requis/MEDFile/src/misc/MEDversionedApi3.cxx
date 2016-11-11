@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -27,6 +27,8 @@ extern "C" {
 using namespace std;
 
 static MED_VERSIONED_API3 & MedVersionedApi3=MED_VERSIONED_API3::Instance();
+
+MED_VERSIONED_API3::~MED_VERSIONED_API3() {};
 
 MED_VERSIONED_API3& MED_VERSIONED_API3::Instance() {
   static MED_VERSIONED_API3 obj;
@@ -70,7 +72,7 @@ void MED_VERSIONED_API3::f77ApiIsSet() {
 // Lorsque les routines wrappers (MEDchampEcr pour MEDchampEcr231,MEDchampEcr232,MEDchampEcr233) demandent leur implémentation
 // à getVersionedApi en fonction de la version avec laquelle le fichier traité à été crée, la première implémentation 
 // dont le numéro de versionement est inférieur ou égal à celui du fichier est renvoyé.
-// getVersionedApi gère les ruptures de compatibilité globale de bibliothèques (ex : on ne relit
+// getVersionedApi gère également les ruptures de compatibilité globale de bibliothèques (ex : on ne relit
 // pas de fichiers < 220 avec les biblioth�ques 2.3.x.
 // Dans ce mécanisme, il est également necessaire de se protéger d'une lecture de fichier dont le mineur du numéro
 // de version serait supérieur à celui de la bibliothèque.
@@ -84,7 +86,7 @@ void MED_VERSIONED_API3::f77ApiIsSet() {
 // Seule la capacité des anciens programmes à utiliser cette nouvelle bibliothèque dynamique est indiquée (ce qui
 // sera toujours le cas avec le système de driver si l'API utilisateur ne change pas (sauf ajout)).
 // Si l'API utilisateur change, le versionement libtool indique l'incompatibilité des anciens programmes à utiliser
-// la nouvelle biblioth�que. Le numéro de version majeur de la bibliothèque devrait également être incrémenté.
+// la nouvelle bibliothèque. Le numéro de version majeur de la bibliothèque devrait également être incrémenté.
 // Si une nouvelle version majeure d'hdf est utilisée et qu'elle est incompatible avec l'ancienne le numéro majeur devrait
 // être également augmenté.
 //
@@ -135,13 +137,84 @@ MED_VERSIONED_API3::MED_VERSIONED_API3() : map<keyType,
     table  = ( map<keyType,
 	       MedFuncType > & ) *this ;
 
-   table[ "_MEDfieldValueAdvancedWr300" ]   = _MEDfieldValueAdvancedWr30 ;
-   table[ "_MEDfieldValueAdvancedRd300" ]   = _MEDfieldValueAdvancedRd30 ;
-   table[ "_MEDfieldValueAdvancedRd236" ]   = _MEDfieldValueAdvancedRd236 ;
+   table[ "_MEDequivalenceInfo300"                   ] = _MEDequivalenceInfo30 ;
+   table[ "_MEDequivalenceInfo236"                   ] = _MEDequivalenceInfo236 ;
+   table[ "_MEDequivalenceCorrespondenceSize300"     ] = _MEDequivalenceCorrespondenceSize30 ;
+   table[ "_MEDequivalenceCorrespondenceSize236"     ] = _MEDequivalenceCorrespondenceSize236 ;
+   table[ "_MEDequivalenceCorrespondenceRd300"       ] = _MEDequivalenceCorrespondenceRd30 ;
+   table[ "_MEDequivalenceCorrespondenceRd236"       ] = _MEDequivalenceCorrespondenceRd236 ;
+   table[ "_MEDequivalenceComputingStepInfo300"      ] = _MEDequivalenceComputingStepInfo30 ;
+   table[ "_MEDequivalenceComputingStepInfo236"      ] = _MEDequivalenceComputingStepInfo236 ;
+   table[ "_MEDequivalenceCorrespondenceSizeInfo300" ] = _MEDequivalenceCorrespondenceSizeInfo30 ;
+   table[ "_MEDequivalenceCorrespondenceSizeInfo236" ] = _MEDequivalenceCorrespondenceSizeInfo236 ;
+   table[ "_MEDnEquivalence300"                      ] = _MEDnEquivalence30 ;
+   table[ "_MEDnEquivalence236"                      ] = _MEDnEquivalence236 ;
+
+   table[ "_MEDfieldCr300"                      ]   = _MEDfieldCr30 ;
+   table[ "_MEDfieldCr236"                      ]   = _MEDfieldCr30 ;
+   table[ "_MEDfieldCr310"                      ]   = _MEDfieldCr31 ;
+   table[ "_MEDfieldValueAdvancedWr300"         ]   = _MEDfieldValueAdvancedWr30 ;
+   table[ "_MEDfieldValueAdvancedRd300"         ]   = _MEDfieldValueAdvancedRd30 ;
+   table[ "_MEDfieldValueAdvancedRd236"         ]   = _MEDfieldValueAdvancedRd236 ;
+   table[ "_MEDfield23ComputingStepMeshInfo310" ]   = _MEDfield23ComputingStepMeshInfo31 ;
+   table[ "_MEDfield23ComputingStepMeshInfo300" ]   = _MEDfield23ComputingStepMeshInfo30 ;
+   table[ "_MEDfield23ComputingStepMeshInfo236" ]   = _MEDfield23ComputingStepMeshInfo236 ;
+   table[ "_MEDfield23nProfile300"              ]   = _MEDfield23nProfile30 ;
+   table[ "_MEDfield23nProfile236"              ]   = _MEDfield23nProfile236 ;
+   table[ "_MEDfield23nValue300"                ]   = _MEDfield23nValue30 ;
+   table[ "_MEDfield23nValue236"                ]   = _MEDfield23nValue236 ;
+   table[ "_MEDfieldInfoByName300"              ]   = _MEDfieldInfoByName30 ;
+   table[ "_MEDfieldInfoByName236"              ]   = _MEDfieldInfoByName236 ;
+   table[ "_MEDfieldComputingStepInfo310"       ]   = _MEDfieldComputingStepInfo31 ;
+   table[ "_MEDfieldComputingStepInfo300"       ]   = _MEDfieldComputingStepInfo30 ;
+   table[ "_MEDfieldComputingStepInfo236"       ]   = _MEDfieldComputingStepInfo236 ;
+   table[ "_MEDfieldComputingStepMeshInfo300"   ]   = _MEDfieldComputingStepMeshInfo30 ;
+   table[ "_MEDfieldComputingStepMeshInfo236"   ]   = _MEDfieldComputingStepMeshInfo236 ;
+   table[ "_MEDfieldnProfile300"                ]   = _MEDfieldnProfile30 ;
+   table[ "_MEDfieldnProfile236"                ]   = _MEDfieldnProfile236 ;
+   table[ "_MEDfieldnValue300"                  ]   = _MEDfieldnValue30 ;
+   table[ "_MEDfieldnValue236"                  ]   = _MEDfieldnValue236 ;
+
+   table[ "_MEDfileCommentRd300"      ] = _MEDfileCommentRd30 ;
+   table[ "_MEDfileCommentRd236"      ] = _MEDfileCommentRd236 ;
+   table[ "_MEDfileObjectsMount300"   ] = _MEDfileObjectsMount30 ;
+   table[ "_MEDfileObjectsMount236"   ] = _MEDfileObjectsMount236 ;
+   table[ "_MEDfileObjectsUnmount300" ] = _MEDfileObjectsUnmount30 ;
+   table[ "_MEDfileObjectsUnmount236" ] = _MEDfileObjectsUnmount236 ;
+
+   table[ "_MEDfilterEntityCr300"         ] = _MEDfilterEntityCr30 ;
+   table[ "_MEDfilterEntityCr236"         ] = _MEDfilterEntityCr236 ;
+
    table[ "_MEDnFamily23Attribute236"   ]   = _MEDnFamily23Attribute236 ;
    table[ "_MEDnFamily23Attribute300"   ]   = _MEDnFamily23Attribute30 ;
+   table[ "_MEDnFamily300"              ]   = _MEDnFamily30 ;
+   table[ "_MEDnFamily236"              ]   = _MEDnFamily236 ;
+   table[ "_MEDnFamilyGroup320"         ]   = _MEDnFamilyGroup32 ;
+   table[ "_MEDnFamilyGroup300"         ]   = _MEDnFamilyGroup30 ;
+   table[ "_MEDnFamilyGroup236"         ]   = _MEDnFamilyGroup236 ;
    table[ "_MEDfamily23Info236"         ]   = _MEDfamily23Info236 ;
    table[ "_MEDfamily23Info300"         ]   = _MEDfamily23Info30 ;
+   table[ "_MEDfamilyCr320"         ]   = _MEDfamilyCr32 ;
+   table[ "_MEDfamilyCr300"         ]   = _MEDfamilyCr30 ;
+   table[ "_MEDfamilyInfo320"       ]   = _MEDfamilyInfo32 ;
+   table[ "_MEDfamilyInfo300"       ]   = _MEDfamilyInfo30 ;
+
+
+   table[ "_MEDlinkRd300"         ] = _MEDlinkRd30 ;
+   table[ "_MEDlinkRd236"         ] = _MEDlinkRd236 ;
+
+   table[ "_MEDlocalizationRd300" ] = _MEDlocalizationRd30 ;
+   table[ "_MEDlocalizationRd236" ] = _MEDlocalizationRd236 ;
+   table[ "_MEDlocalizationInfoByName300" ] = _MEDlocalizationInfoByName30 ;
+   table[ "_MEDlocalizationInfoByName236" ] = _MEDlocalizationInfoByName236 ;
+
+
+   table[ "_MEDmeshEntityInfo300" ] = _MEDmeshEntityInfo30 ;
+   table[ "_MEDmeshEntityInfo236" ] = _MEDmeshEntityInfo236 ;
+   table[ "_MEDmeshComputationStepInfo300" ] = _MEDmeshComputationStepInfo30 ;
+   table[ "_MEDmeshComputationStepInfo236" ] = _MEDmeshComputationStepInfo236 ;
+   table[ "_MEDmeshGridIndexCoordinateRd300" ] = _MEDmeshGridIndexCoordinateRd30 ;
+   table[ "_MEDmeshGridIndexCoordinateRd236" ] = _MEDmeshGridIndexCoordinateRd236 ;
    table[ "_MEDmeshInfoByName300"         ] = _MEDmeshInfoByName30 ;
    table[ "_MEDmeshInfoByName236"         ] = _MEDmeshInfoByName236 ;
    table[ "_MEDmeshnAxisByName300"         ] = _MEDmeshnAxisByName30 ;
@@ -152,46 +225,15 @@ MED_VERSIONED_API3::MED_VERSIONED_API3() : map<keyType,
    table[ "_MEDmeshnEntity236"         ] = _MEDmeshnEntity236 ;
    table[ "_MEDmeshAdvancedRd300"         ] = _MEDmeshAdvancedRd30 ;
    table[ "_MEDmeshAdvancedRd236"         ] = _MEDmeshAdvancedRd236 ;
-   table[ "_MEDfilterEntityCr300"         ] = _MEDfilterEntityCr30 ;
-   table[ "_MEDfilterEntityCr236"         ] = _MEDfilterEntityCr236 ;
-   table[ "_MEDnFamily300"         ] = _MEDnFamily30 ;
-   table[ "_MEDnFamily236"         ] = _MEDnFamily236 ;
-   table[ "_MEDnFamilyGroup300"         ] = _MEDnFamilyGroup30 ;
-   table[ "_MEDnFamilyGroup236"         ] = _MEDnFamilyGroup236 ;
-   table[ "_MEDlinkRd300"         ] = _MEDlinkRd30 ;
-   table[ "_MEDlinkRd236"         ] = _MEDlinkRd236 ;
-   table[ "_MEDfieldInfoByName300" ] = _MEDfieldInfoByName30 ;
-   table[ "_MEDfieldInfoByName236" ] = _MEDfieldInfoByName236 ;
-   table[ "_MEDfieldComputingStepInfo300" ] = _MEDfieldComputingStepInfo30 ;
-   table[ "_MEDfieldComputingStepInfo236" ] = _MEDfieldComputingStepInfo236 ;
-   table[ "_MEDfieldComputingStepMeshInfo300" ] = _MEDfieldComputingStepMeshInfo30 ;
-   table[ "_MEDfieldComputingStepMeshInfo236" ] = _MEDfieldComputingStepMeshInfo236 ;
-   table[ "_MEDfieldnProfile300" ] = _MEDfieldnProfile30 ;
-   table[ "_MEDfieldnProfile236" ] = _MEDfieldnProfile236 ;
-   table[ "_MEDfieldnValue300" ] = _MEDfieldnValue30 ;
-   table[ "_MEDfieldnValue236" ] = _MEDfieldnValue236 ;
+
+   table[ "_MEDparameterInfoByName300" ] = _MEDparameterInfoByName30 ;
+   table[ "_MEDparameterInfoByName236" ] = _MEDparameterInfoByName236 ;
+   table[ "_MEDparameterValueRd300"    ] = _MEDparameterValueRd30 ;
+   table[ "_MEDparameterValueRd236"    ] = _MEDparameterValueRd236 ;
+
    table[ "_MEDprofileRd300" ] = _MEDprofileRd30 ;
    table[ "_MEDprofileRd236" ] = _MEDprofileRd236 ;
-   table[ "_MEDlocalizationRd300" ] = _MEDlocalizationRd30 ;
-   table[ "_MEDlocalizationRd236" ] = _MEDlocalizationRd236 ;
-   table[ "_MEDlocalizationInfoByName300" ] = _MEDlocalizationInfoByName30 ;
-   table[ "_MEDlocalizationInfoByName236" ] = _MEDlocalizationInfoByName236 ;
-   table[ "_MEDnEquivalence300" ] = _MEDnEquivalence30 ;
-   table[ "_MEDnEquivalence236" ] = _MEDnEquivalence236 ;
-   table[ "_MEDequivalenceInfo300" ] = _MEDequivalenceInfo30 ;
-   table[ "_MEDequivalenceInfo236" ] = _MEDequivalenceInfo236 ;
-   table[ "_MEDequivalenceCorrespondenceSize300" ] = _MEDequivalenceCorrespondenceSize30 ;
-   table[ "_MEDequivalenceCorrespondenceSize236" ] = _MEDequivalenceCorrespondenceSize236 ;
-   table[ "_MEDequivalenceCorrespondenceRd300" ] = _MEDequivalenceCorrespondenceRd30 ;
-   table[ "_MEDequivalenceCorrespondenceRd236" ] = _MEDequivalenceCorrespondenceRd236 ;
-   table[ "_MEDequivalenceComputingStepInfo300" ] = _MEDequivalenceComputingStepInfo30 ;
-   table[ "_MEDequivalenceComputingStepInfo236" ] = _MEDequivalenceComputingStepInfo236 ;
-   table[ "_MEDequivalenceCorrespondenceSizeInfo300" ] = _MEDequivalenceCorrespondenceSizeInfo30 ;
-   table[ "_MEDequivalenceCorrespondenceSizeInfo236" ] = _MEDequivalenceCorrespondenceSizeInfo236 ;
-   table[ "_MEDmeshComputationStepInfo300" ] = _MEDmeshComputationStepInfo30 ;
-   table[ "_MEDmeshComputationStepInfo236" ] = _MEDmeshComputationStepInfo236 ;
-   table[ "_MEDmeshGridIndexCoordinateRd300" ] = _MEDmeshGridIndexCoordinateRd30 ;
-   table[ "_MEDmeshGridIndexCoordinateRd236" ] = _MEDmeshGridIndexCoordinateRd236 ;
+
    table[ "_MEDnSubdomainJoint300" ] = _MEDnSubdomainJoint30 ;
    table[ "_MEDnSubdomainJoint236" ] = _MEDnSubdomainJoint236 ;
    table[ "_MEDsubdomainJointInfo300" ] = _MEDsubdomainJointInfo30 ;
@@ -204,32 +246,16 @@ MED_VERSIONED_API3::MED_VERSIONED_API3() : map<keyType,
    table[ "_MEDsubdomainComputingStepInfo236" ] = _MEDsubdomainComputingStepInfo236 ;
    table[ "_MEDsubdomainCorrespondenceSizeInfo300" ] = _MEDsubdomainCorrespondenceSizeInfo30 ;
    table[ "_MEDsubdomainCorrespondenceSizeInfo236" ] = _MEDsubdomainCorrespondenceSizeInfo236 ;
-   table[ "_MEDparameterInfoByName300" ] = _MEDparameterInfoByName30 ;
-   table[ "_MEDparameterInfoByName236" ] = _MEDparameterInfoByName236 ;
-   table[ "_MEDparameterValueRd300" ] = _MEDparameterValueRd30 ;
-   table[ "_MEDparameterValueRd236" ] = _MEDparameterValueRd236 ;
-   table[ "_MEDfileCommentRd300" ] = _MEDfileCommentRd30 ;
-   table[ "_MEDfileCommentRd236" ] = _MEDfileCommentRd236 ;
-   table[ "_MEDfileObjectsMount300" ] = _MEDfileObjectsMount30 ;
-   table[ "_MEDfileObjectsMount236" ] = _MEDfileObjectsMount236 ;
-   table[ "_MEDfileObjectsUnmount300" ] = _MEDfileObjectsUnmount30 ;
-   table[ "_MEDfileObjectsUnmount236" ] = _MEDfileObjectsUnmount236 ;
-   table[ "_MEDfield23ComputingStepMeshInfo300" ] = _MEDfield23ComputingStepMeshInfo30 ;
-   table[ "_MEDfield23ComputingStepMeshInfo236" ] = _MEDfield23ComputingStepMeshInfo236 ;
-   table[ "_MEDfield23nProfile300" ] = _MEDfield23nProfile30 ;
-   table[ "_MEDfield23nProfile236" ] = _MEDfield23nProfile236 ;
-   table[ "_MEDfield23nValue300" ] = _MEDfield23nValue30 ;
-   table[ "_MEDfield23nValue236" ] = _MEDfield23nValue236 ;
-   table[ "_MEDmeshEntityInfo300" ] = _MEDmeshEntityInfo30 ;
-   table[ "_MEDmeshEntityInfo236" ] = _MEDmeshEntityInfo236 ;
+
+
 
 }
 
 
+
 MedFuncType MED_VERSIONED_API3::operator[]( const keyType & c ) const
 {
-  map<keyType,MedFuncType > &table = (map<keyType,
-				   MedFuncType >&)*this ;
+  map<keyType,MedFuncType > &table = (map<keyType, MedFuncType >&)*this ;
 
   map<keyType,MedFuncType >::iterator it = table.find( c );
   if ( it == table.end() ) return (MedFuncType) NULL;

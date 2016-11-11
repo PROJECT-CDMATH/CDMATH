@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -76,6 +76,9 @@ C  ** Ouverture en mode de creation du fichier test2.med
       
 C  **  Creation du maillage maa1 de type MED_NON_STRUCTURE
 C  **  et de dimension 3
+C  ** attention le ../test3 de V3.0 supposait une dimension 2
+C  ** ce qui propoquait un écrasement de mdim lors du traitement
+C  ** des chaines unites et nom des axes. 
       call efmaac(fid,'maa1',3,
      &     MED_NON_STRUCTURE,
      &     'un premier maillage',ret)

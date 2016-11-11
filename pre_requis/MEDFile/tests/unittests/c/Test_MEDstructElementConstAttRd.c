@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -58,6 +58,7 @@ int main (int argc, char **argv)
   med_int            _profilesize=0;
 
   unsigned char *    _value=NULL;
+  med_int            _allocsize=0;
 
   /* Ouverture en mode lecture du fichier Test_MEDstructuElement.med */
   _fid = MEDfileOpen("current.med",MED_ACC_RDONLY);
@@ -87,17 +88,17 @@ int main (int argc, char **argv)
 
     fprintf(stdout,"Elément de structure n° %d |%s| de type géométrique n° %d et de dimension %"IFORMAT"\n",
 	    _i,_elementname,_geotype,_elementdim);
+
     if ( strlen(_supportmeshname) ) {
-      fprintf(stdout,"\t Maillage support de nom |%s|",_supportmeshname);
-      if (_ncell)
-	fprintf(stdout," avec %d maille(s) de type %d et ",_ncell,_geocelltype);
-      if (_nnode)
-	fprintf(stdout," avec %d noeud(s)\n",_nnode);
+                   fprintf(stdout,"\t Maillage support de nom |%s|",_supportmeshname);
+      if (_ncell)  fprintf(stdout," avec %d maille(s) de type %d et ",_ncell,_geocelltype);
+      if (_nnode)  fprintf(stdout," avec %d noeud(s)\n",_nnode);
       else {
-	fprintf(stderr,"\n Erreur : les noeuds doivent être définis s'il existe un maillage support\n");
+	           fprintf(stderr,"\n Erreur : les noeuds doivent être définis s'il existe un maillage support\n");
       }
     } else
-      fprintf(stdout,"\t Maillage support implicite sur noeud\n");
+                   fprintf(stdout,"\t Maillage support implicite sur noeud\n");
+
     fprintf(stdout,"\t Nombre d'attribut(s) constant(s) : %d",_nconstantattribute);
     if (_anyprofile) fprintf(stdout,", avec profil.\n"); else fprintf(stdout,", sans profil.\n");
     if ( _nconstantattribute ) {
@@ -111,29 +112,29 @@ int main (int argc, char **argv)
 	fprintf(stdout,"\t\t  Cet Attribut est attaché au type d'entité  %d avec un profil |%s| de taille "IFORMAT"\n",
 		_attentitytype,_profilename,_profilesize);
 
+	/*Il serait pratique que profilesize renvoie les valeurs suivantes (avec un _profilename=MED_NO_PROFILE) :*/
 	if (!_profilesize)
 	  if (_attentitytype == MED_NODE) _profilesize = _nnode; else _profilesize=_ncell;
 	_n     = _ncomponent*_profilesize;
-	if ( _attentitytype == MED_ATT_NAME) ++_n;
-	_value = (unsigned char *) malloc(_n*MEDstructElementAttSizeof(_constatttype));
-	if ( _attentitytype == MED_ATT_NAME) --_n;
 
-/* 	  ISCRUTE(_ncomponent);ISCRUTE(_profilesize);ISCRUTE(MEDstructElementAttSizeof(_constatttype)); */
+	_allocsize =_n*MEDstructElementAttSizeof(_constatttype);
+	if ( _constatttype == MED_ATT_NAME) ++_allocsize;
+	_value = (unsigned char *) malloc(_allocsize);
+
+	/* ISCRUTE(_ncomponent);ISCRUTE(_profilesize);ISCRUTE(MEDstructElementAttSizeof(_constatttype)); */
 	if ( MEDstructElementConstAttRd(_fid, _elementname,_constattname, _value ) < 0 ) return -1;
 
 	fprintf(stdout,"\t\t  Cet Attribut a pour valeurs : \n");
 	for (_k=0; _k < _n; ++_k) {
 	  switch (_constatttype) {
-	  case  MED_ATT_FLOAT64 :
-	    printf("%f ", ((med_float*)(_value))[ _k]) ;
+	  case  MED_ATT_FLOAT64 :    printf("%f ", ((med_float*)(_value))[ _k]) ;
 	    break;
 	    
-	  case MED_ATT_INT :
-	    printf("%d ",((med_int*)(_value))[_k]);
+	  case MED_ATT_INT : 	     printf("%d ",((med_int*)(_value))[_k]);
 	    break;
 	    
-	  case MED_ATT_NAME :
-	    for (_l=_k*MED_NAME_SIZE; _l < (_k+1)*MED_NAME_SIZE; ++_l) printf("%c",((char *)_value)[_l]);printf("\n");
+	  case MED_ATT_NAME :	    for (_l=_k*MED_NAME_SIZE; _l < (_k+1)*MED_NAME_SIZE; ++_l) 
+	                             printf("%c",((char *)_value)[_l]);printf("\n");
 	    break;
 	  default:
 	    break;
@@ -141,7 +142,6 @@ int main (int argc, char **argv)
 	}
 	printf("\n");
 	free(_value);
-
       }
     }
     fprintf(stdout,"\t Nombre d'attributs variables : %d\n",_nvariableattribute);

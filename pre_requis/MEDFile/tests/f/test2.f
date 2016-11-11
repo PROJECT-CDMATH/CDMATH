@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -71,7 +71,7 @@ C  ** Fermeture du fichier test1.med
 
       
 C  ** Ouverture en mode de creation du fichier test2.med
-      call mfiope(fid,'test2.med',MED_ACC_CREAT, cret)
+      call mfiope(fid,'test2.med',MED_ACC_RDWR, cret)
       print *,cret
       if (cret .ne. 0 ) then
          print *,'Erreur creation du fichier'
@@ -79,7 +79,7 @@ C  ** Ouverture en mode de creation du fichier test2.med
       endif      
       
 C  **  Creation du maillage maa1 de type non structure
-C  **  et de dimension 3
+C  **  et de dimension 2
       call mmhcre(fid,'maa1',2,2,
      &     MED_UNSTRUCTURED_MESH,'un premier maillage', 
      &     "",MED_SORT_DTIT,MED_CARTESIAN,nomcoo,unicoo,ret)

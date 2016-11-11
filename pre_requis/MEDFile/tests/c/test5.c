@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -136,10 +136,19 @@ int main (int argc, char **argv)
     nomnoe = (char*) malloc(MED_SNAME_SIZE*nnoe+1);
   }
 
+  /* med_int filterarray[2]={2,4}; */
+
+  /* if ( MEDfilterEntityCr( fid, nnoe, 1, sdim, MED_ALL_CONSTITUENT, */
+  /* 			  MED_NO_INTERLACE, MED_GLOBAL_PFLMODE, */
+  /* 			  MED_NO_PROFILE, 2, */
+  /* 			  filterarray, &filter) < 0 ) { */
+  /*   MESSAGE("Erreur à la création du filtre 1."); */
+  /* } */
+
   if ( MEDfilterEntityCr( fid, nnoe, 1, sdim, 2,
-			  MED_FULL_INTERLACE, MED_GLOBAL_PFLMODE,
-			  MED_NO_PROFILE, MED_UNDEF_SIZE,
-			  NULL, &filter) < 0 ) {
+  			  MED_FULL_INTERLACE, MED_GLOBAL_PFLMODE,
+  			  MED_NO_PROFILE, MED_UNDEF_SIZE,
+  			  NULL, &filter) < 0 ) {
     MESSAGE("Erreur à la création du filtre 1.");
   }
 

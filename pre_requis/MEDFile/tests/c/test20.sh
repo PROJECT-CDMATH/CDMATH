@@ -1,9 +1,9 @@
 #!/bin/sh
 
 file=test20
-${CP} ${BUILDDIR}/test2.med ${BUILDDIR}/test20-0.med
-${CP} ${SRCDIR}/dumps.ref/test10-med.hdf ${BUILDDIR}/test10-med.hdf
-${CP} ${SRCDIR}/dumps.ref/test2-med.hdf ${BUILDDIR}/test2-med.hdf
+${CP} ${BUILDDIR}/test2.med ${BUILDDIR}/test20-0.med && chmod 644 ${BUILDDIR}/test20-0.med 
+${CP} ${SRCDIR}/dumps.ref/test10-med.hdf ${BUILDDIR}/test10-med.hdf && chmod 644 ${BUILDDIR}/test10-med.hdf
+${CP} ${SRCDIR}/dumps.ref/test2-med.hdf ${BUILDDIR}/test2-med.hdf && chmod 644 ${BUILDDIR}/test2-med.hdf
 test "x${CPYMED}" = "xyes" && ${CP} ${SRCDIR}/test.med.ref ${BUILDDIR}/${file}.med && chmod 644 ${BUILDDIR}/${file}.med
 output=/dev/null && test "x${OUTPUT}" = "xyes" && output=${file}.out
 ${CHECKER} ${EXECDIR}/${file} > ${output} 2>&1 && ${H5DUMP} ${BUILDDIR}/${file}.med > ${BUILDDIR}/${file}.dump  && ( \

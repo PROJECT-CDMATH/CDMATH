@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -198,10 +198,13 @@
 #define MED_TAILLE_MNT 5
 
 /* Nom du data group ou ranger les familles */
-#define FAMILLE_ZERO "FAMILLE_ZERO"
 #define MED_FAS "/FAS/"
 #define MED_FAS_NOM "FAS"
 #define MED_TAILLE_FAS 5
+#define FAMILLE_ZERO "FAMILLE_ZERO"
+#define MED_FAS_ZERO "/FAMILLE_ZERO/"
+#define MED_FAS_ZERO_NOM "FAMILLE_ZERO"
+#define MED_TAILLE_FAS_ZERO 14
 #define MED_FAS_NOEUD "/NOEUD/"
 #define MED_FAS_NOEUD_NOM "NOEUD"
 #define MED_FAS_ELEME "/ELEME/"

@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 # /*  This file is part of MED.
 #  *
-#  *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+#  *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
 #  *  MED is free software: you can redistribute it and/or modify
 #  *  it under the terms of the GNU Lesser General Public License as published by
 #  *  the Free Software Foundation, either version 3 of the License, or
@@ -53,7 +53,7 @@ for i in xrange(nmaa):
 
     gridtype=MED_GRID_TYPE()
     if (meshtype.val == MED_STRUCTURED_MESH):
-        gridtype=MEDmeshGridTypeRd(fid,maa) 
+        gridtype=MEDmeshGridTypeRd(fid,maa)
     if (gridtype.val == MED_CARTESIAN_GRID):	print "\t - Grille cartesienne \n"
     if (gridtype.val == MED_CURVILINEAR_GRID):	print "\t - Grille déstructuré \n"
 
@@ -73,10 +73,10 @@ for i in xrange(nmaa):
                                 MED_FULL_INTERLACE, coo)
 	print "\t   Coordonnees des oeuds de la grille: ",coo
 
-        nfam,chgt,trsf=MEDmeshnEntity(fid,maa,MED_NO_DT,MED_NO_IT,  
+        nfam,chgt,trsf=MEDmeshnEntity(fid,maa,MED_NO_DT,MED_NO_IT,
                                       MED_NODE, MED_NONE, MED_FAMILY_NUMBER,MED_NODAL)
 
-        if (nfam != 0):print "Le nombre de famille de vrait être nul" 
+        if (nfam != 0):print "Le nombre de famille de vrait être nul"
 
  # /* On regarde les coordonnees des indices de la grille cartesienne */
     if (meshtype.val == MED_STRUCTURED_MESH) and (gridtype.val == MED_CARTESIAN_GRID):

@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -40,6 +40,7 @@ From Fortran call of following C functions :
 
 #define nmfifope F77_FUNC(mfifope,MFIFOPE)
 #define nmfifclo F77_FUNC(mfifclo,MFIFCLO)
+#define nmfifnam F77_FUNC(mfifnam,MFIFNAM)
 #define nmfifcow F77_FUNC(mfifcow,MFIFCOW)
 #define nmfifcor F77_FUNC(mfifcor,MFIFCOR)
 #define nmfifnvr F77_FUNC(mfifnvr,MFIFNVR)
@@ -81,6 +82,48 @@ nmfifope (const char const *name,
   _ret = (med_int) MEDfileOpen(_fn, _access); 
 
   _MEDcstringFree(_fn);
+
+  return(_ret); 
+}
+
+
+
+#ifdef PPRO_NT
+med_int
+MFIFNAM(med_int *fid,
+	char const *filename,
+	const unsigned int bidon,
+	/* const med_int const *filenamesize,  */
+  	const med_int const *filenamelen)
+#else
+med_int
+nmfifnam(med_int *fid,
+	char const *filename,
+	/* const med_int const *filenamesize,  */
+        const med_int const *filenamelen)
+#endif
+{
+  char *_fn=NULL;
+  med_int _ret=-1;
+
+  /* ISCRUTE(*filenamesize); */
+  /* ISCRUTE(*filenamelen); */
+  /* ISCRUTE_id(*fid); */
+  _ret = MEDfileName((med_idt) *fid, NULL, 0);
+  /* ISCRUTE(_ret); */
+  /* if ( (_ret<0) || ( (*filenamesize) == 0) ) return _ret; */
+  if ( (_ret<0) || ( (*filenamelen) == 0) ) return _ret;
+  if ( (*filenamelen != 0) && 
+       ( (_ret) > (*filenamelen) ) ) return -1;
+
+  char *_fs1=(char *) malloc(_ret*sizeof(char)+1);
+
+  _ret = (med_int) MEDfileName((med_idt) *fid,_fs1, *filenamelen); 
+  /* SSCRUTE(_fs1); */
+  /* ISCRUTE(*filenamesize); */
+  /* ISCRUTE_id(*fid); */
+  _MEDc2fString(_fs1,(char*)filename,*filenamelen);
+  free(_fs1);
 
   return(_ret); 
 }

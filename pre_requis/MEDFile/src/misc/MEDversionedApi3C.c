@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -46,7 +46,7 @@ MedFuncType _MEDversionedApi3( const char * const key,
   }
 
   if ( _fversionMM > 100*MED_NUM_MAJEUR+10*MED_NUM_MINEUR ) {
-    MESSAGE("Cette bibliothèque MED n'est pas capable de lire un fichier MED dont le mineur de la version"
+    MESSAGE("Cette bibliothèque MED n'est pas capable de lire un fichier MED dont le mineur de la version "
 	    "excède celui de la bibliothèque.");
     MESSAGE("La version demandée est :");ISCRUTE_int(_fversionMMR);
     goto QUIT;
@@ -70,7 +70,7 @@ MedFuncType _MEDversionedApi3( const char * const key,
 
   /*
    * Lorsqu'une routine non versionnée doit être versionnée, la nouvelle
-   * implémentation est numérotée en "MED_NUM_MAJEUR"MED_NUM_MINEUR" ett l'ancienne
+   * implémentation est numérotée en "MED_NUM_MAJEUR"MED_NUM_MINEUR" et l'ancienne
    * en "MED_NUM_MAJEUR".0
    *
    */

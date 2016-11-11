@@ -52,8 +52,9 @@ host_triplet = @host@
 subdir = .
 DIST_COMMON = INSTALL NEWS README AUTHORS ChangeLog \
 	$(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/configure $(am__configure_deps) COPYING \
-	COPYING.LESSER TODO $(top_srcdir)/config/config.guess \
+	$(top_srcdir)/configure $(am__configure_deps) \
+	$(srcdir)/CMakeLists.txt.in COPYING COPYING.LESSER TODO \
+	$(top_srcdir)/config/config.guess \
 	$(top_srcdir)/config/config.sub \
 	$(top_srcdir)/config/install-sh $(top_srcdir)/config/ltmain.sh \
 	$(top_srcdir)/config/missing
@@ -89,7 +90,7 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/include/med_config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = CMakeLists.txt
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -383,7 +384,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I config
-EXTRA_DIST = bootstrap COPYING COPYING.LESSER CMakeLists.txt
+EXTRA_DIST = bootstrap COPYING COPYING.LESSER CMakeLists.txt.in CMakeLists.txt
+#EXTRA_DIST += CMakeLists.txt.in
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 configure config-h.in stamp-h.in config.cache config.h.in config.log config.status
 
 # Process the following directories
@@ -425,6 +427,8 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
+CMakeLists.txt: $(top_builddir)/config.status $(srcdir)/CMakeLists.txt.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 mostlyclean-libtool:
 	-rm -f *.lo

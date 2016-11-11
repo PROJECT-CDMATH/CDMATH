@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -127,7 +127,7 @@ int main (int argc, char **argv)
 
     med_geometry_type     _geotype       = MED_TRIA6;
     med_int               _geodim        = _geotype/100;
-    med_int               _geonnodes  = _geotype%100;
+    med_int               _geonnodes     = _geotype%100;
     char       _ipointname[MED_NAME_SIZE+1];
     med_float* _ipointrefcoo = 0;
     med_int    _ipoint       = nvaluesperentity;
@@ -288,6 +288,8 @@ int main (int argc, char **argv)
 
       /*Attention allocation mémoire potentiellement grosse car réalisée uniquement par le processus 0
        qui rassemble les données.*/
+      /* C'est une taille maxi qui ne prend pas en compte le COMPACT+filter */
+      /* TODO : Ajuster la taille au storage_mode*/
       _filteredarrayvalues = (med_float*) malloc(_nentitiesarrayvalues*
 						 nvaluesperentity*
 						 nconstituentpervalue*sizeof(med_float));
@@ -341,7 +343,7 @@ int main (int argc, char **argv)
 	  for (_i=0; _i < _nentitiesfiltered; ++_i )
 	    for (_j=0; _j < nvaluesperentity; ++_j)
 	      for (_k=0; _k < nconstituentpervalue; ++_k) {
-		_ind = (_filterarray[_i]-1)*nvaluesperentity*nconstituentpervalue+_j*nconstituentpervalue+_k;
+		_ind = _i*nvaluesperentity*nconstituentpervalue+_j*nconstituentpervalue+_k;
 /* 		fprintf(stdout,"%s%3d%s = %f\n","_filteredarrayvaluesFULLCP[",_ind,"]",_filteredarrayvalues[_ind]) ; */
 		fprintf(_asciifile,"%f\n",_filteredarrayvalues[_ind]) ;
 	  }
@@ -350,7 +352,8 @@ int main (int argc, char **argv)
 	  for (_j=0; _j < _nentitiesfiltered; ++_j)
 	    for (_k=0; _k < nvaluesperentity; ++_k)
 	      for (_i=0; _i < nconstituentpervalue; ++_i) {
-		_ind =_i*_nentitiesarrayvalues*nvaluesperentity+ (_filterarray[_j]-1)*nvaluesperentity +_k;
+		_ind =_i*_nentitiesfiltered*nvaluesperentity+ _j*nvaluesperentity +_k;
+		/* _ind =_i*_nentitiesarrayvalues*nvaluesperentity+ (_filterarray[_j]-1)*nvaluesperentity +_k; */
 /* 		fprintf(stdout,"%s%3d%s = %f\n","_filteredarrayvaluesNOCP[",_ind,"]",_filteredarrayvalues[_ind]); */
 		fprintf(_asciifile,"%f\n",_filteredarrayvalues[_ind]);
 	      }

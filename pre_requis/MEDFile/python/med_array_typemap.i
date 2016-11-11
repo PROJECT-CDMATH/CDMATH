@@ -235,7 +235,7 @@ Type.__repr__= lambda self: #Type +"("+str([x for x in self])+")"
 }
 
 // ------------ Traitement pour le type tableau unsigned char * -------------------
-//TODO: Mettre en commun le code CAR IDEM IN:
+//TODO: Mettre en commun le code (OUT) CAR IDEM (IN):
 //      Modifier la macro précédente pour utiliser un fragment
 //        qui spécialise le traitement pour unsigned char *
 

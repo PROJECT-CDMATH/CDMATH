@@ -20,6 +20,7 @@ print "Version Du Fichier (str) :",version
 comment = MEDfileCommentRd(fid)
 print comment
 
+print MEDfileName(fid);
 
 MEDfileClose(fid)
 

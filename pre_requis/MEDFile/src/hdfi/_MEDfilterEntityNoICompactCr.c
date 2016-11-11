@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -59,12 +59,14 @@ med_err _MEDfilterEntityNoICompactCr(const med_idt          fid,
 
   med_idt    _memspace[1]={0},_diskspace[1]={0};
   med_size   _memspacesize[1];
+  med_size   _diskspacesize[1];
   med_int    profilearraysize=0;
   med_int    _profilearraysize=0;
   med_int    _filterarraysize=0,(*_filterarrayfunc)(const med_int * const,int)=0;
-  med_size   *_fltmem=NULL;
-  med_size   _fltmemsize[1];
-  med_size   _onedimallvaluesoffset=0;
+  med_size   *_fltmem=NULL,*_pfldisk=NULL;
+  med_size   _fltmemsize[1],_pfldisksize[1];
+  med_size   _onedimallvaluesmemoffset=0;
+  med_size   _onedimallvaluesdiskoffset=0;
   med_err    _ret=-1;
   int        _i=0,_j=0,_index=0;
   int        _dim=0, _firstdim=0, _dimutil=0, _lastdim=0 ;
@@ -83,7 +85,6 @@ med_err _MEDfilterEntityNoICompactCr(const med_idt          fid,
   if ( strlen(profilename) ) {
     profilearraysize = MEDprofileSizeByName(fid,profilename);
     _profilearraysize=profilearraysize;
-
   } else {
     _profilearraysize = nentity;
   }
@@ -97,12 +98,10 @@ med_err _MEDfilterEntityNoICompactCr(const med_idt          fid,
     _filterarraysize = filterarraysize;
   }
 
-  _fltmemsize[0] = _filterarraysize*nvaluesperentity*_dimutil;
-  _fltmem        = (med_size *) malloc (sizeof(med_size)*_fltmemsize[0]);
-
-  _onedimallvaluesoffset = _profilearraysize*nvaluesperentity;
-
-  _memspacesize[0] = _profilearraysize*nvaluesperentity*nconstituentpervalue;
+  _onedimallvaluesmemoffset = _filterarraysize*nvaluesperentity;
+  _fltmemsize[0]            = _onedimallvaluesmemoffset*_dimutil;
+  _fltmem                   = (med_size *) malloc (sizeof(med_size)*_fltmemsize[0]);
+  _memspacesize[0]          = _filterarraysize*nvaluesperentity*nconstituentpervalue;
 
   if ( (_memspace[0] = H5Screate_simple (1,_memspacesize, NULL)) <0) {
     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_MEMSPACE,MED_ERR_SIZE_MSG);
@@ -110,10 +109,23 @@ med_err _MEDfilterEntityNoICompactCr(const med_idt          fid,
     goto ERROR;
   }
 
+  _pfldisksize[0]            = _fltmemsize[0];
+  _pfldisk                   = (med_size *) malloc (sizeof(med_size)*_pfldisksize[0]);
+  _onedimallvaluesdiskoffset = _profilearraysize*nvaluesperentity;
+  _diskspacesize[0]          = _onedimallvaluesdiskoffset*nconstituentpervalue;
+
+  if ( (_diskspace[0] = H5Screate_simple (1,_diskspacesize, NULL)) <0) {
+    MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_DISKSPACE,MED_ERR_ID_MSG);
+    ISCRUTE_id(_diskspace[0]);
+    goto ERROR;
+  }
+
+
   for (_dim=_firstdim; _dim < _lastdim; ++_dim) {
     for (_i=0; _i < _filterarraysize; ++_i) {
       for (_j=0; _j < nvaluesperentity; ++_j) {
-	_fltmem[_index] = _dim*_onedimallvaluesoffset + _filterarrayfunc(filterarray,_i)*nvaluesperentity+_j  ;
+	_fltmem [_index] = _dim*_onedimallvaluesmemoffset +  _i*nvaluesperentity+_j  ;
+	_pfldisk[_index] = _dim*_onedimallvaluesdiskoffset + _filterarrayfunc(filterarray,_i)*nvaluesperentity+_j  ;
 #ifdef _DEBUG_
 	printf("NoCmp :_fltmem[%d]=%llu \n",_index,_fltmem[_index]);
 #endif
@@ -128,13 +140,15 @@ med_err _MEDfilterEntityNoICompactCr(const med_idt          fid,
     goto ERROR;
   }
 
-  if ( (_diskspace[0] = H5Scopy (_memspace[0])) <0) {
-    MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_DISKSPACE,MED_ERR_ID_MSG);
+
+  if ( H5Sselect_elements(_diskspace[0] ,H5S_SELECT_SET,_pfldisksize[0], HDF5_SELECT_BUG _pfldisk ) <0) {
+    MED_ERR_(_ret,MED_ERR_SELECT,MED_ERR_DISKSPACE,MED_ERR_ID_MSG);
     ISCRUTE_id(_diskspace[0]);
     goto ERROR;
   }
 
   free(_fltmem);_fltmem=NULL;
+  free(_pfldisk);_pfldisk=NULL;
 
   if (  _MEDsetFilter(1,_memspace, _diskspace, nentity,
 		      nvaluesperentity, nconstituentpervalue,
@@ -150,6 +164,7 @@ med_err _MEDfilterEntityNoICompactCr(const med_idt          fid,
  ERROR:
 
   if (_fltmem) free(_fltmem);
+  if (_pfldisk) free(_pfldisk);
 
   return _ret;
 }

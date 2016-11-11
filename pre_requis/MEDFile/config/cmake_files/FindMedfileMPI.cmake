@@ -81,6 +81,8 @@ IF(MPI_FOUND OR MPIEXEC)  # MPI_FOUND is declared as deprecated in CMake doc
 
   SET(MPI_ROOT_DIR ${_tmp_ROOT_DIR})
 
+  SET(MED_DEFINE_MED_HAVE_MPI "#define MED_HAVE_MPI")
+
 ELSE(MPI_FOUND OR MPIEXEC)
   MESSAGE(STATUS "MPI was not found.")  
 ENDIF(MPI_FOUND OR MPIEXEC)

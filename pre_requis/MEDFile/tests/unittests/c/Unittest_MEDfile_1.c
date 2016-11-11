@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -36,6 +36,9 @@ int main (int argc, char **argv)
   med_int major,minor,release;
   char medversion[10];
   med_int majorFromStr, minorFromStr, releaseFromStr;
+  char filenameFromId[MED_PATHNAME_SIZE+1] = "";
+  char* filenameFromIdPtr = NULL;
+  med_int filenamesize = 0;
 
   /* file creation */
   fid = MEDfileOpen(filename,MED_ACC_CREAT);
@@ -47,6 +50,13 @@ int main (int argc, char **argv)
   /* write a comment */
   if (MEDfileCommentWr(fid,comment) < 0) {
     MESSAGE("ERROR : file comment writing");
+    return -1;
+  }
+
+  /* Get filename */
+  if ( (MEDfileName(fid,filenameFromId,MED_PATHNAME_SIZE+1) < 0 ) || 
+       ( strncmp(filenameFromId,filename,MED_PATHNAME_SIZE) )) {
+    MESSAGE("ERROR : file getting filename");
     return -1;
   }
 
@@ -111,6 +121,21 @@ int main (int argc, char **argv)
     return -1;
   }
 
+  /* Get filename */
+  if ( (filenamesize=MEDfileName(fid,NULL,0)) < 0 ) { 
+    MESSAGE("ERROR : file getting filename");
+    return -1;
+  } else 
+    filenameFromIdPtr = (char * ) malloc((filenamesize+1)*sizeof(char));
+
+  if ( (MEDfileName(fid,filenameFromIdPtr,filenamesize) < 0) || 
+       ( strncmp(filenameFromIdPtr,filename,filenamesize) )) {
+    MESSAGE("ERROR : file getting filename");
+    free(filenameFromIdPtr);
+    return -1;
+  }
+  free(filenameFromIdPtr);
+  
   /* file closing */
   if (MEDfileClose(fid) < 0) {
     MESSAGE("ERROR : file closing");

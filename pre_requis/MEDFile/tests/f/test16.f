@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -51,7 +51,7 @@ C
         parameter (dt=0.0)
 	
 C       ** Creation du fichier test16.med **
-	call mfiope(fid,'test16.med',MED_ACC_CREAT, cret)
+	call mfiope(fid,'test16.med',MED_ACC_RDWR, cret)
 	print *,cret
 	if (cret .ne. 0 ) then
 	   print *,'Erreur creation du fichier'

@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -117,11 +117,11 @@ int main (int argc, char **argv)
 	MESSAGE("Erreur à la lecture de la fonction de base n°");ISCRUTE(_basisfuncit);goto ERROR;
       } else {
 	fprintf(stdout,"\n\t Tableau de coefficients de la fonctions de base n° %d :\n\t",_basisfuncit);
-	for ( _coefficientit=1; _coefficientit<= _ncoefficient; ++_coefficientit)
+	for ( _coefficientit=0; _coefficientit< _ncoefficient; ++_coefficientit)
 	  fprintf(stdout," %4f ",_coefficient[_coefficientit]);
 
 	fprintf(stdout,"\n\t Tableau de puissances de la fonctions de base n° %d :\n\t",_basisfuncit);
-	for ( _powerit=1; _powerit<= _nvariable*_ncoefficient; ++_powerit)
+	for ( _powerit=0; _powerit< _nvariable*_ncoefficient; ++_powerit)
 	  fprintf(stdout," %4d ",_power[_powerit]);
       }
     }

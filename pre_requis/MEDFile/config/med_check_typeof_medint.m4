@@ -1,6 +1,6 @@
 dnl  This file is part of MED.
 dnl
-dnl  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+dnl  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
 dnl  MED is free software: you can redistribute it and/or modify
 dnl  it under the terms of the GNU Lesser General Public License as published by
 dnl  the Free Software Foundation, either version 3 of the License, or

@@ -61,7 +61,7 @@
 // A définir avant les définitions d'un typemap med_int * scalaire
 %med_array_typemaps(med_int,MEDINT, \   )
 
-// A définir avant les définitions d'un typemap char *
+// Définir les MEDCHAR avant les définitions d'un typemap char *
 // STRING ARRAY OUT :
 %med_array_typemaps(char,MEDCHAR,name)
 %med_array_typemaps(char,MEDCHAR,elementname)
@@ -70,6 +70,7 @@
 //Désactive toutes les sorties d'erreur
 //les erreurs sont gérées par les exceptions
 %typemap(out) med_err {
+  Py_INCREF(Py_None);
   $result=Py_None;
 }
 

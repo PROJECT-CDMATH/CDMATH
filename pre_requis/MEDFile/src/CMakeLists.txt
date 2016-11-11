@@ -24,7 +24,6 @@ ADD_SUBDIRECTORY(hdfi)
 ADD_SUBDIRECTORY(ci)
 ADD_SUBDIRECTORY(misc)
 
-SET(CMAKE_Fortran_COMPILER_WORKS OFF)
 IF(CMAKE_Fortran_COMPILER_WORKS)
   # Build intermediate targets _cfi, _cfi_static and _fi:
   ADD_SUBDIRECTORY(cfi)

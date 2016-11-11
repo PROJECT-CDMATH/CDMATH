@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -134,18 +134,18 @@ med_err _MEDfilterBlockOfEntityFullICompactCr(const med_idt          fid,
   _stridefile        [0]     = stride*nvaluesperentity;
   _filelastblocksize [0]     = _countmemlastblock[0];
 
-/*   ISCRUTE(_oneentitymemoffset    ); */
-/*   ISCRUTE(_blocksize         [0] );  */
-/*   ISCRUTE(_memblocksize      [0] ); */
-/*   ISCRUTE_id(_memspacesize      [0] ); */
-/*   ISCRUTE(_stridemem         [0] ); */
-/*   ISCRUTE(_countmem          [0] ); */
-/*   ISCRUTE(_countmemlastblock [0] ); */
+  /* ISCRUTE(_oneentitymemoffset    ); */
+  /* ISCRUTE(_blocksize         [0] ); */
+  /* ISCRUTE(_memblocksize      [0] ); */
+  /* ISCRUTE_id(_memspacesize      [0] ); */
+  /* ISCRUTE(_stridemem         [0] ); */
+  /* ISCRUTE(_countmem          [0] ); */
+  /* ISCRUTE(_countmemlastblock [0] ); */
 
-/*   ISCRUTE(_onedimallvaluesfileoffset ); */
-/*   ISCRUTE_int(_filespacesize     [0]     ); */
-/*   ISCRUTE(_stridefile        [0]     ); */
-/*   ISCRUTE(_filelastblocksize [0]     ); */
+  /* ISCRUTE(_onedimallvaluesfileoffset ); */
+  /* ISCRUTE_int(_filespacesize     [0]     ); */
+  /* ISCRUTE(_stridefile        [0]     ); */
+  /* ISCRUTE(_filelastblocksize [0]     ); */
 
   if ( _memspacesize[0] > _filespacesize[0] ) {
     MED_ERR_(_ret,MED_ERR_RANGE,MED_ERR_MEMSPACE,MED_ERR_SIZE_MSG);

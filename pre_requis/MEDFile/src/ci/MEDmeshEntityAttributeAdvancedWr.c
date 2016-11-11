@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -23,7 +23,7 @@
 #include <stdlib.h>
 
 /**\ingroup MEDmesh
-  \brief \MEDmeshEntityAttributeAdvancedWrBrief
+  \brief \MEDmeshEntityAttributeAdvancedBrief{d'écrire}
   \param fid \fid
   \param meshname \meshname
   \param datatype \datatype
@@ -34,9 +34,9 @@
   \param filter \filter
   \param attval \attributevalue
   \retval med_err \error
-  \details \MEDmeshEntityAttributeAdvancedWrDetails
+  \details \MEDmeshEntityAttributeAdvancedDetails{d'écrire}
   \remarks
-  \MEDmeshEntityAttributeAdvancedWrRem
+  \MEDmeshEntityAttributeAdvancedRem
  */
 
 med_err MEDmeshEntityAttributeAdvancedWr(const med_idt               fid,
@@ -70,7 +70,7 @@ med_err MEDmeshEntityAttributeAdvancedWr(const med_idt               fid,
 			   MED_INTERNAL_UNDEF,
 			   numdt,
 			   numit,
-			   MED_UNDEF_DT, /*Si la s�quence de calcul n'existe pas, ce champ sera initialis� correctement par d'autres appels.*/
+			   MED_UNDEF_DT, /*Si la séquence de calcul n'existe pas, ce champ sera initialisé correctement par d'autres appels.*/
 			   entitype,
 			   geotype,
 			   MED_NODAL,

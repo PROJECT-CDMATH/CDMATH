@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -76,7 +76,7 @@ med_err MAJ_236_300_joint(med_idt fid, const char * const maa)
 	    jnt,maa);
 
     /* Creation du joint */
-    MAJ_version(fid);
+    MAJ_version_num(fid,3,0,8);
     if (MEDsubdomainJointCr(fid,maa,jnt,des,ndom,maa_dist) < 0) {
       MESSAGE("Erreur a la creation du joint");
       return -1;
@@ -106,7 +106,7 @@ med_err MAJ_236_300_joint(med_idt fid, const char * const maa)
     }
 
   }
-  MAJ_version(fid);
+  MAJ_version_num(fid,3,0,8);
 
   return ret;
 }
@@ -143,7 +143,7 @@ int afficheCorres(med_idt fid, const char * const maa, char *jnt,
       ret = -1;
     }
     if (ret == 0) {
-      MAJ_version(fid);
+      MAJ_version_num(fid,3,0,8);
       for (k=0;k<nc;k++)
 /* 	printf("Correspondance %d : "IFORMAT" et "IFORMAT" \n",k+1,*(cortab+2*k), */
 /* 	       *(cortab+2*k+1)); */

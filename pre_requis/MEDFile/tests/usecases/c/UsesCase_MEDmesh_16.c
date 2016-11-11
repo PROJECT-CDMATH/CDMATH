@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -16,9 +16,9 @@
  */
 
 /*
- *  How to create an unstructured mesh with polygons
+ *  How to create an unstructured mesh with polyhedrons
  *
- *  Use case 16 : read a 2D unstructured mesh with 2 polyhedrons
+ *  Use case 16 : read a 2D unstructured mesh with 1 polyhedrons
  */
 
 #include <med.h>
@@ -29,7 +29,7 @@
 
 int main (int argc, char **argv) {
   med_idt fid;
-  const char meshname[MED_NAME_SIZE+1] = "3D unstructured mesh";
+  const char meshname[MED_NAME_SIZE+1] = "3D Unstructured Mesh With 2 polyhedrons";
   char meshdescription[MED_COMMENT_SIZE+1];
   med_int meshdim;
   med_int spacedim;
@@ -43,10 +43,10 @@ int main (int argc, char **argv) {
   med_float *coordinates = NULL;
   med_int nnodes = 0;
   med_int npoly = 0;
-  med_int indexsize;
-  med_int faceIndexSize;
-  med_int *index = NULL;
+  med_int faceindexsize;
+  med_int nodeindexsize;
   med_int *faceindex = NULL;
+  med_int *nodeindex = NULL;
   med_int *connectivity = NULL;
   med_int connectivitysize;
   med_bool coordinatechangement;
@@ -64,7 +64,7 @@ int main (int argc, char **argv) {
 
   /*
    * ... we know that the MED file has only one mesh,
-   * a real code working would check ...
+   * a real code would check ...
    */
 
   /* read mesh informations : mesh dimension, space dimension ... */
@@ -74,47 +74,46 @@ int main (int argc, char **argv) {
     return -1;
   }
 
-  /* read how many nodes in the mesh */
+  /* read how many nodes are in the mesh */
   if ((nnodes = MEDmeshnEntity(fid, meshname, MED_NO_DT, MED_NO_IT, MED_NODE, MED_POINT1,
-             MED_COORDINATE, MED_NO_CMODE,&coordinatechangement,
-             &geotransformation)) < 0) {
-    MESSAGE("ERROR : number of nodes ...");
-    return -1;
-  }
+             MED_COORDINATE, MED_NO_CMODE,&coordinatechangement, &geotransformation)) < 0)
+    { MESSAGE("ERROR : number of nodes ...");
+      return -1;
+    }
 
   /*
    * ... we know that we only have MED_POLYHEDRON cells in the mesh,
-   * a real code working would check all MED geometry cell types ...
+   * a real code would check for MED geometry cell types ...
    */
 
-  /* How many polygon in the mesh in nodal connectivity mode */
-  /* For the polygons, we get the size of array index */
-  if ((indexsize = MEDmeshnEntity(fid,meshname,MED_NO_DT,MED_NO_IT,
+  /* We read how many polyhedrons are in the mesh (using nodal connectivity mode) */
+  /* We get the size of the polyhedrons/face index array. 
+   * As an index of the face index array give the location of the first face   and so the 
+   * number of polyhedrons 
+   */
+  if ((faceindexsize = MEDmeshnEntity(fid,meshname,MED_NO_DT,MED_NO_IT,
           MED_CELL,MED_POLYHEDRON,MED_INDEX_FACE,MED_NODAL,
-          &coordinatechangement,
-          &geotransformation)) < 0) {
-    MESSAGE("ERROR : read number of polyedron ...");
-    return -1;
-  }
-  npoly = indexsize-1;
+          &coordinatechangement, &geotransformation)) < 0) 
+    { MESSAGE("ERROR : read number of polyhedrons ...");
+      return -1;
+    }
+  npoly = faceindexsize-1;
   ISCRUTE(npoly);
 
-  if ((faceIndexSize = MEDmeshnEntity(fid,meshname,MED_NO_DT,MED_NO_IT,
+  if ((nodeindexsize = MEDmeshnEntity(fid,meshname,MED_NO_DT,MED_NO_IT,
           MED_CELL,MED_POLYHEDRON,MED_INDEX_NODE,MED_NODAL,
-          &coordinatechangement,
-          &geotransformation)) < 0) {
-    MESSAGE("ERROR : read number of polyedron ...");
-    return -1;
-  }
-  ISCRUTE(faceIndexSize);
+          &coordinatechangement, &geotransformation)) < 0) 
+    { MESSAGE("ERROR : read number of polyhedrons ...");
+      return -1;
+    }
+  ISCRUTE(nodeindexsize);
 
   /* how many nodes for the polyhedron connectivity ? */
   if ((connectivitysize = MEDmeshnEntity(fid,meshname,MED_NO_DT,MED_NO_IT,
            MED_CELL,MED_POLYHEDRON,MED_CONNECTIVITY,MED_NODAL,
-           &coordinatechangement,
-           &geotransformation)) < 0) {
-    MESSAGE("ERROR : read connevity size ...");
-    return -1;
+           &coordinatechangement, &geotransformation)) < 0) 
+    { MESSAGE("ERROR : read connevity size ...");
+      return -1;
     }
   ISCRUTE(connectivitysize);
 
@@ -135,30 +134,30 @@ int main (int argc, char **argv) {
 
 
   /* read polygons connectivity */
-  index = (med_int *) malloc(sizeof(med_int)*indexsize);
-  faceindex = (med_int *) malloc(sizeof(med_int)*faceIndexSize);
+  faceindex = (med_int *) malloc(sizeof(med_int)*faceindexsize);
+  nodeindex = (med_int *) malloc(sizeof(med_int)*nodeindexsize);
   connectivity = (med_int *) malloc(sizeof(med_int)*connectivitysize);
 
   if (MEDmeshPolyhedronRd(fid,meshname,MED_NO_DT,MED_NO_IT,MED_CELL,MED_NODAL,
-			  index,faceindex,connectivity) < 0) {
-    MESSAGE("ERROR : read polygon connectivity ...");
-    return -1;
-  }
+			  faceindex,nodeindex,connectivity) < 0) 
+    { MESSAGE("ERROR : read polygon connectivity ...");
+      return -1;
+    }
 
   for (i=0;i<npoly;i++)
     {
     printf(">> MED_POLYHEDRON "IFORMAT" : \n",i+1);
-    printf("---- Face Index         ----- : [ ");
-    ind1 = *(index+i)-1;
-    ind2 = *(index+i+1)-1;
+    printf("---- Face Index         ----- : [\n");
+    ind1 = *(faceindex+i)-1;
+    ind2 = *(faceindex+i+1)-1;
     for (k=ind1;k<ind2;k++)
-      printf(IFORMAT" ",*(faceindex+k));
+      printf(IFORMAT" ",*(nodeindex+k));
     printf(" ] \n");
-    printf("---- Connectivity       ----- : [ ");
+    printf("---- Connectivity       ----- : [\n");
     for (k=ind1;k<ind2;k++)
       {
-      jind1 = *(faceindex+k)-1;
-      jind2 = *(faceindex+k+1)-1;
+      jind1 = *(nodeindex+k)-1;
+      jind2 = *(nodeindex+k+1)-1;
       for (j=jind1;j<jind2;j++)
         printf(IFORMAT" ",*(connectivity+j));
       printf(" \n");
@@ -167,7 +166,7 @@ int main (int argc, char **argv) {
     }
 
   /*
-   * ... we know that the family number of nodes and elements is 0, a real working would check ...
+   * ... we know that the family number of nodes and elements is 0, a real code would check ...
    */
 
   /* close MED file */
@@ -180,11 +179,11 @@ int main (int argc, char **argv) {
   if (coordinates)
     free(coordinates);
 
-  if (index)
-    free(index);
-
   if (faceindex)
     free(faceindex);
+
+  if (nodeindex)
+    free(nodeindex);
 
   if (connectivity)
     free(connectivity);

@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -216,7 +216,10 @@ _MEDmeshnEntity30(int dummy, ...)
    *  Ouverture du datagroup de niveau 4 <geotype>
    */
 
-  /* Pas Utilisation pour MED_NODE  */
+  /* Pour <entitype>==MED_NODE, on renvoie 1 s'il existe au moins un dataset car
+     par construction du modèle via l'API le tableau de coordonnées preexiste forcément
+     aux autres tableaux.
+   */
   if ( geotype == MED_GEO_ALL ) {
 
     _err=_MEDnObjects(_datagroup2,".",&_n);
@@ -270,7 +273,8 @@ _MEDmeshnEntity30(int dummy, ...)
   }
 
   /*
-   * Lecture du flag de modification sur autre chose que MED_CONNECTIVITY,MED_COORDINATE,MED_COORDINATE_AXIS<i>
+   * Lecture du flag indiquant une modification sur autre chose que les
+   datasets : MED_CONNECTIVITY,MED_COORDINATE,MED_COORDINATE_AXIS<i>
    *
    */
   if ( _MEDattrEntierLire(_datagroup,MED_NOM_CGS,&_changement_s) < 0) {
@@ -282,8 +286,8 @@ _MEDmeshnEntity30(int dummy, ...)
   /* 1) Lorsque l'utilisateur interroge un <meddatatype> qui est relatif a des coordonnées (famille,....) il faut mettre
    * le flag chgt à jour par rapport à des modifications potentiellement effectuées sur ces coordonnées
    * <=>
-   * Si on interroge autre chose que MED_CONNECTIVITY,MED_COORDINATE
-   * et qu'un changement est présent sur MED_CONNECTIVITY,MED_COORDINATE
+   * Si on interroge autre chose que MED_CONNECTIVITY,MED_COORDINATE,MED_COORDINATE_AXIS<i>
+   * et qu'un changement est présent sur MED_CONNECTIVITY,MED_COORDINATE,MED_COORDINATE_AXIS<i>
    * le flag chgt doit être positionné à vrai
    * Une demande entitype==MED_NODE && (meddatatype == MED_COORDINATE_AXIS1)||(meddatatype == MED_COORDINATE_AXIS2)
    *    ||(meddatatype === MED_COORDINATE_AXIS3) est assimilée à une demande concernant des coordonnées
@@ -305,20 +309,20 @@ _MEDmeshnEntity30(int dummy, ...)
 
     if (entitytype == MED_NODE) {
       if ( ( (med_mesh_type) _intmeshtype ) != MED_UNSTRUCTURED_MESH ) {
-	if ( (_gridtype == MED_CARTESIAN_GRID) ||
-	     (_gridtype == MED_CURVILINEAR_GRID) ) {
-	  _ntmpmeddatatype=_meshdim;
+	/* - Quelque soit le type de grille, les tableaux MED_COORDINATE_AXISx sont utilisés.
+	 * - Les grilles MED_POLAR_GRID et MED_CARTESIAN_GRID les utilisent pour enregistrer les coordonnées  
+	 *   de référence sur les différents axes du système de coordonnées choisi.
+	 * - Les grilles curvilinéaires utilisent MED_COORDINATE_AXISx pour stocker la structure
+	 *   et le tableau MED_COORDINATE pour stocker les coordonnées des noeuds. 
+	 */
+	  _ntmpmeddatatype   = _meshdim;
 	  _tmpmeddatatype[0] = MED_COORDINATE_AXIS1;
 	  _tmpmeddatatype[1] = MED_COORDINATE_AXIS2;
 	  _tmpmeddatatype[2] = MED_COORDINATE_AXIS3;
-	} else  if (_gridtype == MED_CURVILINEAR_GRID ) {
-/*Les grilles curvilinéaires utilisent MED_COORDINATE_AXISx pour stocker la structure et le tableau MED_COORDINATE pour stocker les coordonnées des noeuds */
-	  ++_ntmpmeddatatype;
-	  _tmpmeddatatype[3] = MED_COORDINATE;
-	} else {
-	MED_ERR_(_ret,MED_ERR_RANGE,MED_ERR_GRIDTYPE,MED_ERR_MESH_MSG);
-	SSCRUTE(meshname);ISCRUTE_int(_gridtype);goto ERROR;
-	}
+	  if (_gridtype == MED_CURVILINEAR_GRID ) {
+	    ++_ntmpmeddatatype;
+	    _tmpmeddatatype[_meshdim] = MED_COORDINATE;
+	  }
       } else
 	_tmpmeddatatype[0] = MED_COORDINATE;
     } else {

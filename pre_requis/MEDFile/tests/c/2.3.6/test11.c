@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -327,9 +327,8 @@ med_err getFieldsOn(med_idt fid, char * nomcha, med_type_champ typcha, med_int n
 	  ret = -1;
 	} else {
 
-	  lien = malloc(lnsize*sizeof(char));
+	  lien = malloc(lnsize*sizeof(char)+1);
 	  EXIT_IF(lien == NULL,NULL,NULL);
-
 	  if ( MEDlienLire(fid, lien, maa_ass) < 0 )  {
 	    MESSAGE("Erreur a la lecture du lien : "); 
 	    SSCRUTE(maa_ass);SSCRUTE(lien);

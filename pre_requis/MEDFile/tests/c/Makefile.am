@@ -144,9 +144,9 @@ CLEANFILES = \
 ./test8.dump
 
 if ENABLE_API23
-SUBDIRS          = dumps.ref . 2.3.6 2.3.1 2.3.2 2.3v3.0 2.3.1v3.0 2.3.2v3.0
+SUBDIRS          = dumps.ref . 3.1.0 3.0.8 2.3.6 2.3.1 2.3.2 2.3v3.0 2.3.1v3.0 2.3.2v3.0
 else
-SUBDIRS          = dumps.ref .
+SUBDIRS          = dumps.ref . 3.1.0 3.0.8
 endif
 
 EXTRA_DIST+=CMakeLists.txt

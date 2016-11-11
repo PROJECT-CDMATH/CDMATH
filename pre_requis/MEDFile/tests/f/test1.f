@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -27,12 +27,13 @@ C
 C     
       integer cret
       integer fid
+      character*255 fname
       character*200 des
       parameter (des = "Ceci est un courte description"
      1     // " du fichier test1.med")  
       
 C     Creation du fichier "test1.med"
-      call mfiope(fid,'test1.med',MED_ACC_CREAT, cret)
+      call mfiope(fid,'test1.med',MED_ACC_RDWR, cret)
       print *,cret
       if (cret .ne. 0 ) then
          print *,'Erreur à la création du fichier'
@@ -47,6 +48,23 @@ C     Ecriture d'un en-tete dans le fichier
          call efexit(-1)
       endif      
       
+C     Lecture de la taille du nom de fichier "test1.med"
+      call mfinam(fid,"", cret)
+      print *,cret
+      if (cret .le. 0 ) then
+         print *,'Erreur à la lecture de la taille du nom de fichier'
+         call efexit(-1)
+      endif      
+
+C     Lecture du nom de fichier "test1.med"
+      call mfinam(fid,fname, cret)
+      print *,cret
+      if (cret .le. 0 ) then
+         print *,'Erreur à la lecture du nom de fichier'
+         call efexit(-1)
+      endif      
+      print *,fname
+
 C     Fermeture du fichier
       call mficlo(fid,cret)
       print *,cret

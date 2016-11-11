@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -231,7 +231,10 @@ c     read values
      &    (aval3(2) .ne. val3(2)) .or.
      &    (aval3(3) .ne. val3(3)) 
      &   ) then
-          print *,'ERROR : attribute values'
+          print *,'ERROR : attribute values |',aval3(1),'|',aval3(2),
+     &        '|',aval3(3),'|'
+          print *,'ERROR : attribute values |',val3(1),'|',val3(2),
+     &        '|',val3(3),'|'
          call efexit(-1)
       endif
 C

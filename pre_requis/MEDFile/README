@@ -5,7 +5,7 @@ TABLE DES MATIERES
 
 1. 	Obtenir la derniere version
 
-2.   	Installer la bibliotheque MED 3.0
+2.   	Installer la bibliotheque MED 3.1
 2.1 	Plates-formes supportees
 2.2 	Logiciels necessaires a l'installation
 2.3	Lancement de l'installation sous UNIX
@@ -26,9 +26,9 @@ La version la plus recente de la bibliotheque MED se trouve
 sur le serveur intranet EDF R&D : http://med.der.edf.fr.
 
 
-2. 	Installer la bibliotheque MED 3.0
+2. 	Installer la bibliotheque MED 3.1
 
-Pour compiler et installer la librairie MED3.0 ainsi que sa
+Pour compiler et installer la librairie MED3.1 ainsi que sa
 batterie de programmes tests et ses utilitaires, 
 verifiez tout d'abord que vous disposez 
 d'un environnement adéquat puis appliquez les instructions suivantes.
@@ -36,13 +36,12 @@ d'un environnement adéquat puis appliquez les instructions suivantes.
 2.1	Plates-formes supportees et testées
 
 PCs LINUX 32/64
-BULL Novascale 4040 Linux 64 : 
 SUN-SOLARIS                    -> 3.0.x
 BLUEGENE                       -> 3.0.x
 
 2.2	Logiciels necessaires a l'installation
 
-a. HDF 5-1.8.4p1 (http://www.hdfgroup.org/HDF5).
+a. HDF 5-1.8.14 (http://www.hdfgroup.org/HDF5).
 a1. Variable d'environement HDF5HOME positionnée à l'emplacement d'HDF5
     ou utilisation de l'option --with-hdf5=<hdf5 path> à l'étape de configuration.
     Si aucune option n'est utilisée, MED cherche hdf dans /usr.
@@ -109,7 +108,7 @@ Remarques :
   Configurez par la commande : ./configure --prefix=<repertoire cible> F77=pgf90 --with-f90=pgf90
 
   Il est necessaire d'utiliser le compilateur F90 également pour compiler l'interface fortran
-  de la biliothèque (varaible F77).
+  de la biliothèque (variable F77).
 
 - Pour compiler la bibliotheque en mode debug utilisez : 
 
@@ -129,8 +128,10 @@ Remarques :
 - Pour spécifier où se trouve HDF5 sans utiliser la variable 
   d'environnement HDF5HOME utilisez : --with-hdf5=<path> 
 
-- Pour désactiver l'affichage de messages d'erreur sur la sortie erreur utiliser l'option
-  --enable-msgerr=false ou --disable-msgerr
+- Pour désactiver l'affichage de messages d'erreur sur la sortie erreur utilisez l'option
+  --enable-msgerr=false ou --disable-msgerr.
+
+  Si elle est bien utilisée, la bibliothèque ne devrait pas afficher d'erreur.
 
 - MED se base sur la taille des entiers F77 pour définir la taille du med_int. Les
   options de compilation concernant la taille des entiers fortran sont testées à l'étape
@@ -263,8 +264,8 @@ pas de wrapper 	mpif90
 
 Trois utilitaires sont compiles et installes dans <repertoire cible>/bin.
 Ce sont :
-- mdump (xmdump) : outil de dump d'un fichier MED aux formats V2.3 à V3.0. -> 3.0.7
-- medimport : traducteur de fichier à partir des versions V2.x vers V3.0.
+- mdump (xmdump) : outil de dump d'un fichier MED aux formats V2.3 à V3.1.
+- medimport : traducteur de fichier à partir des versions V2.x vers V3.1.
 - mdeconforme : vérificateur de conformité de fichier.
 
 4.	Documentation

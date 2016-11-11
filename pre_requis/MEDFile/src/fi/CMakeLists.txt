@@ -16,4 +16,8 @@ SET(fi_SOURCES
   medmesh.f
 )
 
+IF(MEDFILE_USE_MPI)
+LIST(APPEND fi_SOURCES medparfile.f)
+ENDIF(MEDFILE_USE_MPI)
+
 ADD_LIBRARY(_fi        OBJECT ${fi_SOURCES})

@@ -1,6 +1,6 @@
 C*  This file is part of MED.
 C*
-C*  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+C*  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
 C*  MED is free software: you can redistribute it and/or modify
 C*  it under the terms of the GNU Lesser General Public License as published by
 C*  the Free Software Foundation, either version 3 of the License, or
@@ -32,6 +32,23 @@ c
       else
          cret=0
       endif
+c      
+      return
+      end
+
+
+
+      subroutine mfinam(fid, name, cret)
+c     DEC$ ATTRIBUTES DLLEXPORT :: mfinam
+c
+      implicit none
+      save
+      character *(*) name
+      integer fid
+      integer namesize,cret
+      integer mfifnam
+c
+      cret = mfifnam(fid, name, len(name))
 c      
       return
       end

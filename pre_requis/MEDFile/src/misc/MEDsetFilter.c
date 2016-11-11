@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -94,6 +94,8 @@ med_err  _MEDsetFilter(const med_int   nspaces,
   (*filter).storagemode             = storagemode;
   strcpy((*filter).profilename,profilename);
 
+
+/* ISCRUTE((*filter).nspaces              ); */
 /*   ISCRUTE((*filter).nentity              ); */
 /*   ISCRUTE((*filter).nvaluesperentity     ); */
 /*   ISCRUTE((*filter).nconstituentpervalue ); */

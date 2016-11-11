@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -487,7 +487,7 @@ if (_MEDcheckVersion30(fid) < 0) goto ERROR;
     if ( _MEDattributeStringWr(_datagroup,MED_NOM_PFL,MED_NAME_SIZE,_profilename) < 0) {
       MED_ERR_(_ret,MED_ERR_WRITE,MED_ERR_ATTRIBUTE,MED_ERR_MESH_MSG);
       SSCRUTE(meshname);ISCRUTE(numit);ISCRUTE(numdt);SSCRUTE(_datagroupname2);SSCRUTE(_datagroupname3);
-      SSCRUTE(MED_NOM_PFL);SSCRUTE(_profilename);goto ERROR;
+      SSCRUTE(_profilename);goto ERROR;
     }
 
   /*

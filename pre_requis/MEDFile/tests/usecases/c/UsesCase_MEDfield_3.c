@@ -1,6 +1,6 @@
 /*  This file is part of MED.
  *
- *  COPYRIGHT (C) 1999 - 2013  EDF R&D, CEA/DEN
+ *  COPYRIGHT (C) 1999 - 2016  EDF R&D, CEA/DEN
  *  MED is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -69,7 +69,7 @@ int main (int argc, char **argv) {
 
     /* field information 
      * ... we know that the field has no computation step 
-     * and that the field values type is MED_FLOAT64, a real code working would check ... 
+     * and that the field values type is MED_FLOAT64, a real code would check ... 
      */
     if ((ncomponent = MEDfieldnComponent(fid,i+1)) < 0) {
       MESSAGE("ERROR : number of field component ...");
