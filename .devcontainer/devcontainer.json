@@ -1,0 +1,3200 @@
+{Licensing Fee for Standard Plan
+F95E-A637-209C
+
+
+Coldline Storage Oregon
+E209-9471-B5A2
+
+
+Network Vpn Internet Data Transfer In from Africa to Madrid
+6C21-312E-2094
+
+
+Licensing Fee for Ubuntu 18.04 LTS (Bionic Beaver) on g1-small
+183F-99CA-AC9C
+
+Licensing Fee for Ubuntu 18.04 LTS (Bionic Beaver) on f1-micro
+CB06-F11F-A744
+
+Licensing Fee for Ubuntu 18.04 LTS (Bionic Beaver) (RAM cost)
+2C7B-35C6-FB5F
+
+Licensing Fee for CoreOS Beta on g1-small
+0EA8-35E3-F896
+
+Licensing Fee for CoreOS Beta on f1-micro
+0FE6-96EF-5808
+
+
+B23-D924-F051	0.00 USD (Free) per 1 hour
+
+
+Network Vpn Inter Region Data Transfer In from Hong Kong to Sydney
+0031-0209-F39B	0.00 USD (Free) per 1 gibibyte	
+
+Network Vpn Inter Region Data Transfer In from London to Finland
+4409-2091-6BBF
+
+
+Licensing Fee for CoreOS Beta (RAM cost)
+1892-3B23-B453	0.00 USD (Free) per 1 gibibyte hour	
+
+Licensing Fee for Ubuntu 18.04 LTS (Bionic Beaver) (CPU cost)
+A227-50BC-4E7E	0.00 USD (Free) per 1 hour	
+
+Licensing Fee for Ubuntu 18.04 LTS (Bionic Beaver) (GPU cost)
+DCDE-8EC1-4FA5	0.00 USD (Free) per 1 hour	
+
+Network Inter Region Data Transfer In from Dammam to EMEA
+3790-46E8-2097
+
+
+
+Consent Structured Storage (Iowa)
+9DC2-F0A1-209A
+
+
+Licensing Fee for Standard Plan
+E543-EF0D-D945
+
+Active Physical Storage (europe-west4)
+9B3C-7D4E-209E
+
+BigQuery Storage API - Read Bytes Scanned (asia-northeast3)
+25A8-2C47-209D
+
+BigQuery Storage API - Read Bytes Scanned (europe-west4)
+6AA3-EC4F-EC6D
+
+BigQuery Storage API - Read Bytes Scanned (us-east4)
+2345-A899-8A68
+
+BigQuery Storage API - Read Bytes Scanned (us-west4)
+45F3-577C-4C37
+
+BigQuery Storage API - Write (europe)
+CB55-0D6D-EA30	
+
+
+
+BigQuery Storage API - Write (europe-west4)
+6D08-118F-C990
+
+BigQuery Storage API - Write (us-east4)
+56C3-39F0-A46A
+
+BigQuery Storage API - Write (us-west4)
+3BEE-F007-9671
+
+Analysis (europe-west4)
+199D-DD2A-3213
+
+
+Analysis (us-east4)
+5094-D030-92B2
+
+
+
+Analysis (us-west4)
+#!/usr/bin/env python
+# -*-coding:utf-8 -*
+
+import errno
+import getopt
+import os
+import subprocess
+import sys
+
+
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
+
+
+def main(argv):
+    """The main function treats the arguments given to our script."""
+
+    src_directory = os.getcwd()
+    #build_directory = """./build"""
+    install_directory = """/usr"""
+    mpi_option = """"""
+
+    try:
+        opts, args = getopt.getopt(argv, """h""",
+                                   ["""help""", """prefix=""", """MPI_ROOT_DIR=""", """make"""])
+    except getopt.GetoptError:
+        print("""You gave incorrect arguments.""")
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt in ("-h", "--help"):
+            print("""Possible options: h, help, prefix, MPI_ROOT_DIR.""")
+            # Notice that the make option is hidden.
+            sys.exit()
+        elif opt in ("""--prefix"""):
+            install_directory = str(arg)
+        elif opt in ("""--MPI_ROOT_DIR"""):
+            mpi_directory = str(arg)
+            mpi_option = """-DMPI_ROOT_DIR=""" + mpi_directory
+
+    # mkdir_p(build_directory)
+    # os.chdir(build_directory)
+    subprocess.call(["""cmake""",
+                     """-DCMAKE_INSTALL_PREFIX=""" + install_directory,
+                     """-DCMAKE_BUILD_TYPE=Release""",
+                     mpi_option,
+                     src_directory])
+
+
+if __name__ == """__main__""":
+    main(sys.argv[1:])
+
+
+
+>>                         } else if (typeof ob[insideFrontInterface.language] != "undefined") {
+>>                                 return ob[insideFrontInterface.language] || ob["en"] || "";
+>>                         } else if (insideFrontInterface.language.indexOf("-") !== -1 && typeof ob[insideFrontInterfac
+e.language.split("-")[0]] == "string") {
+>>                                 return ob[insideFrontInterface.language.split("-")[0]];
+>>                         } else if (Object.keys(ob).length > 0) {
+>>                                 for (var property in ob) {
+>>                                         if (property === "type")
+>>                                                 continue;
+>>                                         return ob[property];
+>>                                 }
+>>                                 return "";
+>>                         } else {
+>>                                 return "";
+>>                         }
+>>                 }
+>>                 function checkChatVisible() {
+>>                         var chatSettings = getChatSettings();
+>>                         var chatIsVisible = true;
+>>                         var data = frontEnd.settingsData;
+>>                         try {
+>>                                 if (chatSettings.useMinimiseButton === true && (hasSessionStorage && sessionStorage.g
+etItem("insideChatClosed") === "True") || insideFrontInterface.chat.isTabHiddenOnThisDevice()) {
+>>                                         chatIsVisible = false;
+>>                                 }
+>>                         } catch (e) {}
+>>                         if (typeof data.chats != "undefined" && data.chats.length > 0 && (chatSettings.showTabForActi
+ve === true || chatSettings.showPaneForActive === true)) {
+>>                                 chatIsVisible = true;
+>>                         }
+>>                         _insideGraph.doEvent("chat_visible", chatIsVisible);
+>>                 }
+>>                 insideFrontInterface.setTabPosition = setTabPosition;
+>>                 function setTabPosition() {
+>>                         if (device >= 2 && typeof (frontEnd.settings.mobileTabPosition) != "undefined") {
+>>                                 tabPosition = frontEnd.settings.mobileTabPosition || "9";
+>>                         } else if (typeof (frontEnd.settings.tabPosition) != "undefined") {
+>>                                 tabPosition = frontEnd.settings.tabPosition || "6";
+>>                         }
+>>                         var posNumbers = {
+>>                                 1: "topleft",
+>>                                 2: "top",
+>>                                 3: "topright",
+>>                                 4: "left",
+>>                                 5: "bottom",
+>>                                 6: "right",
+>>                                 7: "bottomleft",
+>>                                 8: "bottom",
+>>                                 9: "bottomright"
+>>                         };
+>>                         if (!isNaN(tabPosition)) {
+>>                                 tabPosition = posNumbers[tabPosition];
+>>                         }
+>>                         if ($("#inside_liveChatTab").hasClass("usingChatHeader")) {
+>>                                 if (tabPosition.indexOf("left") != -1) {
+>>                                         tabPosition = "bottomleft";
+>>                                 } else {
+>>                                         tabPosition = "bottomright";
+>>                                 }
+>>                         }
+>>                         if (frontEnd.settings.chatSettings && frontEnd.settings.chatSettings.version == "2") {
+>>                                 tabPosition = posNumbers[frontEnd.settings.chatSettings.chatTab.position] || "right";
+>>                                 if (device >= 2) {
+>>                                         tabPosition = posNumbers[frontEnd.settings.chatSettings.chatTab.mobileTabPosi
+tion] || "right";
+>>                                 }
+>>                         } else if (typeof (insideChatPane) != "undefined" && insideChatPane.settings && insideChatPan
+e.settings.chatSettings.chatTab.position) {
+>>                                 if (device >= 2) {
+>>                                         tabPosition = insideChatPane.settings.chatSettings.chatTab.mobileTabPosition
+|| "9";
+>>                                 } else {
+>>                                         tabPosition = insideChatPane.settings.chatSettings.chatTab.position || "6";
+>>                                 }
+>>                                 tabPosition = posNumbers[tabPosition];
+>>                         }
+>>                         tabYScale = 0.5;
+>>                         if (tabPosition.indexOf("right") != -1) {
+>>                                 $("#inside_tabs").css("right", "0px");
+>>                         } else {
+>>                                 $("#inside_tabs").css("right", "auto");
+>>                         }
+>>                         if (tabPosition == "left") {
+>>                                 $("#inside_tabs").css("left", "0px").css("right", "auto");
+>>                                 $("#inside_tabs").css("text-align", "left");
+>>                                 tabYScale = 0.5;
+>>                         }
+>>                         if (tabPosition == "topleft") {
+>>                                 $("#inside_tabs").css("left", "0px");
+>>                                 $("#inside_tabs").css("text-align", "left");
+>>                                 tabYScale = 1.0;
+>>                         }
+>>                         if (tabPosition == "bottomleft") {
+>>                                 $("#inside_tabs").css("left", "0px");
+>>                                 $("#inside_tabs").css("text-align", "left");
+>>                                 tabYScale = 0.0;
+>>                         }
+>>                         if (tabPosition == "topright") {
+>>                                 tabYScale = 1.0;
+>>                         }
+>>                         if (tabPosition == "bottomright") {
+>>                                 tabYScale = 0.0;
+>>                         }
+>>                         insideFrontInterface.chat.setTabOffsetPosition();
+>>                         windowScale();
+>>                 }
+>>                 function unquoteAttr(s, preserveCR) {
+>>                         return ('' + s).split('&amp;').join("&").replace(/&apos;/g, '').replace(/&quot;/g, '"').repla
+ce(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#10;/g, "\r\n").replace(/&#39;/g, '"').replace(/&nbsp;/g, ' ').replace(
+/&#13;/g, "\r\n");
+>>                 }
+>>                 function loadFacebookSDK() {
+>>                         (function(d, s, id) {
+>>                                 var js, fjs = d.getElementsByTagName(s)[0];
+>>                                 if (d.getElementById(id)) {
+>>                                         return;
+>>                                 }
+>>                                 js = d.createElement(s);
+>>                                 js.id = id;
+>>                                 js.src = '//connect.facebook.net/en_US/sdk.js';
+>>                                 fjs.parentNode.insertBefore(js, fjs);
+>>                         }(document, 'script', 'facebook-jssdk'));
+>>                 }
+>>                 window.fbAppId = window.fbAppId || "";
+>>                 window.fbQueue = window.fbQueue || [];
+>>                 window.fbReady = window.fbReady || false;
+>>                 window.fbAsyncInit = window.fbAsyncInit || function() {
+>>                         FB.init({
+>>                                 appId: window.fbAppId,
+>>                                 xfbml: false,
+>>                                 version: 'v2.5'
+>>                         });
+>>                         window.fbReady = true;
+>>                         window.processFbQueue();
+>>                 }
+>>                 ;
+>>                 window.processFbQueue = window.processFbQueue || function() {
+>>                         if (!window.fbReady) {
+>>                                 return;
+>>                         }
+>>                         if (window.fbQueue.length === 0) {
+>>                                 return;
+>>                         }
+>>                         fbQueue.shift().call(window);
+>>                         setTimeout(window.processFbQueue, 0);
+>>                 }
+>>                 ;
+>>                 frontEnd.visitorNotify = visitorNotify;
+>>                 function visitorNotify(data, callback) {
+>>                         if (insideFrontInterface.visitorNotify) {
+>>                                 var popup = insideFrontInterface.visitorNotify.show(data);
+>>                                 if (typeof callback == "function") {
+>>                                         callback(popup);
+>>                                 }
+>>                                 return;
+>>                         }
+>>                         loadCssFile(_insideCDN + "./fonts/insideicons/front/icoinside-front-surveys.css?" + _insideSc
+riptVersion);
+>>                         _insideGraph.loadModule("visitornotify", "inside.front.visitornotify.js").then(function() {
+>>                                 var popup = insideFrontInterface.visitorNotify.show(data);
+>>                                 if (typeof callback == "function") {
+>>                                         callback(popup);
+>>                                 }
+>>                         });
+>>                 }
+>>                 function getSelectionText() {
+>>                         var text = "";
+>>                         if (window.getSelection) {
+>>                                 text = window.getSelection().toString();
+>>                         } else if (document.selection && document.selection.type != "Control") {
+>>                                 text = document.selection.createRange().text;
+>>                         }
+>>                         return text;
+>>                 }
+>>                 function disconnected() {
+>>                         console.log("disconnected from inside");
+>>                         $("#inside_liveChatTab").hide();
+>>                         if (chatPaneVersion() === 2 && typeof insideChatPane !== "undefined" && typeof insideChatPane
+.disconnectedReceived === "function") {
+>>                                 insideChatPane.disconnectedReceived();
+>>                         }
+>>                 }
+>>                 var scaleinit = false;
+>>                 var chatPaneMode = "";
+>>                 var tabYScale = 0.5;
+>>                 var viewport;
+>>                 frontEnd.windowScale = windowScale;
+>>                 insideFrontInterface.windowScale = windowScale;
+>>                 function windowScale(animTime) {
+>>                         if (typeof (animTime) == "undefined") {
+>>                                 animTime = 0;
+>>                         }
+>>                         viewport = getViewPortSize();
+>>                         var offset = viewport.height * tabYScale;
+>>                         if (device == 3 && (navigator.platform.indexOf("iPhone") != -1 || navigator.platform.indexOf(
+"iPad") != -1)) {
+>>                                 offset = viewport.height * tabYScale * getViewportScale();
+>>                         }
+>>                         if (tabPosition == "left" || tabPosition == "right") {
+>>                                 offset -= $("#inside_liveChatTab").height() * 0.5;
+>>                         }
+>>                         if (device > 1 && tabPosition.startsWith('top')) {
+>>                                 if (typeof (document.documentElement) != 'undefined' && typeof (document.documentElem
+ent.clientHeight) != 'undefined' && offset > document.documentElement.clientHeight) {
+>>                                         if (device !== 1 && document.documentElement.clientHeight < window.innerHeigh
+t) {
+>>                                                 offset = window.innerHeight;
+>>                                         } else {
+>>                                                 offset = document.documentElement.clientHeight;
+>>                                         }
+>>                                 }
+>>                                 if (!insideFrontInterface.chat.chatPaneOpen && $("#inside_tabs").is(":visible") && !$
+("#inside_tabs").is(':empty') && $("#inside_liveChatTab").height() == 0 && $(".inside-notification").length == 0) {
+>>                                         setTimeout(windowScale, 250);
+>>                                 }
+>>                         }
+>>                         if (tabPosition.startsWith('top')) {
+>>                                 offset -= $("#inside_liveChatTab").height();
+>>                         }
+>>                         if (!animTime) {
+>>                                 if (!(ios && !standalone && safari && $('input').is(":focus"))) {
+>>                                         $("#inside_tabs").css("bottom", offset + "px");
+>>                                 }
+>>                         }
+>>                         if (insideFrontInterface.visitorNotify) {
+>>                                 insideFrontInterface.visitorNotify.scalePopups();
+>>                         }
+>>                         if (IE11Quirks) {
+>>                                 IE11ScrollFix();
+>>                         }
+>>                         var disableChatOnVideoCall = insideFrontInterface.chat.settings && insideFrontInterface.chat.
+settings.preChat && insideFrontInterface.chat.settings.preChat.disableChatOnVideoCall == true && typeof (insideChatPane)
+ != "undefined" && typeof (insideChatPane.videoChat) != "undefined" && insideChatPane.videoChat.disableChatOnVideoCall =
+= true;
+>>                         if (document.getElementById('inside_holder') != null) {
+>>                                 if (window.innerHeight > window.innerWidth || disableChatOnVideoCall) {
+>>                                         document.getElementById('inside_holder').classList.add("portrait");
+>>                                 } else
+>>                                         document.getElementById('inside_holder').classList.remove("portrait");
+>>                         }
+>>                 }
+>>                 insideFrontInterface.positionTabs = positionTabs;
+>>                 function positionTabs() {
+>>                         if (tabPosition.indexOf("right") != -1) {
+>>                                 $("#inside_tabs").removeClass("leftTabPosition");
+>>                         } else {
+>>                                 $("#inside_tabs").addClass("leftTabPosition");
+>>                         }
+>>                         $("#inside_tabs > div").each(function() {
+>>                                 $(this).css({
+>>                                         "left": "",
+>>                                         "right": ""
+>>                                 });
+>>                                 if (tabPosition.indexOf("right") != -1) {
+>>                                         if (frontEnd.settings.autohideTabs && (frontEnd.autoHideAllowed || frontEnd.s
+ettings.autoHideTabOnLoad) && !(device > 1 && frontEnd.settings.autohideOnMobile == false) && !$(this).hasClass("noAutoH
+ide")) {
+>>                                                 hideAmount = 20;
+>>                                                 if (typeof (frontEnd.settings.autoHideAmount) != "undefined" && front
+End.settings.autoHideAmount != "" && !isNaN(frontEnd.settings.autoHideAmount)) {
+>>                                                         hideAmount = parseInt(frontEnd.settings.autoHideAmount);
+>>                                                 }
+>>                                                 $(this).css("right", hideAmount + "px");
+>>                                                 $(this).attr("tabHidden", true);
+>>                                         } else {
+>>                                                 if ($(this).hasClass("usingChatHeader")) {
+>>                                                         $(this).css("right", $(this).outerWidth());
+>>                                                 } else if ($(this).find("img, svg").length > 0) {
+>>                                                         $(this).css("right", $(this).find("img, svg").width());
+>>                                                 } else if ($(this).find("svg").length > 0) {
+>>                                                         $(this).css("right", $(this).find("svg").width());
+>>                                                 }
+>>                                         }
+>>                                 } else {
+>>                                         if (frontEnd.settings.autohideTabs && (frontEnd.autoHideAllowed || frontEnd.s
+ettings.autoHideTabOnLoad) && !(device > 1 && frontEnd.settings.autohideOnMobile == false)) {
+>>                                                 hideAmount = 20;
+>>                                                 if (typeof (frontEnd.settings.autoHideAmount) != "undefined" && front
+End.settings.autoHideAmount != "" && !isNaN(frontEnd.settings.autoHideAmount)) {
+>>                                                         hideAmount = parseInt(frontEnd.settings.autoHideAmount);
+>>                                                 }
+>>                                                 if ($(this).find("img, svg").length > 0) {
+>>                                                         $(this).css("left", -$(this).find("img, svg").width() + hideA
+mount + "px");
+>>                                                 }
+>>                                         } else {
+>>                                                 if ($(this).find("img, svg").length > 0)
+>>                                                         $(this).css("left", 0);
+>>                                         }
+>>                                 }
+>>                         });
+>>                 }
+>>                 insideFrontInterface.setMetaViewport = setMetaViewPort;
+>>                 var siteViewport = $('meta[name="viewport"]:last'), siteViewportContent, siteViewportId, siteViewport
+Class;
+>>                 if (siteViewport.length > 0) {
+>>                         siteViewportContent = siteViewport.attr('content');
+>>                         siteViewportId = siteViewport.attr('id');
+>>                         siteViewportClass = siteViewport.attr('class');
+>>                 }
+>>                 function setMetaViewPort() {
+>>                         if ($('meta[name="viewport"]').length == 0) {
+>>                                 var meta = document.createElement('meta');
+>>                                 meta.name = 'viewport';
+>>                                 document.head.appendChild(meta);
+>>                         }
+>>                         var metaContent = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no
+';
+>>                         var metaContentChanged = $('meta[name="viewport"]:last').attr("content") != metaContent;
+>>                         $('meta[name="viewport"]:last').attr({
+>>                                 'id': 'inside-viewport',
+>>                                 'class': 'inside-viewport',
+>>                                 'content': metaContent
+>>                         });
+>>                         if (metaContentChanged) {
+>>                                 if (typeof insideChatPane != "undefined") {
+>>                                         setTimeout(insideChatPane.windowScale, 0);
+>>                                         setTimeout(insideChatPane.windowScale, 500);
+>>                                 }
+>>                         }
+>>                 }
+>>                 insideFrontInterface.resetMetaViewport = resetMetaViewPort;
+>>                 function resetMetaViewPort() {
+>>                         if (siteViewport.length > 0) {
+>>                                 $('meta[name="viewport"]:last').attr({
+>>                                         'id': siteViewportId,
+>>                                         'class': siteViewportClass,
+>>                                         'content': siteViewportContent
+>>                                 });
+>>                                 if (typeof siteViewportClass == 'undefined' || siteViewportClass.length == 0)
+>>                                         $('meta[name="viewport"]:last').removeAttr('class');
+>>                                 if (typeof siteViewportId == 'undefined' || siteViewportId.length == 0)
+>>                                         $('meta[name="viewport"]:last').removeAttr('id');
+>>                         } else
+>>                                 $('meta[name="viewport"]:last').remove();
+>>                 }
+>>                 frontEnd.getViewportScale = getViewportScale;
+>>                 function getViewportScale() {
+>>                         this.viewportScale = 1;
+>>                         return this.viewportScale;
+>>                 }
+>>                 var autoHideTimeout;
+>>                 frontEnd.autoHideAllowed = false;
+>>                 function startautohideTabs() {
+>>                         if (device > 1 && frontEnd.settings && frontEnd.settings.autohideOnMobile === false) {
+>>                                 return;
+>>                         }
+>>                         if (frontEnd.settings.chatSettings) {
+>>                                 if (!frontEnd.settings.chatSettings.chatTab.autohideTabs) {
+>>                                         return;
+>>                                 }
+>>                         } else {
+>>                                 if (!frontEnd.settings.autohideTabs)
+>>                                         return;
+>>                         }
+>>                         $("#inside_tabs").off("mouseenter");
+>>                         $("#inside_tabs").off("mouseleave");
+>>                         if (device != 2 && device != 3) {
+>>                                 $("#inside_tabs").on("touchmove", "> div[autohide]", autohideTabs);
+>>                                 $("#inside_tabs").on("mouseenter", "> div[autohide]", hoverShowTabs);
+>>                                 $("#inside_tabs").on("mouseleave", "> div[autohide]", function() {
+>>                                         autoHideTimeout = setTimeout(autohideTabs, 100);
+>>                                         frontEnd.autoHideAllowed = true;
+>>                                 });
+>>                         }
+>>                         $("#inside_tabs").off("load").on("load", "img", autohideTabs);
+>>                         if (frontEnd.settings.autoHideTabOnLoad != true) {
+>>                                 positionTabs();
+>>                                 frontEnd.autoHideAllowed = true;
+>>                                 autohideTabs();
+>>                                 setTimeout(function() {
+>>                                         hoverShowTabs($("#inside_tabs > div[autohide]"));
+>>                                         frontEnd.autoHideAllowed = false;
+>>                                 }, 1000);
+>>                                 setTimeout(function() {
+>>                                         frontEnd.autoHideAllowed = true;
+>>                                         autohideTabs();
+>>                                 }, 5000);
+>>                         } else {
+>>                                 autohideTabs(0);
+>>                         }
+>>                 }
+>>                 frontEnd.autohideTabs = autohideTabs;
+>>                 function autohideTabs(time) {
+>>                         if (device > 1 && frontEnd.settings.autohideOnMobile == false) {
+>>                                 return;
+>>                         }
+>>                         $("#inside_tabs").show();
+>>                         if (typeof (time) == "undefined") {
+>>                                 time = 1000;
+>>                         }
+>>                         var hideAmount = 20;
+>>                         if (typeof (frontEnd.settings.autoHideAmount) != "undefined" && frontEnd.settings.autoHideAmo
+unt != "" && !isNaN(frontEnd.settings.autoHideAmount)) {
+>>                                 hideAmount = parseInt(frontEnd.settings.autoHideAmount);
+>>                         }
+>>                         $("#inside_tabs > div[autohide]").each(function() {
+>>                                 autohideTab(this, time);
+>>                         });
+>>                         if (insideFrontInterface.chat.chatPaneOpen || (insideFrontInterface.getAvailableAssistants &&
+ insideFrontInterface.getAvailableAssistants().length == 0)) {}
+>>                 }
+>>                 frontEnd.autohideTab = autohideTab;
+>>                 function autohideTab(tab, time) {
+>>                         if (!frontEnd.autoHideAllowed && frontEnd.settings.autoHideTabOnLoad != true)
+>>                                 return;
+>>                         var $tab = $(tab);
+>>                         if ($tab.hasClass("noAutoHide")) {
+>>                                 $tab.stop(true).animate({
+>>                                         right: $tab.outerWidth()
+>>                                 }, 0);
+>>                                 return;
+>>                         }
+>>                         if ($tab.attr("autohide")) {
+>>                                 hideAmount = parseInt($tab.attr("autohide"));
+>>                         }
+>>                         var tabImage = $tab.find("img, svg");
+>>                         var tabWidth = tabImage.width();
+>>                         if (tabPosition == "left" || tabPosition == "topleft" || tabPosition == "bottomleft") {
+>>                                 $tab.stop(true, true).css("left", "0px").animate({
+>>                                         left: -tabWidth + hideAmount
+>>                                 }, time);
+>>                         } else {
+>>                                 if (time != 0) {
+>>                                         $tab.stop(true, true).animate({
+>>                                                 right: hideAmount
+>>                                         }, time);
+>>                                 } else {
+>>                                         $tab.stop(true, true).css({
+>>                                                 right: hideAmount
+>>                                         });
+>>                                 }
+>>                         }
+>>                         $tab.attr("tabHidden", "true");
+>>                 }
+>>                 insideFrontInterface.hoverShowTabs = hoverShowTabs;
+>>                 function hoverShowTabs(_tab) {
+>>                         if (typeof (_tab.currentTarget) == "undefined") {
+>>                                 tab = _tab;
+>>                         } else {
+>>                                 tab = $(this);
+>>                         }
+>>                         clearTimeout(autoHideTimeout);
+>>                         if (tabPosition == "left" || tabPosition == "topleft" || tabPosition == "bottomleft") {
+>>                                 tab.css("right", "");
+>>                                 tab.stop(true).animate({
+>>                                         left: 0
+>>                                 }, 250);
+>>                         } else {
+>>                                 tab.css("left", "");
+>>                                 var tabImage = tab.find("img, svg");
+>>                                 var tabWidth = tabImage.width();
+>>                                 tab.stop(true).animate({
+>>                                         right: tabWidth
+>>                                 }, 250);
+>>                         }
+>>                         tab.removeAttr("tabHidden", "true");
+>>                 }
+>>                 frontEnd.getViewPortSize = getViewPortSize;
+>>                 function getViewPortSize() {
+>>                         var viewportwidth;
+>>                         var viewportheight;
+>>                         if (device === 2 || device === 3) {
+>>                                 var zoomLevel = document.documentElement.clientWidth / window.innerWidth;
+>>                                 viewportheight = window.innerHeight * zoomLevel;
+>>                                 viewportwidth = document.documentElement.clientWidth;
+>>                                 if (window.innerWidth !== window.outerWidth) {
+>>                                         viewportheight = window.innerHeight;
+>>                                         viewportwidth = window.innerWidth;
+>>                                 }
+>>                         } else if (typeof document.documentElement != 'undefined' && typeof document.documentElement.
+clientWidth != 'undefined' && document.documentElement.clientWidth != 0 && document.documentElement.clientHeight <= wind
+ow.innerHeight && !firefox) {
+>>                                 viewportwidth = document.documentElement.clientWidth,
+>>                                 viewportheight = document.documentElement.clientHeight;
+>>                         } else if (typeof window.innerWidth != 'undefined') {
+>>                                 viewportwidth = window.innerWidth,
+>>                                 viewportheight = window.innerHeight;
+>>                         } else {
+>>                                 viewportwidth = document.getElementsByTagName('body')[0].clientWidth,
+>>                                 viewportheight = document.getElementsByTagName('body')[0].clientHeight;
+>>                         }
+>>                         return {
+>>                                 width: viewportwidth,
+>>                                 height: viewportheight
+>>                         };
+>>                 }
+>>                 frontEnd.setCookie = setCookie;
+>>                 frontEnd.getCookie = getCookie;
+>>                 function getCookie(c_name) {
+>>                         var i, x, y, ARRcookies = document.cookie.split(";");
+>>                         for (i = 0; i < ARRcookies.length; i++) {
+>>                                 x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+>>                                 y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+>>                                 x = x.replace(/^\s+|\s+$/g, "");
+>>                                 if (x == c_name) {
+>>                                         return unescape(y);
+>>                                 }
+>>                         }
+>>                 }
+>>                 function setCookie(c_name, value, exdays) {
+>>                         var exdate = new Date();
+>>                         exdate.setDate(exdate.getDate() + exdays);
+>>                         var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
+>>                         document.cookie = c_name + "=" + c_value;
+>>                 }
+>>                 function trace() {
+>>                         var arr = Array.prototype.slice.call(arguments);
+>>                         if (typeof (console) != "undefined") {
+>>                                 console.log(arr.join(","));
+>>                         }
+>>                 }
+>>                 frontEnd.loadCssFile = loadCssFile;
+>>                 function loadCssFile(url, callback) {
+>>                         _insideGraph.loadCSS(url, callback);
+>>                 }
+>>                 frontEnd.loadInsideChat = loadInsideChat;
+>>                 function loadInsideChat(callback) {
+>>                         loadTranslations(function() {
+>>                                 if (insideFrontInterface.chatPaneVersion() != 2 && typeof insideLegacyChat != "undefi
+ned") {
+>>                                         callback();
+>>                                         return;
+>>                                 }
+>>                                 _insideGraph.loadModule("chat", "frontend-chat.js.bundle").then(function() {
+>>                                         if (insideFrontInterface.chatPaneVersion() != 2 && typeof insideLegacyChat ==
+ "undefined") {
+>>                                                 _insideGraph.loadJS(insideScript + "/js/inside.front.legacychat.js?"
++ _insideScriptVersion, function() {
+>>                                                         return typeof insideLegacyChat != 'undefined'
+>>                                                 }, function() {
+>>                                                         insideLegacyChat.init($);
+>>                                                         if (typeof (callback) == "function") {
+>>                                                                 callback();
+>>                                                         }
+>>                                                 });
+>>                                                 loadCssFile(_insideCDN + "/css/inside.front.legacychat.css?" + _insid
+eScriptVersion, function() {
+>>                                                         console.log("legacy css loaded");
+>>                                                 });
+>>                                         } else {
+>>                                                 console.log("chat bundle loaded")
+>>                                                 if (typeof (callback) == "function") {
+>>                                                         callback();
+>>                                                 }
+>>                                         }
+>>                                 }).catch(function(err) {
+>>                                         console.error("Error loading chat module: ", err);
+>>                                 });
+>>                         });
+>>                 }
+>>                 function loadInsideSurvey(callback) {
+>>                         loadCssFile(_insideCDN + "./fonts/insideicons/front/icoinside-front-surveys.css?" + _insideSc
+riptVersion);
+>>                         _insideGraph.loadModule("survey", "inside.front.survey.js").then(function() {
+>>                                 _insideGraph.initModule("survey");
+>>                                 if (typeof (callback) == "function")
+>>                                         callback();
+>>                         });
+>>                 }
+>>                 insideFrontInterface.getAvailableAssistants = getAvailableAssistants;
+>>                 function getAvailableAssistants() {
+>>                         var assistants = [];
+>>                         for (var userid in $.inside.front.users) {
+>>                                 var user = $.inside.front.users[userid];
+>>                                 if (typeof (user) != "function" && typeof (user) != "string")
+>>                                         assistants.push(user);
+>>                         }
+>>                         return assistants;
+>>                 }
+>>                 insideFrontInterface.chatPaneVersion = chatPaneVersion;
+>>                 function chatPaneVersion() {
+>>                         if (insideFrontInterface && insideFrontInterface.chatSettings && insideFrontInterface.chatSet
+tings.version == "2") {
+>>                                 usingChatPanev2 = true;
+>>                                 insideFrontInterface.chat.version = 2;
+>>                                 return 2;
+>>                         }
+>>                         insideFrontInterface.chat.version = 1;
+>>                         return 1;
+>>                 }
+>>                 insideFrontInterface.language = "en";
+>>                 insideFrontInterface.chat.translate = translate;
+>>                 function translate(str) {
+>>                         if (typeof (str) == "undefined" || str == null || str == "") {
+>>                                 return "";
+>>                         }
+>>                         if (typeof str === "object") {
+>>                                 str = str[insideFrontInterface.language] || str["en"];
+>>                         }
+>>                         if (typeof (str) == "undefined" || str == null || str == "") {
+>>                                 return "";
+>>                         }
+>>                         if (insideFrontInterface.labelTranslations && insideFrontInterface.labelTranslations.translat
+ions[str]) {
+>>                                 return insideFrontInterface.labelTranslations.translations[str];
+>>                         }
+>>                         if (insideFrontInterface.labelTranslations && insideFrontInterface.labelTranslations.translat
+ions) {
+>>                                 var squareReplace = /\[(.*?)\]/gi;
+>>                                 var squareReplace2 = /\[(.*?)\]/i;
+>>                                 var regExCharReplace = /[-[\]{}()*+?.,\\^$|#\s]/g;
+>>                                 var clearStr = str.toString().replace(/<br\s*[\/]?>/gi, " ").replace(/\[/g, "XOPENBRA
+CKETX");
+>>                                 for (var i in insideFrontInterface.labelTranslations.translations) {
+>>                                         if (i.indexOf("[") == -1)
+>>                                                 continue;
+>>                                         var englishPhrase = i;
+>>                                         var translation = insideFrontInterface.labelTranslations.translations[i];
+>>                                         if (typeof (translation) == "undefined")
+>>                                                 continue;
+>>                                         var toMatch = "";
+>>                                         toMatch = englishPhrase.replace(squareReplace, "XREPLACEX");
+>>                                         toMatch = toMatch.replace(regExCharReplace, "\\$&");
+>>                                         toMatch = toMatch.split("XREPLACEX").join("(.*)");
+>>                                         toMatch = "^" + toMatch + "(.)*" + "$";
+>>                                         var regex = new RegExp(toMatch,"gi");
+>>                                         var matches = clearStr.match(regex);
+>>                                         if (matches != null && matches.length > 0) {
+>>                                                 var newStr = translation;
+>>                                                 if (typeof (translation) == "undefined" || translation == "") {
+>>                                                         return str;
+>>                                                 }
+>>                                                 var contentsOfBrackets;
+>>                                                 regex.lastIndex = 0;
+>>                                                 var exec = regex.exec(clearStr);
+>>                                                 if (exec) {
+>>                                                         contentsOfBrackets = exec[1];
+>>                                                 }
+>>                                                 if (exec.length > 1) {
+>>                                                         for (var i = 1; i < exec.length; i++) {
+>>                                                                 newStr = newStr.replace(squareReplace2, exec[i]);
+>>                                                         }
+>>                                                 }
+>>                                                 return newStr.replace(/XOPENBRACKETX/g, '[');
+>>                                         }
+>>                                 }
+>>                         }
+>>                         return str;
+>>                 }
+>>                 frontEnd.addStyleString = addStyleString;
+>>                 function addStyleString(str, id) {
+>>                         if (typeof (id) != "undefined") {
+>>                                 $("style#" + id).remove();
+>>                         }
+>>                         var styleNode = $("<style>" + str + "</style>").appendTo("body");
+>>                         if (typeof (id) != "undefined") {
+>>                                 styleNode.attr("id", id);
+>>                         }
+>>                 }
+>>                 insideFrontInterface.closePopups = closePopups;
+>>                 function closePopups() {
+>>                         $(".inside_windowBlack").remove();
+>>                         $(".inside_visitorNotify").remove();
+>>                 }
+>>                 $.inside.front = frontEnd;
+>>                 if (_insideGraph.connectImmediately) {
+>>                         setTimeout(init, 0);
+>>                 } else {
+>>                         $(document).ready(init);
+>>                 }
+>>                 function getQueryStringParameterByName(name, url) {
+>>                         if (!url) {
+>>                                 url = window.location.href;
+>>                         }
+>>                         name = name.replace(/[\[\]]/g, '\\$&');
+>>                         var regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`,'i')
+>>                           , results = regex.exec(url);
+>>                         if (!results) {
+>>                                 return null;
+>>                         }
+>>                         if (!results[2]) {
+>>                                 return '';
+>>                         }
+>>                         return decodeURIComponent(results[2].replace(/\+/g, ' '));
+>>                 }
+>>         }
+>>         )(window, _insideGraph.jQuery);
+>>         function initTabVisible() {
+>>                 _insideGraph.tabVisible = true;
+>>                 var hidden, visibilityChange;
+>>                 if (typeof document.hidden !== "undefined") {
+>>                         hidden = "hidden";
+>>                         visibilityChange = "visibilitychange";
+>>                 } else if (typeof document.msHidden !== "undefined") {
+>>                         hidden = "msHidden";
+>>                         visibilityChange = "msvisibilitychange";
+>>                 } else if (typeof document.webkitHidden !== "undefined") {
+>>                         hidden = "webkitHidden";
+>>                         visibilityChange = "webkitvisibilitychange";
+>>                 }
+>>                 function handleVisibilityChange() {
+>>                         if (document[hidden]) {
+>>                                 _insideGraph.tabVisible = false;
+>>                         } else {
+>>                                 _insideGraph.tabVisible = true;
+>>                         }
+>>                 }
+>>                 if (typeof document.addEventListener === "undefined" || hidden === undefined) {} else {
+>>                         document.addEventListener(visibilityChange, handleVisibilityChange, false);
+>>                 }
+>>         }
+>>         this.destroy = destroy;
+>>         function destroy() {
+>>                 delete window.insideFrontInterface;
+>>                 _insideGraph.jQuery.inside.unbindAll();
+>>         }
+>> });
+>> ;_insideGraph.registerModule("tabs", function() {
+>>         var $ = _insideGraph.jQuery;
+>>         var settings = $.inside.front.settings;
+>>         var chatSettings = $.inside.front.settings.chatSettings;
+>>         var device = $.inside.front.device;
+>>         var hasSessionStorage = false;
+>>         try {
+>>                 hasSessionStorage = typeof (sessionStorage) != 'undefined';
+>>         } catch (e) {}
+>>         var checkMessageReceived = true;
+>>         var useMinimiseButton = false;
+>>         insideFrontInterface.getUseMinimiseButton = function() {
+>>                 return useMinimiseButton;
+>>         }
+>>         var getAriaButtonAttribute = insideFrontInterface.getAriaButtonAttribute;
+>>         var translate = insideFrontInterface.chat.translate;
+>>         var usingChatPanev2 = false;
+>>         var chatTabMode = "offline";
+>>         var tabPosition = "right";
+>>         var customimageurl = _insideCDN + "/custom/";
+>>         insideFrontInterface.chatTabMode = chatTabMode;
+>>         insideFrontInterface.chat.startOffline = true;
+>>         var messageReceived = false;
+>>         var defaultOnlineSVGs = {
+>>                 "default1": '<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><g fi
+ll="none" fill-rule="evenodd"><circle cx="30" cy="30" r="30" fill="#1BB9DA"/><path fill="#FFF" d="M32.644 42.097l-.04 5.
+167-6.552-5.167h-9.3a5.64 5.64 0 0 1-5.64-5.64V21.543a5.64 5.64 0 0 1 5.64-5.64h25.495a5.64 5.64 0 0 1 5.64 5.64v14.914a
+5.64 5.64 0 0 1-5.64 5.64h-9.603z"/><path fill="#1BB9DA" d="M22.62 32c-1.085 0-1.965-.895-1.965-2s.88-2 1.966-2c1.085 0
+1.965.895 1.965 2s-.88 2-1.965 2zm6.88 0c-1.086 0-1.966-.895-1.966-2s.88-2 1.966-2c1.086 0 1.966.895 1.966 2s-.88 2-1.96
+6 2zm6.88 0c-1.086 0-1.966-.895-1.966-2s.88-2 1.965-2c1.086 0 1.966.895 1.966 2s-.88 2-1.966 2z"/></g></svg>',
+>>                 "default2": '<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><g fi
+ll="none" fill-rule="evenodd"><circle cx="30" cy="30" r="30" fill="#1BB9DA"/><path stroke="#F9F9F9" stroke-width="2" d="
+M32.644 42.097l-.04 5.167-6.552-5.167h-9.3a5.64 5.64 0 0 1-5.64-5.64V21.543a5.64 5.64 0 0 1 5.64-5.64h25.495a5.64 5.64 0
+ 0 1 5.64 5.64v14.914a5.64 5.64 0 0 1-5.64 5.64h-9.603z"/></g></svg>',
+>>                 "default3": '<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 61 70" class
+="svgreplace replaced-svg"><g fill="none" fill-rule="evenodd"><path fill="#1BB9DA" d="M30.278 61.583a30.1 30.1 0 0 0 3.4
+54-.198l10.339 8.398a1 1 0 0 0 1.63-.777V58.15c9.724-5.124 14.855-15.452 14.855-27.358C60.556 13.786 47 0 30.278 0S0 13.
+786 0 30.791c0 17.006 13.556 30.792 30.278 30.792z"></path><path fill="#FFF" d="M19.683 34c-1.629 0-2.95-1.343-2.95-3s1.
+321-3 2.95-3c1.63 0 2.95 1.343 2.95 3s-1.32 3-2.95 3zM30.5 34c-1.63 0-2.95-1.343-2.95-3s1.32-3 2.95-3c1.63 0 2.95 1.343
+2.95 3s-1.32 3-2.95 3zm10.817 0c-1.63 0-2.95-1.343-2.95-3s1.32-3 2.95-3c1.629 0 2.95 1.343 2.95 3s-1.321 3-2.95 3z"></pa
+th></g></svg>',
+>>                 "default4": '<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60" class
+="svgreplace replaced-svg"><g fill="none" fill-rule="evenodd"><circle cx="30" cy="30" r="30" fill="#1BB9DA" fill-rule="n
+onzero"></circle><path stroke="#FFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M38.28 39.548v
+6.52l-7.693-6.52H17.7a1.488 1.488 0 0 1-1.475-1.5V21c0-.828.66-1.5 1.475-1.5h23.787c.814 0 1.475.672 1.475 1.5v17.048c0
+.828-.66 1.5-1.475 1.5H38.28z"></path></g></svg>',
+>>                 "default5": '<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60" class
+="svgreplace replaced-svg"><g fill="none" fill-rule="nonzero"><circle cx="30" cy="30" r="30" fill="#1BB9DA"></circle><pa
+th fill="#FFF" d="M29.594 46c4.019 0 7.753-1.012 10.847-2.744l9.735 1.654-3.774-6.958C48.03 35.61 48.96 32.895 48.96 30c
+0-8.837-8.67-16-19.365-16C18.9 14 10.23 21.163 10.23 30s8.67 16 19.365 16z"></path></g></svg>',
+>>                 "default6": '<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><g fi
+ll="none" fill-rule="nonzero">  <circle cx="30" cy="30" r="30" fill="#1BB9DA"/><path fill="#FFF" d="M17.983 20H41.77c.54
+3 0 .983.448.983 1v17.048c0 .552-.44 1-.983 1h-3.697V45l-7.024-5.952H17.983a.992.992 0 0 1-.983-1V21c0-.552.44-1 .983-1z
+"/></g></svg>',
+>>                 "default7": '<?xml version="1.0" encoding="UTF-8"?><svg width="119px" height="33px" viewBox="0 0 119
+33" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>1B6F7EA9-2573-478
+3-86AD-15DD810AAACE</title><desc>Created with sketchtool.</desc><g id="Page-1" stroke="none" stroke-width="1" fill="none
+" fill-rule="evenodd">  <g id="Chat-Tab/Styling" transform="translate(-338.000000, -1202.000000)"><g id="chat-tab-2" tra
+nsform="translate(338.000000, 1202.000000)"><rect id="Rectangle-2-Copy" fill="#1BB9DA" x="0" y="0" width="119" height="3
+2.8999999" rx="4.69999999"></rect><path d="M25.9522868,22.2949544 L25.9224674,26.0257792 L21.3732377,22.4999999 L15.98,2
+2.4999999 C12.865114,22.4999999 10.34,19.9748859 10.34,16.86 L10.34,14.04 C10.34,10.925114 12.865114,8.39999998 15.98,8.
+39999998 L24.4399999,8.39999998 C27.5548859,8.39999998 30.0799999,10.925114 30.0799999,14.04 L30.0799999,16.86 C30.07999
+99,19.4510416 28.3327885,21.6340001 25.9522868,22.2949544 Z" id="Combined-Shape-Copy-2" fill="#FFFFFF"></path><text id="
+LIVE-CHAT" font-family="Nunito-ExtraBold, Nunito" font-size="13.16" font-weight="600" fill="#FFFFFF"><tspan x="38.719999
+9" y="20.58">LIVE CHAT</tspan></text></g>  </g></g></svg>'
+>>         }
+>>         var defaultOfflineSVGs = {
+>>                 "default1": '<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><g fi
+ll="none" fill-rule="evenodd"><circle cx="30" cy="30" r="30" fill="#1BB9DA"/><path fill="#FFF" d="M32.644 42.097l-.04 5.
+167-6.552-5.167h-9.3a5.64 5.64 0 0 1-5.64-5.64V21.543a5.64 5.64 0 0 1 5.64-5.64h25.495a5.64 5.64 0 0 1 5.64 5.64v14.914a
+5.64 5.64 0 0 1-5.64 5.64h-9.603z"/><path fill="#1BB9DA" d="M22.62 32c-1.085 0-1.965-.895-1.965-2s.88-2 1.966-2c1.085 0
+1.965.895 1.965 2s-.88 2-1.965 2zm6.88 0c-1.086 0-1.966-.895-1.966-2s.88-2 1.966-2c1.086 0 1.966.895 1.966 2s-.88 2-1.96
+6 2zm6.88 0c-1.086 0-1.966-.895-1.966-2s.88-2 1.965-2c1.086 0 1.966.895 1.966 2s-.88 2-1.966 2z"/></g></svg>',
+>>                 "default2": '<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><g fi
+ll="none" fill-rule="evenodd"><circle cx="30" cy="30" r="30" fill="#1BB9DA"/><path stroke="#F9F9F9" stroke-width="2" d="
+M32.644 42.097l-.04 5.167-6.552-5.167h-9.3a5.64 5.64 0 0 1-5.64-5.64V21.543a5.64 5.64 0 0 1 5.64-5.64h25.495a5.64 5.64 0
+ 0 1 5.64 5.64v14.914a5.64 5.64 0 0 1-5.64 5.64h-9.603z"/></g></svg>',
+>>                 "default3": '<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 61 70" class
+="svgreplace replaced-svg"><g fill="none" fill-rule="evenodd"><path fill="#1BB9DA" d="M30.278 61.583a30.1 30.1 0 0 0 3.4
+54-.198l10.339 8.398a1 1 0 0 0 1.63-.777V58.15c9.724-5.124 14.855-15.452 14.855-27.358C60.556 13.786 47 0 30.278 0S0 13.
+786 0 30.791c0 17.006 13.556 30.792 30.278 30.792z"></path><path fill="#FFF" d="M19.683 34c-1.629 0-2.95-1.343-2.95-3s1.
+321-3 2.95-3c1.63 0 2.95 1.343 2.95 3s-1.32 3-2.95 3zM30.5 34c-1.63 0-2.95-1.343-2.95-3s1.32-3 2.95-3c1.63 0 2.95 1.343
+2.95 3s-1.32 3-2.95 3zm10.817 0c-1.63 0-2.95-1.343-2.95-3s1.32-3 2.95-3c1.629 0 2.95 1.343 2.95 3s-1.321 3-2.95 3z"></pa
+th></g></svg>',
+>>                 "default4": '<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60" class
+="svgreplace replaced-svg"><g fill="none" fill-rule="evenodd"><circle cx="30" cy="30" r="30" fill="#1BB9DA" fill-rule="n
+onzero"></circle><path stroke="#FFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M39.03 40.298v
+7.389l-8.718-7.389H17.7c-1.232 0-2.225-1.01-2.225-2.25V21c0-1.24.993-2.25 2.225-2.25h23.787c1.232 0 2.225 1.01 2.225 2.2
+5v17.048c0 1.24-.993 2.25-2.225 2.25H39.03z"></path><path fill="#FFF" fill-rule="nonzero" d="M26.566 34h-6.028v-.973l4.2
+48-6.392h-4.132v-1.201h5.796v.984l-4.263 6.38h4.379V34zm6.096 0H27.83v-.85l3.22-4.576h-3.024V27.52h4.546v.96l-3.152 4.46
+5h3.244V34zm6.133 0h-4.834v-.85l3.222-4.576h-3.026V27.52h4.546v.96l-3.152 4.465h3.245V34z"></path></g></svg>',
+>>                 "default5": '<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60" class
+="svgreplace replaced-svg"><g fill="none" fill-rule="nonzero"><circle cx="30" cy="30" r="30" fill="#1BB9DA"></circle><pa
+th fill="#FFF" d="M29.594 46c4.019 0 7.753-1.012 10.847-2.744l9.735 1.654-3.774-6.958C48.03 35.61 48.96 32.895 48.96 30c
+0-8.837-8.67-16-19.365-16C18.9 14 10.23 21.163 10.23 30s8.67 16 19.365 16z"></path><path fill="#1BB9DA" d="M26.346 36H18
+.8v-1.374l4.86-6.87h-4.728v-1.75h7.28v1.367L21.36 34.25h4.986V36zm7.35 0h-6.123v-1.23l3.59-4.82h-3.375v-1.593h5.781v1.35
+4l-3.494 4.696h3.62V36h.001zm7.434 0h-6.122v-1.23l3.59-4.82h-3.375v-1.593h5.781v1.354l-3.494 4.696h3.62V36z"></path></g>
+</svg>',
+>>                 "default6": '<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><g fi
+ll="none" fill-rule="nonzero"><circle cx="30" cy="30" r="30" fill="#1BB9DA"/><path fill="#FFF" d="M17.983 20H41.77c.543
+0 .983.448.983 1v17.048c0 .552-.44 1-.983 1h-3.697V45l-7.024-5.952H17.983a.992.992 0 0 1-.983-1V21c0-.552.44-1 .983-1z"/
+></g></svg>'
+>>         }
+>>         function init() {
+>>                 $("#inside_holder").show();
+>>                 setTimeout(setChatTab, 1000);
+>>                 window.addEventListener("resize", windowScale);
+>>                 if (settings && settings.chatSettings && settings.chatSettings.videoFeed && settings.chatSettings.vid
+eoFeed.enabled) {}
+>>         }
+>>         init();
+>>         function showThemeVideosTab() {
+>>                 insideAPI.post("api/operator/getthemevideofeed", {
+>>                         lastFileLibraryId: 0,
+>>                         lastFeaturedFileLibraryId: 0,
+>>                         pageSize: 10
+>>                 }, function(response) {
+>>                         if (response.videos.length > 0) {
+>>                                 $("#inside_tabs").prepend("<div class='tab' id='themeVideosTab'></div>");
+>>                         }
+>>                         insideChatPane.insideVideos.lastFileLibraryId = response.lastFileLibraryId;
+>>                         insideChatPane.insideVideos.lastFeaturedFileLibraryId = response.lastFeaturedFileLibraryId;
+>>                         var tabImage = document.createElement("img");
+>>                         tabImage.setAttribute("src", response.videos[0].thumbpath);
+>>                         $("#themeVideosTab")[0].style.opacity = 0;
+>>                         $("#themeVideosTab").html("").append(tabImage);
+>>                         tabImage.addEventListener("load", function() {
+>>                                 windowScale();
+>>                                 $("#themeVideosTab")[0].style.opacity = 1;
+>>                         });
+>>                         addCloseToChatTab($("#themeVideosTab"));
+>>                         $("#themeVideosTab").click(function() {
+>>                                 insideFrontInterface.openChatPane(true, function() {
+>>                                         insideChatPane.insideVideos.showChatPaneThemeVideos();
+>>                                 });
+>>                         });
+>>                 });
+>>         }
+>>         function windowScale() {
+>>                 scaleChatTab();
+>>         }
+>>         var svgIconColourSet = false;
+>>         function cloneSvgs(svgs, _colour) {
+>>                 var colour = settings.chatSettings.generalStyles.brandColor;
+>>                 if (typeof _colour != "undefined") {
+>>                         colour = _colour;
+>>                 }
+>>                 var newSVGs = {};
+>>                 for (var i in svgs) {
+>>                         newSVGs[i] = svgs[i].split("#1BB9DA").join(colour);
+>>                 }
+>>                 return newSVGs;
+>>         }
+>>         insideFrontInterface.chat.setChatTab = setChatTab;
+>>         function setChatTab(t) {
+>>                 if (chatSettings && chatSettings.version == "2") {
+>>                         usingChatPanev2 = true;
+>>                 }
+>>                 if (usingChatPanev2 && !svgIconColourSet) {
+>>                         chatSettings = _insideGraph.jQuery.inside.front.settings.chatSettings || _insideGraph.jQuery.
+inside.front.settings;
+>>                         defaultOnlineSVGs = cloneSvgs(defaultOnlineSVGs);
+>>                         defaultOfflineSVGs = cloneSvgs(defaultOfflineSVGs, settings.chatSettings.chatTab.offlineColor
+ || "#cccccc");
+>>                         svgIconColourSet = true;
+>>                 }
+>>                 try {
+>>                         if (insideFrontInterface.isBlocked || $('.inside-notification, #insideChatFrame.notificationM
+ode').is(':visible') || (insideFrontInterface.chat.data && insideFrontInterface.chat.data.flags.indexOf("dnd") !== -1))
+{
+>>                                 $("#inside_liveChatTab").hide();
+>>                                 return;
+>>                         }
+>>                 } catch (e) {}
+>>                 if (insideFrontInterface.getAvailableAssistants().length > 0) {
+>>                         if ((typeof (t) != "undefined" && !t) || !insideFrontInterface.chat.startOffline) {
+>>                                 checkMessageReceived = false;
+>>                                 insideFrontInterface.chat.startOffline = false;
+>>                         } else {
+>>                                 checkMessageReceived = true;
+>>                         }
+>>                         setOnlineChatTab();
+>>                         try {
+>>                                 setJoinTheCallTag(false);
+>>                         } catch (e) {}
+>>                         $("#inside_clickToCallChatTab").show();
+>>                 } else {
+>>                         setOfflineChatTab();
+>>                         if ($("#inside_joinTheCallChatTab").length !== 0) {
+>>                                 setJoinTheCallTag(true);
+>>                         }
+>>                         $("#inside_clickToCallChatTab").show();
+>>                 }
+>>                 if (typeof chatSettings != "undefined" && chatSettings && chatSettings.chatTab && chatSettings.chatTa
+b.draggable === false) {
+>>                         $(document.querySelector("#inside_tabs")).unbind("mousedown touchstart");
+>>                 }
+>>                 setTimeout($.inside.front.windowScale, 1000);
+>>         }
+>>         function positionJoinTheCallTag() {
+>>                 if ($("#inside_joinTheCallChatTab").length === 0) {
+>>                         return;
+>>                 }
+>>         }
+>>         insideFrontInterface.setJoinTheCallTag = setJoinTheCallTag;
+>>         function setJoinTheCallTag(show) {
+>>                 if ($("#inside_joinTheCallChatTab").length === 0) {
+>>                         return;
+>>                 }
+>>                 positionJoinTheCallTag();
+>>                 if (show && !insideFrontInterface.chat.chatPaneOpen) {
+>>                         $("#inside_joinTheCallChatTab").show();
+>>                 } else {
+>>                         $("#inside_joinTheCallChatTab").hide();
+>>                 }
+>>         }
+>>         insideFrontInterface.chat.setupJoinTheCallTag = setupJoinTheCallTag;
+>>         function setupJoinTheCallTag(jtcsettings) {
+>>                 if ($("#inside_joinTheCallChatTab").length) {
+>>                         return;
+>>                 }
+>>                 var tabImg = imageurl + "assistance-tab.png";
+>>                 if (jtcsettings.tabImage) {
+>>                         tabImg = customimageurl + jtcsettings.tabImage;
+>>                 }
+>>                 var html = "<div id='inside_joinTheCallChatTab' " + getAriaButtonAttribute(translate('Join the Call')
+) + " class='noselect' ondragstart='return false;' ondrop='return false;'>" + "<img id='inside_joinTheCallImage' src='"
++ tabImg + "' alt='" + translate('Join the Call') + "' />" + "<div id='inside_joinTheCallPasscode'></div>" + "</div>";
+>>                 var $html = $(html);
+>>                 $(html).find("#inside_joinTheCallChatTab").hide();
+>>                 $html.appendTo("#inside_tabs");
+>>                 $html.find("img").on("load", insideFrontInterface.chat.onJoinTheCallChatTabImageLoad);
+>>                 if (tabPosition.indexOf("bottom") != -1 || $("#inside_liveChatTab.usingChatHeader").length != 0) {
+>>                         $("#inside_liveChatTab").appendTo("#inside_tabs");
+>>                 }
+>>                 var j2cImageIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15
+"><path fill="currentColor" fill-rule="nonzero" d="M11.198 4.5H2.007v3H0v-5h11.124l-1.092-1.092 1.415-1.414 3.547 3.547-
+1.414 1.415-2.121 2.121-1.42-1.419L11.199 4.5zm-7.396 5.991h9.191v-3H15v5H3.876l1.092 1.092-1.415 1.414L.006 11.45l1.414
+-1.415 2.121-2.12 1.42 1.418-1.159 1.158z"/></svg>';
+>>                 settings.showJoinTheCallIcon = jtcsettings.showJoinTheCallIcon;
+>>                 if (jtcsettings.showJoinTheCallIcon == true && $("#inside_joinTheCallIcon").length == 0) {
+>>                         var jtcTooltip = "Session Code: ";
+>>                         var jtcIcon = "";
+>>                         try {
+>>                                 jtcTooltip = insideFrontInterface.chat.settings.joinTheCallText || "Session Code: ";
+>>                                 jtcIcon = insideFrontInterface.chat.settings.joinTheCallIcon || "";
+>>                         } catch (e) {
+>>                                 jtcTooltip = "Session Code: ";
+>>                         }
+>>                         if (jtcIcon) {
+>>                                 j2cImageIcon = "<img src='" + (customimageurl + jtcIcon) + "' />";
+>>                         }
+>>                         $("<div " + getAriaButtonAttribute(jtcTooltip) + " class='inside_icon_image_holder' id='insid
+e_joinTheCallIcon' title-data='" + jtcTooltip + "'>" + j2cImageIcon + "</div>").prependTo("#chatHeaderIcons, #inside_cha
+tPane_custom_chatHeader");
+>>                 } else {
+>>                         $("#inside_joinTheCallIcon").remove();
+>>                 }
+>>                 if (jtcsettings.colour) {
+>>                         $("#inside_joinTheCallPasscode").css("color", jtcsettings.colour);
+>>                 }
+>>                 if (jtcsettings.textSize) {
+>>                         $("#inside_joinTheCallPasscode").css("font-size", jtcsettings.textSize + "px");
+>>                 }
+>>                 $("#inside_joinTheCallChatTab").hover(function() {
+>>                         if (this.codeLoaded != true) {
+>>                                 this.codeLoaded = true;
+>>                                 $.inside.front.loadInsideChat(function() {
+>>                                         $.when(insideFrontInterface.chat.getVisitorCobrowsePasscode()).done(function(
+response) {
+>>                                                 $("#inside_joinTheCallPasscode").text(response.data);
+>>                                         }).fail(function(response) {
+>>                                                 $("#inside_joinTheCallPasscode").text("????");
+>>                                         });
+>>                                 });
+>>                         }
+>>                 });
+>>                 $("#inside_joinTheCallChatTab").click(j2cTabClick);
+>>                 $('body').on('click', '#inside_joinTheCallIcon', function() {
+>>                         $.inside.front.loadInsideChat(function() {
+>>                                 $.when(insideFrontInterface.chat.getVisitorCobrowsePasscode()).done(function(response
+) {
+>>                                         var joinTheCallText = "Session Code: ";
+>>                                         var joinTheCallIcon = _insideCDN + "/images/icon-join-call-greeen.png";
+>>                                         if (insideFrontInterface.chat && insideFrontInterface.chat.settings && inside
+FrontInterface.chat.settings.joinTheCallText && typeof (insideFrontInterface.chat.settings.joinTheCallText) == "string")
+>>                                                 joinTheCallText = insideFrontInterface.chat.settings.joinTheCallText;
+>>                                         if (insideFrontInterface.chat.clickToCallSettings && insideFrontInterface.cha
+t.clickToCallSettings.joinTheCallMsg) {
+>>                                                 joinTheCallText = insideFrontInterface.chat.clickToCallSettings.joinT
+heCallMsg;
+>>                                         }
+>>                                         var msg = '<div class="insideJoinTheCallSessionCodeHolder" style="max-width:1
+50px;display:inline;">' + '   <svg  class="icon-join-call" style="color:#39e039;vertical-align: middle;margin-left: 20px
+;" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15"><path fill="currentColor" fill-rule="no
+nzero" d="M11.198 4.5H2.007v3H0v-5h11.124l-1.092-1.092 1.415-1.414 3.547 3.547-1.414 1.415-2.121 2.121-1.42-1.419L11.199
+ 4.5zm-7.396 5.991h9.191v-3H15v5H3.876l1.092 1.092-1.415 1.414L.006 11.45l1.414-1.415 2.121-2.12 1.42 1.418-1.159 1.158z
+"/></svg>' + '   <span style="padding-left: 12px;vertical-align: middle;">' + joinTheCallText + '<b> ' + response.data +
+ '</b></span>' + '</div>';
+>>                                         if ($(".inside_chatPane, #inside_chatPane_custom").hasClass("offline")) {
+>>                                                 $("#inside_leaveMessageForm .insideJoinTheCallSessionCodeHolder").rem
+ove();
+>>                                                 $(msg).insertAfter("#inside_prechatForm .inside_sendButton, #inside_l
+eaveMessageForm .inside_sendButton");
+>>                                         } else if ($(".inside_chatPane, #inside_chatPane_custom").hasClass("prechat")
+) {
+>>                                                 $("#inside_prechatForm_form .insideJoinTheCallSessionCodeHolder").rem
+ove();
+>>                                                 $("#inside_prechatForm_form").append('<center style="margin: 20px 0 0
+ -20px;">' + msg + '</center>');
+>>                                         } else {
+>>                                                 insideFrontInterface.chat.showSystemMessage(msg, false);
+>>                                         }
+>>                                 }).fail(function(response) {
+>>                                         var msg = settings.joinTheCallFailMsg || "Could not get Join the Call code!";
+>>                                         insideFrontInterface.chat.showSystemMessage(msg, false);
+>>                                 });
+>>                         });
+>>                 });
+>>                 setJoinTheCallTag(insideFrontInterface.getAvailableAssistants().length === 0);
+>>         }
+>>         insideFrontInterface.showChatPaneHeaderForDevice = showChatPaneHeaderForDevice;
+>>         function showChatPaneHeaderForDevice(offline) {
+>>                 if (typeof insideChatPane != "undefined") {
+>>                         activeChat = insideChatPane.activeChat;
+>>                 }
+>>                 if (usingChatPanev2 && typeof insideChatPane != "undefined" && insideChatPane.showHeaderForTab) {
+>>                         return true;
+>>                 }
+>>                 if (typeof (settings.showChatPaneHeaderAsChatTab) != "undefined" && settings.showChatPaneHeaderAsChat
+Tab) {
+>>                         if (device === 2) {
+>>                                 if (offline === true && settings.showChatPaneHeaderAsChatTab.indexOf("mobile_offline"
+) !== -1) {
+>>                                         return true;
+>>                                 }
+>>                                 if (!offline && !activeChat && settings.showChatPaneHeaderAsChatTab.indexOf("mobile")
+ !== -1) {
+>>                                         return true;
+>>                                 }
+>>                                 if (!offline && activeChat && settings.showChatPaneHeaderAsChatTab.indexOf("mobile_ac
+tive") !== -1) {
+>>                                         return true;
+>>                                 }
+>>                         } else {
+>>                                 if (offline === true && settings.showChatPaneHeaderAsChatTab.indexOf("desktop_offline
+") !== -1) {
+>>                                         return true;
+>>                                 }
+>>                                 if (!offline && !activeChat && settings.showChatPaneHeaderAsChatTab.indexOf("desktop"
+) !== -1) {
+>>                                         return true;
+>>                                 }
+>>                                 if (!offline && activeChat && settings.showChatPaneHeaderAsChatTab.indexOf("desktop_a
+ctive") !== -1) {
+>>                                         return true;
+>>                                 }
+>>                         }
+>>                 }
+>>                 return false;
+>>         }
+>>         function removeHeaderFromTab() {
+>>                 $("#inside_liveChatTab").removeClass("usingChatHeader").removeClass("noAutoHide");
+>>                 insideFrontInterface.setTabPosition();
+>>                 $("#inside_liveChatTab").css("background", "");
+>>                 addTabContents();
+>>         }
+>>         var hideChatTab = false;
+>>         var showTabForActive = false;
+>>         var showPaneForActive = false;
+>>         var activeChat = false;
+>>         insideFrontInterface.chat.getHideChatTab = function() {
+>>                 return hideChatTab;
+>>         }
+>>         function customImage(_url) {
+>>                 customImageUrl = _insideCDN + "custom/";
+>>                 return customImageUrl + _url + "?" + ($.inside.front.settings.imageCacheVersion || "");
+>>         }
+>>         function checkPrivacyOptIn() {
+>>                 if (_insideGraph.current.noCookie === true && chatSettings && chatSettings.version == "2") {
+>>                         if (typeof chatSettings.privacy == "undefined" || !chatSettings.privacy || chatSettings.priva
+cy.enabled === false) {
+>>                                 return false;
+>>                         }
+>>                 }
+>>                 return true;
+>>         }
+>>         insideFrontInterface.chat.setOnlineChatTab = setOnlineChatTab;
+>>         function setOnlineChatTab(t) {
+>>                 $("#inside_holder").removeClass("offline");
+>>                 device = $.inside.front.device;
+>>                 chatSettings = _insideGraph.jQuery.inside.front.settings.chatSettings || _insideGraph.jQuery.inside.f
+ront.settings;
+>>                 if (chatSettings && chatSettings.version == "2") {
+>>                         usingChatPanev2 = true;
+>>                         if (typeof insideChatPane != "undefined" && typeof insideChatPane.activeChat != "undefined")
+{
+>>                                 activeChat = insideChatPane.activeChat;
+>>                         }
+>>                 } else {
+>>                         activeChat = insideFrontInterface.chat.activeChat;
+>>                 }
+>>                 if (!checkPrivacyOptIn()) {
+>>                         $("#inside_liveChatTab").hide();
+>>                         return;
+>>                 }
+>>                 try {
+>>                         if (hasSessionStorage && sessionStorage.getItem("insideChatClosed") === "True") {
+>>                                 return;
+>>                         }
+>>                 } catch (e) {}
+>>                 if ($("#inside_liveChatTab").length == 0) {
+>>                         addChatTab();
+>>                         $("#inside_liveChatTab").hide();
+>>                 }
+>>                 if ($(".inside_chatPane, #inside_chatPane_custom").is(":visible")) {
+>>                         $("#inside_liveChatTab").hide();
+>>                 }
+>>                 $("#inside_liveChatTab").removeClass("inside_chat_offline").addClass("inside_chat_online");
+>>                 chatTabMode = "online";
+>>                 insideFrontInterface.chatTabMode = chatTabMode;
+>>                 if (activeChat) {
+>>                         $("#inside_liveChatTab, #inside_tabs").addClass("inside_active_chat");
+>>                 } else {
+>>                         $("#inside_liveChatTab, #inside_tabs").removeClass("inside_active_chat");
+>>                 }
+>>                 $("#inside_liveChatTab .chatHeaderIcons").remove();
+>>                 if (usingChatPanev2 && showChatPaneHeaderForDevice())
+>>                         return;
+>>                 if (typeof (settings) != "undefined" && settings != null) {
+>>                         if (!usingChatPanev2 && settings.showChatPaneHeaderAsChatTab && showChatPaneHeaderForDevice()
+) {
+>>                                 addChatPaneHeaderToTab();
+>>                                 addCloseToChatTab();
+>>                         } else {
+>>                                 if ($("#inside_liveChatTab").hasClass("usingChatHeader")) {
+>>                                         removeHeaderFromTab();
+>>                                 }
+>>                                 prevTabImage = $("#inside_liveChatTab .inside_chatTabImage").attr("src");
+>>                                 if (!usingChatPanev2) {
+>>                                         var chatTabImageUrl;
+>>                                         if (device === 1) {
+>>                                                 if ($("#inside_liveChatTab .inside_chatTabImage").length == 0)
+>>                                                         addTabContents();
+>>                                                 if (activeChat && chatSettings && chatSettings.chatTab && typeof (cha
+tSettings.chatTab.activeChatTab) != "undefined" && chatSettings.chatTab.activeChatTab != "") {
+>>                                                         chatTabImageUrl = customImage(chatSettings.chatTab.activeChat
+Tab);
+>>                                                 } else if (chatSettings && chatSettings.chatTab && typeof (chatSettin
+gs.chatTab.onlineChatTab) != "undefined" && chatSettings.chatTab.onlineChatTab != "") {
+>>                                                         chatTabImageUrl = customImage(chatSettings.chatTab.onlineChat
+Tab);
+>>                                                 } else if (activeChat && settings.activeChatTabImage) {
+>>                                                         chatTabImageUrl = customImage(settings.activeChatTabImage);
+>>                                                 } else if (typeof (settings.customTabImage) != "undefined" && setting
+s.customTabImage != "") {
+>>                                                         chatTabImageUrl = customImage(settings.customTabImage);
+>>                                                 } else {
+>>                                                         if (!usingChatPanev2) {
+>>                                                                 chatTabImageUrl = $.inside.front.imageurl + "livechat
+icon.png";
+>>                                                         }
+>>                                                 }
+>>                                         } else {
+>>                                                 if (activeChat && settings.activeChatTabMobileImage) {
+>>                                                         chatTabImageUrl = customImage(settings.activeChatTabMobileIma
+ge);
+>>                                                 } else if (typeof (settings.customMobileTabImage) != "undefined" && s
+ettings.customMobileTabImage != "") {
+>>                                                         chatTabImageUrl = customImage(settings.customMobileTabImage);
+>>                                                 } else {
+>>                                                         if (!usingChatPanev2) {
+>>                                                                 chatTabImageUrl = $.inside.front.imageurl + "livechat
+icon_mobile.png";
+>>                                                         }
+>>                                                 }
+>>                                         }
+>>                                         updateChatTabImage(chatTabImageUrl);
+>>                                 }
+>>                                 if (device == 1) {
+>>                                         if ($.inside.front.settings.showCloseOnTab) {
+>>                                                 if (activeChat && $.inside.front.settings.showCloseOnTab.indexOf("des
+ktop_active") != -1) {
+>>                                                         addCloseToChatTab();
+>>                                                 } else if (!activeChat && $.inside.front.settings.showCloseOnTab.inde
+xOf("desktop") != -1) {
+>>                                                         addCloseToChatTab();
+>>                                                 }
+>>                                         }
+>>                                 } else {
+>>                                         if ($.inside.front.settings.showCloseOnTab) {
+>>                                                 if (activeChat && $.inside.front.settings.showCloseOnTab.indexOf("mob
+ile_active") != -1) {
+>>                                                         addCloseToChatTab();
+>>                                                 } else if (!activeChat && $.inside.front.settings.showCloseOnTab.inde
+xOf("mobile") != -1) {
+>>                                                         addCloseToChatTab();
+>>                                                 }
+>>                                         }
+>>                                 }
+>>                                 if (usingChatPanev2 && chatSettings && chatSettings.chatTab) {
+>>                                         var chatTabImageUrl;
+>>                                         if ($("#inside_liveChatTab .inside_chatTabImage").length == 0 && $("#inside_l
+iveChatTab svg").length == 0)
+>>                                                 addTabContents();
+>>                                         if (device == 1 && activeChat && chatSettings && chatSettings.chatTab && chat
+Settings.chatTab.useAvatar && chatSettings.chatTab.useAvatar.indexOf("desktop_active") != -1 && chatSettings.chatTab.ava
+tarChatTab) {
+>>                                                 chatTabImageUrl = customImage(chatSettings.chatTab.avatarChatTab);
+>>                                         } else if (device == 1 && !activeChat && chatSettings && chatSettings.chatTab
+ && chatSettings.chatTab.useAvatar && chatSettings.chatTab.useAvatar.indexOf("desktop") != -1 && chatSettings.chatTab.av
+atarChatTab) {
+>>                                                 chatTabImageUrl = customImage(chatSettings.chatTab.avatarChatTab);
+>>                                         } else if (device >= 2 && activeChat && chatSettings && chatSettings.chatTab
+&& chatSettings.chatTab.useAvatar && chatSettings.chatTab.useAvatar.indexOf("mobile_active") != -1 && chatSettings.chatT
+ab.avatarChatTab) {
+>>                                                 chatTabImageUrl = customImage(chatSettings.chatTab.avatarChatTab);
+>>                                         } else if (device >= 2 && !activeChat && chatSettings && chatSettings.chatTab
+ && chatSettings.chatTab.useAvatar && chatSettings.chatTab.useAvatar.indexOf("mobile") != -1 && chatSettings.chatTab.ava
+tarChatTab) {
+>>                                                 chatTabImageUrl = customImage(chatSettings.chatTab.avatarChatTab);
+>>                                         } else if (device >= 2 && activeChat && chatSettings && chatSettings.chatTab
+&& typeof (chatSettings.chatTab.activeChatTabMobile) != "undefined" && chatSettings.chatTab.activeChatTabMobile != "") {
+>>                                                 chatTabImageUrl = customImage(chatSettings.chatTab.activeChatTabMobil
+e);
+>>                                         } else if (device >= 2 && !activeChat && chatSettings && chatSettings.chatTab
+ && typeof (chatSettings.chatTab.onlineChatTabMobile) != "undefined" && chatSettings.chatTab.onlineChatTabMobile != "")
+{
+>>                                                 chatTabImageUrl = customImage(chatSettings.chatTab.onlineChatTabMobil
+e);
+>>                                         } else if (device == 1 && typeof insideChatPane != "undefined" && insideChatP
+ane.activeChat && chatSettings && chatSettings.chatTab && typeof (chatSettings.chatTab.activeChatTab) != "undefined" &&
+chatSettings.chatTab.activeChatTab != "") {
+>>                                                 chatTabImageUrl = customImage(chatSettings.chatTab.activeChatTab);
+>>                                         } else if (device == 1 && chatSettings && chatSettings.chatTab && typeof (cha
+tSettings.chatTab.onlineChatTab) != "undefined" && chatSettings.chatTab.onlineChatTab != "" && typeof chatSettings.chatT
+ab.onlineChatTab != "object") {
+>>                                                 chatTabImageUrl = customImage(chatSettings.chatTab.onlineChatTab);
+>>                                         } else {
+>>                                                 var headerIcons = $("#inside_liveChatTab .chatHeaderIcons");
+>>                                                 var notifIcon = $("#inside_liveChatTab .inside_chatNotification");
+>>                                                 $("#inside_liveChatTab").html(defaultOnlineSVGs[getLanguageValue(chat
+Settings.chatTab.onlineChatTabDefault)]);
+>>                                                 $("#inside_liveChatTab").width($("#inside_liveChatTab svg").width());
+>>                                                 scaleChatTab();
+>>                                                 if (headerIcons) {
+>>                                                         $("#inside_liveChatTab").append(headerIcons);
+>>                                                 }
+>>                                                 if (notifIcon) {
+>>                                                         $("#inside_liveChatTab").append(notifIcon);
+>>                                                 }
+>>                                                 insideFrontInterface.positionTabs();
+>>                                         }
+>>                                         updateChatTabImage(chatTabImageUrl);
+>>                                 }
+>>                                 if (prevTabImage == $("#inside_liveChatTab .inside_chatTabImage").attr("src")) {
+>>                                         setTabAutohide();
+>>                                 }
+>>                         }
+>>                 } else {
+>>                         $("#inside_liveChatTab .inside_chatTabImage").attr("src", $.inside.front.imageurl + "livechat
+icon.png");
+>>                 }
+>>                 hideChatTab = insideFrontInterface.chat.isTabHiddenOnThisDevice();
+>>                 if (typeof (settings) != "undefined" && settings != null && typeof (settings.hideChatTab) != "undefin
+ed" && settings.hideChatTab) {
+>>                         if (hideChatTab) {
+>>                                 $("#inside_liveChatTab").hide();
+>>                         } else {
+>>                                 $("#inside_liveChatTab").css("opacity", 1).show();
+>>                         }
+>>                 } else {
+>>                         if (!hideChatTab && tabPosition != "bottomright" || (tabPosition == "bottomright" && $(".insi
+de-notification:visible").length == 0)) {
+>>                                 $("#inside_liveChatTab").show().css("opacity", 1);
+>>                         }
+>>                 }
+>>                 if (typeof (settings) != "undefined" && settings != null && typeof settings.hideChatTabOnDevices != "
+undefined" && settings.hideChatTabOnDevices != null) {
+>>                         hideChatTab = false;
+>>                         if (settings.hideChatTab == true && settings.hideChatTabOnDevices.indexOf(device.toString())
+!= -1) {
+>>                                 hideChatTab = true;
+>>                         }
+>>                 }
+>>                 if (typeof (settings) != "undefined" && settings != null && typeof (settings.showTabForActive) != "un
+defined" && settings.showTabForActive == true) {
+>>                         showTabForActive = true;
+>>                         if (insideFrontInterface.currentChatId > 0) {
+>>                                 if (usingChatPanev2 && typeof insideChatPane.isOpen != "undefined" && !insideChatPane
+.isOpen()) {
+>>                                         $("#inside_liveChatTab").show();
+>>                                         insideFrontInterface.positionTabs();
+>>                                 } else if (!insideFrontInterface.chat.chatPaneOpen) {
+>>                                         if ($(".inside-notification:visible").length == 0) {
+>>                                                 $("#inside_liveChatTab").show();
+>>                                                 insideFrontInterface.positionTabs();
+>>                                         }
+>>                                 }
+>>                                 checkMessageReceived = false;
+>>                         }
+>>                         if (typeof insideLegacyChat != "undefined" && insideLegacyChat.messageReceived && !checkMessa
+geReceived && $(".inside_chatPane, #inside_chatPane_custom").is(":visible") && typeof (t) != "undefined" && !t) {
+>>                                 $("#inside_liveChatTab").hide();
+>>                                 checkMessageReceived = false;
+>>                         }
+>>                 }
+>>                 if (hideChatTab && settings.showPaneForActive == true) {
+>>                         showPaneForActive = true;
+>>                         showTabForActive = false;
+>>                 }
+>>                 if (hideChatTab && insideFrontInterface.currentChatId > 0 && device == 2 && insideFrontInterface.chat
+.num) {
+>>                         if ($("#inside_liveChatTab").length == 0) {
+>>                                 const isChatV2Open = usingChatPanev2 && typeof insideChatPane != "undefined" && typeo
+f insideChatPane.isOpen != "undefined" && insideChatPane.isOpen();
+>>                                 if (!isChatV2Open) {
+>>                                         insideFrontInterface.openChatPane();
+>>                                         insideFrontInterface.chat.num = 0;
+>>                                 }
+>>                         } else {
+>>                                 $("#inside_liveChatTab").show();
+>>                         }
+>>                 }
+>>                 if ($("#inside_liveChatTab img").length > 0) {
+>>                         $("#inside_liveChatTab img").css("width", "auto");
+>>                         $("#inside_liveChatTab").css("width", "auto");
+>>                 }
+>>                 if ($("#inside_liveChatTab").hasClass('usingChatHeader')) {
+>>                         $("#inside_liveChatTab").outerWidth(settings.width || '');
+>>                 }
+>>                 scaleChatTab();
+>>                 if (settings.autohideTabs == true) {} else {
+>>                         insideFrontInterface.positionTabs();
+>>                 }
+>>                 if (usingChatPanev2 && typeof insideChatPane != "undefined" && typeof insideChatPane.isOpen != "undef
+ined" && insideChatPane.isOpen()) {
+>>                         $("#inside_liveChatTab").hide();
+>>                 } else if (insideFrontInterface.chat.chatPaneOpen) {
+>>                         $("#inside_liveChatTab").hide();
+>>                 }
+>>                 if (usingChatPanev2 && chatSettings) {
+>>                         if (chatSettings.chatTab.shadowOnTab == true || chatSettings.chatTab.shadowOnTab == "true") {
+>>                                 $("#inside_liveChatTab").addClass("insideDropShadow");
+>>                         } else {
+>>                                 $("#inside_liveChatTab").removeClass("insideDropShadow");
+>>                         }
+>>                 }
+>>                 $("#inside_tabs").css('display', 'block');
+>>                 if (insideFrontInterface.getAvailableAssistants().length == 0 && activeChat !== true) {
+>>                         $("#inside_liveChatTab").hide();
+>>                         insideFrontInterface.positionTabs();
+>>                 }
+>>         }
+>>         function updateChatTabImage(chatTabImageUrl) {
+>>                 if (!chatTabImageUrl) {
+>>                         return;
+>>                 }
+>>                 $("#inside_liveChatTab svg").remove();
+>>                 if ($("#inside_liveChatTab .inside_chatTabImage").length === 0) {
+>>                         addTabContents();
+>>                 }
+>>                 const chatTabElement = $("#inside_liveChatTab .inside_chatTabImage");
+>>                 if (chatTabElement.attr("src") !== chatTabImageUrl) {
+>>                         chatTabElement.attr("src", chatTabImageUrl);
+>>                 }
+>>         }
+>>         function getLanguageValue(ob) {
+>>                 if (typeof (ob) == "undefined" || !ob) {
+>>                         return "";
+>>                 }
+>>                 if (typeof ob == "string") {
+>>                         return ob;
+>>                 } else if (typeof ob[langCode] != "undefined") {
+>>                         return ob[langCode] || ob["en"] || "";
+>>                 } else if (langCode.indexOf("-") !== -1 && typeof ob[langCode.split("-")[0]] == "string") {
+>>                         return ob[langCode.split("-")[0]];
+>>                 } else if (Object.keys(ob).length > 0) {
+>>                         for (var property in ob) {
+>>                                 if (property === "type")
+>>                                         continue;
+>>                                 return ob[property];
+>>                         }
+>>                         return "";
+>>                 } else {
+>>                         return "";
+>>                 }
+>>         }
+>>         insideFrontInterface.chat.isTabHiddenOnThisDevice = isTabHiddenOnThisDevice;
+>>         function isTabHiddenOnThisDevice() {
+>>                 device = $.inside.front.device;
+>>                 hideChatTab = false;
+>>                 if (usingChatPanev2 && chatSettings && chatSettings.chatTab.hideChatTab) {
+>>                         if (chatSettings.chatTab.hideChatTabOnDevices.indexOf(device.toString()) != -1) {
+>>                                 hideChatTab = true;
+>>                         }
+>>                 } else if ($.inside.front.settings.hideChatTab == true && typeof $.inside.front.settings.hideChatTabO
+nDevices != "undefined" && $.inside.front.settings.hideChatTabOnDevices != null) {
+>>                         if ($.inside.front.settings.hideChatTabOnDevices.indexOf(device.toString()) != -1) {
+>>                                 hideChatTab = true;
+>>                         }
+>>                 } else {
+>>                         if ($.inside.front.settings.hideChatTab == true) {
+>>                                 hideChatTab = true;
+>>                         }
+>>                 }
+>>                 return hideChatTab;
+>>         }
+>>         insideFrontInterface.chat.isOfflineTabHiddenOnThisDevice = isOfflineTabHiddenOnThisDevice;
+>>         function isOfflineTabHiddenOnThisDevice() {
+>>                 device = $.inside.front.device;
+>>                 if (typeof settings.offlineChat.hideOfflineChatTabOnDevices != "undefined" && settings.offlineChat.hi
+deOfflineChatTabOnDevices != null) {
+>>                         if (settings.offlineChat.hideOfflineChatTabOnDevices.indexOf(device.toString()) != -1) {
+>>                                 return true;
+>>                         }
+>>                 } else {
+>>                         if (settings.offlineChat.hideOfflineChatTab == true) {
+>>                                 return true;
+>>                         }
+>>                 }
+>>                 return false;
+>>         }
+>>         function addCloseToChatTab(tab) {
+>>                 if (typeof tab == "undefined") {
+>>                         tab = $("#inside_liveChatTab");
+>>                 }
+>>                 $(tab).find(".chatHeaderIcons").remove();
+>>                 $(tab).append("<div class='chatHeaderIcons'></div>");
+>>                 var headerIcons = $(tab).find(".chatHeaderIcons");
+>>                 var customCSS = "";
+>>                 var expandIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="9" viewBox="0 0 15 9"><p
+ath fill="currentColor" fill-rule="nonzero" d="M5.996 1.5L0 7.494l1.5 1.5 5.995-5.997 5.997 5.996 1.499-1.499L7.495 0 5.
+996 1.5z"/></svg>';
+>>                 var closeIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15"><
+path fill="currentColor" fill-rule="nonzero" d="M6.085 7.5L0 1.415 1.415 0 7.5 6.085 13.585 0 15 1.415 8.915 7.5 15 13.5
+85 13.585 15 7.5 8.915 1.415 15 0 13.585 6.085 7.5z"/></svg>';
+>>                 if (settings.expandChatTabIcon && settings.expandChatTabIcon.length > 0) {
+>>                         expandIcon = "<img src='" + (customImage(settings.expandChatTabIcon)) + "' />";
+>>                 }
+>>                 if (!usingChatPanev2) {
+>>                         headerIcons.append("<div " + getAriaButtonAttribute(translate("Open")) + " class='inside_icon
+_image_holder icon-expand-image' title-data='" + translate("Open") + "'>" + expandIcon + "</div>");
+>>                 }
+>>                 if (!usingChatPanev2 && settings.closeButtonImage && settings.closeButtonImage.length > 0) {
+>>                         closeIcon = "<img src='" + (customImage(settings.closeButtonImage)) + "' />";
+>>                 }
+>>                 setTimeout(function() {
+>>                         headerIcons.find(".inside_closeCross").remove();
+>>                         headerIcons.append("<div " + getAriaButtonAttribute(translate("Close")) + " class='inside_ico
+n_image_holder inside_closeCross' title-data='" + translate("Close Chat Tab") + "'>" + closeIcon + "</div>");
+>>                         if (usingChatPanev2 && headerIcons.length > 0) {
+>>                                 headerIcons.addClass("chatV2");
+>>                         }
+>>                         if (tab.attr("id") == "inside_liveChatTab") {
+>>                                 $(tab).find(".inside_closeCross").click(closeChatTab);
+>>                         } else {
+>>                                 $(tab).find(".inside_closeCross").click(function() {
+>>                                         $(tab).hide();
+>>                                         windowScale();
+>>                                 });
+>>                         }
+>>                 }, 0);
+>>                 setupTitleOnHover(headerIcons);
+>>                 $.inside.front.addStyleString(customCSS, "InsideChatTabCloseButton");
+>>         }
+>>         function closeChatTab(e) {
+>>                 e.stopPropagation();
+>>                 if (insideFrontInterface && insideFrontInterface.chat && insideFrontInterface.chat.doCloseAndHideChat
+) {
+>>                         insideFrontInterface.chat.doCloseAndHideChat();
+>>                 }
+>>                 $("#inside_liveChatTab").hide();
+>>                 _insideGraph.doEvent("tabclosed");
+>>                 windowScale();
+>>         }
+>>         insideFrontInterface.chat.setupTitleOnHover = setupTitleOnHover;
+>>         function setupTitleOnHover(selector) {
+>>                 $(selector).find('[title-data]').hover(function() {
+>>                         $(this).attr('title', $(this).attr('title-data'));
+>>                 }, function() {
+>>                         $(this).removeAttr('title');
+>>                 });
+>>         }
+>>         function addChatPaneHeaderToTab() {
+>>                 if ($("#inside_liveChatTab.usingChatHeader:visible").length > 0) {
+>>                         return;
+>>                 }
+>>                 if (usingChatPanev2)
+>>                         return;
+>>                 $("#inside_liveChatTab").empty();
+>>                 if (usingChatPanev2)
+>>                         return;
+>>                 $("#inside_liveChatTab").append("<div class='chatTab_header'><div class='chatTab_siteLogo'></div></di
+v>");
+>>                 if (typeof (settings.siteLogo) != "undefined" && settings.siteLogo != "" && settings.siteLogo != null
+) {
+>>                         $(".chatTab_siteLogo").html("<img src='" + _insideCDN + settings.siteLogo + "' />");
+>>                 }
+>>                 if (typeof (settings.headerColour) != "undefined") {
+>>                         $("#inside_liveChatTab").css("background", settings.headerColour);
+>>                 }
+>>                 if (typeof (settings.chatBorderColour) != "undefined") {
+>>                         $("#inside_liveChatTab").css("border", "1px solid " + settings.chatBorderColour);
+>>                 }
+>>                 if (typeof (settings.width) != "undefined") {
+>>                         $("#inside_liveChatTab").css("width", settings.width + "px");
+>>                 }
+>>                 $("#inside_liveChatTab").addClass("usingChatHeader").addClass("noAutoHide");
+>>                 insideFrontInterface.setTabPosition();
+>>                 $("#inside_tabs").css('display', 'block');
+>>                 if (tabPosition.indexOf("bottom") != -1) {
+>>                         $("#inside_liveChatTab").appendTo("#inside_tabs");
+>>                 }
+>>                 if (insideFrontInterface.chat && insideFrontInterface.chat.setupChatPane) {
+>>                         insideFrontInterface.chat.setupChatPane();
+>>                 }
+>>                 if (insideFrontInterface.getAvailableAssistants().length == 0) {
+>>                         if (typeof insideOfflineForm != "undefined")
+>>                                 insideOfflineForm.setOfflineFormStyles();
+>>                         if (settings.offlineChat && settings.offlineChat.headerImage) {
+>>                                 $(".chatTab_siteLogo img").attr("src", customImage(settings.offlineChat.headerImage))
+;
+>>                         }
+>>                 }
+>>                 insideFrontInterface.positionTabs();
+>>         }
+>>         insideFrontInterface.chat.setOfflineChatTab = setOfflineChatTab;
+>>         function setOfflineChatTab() {
+>>                 $("#inside_holder").addClass("offline");
+>>                 device = $.inside.front.device;
+>>                 chatSettings = _insideGraph.jQuery.inside.front.settings.chatSettings || _insideGraph.jQuery.inside.f
+ront.settings;
+>>                 if (chatSettings && chatSettings.version == "2") {
+>>                         usingChatPanev2 = true;
+>>                         if (typeof insideChatPane != "undefined" && insideChatPane.showHeaderForTab)
+>>                                 return;
+>>                         if (chatSettings.offline.enabled != true && !insideFrontInterface.chatInProgress && !activeCh
+at) {
+>>                                 $("#inside_liveChatTab").hide();
+>>                                 return;
+>>                         }
+>>                 }
+>>                 if (!checkPrivacyOptIn()) {
+>>                         $("#inside_liveChatTab").hide();
+>>                         return;
+>>                 }
+>>                 if (settings && settings.useMinimiseButton === true) {
+>>                         useMinimiseButton = true;
+>>                 }
+>>                 if (!useMinimiseButton) {
+>>                         try {
+>>                                 if (hasSessionStorage && sessionStorage.getItem("insideChatClosed") === "True") {
+>>                                         return;
+>>                                 }
+>>                         } catch (e) {}
+>>                 }
+>>                 $(".inside-notification").remove();
+>>                 $("#inside_liveChatTab .chatHeaderIcons").remove();
+>>                 chatTabMode = "offline";
+>>                 insideFrontInterface.chatTabMode = chatTabMode;
+>>                 $("#inside_liveChatTab").removeClass("inside_chat_online").addClass("inside_chat_offline");
+>>                 var hideOfflineChatTab = (settings.offlineChat && settings.offlineChat.hideOfflineChatTab) && isOffli
+neTabHiddenOnThisDevice();
+>>                 if (hideOfflineChatTab) {
+>>                         $("#inside_liveChatTab").hide();
+>>                 }
+>>                 if (activeChat == true && settings.showTabForActive) {
+>>                         $("#inside_liveChatTab").show().css("opacity", "1");
+>>                 }
+>>                 if (!usingChatPanev2 && activeChat == false && $(".inside_dept_selector.selected").length == 0 && typ
+eof insideWebApp == "undefined" && !$(".inside_chatPane").hasClass("offline") && !$(".inside_chatPane").hasClass("clickt
+ocall")) {
+>>                         if (typeof insideFrontInterface.chat.closeChatPane != "undefined")
+>>                                 insideFrontInterface.chat.closeChatPane();
+>>                         if (!hideOfflineChatTab && settings && settings.offlineChat && settings.offlineChat.enabled)
+{
+>>                                 $("#inside_liveChatTab").show().css("opacity", "1");
+>>                         }
+>>                 }
+>>                 if (usingChatPanev2) {
+>>                         var chatPaneIsOpen = (typeof insideChatPane != "undefined" && insideChatPane.isOpen && inside
+ChatPane.isOpen());
+>>                         if (typeof chatSettings == "undefined" || typeof chatSettings.chatTab == "undefined" || chatP
+aneIsOpen) {
+>>                                 return;
+>>                         }
+>>                         if ($("#inside_liveChatTab").length == 0) {
+>>                                 addChatTab();
+>>                         } else if ($("#inside_liveChatTab .inside_chatTabImage").length == 0) {
+>>                                 addTabContents();
+>>                         }
+>>                         if (typeof chatSettings.chatTab.offlineDesktopTab == 'undefined') {
+>>                                 chatSettings.chatTab.offlineDesktopTab = '';
+>>                         }
+>>                         if (typeof chatSettings.chatTab.offlineMobileTab == 'undefined') {
+>>                                 chatSettings.chatTab.offlineMobileTab = '';
+>>                         }
+>>                         var chatTabImageUrl;
+>>                         if (device === 1 && chatSettings.chatTab.offlineDesktopTab != "") {
+>>                                 chatTabImageUrl = customImage(chatSettings.chatTab.offlineDesktopTab);
+>>                         } else if (chatSettings.chatTab.offlineMobileTab != "") {
+>>                                 chatTabImageUrl = customImage(chatSettings.chatTab.offlineMobileTab);
+>>                         }
+>>                         if (device == 1 && chatSettings && chatSettings.chatTab && chatSettings.chatTab.useAvatar &&
+chatSettings.chatTab.useAvatar.indexOf("desktop_offline") != -1 && chatSettings.chatTab.avatarChatTab) {
+>>                                 chatTabImageUrl = customImage(chatSettings.chatTab.avatarChatTab);
+>>                         } else if (device >= 2 && chatSettings && chatSettings.chatTab && chatSettings.chatTab.useAva
+tar && chatSettings.chatTab.useAvatar.indexOf("mobile_offline") != -1 && chatSettings.chatTab.avatarChatTab) {
+>>                                 chatTabImageUrl = customImage(chatSettings.chatTab.avatarChatTab);
+>>                         }
+>>                         updateChatTabImage(chatTabImageUrl);
+>>                         if (chatSettings.offline.hideTab != true) {
+>>                                 $("#inside_liveChatTab").css("width", $("#inside_liveChatTab").find("img, svg").width
+() + "px").css("opacity", 1).show();
+>>                         }
+>>                         if (chatSettings.chatTab.shadowOnOfflineTab == true || chatSettings.chatTab.shadowOnOfflineTa
+b == "true") {
+>>                                 $("#inside_liveChatTab").addClass("insideDropShadow");
+>>                         } else {
+>>                                 $("#inside_liveChatTab").removeClass("insideDropShadow");
+>>                         }
+>>                         if (chatSettings.chatTab.offlineChatTabDefault && chatSettings.chatTab.offlineChatTabDefault
+!= "" && ((device != 2 && chatSettings.chatTab.offlineDesktopTab == "") || (device == 2 && chatSettings.chatTab.offlineM
+obileTab == ""))) {
+>>                                 if (defaultOfflineSVGs) {
+>>                                         $("#inside_liveChatTab").html(defaultOfflineSVGs[chatSettings.chatTab.offline
+ChatTabDefault]);
+>>                                         $("#inside_liveChatTab").width($("#inside_liveChatTab svg").width());
+>>                                         scaleChatTab();
+>>                                         insideFrontInterface.positionTabs();
+>>                                 } else {
+>>                                         return;
+>>                                 }
+>>                         }
+>>                         if (chatSettings.offline.hideTab == true && chatSettings.offline.hideOnDevices.indexOf(device
+.toString()) != -1) {
+>>                                 $("#inside_liveChatTab").hide();
+>>                         } else {
+>>                                 $("#inside_liveChatTab").show();
+>>                         }
+>>                         if (chatSettings.chatTab.showCloseOnTab) {
+>>                                 if (device == 1 && chatSettings.chatTab.showCloseOnTab.indexOf("desktop_offline") !=
+-1) {
+>>                                         addCloseToChatTab();
+>>                                 } else if (device == 2 && chatSettings.chatTab.showCloseOnTab.indexOf("mobile_offline
+") != -1) {
+>>                                         addCloseToChatTab();
+>>                                 }
+>>                         }
+>>                         scaleChatTab();
+>>                         return;
+>>                 }
+>>                 if (!usingChatPanev2) {
+>>                         if (!usingChatPanev2 && settings != null && settings && settings.offlineChat && settings.offl
+ineChat.enabled === true && !hideOfflineChatTab || (activeChat === true && settings && settings.showTabForActive)) {
+>>                                 if ($("#inside_liveChatTab").length == 0) {
+>>                                         addChatTab();
+>>                                 }
+>>                                 if (!usingChatPanev2 && settings.showChatPaneHeaderAsChatTab && showChatPaneHeaderFor
+Device(true)) {
+>>                                         addChatPaneHeaderToTab();
+>>                                         addCloseToChatTab();
+>>                                 } else {
+>>                                         $("#inside_liveChatTab").removeClass("usingChatHeader").removeClass("noAutoHi
+de");
+>>                                         insideFrontInterface.setTabPosition();
+>>                                         if (!$(".inside_chatPane, #inside_chatPane_custom, .inside-notification, #ins
+ideChatFrame.notificationMode").is(":visible")) {
+>>                                                 $("#inside_liveChatTab").show();
+>>                                         }
+>>                                         if (hideOfflineChatTab) {
+>>                                                 $("#inside_liveChatTab").hide();
+>>                                         }
+>>                                         if (activeChat == true && settings.showTabForActive && (!settings.offlineChat
+ || !settings.offlineChat.hideOfflineChatTab)) {
+>>                                                 $("#inside_liveChatTab").show().css("opacity", "1");
+>>                                         }
+>>                                         var prevTabImage = $("#inside_liveChatTab .inside_chatTabImage").attr("src");
+>>                                         var chatTabImageUrl;
+>>                                         if (device === 1) {
+>>                                                 if (typeof (settings.offlineChat.chatTab) != "undefined" && settings.
+offlineChat.chatTab != null && settings.offlineChat.chatTab != "") {
+>>                                                         chatTabImageUrl = customImage("/" + settings.offlineChat.chat
+Tab);
+>>                                                 } else {
+>>                                                         if (tabPosition == "topright" || tabPosition == "right" || ta
+bPosition == "bottomright") {
+>>                                                                 chatTabImageUrl = imageurl + "livechat_offline.png";
+>>                                                         } else {
+>>                                                                 chatTabImageUrl = imageurl + "livechat_offline_left.p
+ng";
+>>                                                         }
+>>                                                 }
+>>                                         } else {
+>>                                                 if (typeof (settings.offlineChat.chatTabMobile) != "undefined" && set
+tings.offlineChat.chatTabMobile != null && settings.offlineChat.chatTabMobile != "") {
+>>                                                         chatTabImageUrl = customImage("/" + settings.offlineChat.chat
+TabMobile);
+>>                                                 } else {
+>>                                                         chatTabImageUrl = imageurl + "livechaticon_mobile.png";
+>>                                                 }
+>>                                         }
+>>                                         updateChatTabImage(chatTabImageUrl);
+>>                                         if (prevTabImage == $("#inside_liveChatTab .inside_chatTabImage").attr("src")
+) {
+>>                                                 setTabAutohide();
+>>                                         }
+>>                                 }
+>>                         } else {
+>>                                 if (insideFrontInterface.chatInProgress) {
+>>                                         $(".inside-notification").remove();
+>>                                         setOnlineChatTab();
+>>                                 }
+>>                                 if (activeChat == false) {
+>>                                         $("#inside_holder #inside_liveChatTab").hide();
+>>                                 }
+>>                         }
+>>                 }
+>>                 if (!hideOfflineChatTab && settings && settings.offlineChat && settings.offlineChat.enabled) {
+>>                         $("#inside_liveChatTab img").css("width", "auto");
+>>                         $("#inside_liveChatTab").css("width", "auto").css("opacity", 1).show();
+>>                         if ($("#inside_liveChatTab").hasClass('usingChatHeader')) {
+>>                                 $("#inside_liveChatTab").outerWidth(settings.width || '');
+>>                         }
+>>                         scaleChatTab();
+>>                         setTimeout(scaleChatTab, 0);
+>>                 }
+>>                 if (!settings.autohideTabs) {
+>>                         insideFrontInterface.positionTabs();
+>>                 }
+>>                 if (activeChat && settings.autohideTabs == true) {
+>>                         setTimeout(function() {
+>>                                 $.inside.front.autohideTabs(0);
+>>                         }, 1);
+>>                         setTimeout(function() {
+>>                                 $.inside.front.autohideTabs(0);
+>>                         }, 250);
+>>                 }
+>>                 if (chatTabMode == "offline" && insideFrontInterface.chat.chatPaneOpen) {
+>>                         $("#inside_liveChatTab").hide();
+>>                 }
+>>         }
+>>         function addTabContents() {
+>>                 $("#inside_liveChatTab").html("<img class='inside_chatTabImage' src='data:image/gif;base64,R0lGODlhAQ
+ABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==' alt='" + translate("Live chat icon, click to open the live chat pane.") + "'
+ />");
+>>                 try {
+>>                         if ($("img.inside_chatTabImage").length > 0) {
+>>                                 $("img.inside_chatTabImage")[0].addEventListener("load", onChatTabImageLoad);
+>>                         }
+>>                 } catch (e) {}
+>>         }
+>>         insideFrontInterface.addChatTab = addChatTab;
+>>         function addChatTab() {
+>>                 if (settings && settings.useMinimiseButton === true) {
+>>                         useMinimiseButton = true;
+>>                 }
+>>                 if (useMinimiseButton) {
+>>                         try {
+>>                                 if (hasSessionStorage && sessionStorage.getItem("insideChatClosed") === "True") {
+>>                                         return;
+>>                                 }
+>>                         } catch (e) {}
+>>                 }
+>>                 if ($("#inside_tabs").length == 0) {
+>>                         $.inside.front.showTabs();
+>>                 }
+>>                 var addTab = true;
+>>                 hideChatTab = insideFrontInterface.chat.isTabHiddenOnThisDevice();
+>>                 if (hideChatTab && settings.showTabForActive != true) {
+>>                         addTab = false;
+>>                 }
+>>                 if (hideChatTab && settings.showTabForActive == true) {
+>>                         addTab = true;
+>>                 }
+>>                 if (settings.offlineChat && settings.offlineChat.enabled && !settings.offlineChat.hideOfflineChatTab
+&& !isOfflineTabHiddenOnThisDevice()) {
+>>                         addTab = true;
+>>                 }
+>>                 var offlineV2Settings = chatSettings.offline || {};
+>>                 var offlineV2Hidden = offlineV2Settings.hideTab && offlineV2Settings.hideOnDevices && offlineV2Settin
+gs.hideOnDevices.indexOf(device.toString()) != -1;
+>>                 if (offlineV2Settings.enabled && !offlineV2Hidden) {
+>>                         addTab = true;
+>>                 }
+>>                 if (addTab) {
+>>                         $("#inside_tabs").hide();
+>>                         $("#inside_tabs").prepend("<div id='inside_liveChatTab' " + getAriaButtonAttribute(translate(
+"Chat")) + "></div>");
+>>                         addTabContents();
+>>                 }
+>>                 $("#inside_liveChatTab").hide();
+>>                 $("#inside_liveChatTab").on("click enter", chatTabClick);
+>>                 $("#inside_liveChatTab").on('keypress', function(e) {
+>>                         if (e.which === 13) {
+>>                                 $(this).trigger('enter');
+>>                         }
+>>                 });
+>>                 const liveChatTab = document.getElementById('inside_liveChatTab');
+>>                 if (liveChatTab) {
+>>                         liveChatTab.addEventListener('click', function() {
+>>                                 if (typeof Notification !== 'undefined' && Notification.permission !== 'granted') {
+>>                                         Notification.requestPermission();
+>>                                 }
+>>                         });
+>>                 }
+>>                 try {
+>>                         if ($("img.inside_chatTabImage").length > 0) {
+>>                                 $("img.inside_chatTabImage")[0].addEventListener("load", onChatTabImageLoad);
+>>                         }
+>>                 } catch (e) {}
+>>                 if (insideFrontInterface.chatPaneVersion() == 1 && settings != null && typeof (settings.tabCSSMargins
+) != "undefined") {
+>>                         var marginArr = settings.tabCSSMargins.split(" ");
+>>                         if (marginArr[0]) {
+>>                                 $("#inside_tabs").css("margin-bottom", +(-parseInt(marginArr[0])) + "px");
+>>                         }
+>>                         if (marginArr[1]) {
+>>                                 $("#inside_tabs").css("margin-right", marginArr[1]);
+>>                         }
+>>                         if (marginArr[2]) {
+>>                                 $("#inside_tabs").css("margin-top", +(-parseInt(marginArr[2])) + "px");
+>>                         }
+>>                         if (marginArr[3]) {
+>>                                 $("#inside_tabs").css("margin-left", marginArr[3]);
+>>                         }
+>>                 } else {
+>>                         if (usingChatPanev2) {
+>>                                 setTabOffsetPosition();
+>>                         }
+>>                 }
+>>                 var touchPosX;
+>>                 var moveXpos;
+>>                 if (device == 2) {
+>>                         var mobileTabPosition = chatSettings.chatTab ? chatSettings.chatTab.mobileTabPosition : "";
+>>                         $("#inside_liveChatTab").on("touchstart", function(e) {
+>>                                 touchPosX = (e.originalEvent && e.originalEvent.touches && e.originalEvent.touches.le
+ngth > 0 ? e.originalEvent.touches[0].pageX : e.pageX);
+>>                                 moveXpos = null;
+>>                         });
+>>                         $("#inside_liveChatTab").on("touchmove", function(e) {
+>>                                 moveXpos = (e.originalEvent && e.originalEvent.touches && e.originalEvent.touches.len
+gth > 0 ? e.originalEvent.touches[0].pageX : e.pageX);
+>>                         });
+>>                         $("#inside_liveChatTab").on("touchend", function(e) {
+>>                                 if (moveXpos != null && $("#inside_liveChatTab").attr("tabHidden") !== "true") {
+>>                                         if (Math.abs(touchPosX - moveXpos) > 20) {
+>>                                                 if (["3", "6", "9"].indexOf(mobileTabPosition) != -1 && touchPosX < m
+oveXpos) {
+>>                                                         $.inside.front.autohideTabs();
+>>                                                 } else if (["1", "4", "7"].indexOf(mobileTabPosition) != -1 && touchP
+osX < moveXpos) {
+>>                                                         $.inside.front.autohideTabs();
+>>                                                 }
+>>                                         }
+>>                                 }
+>>                         });
+>>                 }
+>>                 if ($.inside.front.settingsData.chatlinkvisitor && $.inside.front.settingsData.chatlinkvisitor.autoOp
+ened != true) {
+>>                         insideFrontInterface.openChatPane();
+>>                         $.inside.front.settingsData.chatlinkvisitor.autoOpened = true;
+>>                 }
+>>                 if (window.location.search.indexOf("inside_openchat") != -1) {
+>>                         insideFrontInterface.openChatPane();
+>>                 }
+>>         }
+>>         insideFrontInterface.chat.setTabOffsetPosition = setTabOffsetPosition;
+>>         function setTabOffsetPosition() {
+>>                 if (!usingChatPanev2)
+>>                         return;
+>>                 if (typeof chatSettings.chatTab === 'undefined' || (typeof chatSettings.chatTab.offset === 'undefined
+' && device === 1) || $.isEmptyObject(chatSettings.chatTab.offset) || (typeof chatSettings.chatTab.mobileOffset === 'und
+efined' && device > 1))
+>>                         return;
+>>                 var tabSideOffset = chatSettings.chatTab.offset.side;
+>>                 if (device >= 2) {
+>>                         tabSideOffset = chatSettings.chatTab.mobileOffset.side;
+>>                 }
+>>                 if (tabSideOffset != "") {
+>>                         try {
+>>                                 var inside_tabs = document.querySelector("#inside_tabs");
+>>                                 $("#inside_tabs").stop();
+>>                                 var tabPosition = chatSettings.chatTab.position || "6";
+>>                                 if (device >= 2) {
+>>                                         tabPosition = chatSettings.chatTab.mobileTabPosition || "9";
+>>                                 }
+>>                                 if (!tabPosition || tabPosition == "3" || tabPosition == "6" || tabPosition == "9") {
+>>                                         inside_tabs.style.right = tabSideOffset + "px";
+>>                                 } else {
+>>                                         inside_tabs.style.right = "";
+>>                                         inside_tabs.style.left = tabSideOffset + "px";
+>>                                 }
+>>                         } catch (e) {}
+>>                 }
+>>                 var tabVerticalOffset = chatSettings.chatTab.offset.vertical;
+>>                 if (device >= 2) {
+>>                         tabVerticalOffset = chatSettings.chatTab.mobileOffset.vertical;
+>>                 }
+>>                 if (tabVerticalOffset != "") {
+>>                         try {
+>>                                 var inside_tabs = document.querySelector("#inside_tabs")
+>>                                 var bottomOrMiddle = ["4", "6", "7", "9"];
+>>                                 if (bottomOrMiddle.indexOf(chatSettings.chatTab[device === 1 ? 'position' : 'mobileTa
+bPosition']) != -1) {
+>>                                         inside_tabs.style.marginBottom = parseInt(tabVerticalOffset) + "px";
+>>                                 } else {
+>>                                         inside_tabs.style.marginBottom = -parseInt(tabVerticalOffset) + "px";
+>>                                 }
+>>                         } catch (e) {}
+>>                 }
+>>         }
+>>         function j2cTabClick() {
+>>                 if (device == 2 && $("#inside_joinTheCallChatTab").attr("autohide")) {
+>>                         insideFrontInterface.hoverShowTabs($("#inside_joinTheCallChatTab"));
+>>                         return;
+>>                 }
+>>         }
+>>         insideFrontInterface.chat.chatTabClick = chatTabClick;
+>>         function chatTabClick(force) {
+>>                 insideFrontInterface.chat.num = 0;
+>>                 if (device > 1 && force !== true && $("#inside_liveChatTab").attr("tabHidden") === "true") {
+>>                         insideFrontInterface.hoverShowTabs($("#inside_liveChatTab"));
+>>                         return;
+>>                 }
+>>                 if (chatSettings && chatSettings.version == "2" && typeof insideChatPane == "undefined") {
+>>                         console.log("--- tabs add loading class");
+>>                         $('#inside_holder').addClass('loading tabClicked');
+>>                 }
+>>                 $.inside.front.loadInsideChat(function() {
+>>                         if (insideFrontInterface.chat.preventTabClick) {
+>>                                 insideFrontInterface.chat.preventTabClick = false;
+>>                                 return;
+>>                         }
+>>                         if (usingChatPanev2 || insideFrontInterface.chatPaneVersion() == 2) {
+>>                                 if (typeof insideChatPane == "undefined" || typeof insideChatPane.open == "undefined"
+) {
+>>                                         if (typeof insideFrontInterface.chatPaneFrameReadyCallbacks == "undefined") {
+>>                                                 insideFrontInterface.chatPaneFrameReadyCallbacks = [];
+>>                                         }
+>>                                         insideFrontInterface.chatPaneFrameReadyCallbacks.push(function() {
+>>                                                 chatTabClick(true)
+>>                                         });
+>>                                         return;
+>>                                 }
+>>                                 try {
+>>                                         if (!insideChatPane.isOpen()) {
+>>                                                 insideChatPane.frame.contentWindow.insideVideos.backToChat(true);
+>>                                         }
+>>                                 } catch (e) {}
+>>                                 insideChatPane.open();
+>>                                 if (window != window.top) {
+>>                                         window.parent.postMessage({
+>>                                                 'func': 'openChat',
+>>                                                 'message': 'Message text from iframe.'
+>>                                         }, "*");
+>>                                 }
+>>                                 return;
+>>                         }
+>>                         if (typeof insideLegacyChat != "undefined") {
+>>                                 insideLegacyChat.chatTabClick(force);
+>>                         }
+>>                 });
+>>                 try {
+>>                         if (force !== true) {
+>>                                 var chatSettingsId = chatSettings && chatSettings.chatSettingsId;
+>>                                 var tabValue = insideFrontInterface.getAvailableAssistants().length ? 'Online' : 'Off
+line';
+>>                                 $.inside.ga({
+>>                                         category: "Inside : Chat Tab",
+>>                                         action: "Clicked",
+>>                                         value: chatSettingsId,
+>>                                         label: tabValue
+>>                                 });
+>>                                 _insideGraph.doEvent("tabclicked");
+>>                         }
+>>                 } catch (e) {
+>>                         console.log(e);
+>>                 }
+>>         }
+>>         function setTabAutohide() {
+>>                 if ($.inside.front.settings.autohideTabs) {
+>>                         if (device == 2 && $.inside.front.settings.autohideOnMobile == false) {} else if ($.inside.fr
+ont.settings.autoHideTabOnLoad == true || $("#inside_liveChatTab").attr("tabHidden") == "true") {
+>>                                 $("#inside_liveChatTab").attr("autohide", $.inside.front.settings.autoHideAmount || 2
+0);
+>>                                 $.inside.front.autohideTabs(0);
+>>                         } else {
+>>                                 $("#inside_liveChatTab").attr("autohide", $.inside.front.settings.autoHideAmount || 2
+0);
+>>                                 insideFrontInterface.positionTabs();
+>>                                 setTimeout(function() {
+>>                                         $.inside.front.autohideTabs(0);
+>>                                 }, 1000);
+>>                         }
+>>                 } else {
+>>                         insideFrontInterface.positionTabs();
+>>                 }
+>>         }
+>>         insideFrontInterface.chat.onChatTabImageLoad = onChatTabImageLoad;
+>>         function onChatTabImageLoad() {
+>>                 if (!settings.autohideTabs) {
+>>                         setTimeout(function() {
+>>                                 insideFrontInterface.positionTabs();
+>>                         }, 0);
+>>                 }
+>>                 $("#inside_tabs").css('display', 'block');
+>>                 try {
+>>                         var img = new Image();
+>>                         img.onload = function() {
+>>                                 if (this.width == 1)
+>>                                         scaleChatTab();
+>>                                 else
+>>                                         scaleChatTab(this.width, this.height);
+>>                         }
+>>                         img.src = this.src;
+>>                 } catch (e) {
+>>                         scaleChatTab();
+>>                 }
+>>                 setTabAutohide();
+>>                 $.inside.front.windowScale();
+>>                 _insideGraph.doEvent("chatTabReady");
+>>         }
+>>         insideFrontInterface.chat.onJoinTheCallChatTabImageLoad = onJoinTheCallChatTabImageLoad;
+>>         function onJoinTheCallChatTabImageLoad() {
+>>                 var hideAmount = 23;
+>>                 if (insideFrontInterface.chat.joinTheCallSettings.autohideAmount) {
+>>                         hideAmount = parseInt(insideFrontInterface.chat.joinTheCallSettings.autohideAmount);
+>>                         $("#inside_joinTheCallChatTab").attr("autohide", hideAmount);
+>>                 } else {
+>>                         hideAmount = 23;
+>>                         if (settings.autohideTabs == true) {
+>>                                 $("#inside_joinTheCallChatTab").attr("autohide", hideAmount);
+>>                         }
+>>                 }
+>>                 setTimeout(function() {
+>>                         $("#inside_tabs").css('display', 'block');
+>>                         insideFrontInterface.windowScale();
+>>                         insideFrontInterface.positionTabs();
+>>                         if (insideFrontInterface.chat.joinTheCallSettings.autohideAmount && settings.autohideTabs !=
+true) {
+>>                                 $.inside.front.autohideTab($("#inside_joinTheCallChatTab"));
+>>                         }
+>>                 }, 500);
+>>                 if (insideFrontInterface.chat.joinTheCallSettings.tabSize == "" && !insideFrontInterface.chat.joinThe
+CallSettings.tabImage) {
+>>                         $("#inside_joinTheCallChatTab, #inside_joinTheCallImage").css({
+>>                                 width: 181,
+>>                                 height: 115
+>>                         });
+>>                         $("#inside_joinTheCallPasscode").css("padding-left", 23);
+>>                 } else {
+>>                         if (insideFrontInterface.chat.joinTheCallSettings.tabSize) {
+>>                                 var size = insideFrontInterface.chat.joinTheCallSettings.tabSize.split(",");
+>>                                 $("#inside_joinTheCallChatTab, #inside_joinTheCallImage").css("width", parseInt(size[
+0]) || this.width);
+>>                                 $("#inside_joinTheCallChatTab, #inside_joinTheCallImage").css("height", parseInt(size
+[1]) || this.height);
+>>                         } else {
+>>                                 $("#inside_joinTheCallChatTab").css("width", this.width);
+>>                                 $("#inside_joinTheCallChatTab").css("height", this.height);
+>>                         }
+>>                         $("#inside_joinTheCallPasscode").css("padding-left", hideAmount);
+>>                 }
+>>         }
+>>         insideFrontInterface.scaleChatTab = scaleChatTab;
+>>         function scaleChatTab(width, height) {
+>>                 settings = $.inside.front.settings;
+>>                 if (!$("#inside_liveChatTab").is(":visible")) {
+>>                         return;
+>>                 }
+>>                 if ($("#inside_liveChatTab img").length == 0 && $("#inside_liveChatTab svg").length == 0)
+>>                         return;
+>>                 if ($("#inside_liveChatTab svg").length == 0) {
+>>                         $("#inside_liveChatTab").css("width", "");
+>>                 }
+>>                 if ($("#inside_liveChatTab").hasClass("usingChatHeader")) {
+>>                         $("#inside_liveChatTab.usingChatHeader").css("width", settings.width + "px");
+>>                 } else {
+>>                         var w;
+>>                         if ($("#inside_liveChatTab img").length > 0) {
+>>                                 w = width || $("#inside_liveChatTab img")[0].naturalWidth || $("#inside_liveChatTab i
+mg")[0].width || 100;
+>>                         }
+>>                         if ($("#inside_liveChatTab > svg").length > 0) {
+>>                                 var attrWidth = parseInt($("#inside_liveChatTab > svg")[0].getAttribute("width"));
+>>                                 if (width <= 1 && attrWidth > 1) {
+>>                                         w = attrWidth;
+>>                                 } else {
+>>                                         w = width || $("#inside_liveChatTab > svg")[0].naturalWidth || attrWidth || 1
+00;
+>>                                 }
+>>                         }
+>>                         var pr = 1;
+>>                         try {
+>>                                 pr = window.devicePixelRatio;
+>>                         } catch (e) {}
+>>                         if (device > 1 && pr > 1) {
+>>                                 var viewport = $.inside.front.getViewPortSize();
+>>                                 if (usingChatPanev2 && typeof insideFrontInterface.chatSettings != "undefined" && typ
+eof insideFrontInterface.chatSettings.chatTab.mobileTabWidth == "undefined") {} else {
+>>                                         if (settings != null && typeof (settings.mobileTabWidth) != "undefined" && se
+ttings.mobileTabWidth != "") {
+>>                                                 var widthType = typeof settings.mobileTabWidthType != 'undefined' ? s
+ettings.mobileTabWidthType : '%';
+>>                                                 w = widthType == '%' ? (viewport.width * settings.mobileTabWidth * 0.
+01) : settings.mobileTabWidth;
+>>                                         } else {
+>>                                                 if (w > viewport.width) {
+>>                                                         w = viewport.width;
+>>                                                 }
+>>                                                 if (w < viewport.width * 0.1) {
+>>                                                         w = viewport.width * 0.1;
+>>                                                 }
+>>                                         }
+>>                                 }
+>>                                 $("#inside_liveChatTab").width(w);
+>>                                 $("#inside_liveChatTab img, #inside_liveChatTab > svg").css("width", "100%");
+>>                                 $("#inside_liveChatTab > svg").css("height", "100%");
+>>                         } else {
+>>                                 $("#inside_liveChatTab").width(w);
+>>                         }
+>>                         if ($("#inside_liveChatTab img").height() || height) {
+>>                                 $("#inside_liveChatTab img").attr({
+>>                                         'width': w,
+>>                                         'height': height || $("#inside_liveChatTab img").height()
+>>                                 });
+>>                         }
+>>                         if (typeof insideChatPane !== 'undefined' && insideChatPane.frame) {
+>>                                 insideChatPane.frame.contentDocument.querySelector(':root').style.setProperty("--chat
+TabWidth", w + 'px');
+>>                         }
+>>                 }
+>>                 $.inside.front.windowScale();
+>>                 insideFrontInterface.positionTabs();
+>>         }
+>>         insideFrontInterface.setChatTabPosition = setChatTabPosition;
+>>         function setChatTabPosition(pos) {
+>>                 tabPosition = pos;
+>>                 insideFrontInterface.tabPosition = tabPosition;
+>>                 if (settings != null && (typeof (settings.customTabImage) == "undefined" || settings.customTabImage =
+= "")) {
+>>                         if (pos == "left" || pos == "middleleft" || pos == "bottomleft" || pos == "topleft") {
+>>                                 $(".inside_chatPane, #inside_chatPane_custom").css("left", "0px").css("right", "auto"
+);
+>>                                 $("#inside_liveChatTab .inside_chatTabImage").attr("src", $.inside.front.imageurl + "
+livechaticon_left.png");
+>>                         }
+>>                 }
+>>         }
+>>         insideFrontInterface.chat.clearUnreadChatNotifications = clearUnreadChatNotifications;
+>>         function clearUnreadChatNotifications() {
+>>                 $("#inside_liveChatTab .inside_chatNotification").remove();
+>>         }
+>>         insideFrontInterface.chat.showChatTabNotification = showChatNotification;
+>>         function showChatNotification(target, setUnreadMessages, message, getLastMessageFromOperator) {
+>>                 if (typeof (target) == "undefined" || target == null) {
+>>                         target = "#inside_liveChatTab";
+>>                 }
+>>                 var $target = $(target);
+>>                 var chatNotif;
+>>                 var num = 0;
+>>                 if (typeof setUnreadMessages === "function") {
+>>                         num = setUnreadMessages();
+>>                 }
+>>                 if (num == 0) {
+>>                         $target.find(".inside_chatNotification").remove();
+>>                         return;
+>>                 }
+>>                 if ($target.find(".inside_chatNotification").length > 0) {
+>>                         chatNotif = $target.find(".inside_chatNotification").text(num);
+>>                 } else {
+>>                         chatNotif = $("<div class='inside_chatNotification'>" + num + "</div>").appendTo(target);
+>>                 }
+>>                 if (usingChatPanev2 && chatSettings.chatPane.notifications.numberBgColor) {
+>>                         chatNotif.css("background-color", chatSettings.chatPane.notifications.numberBgColor);
+>>                 }
+>>                 chatNotif.addClass("notransition");
+>>                 chatNotif.css("transform", "scale(0)");
+>>                 setTimeout(function() {
+>>                         chatNotif.removeClass("notransition");
+>>                         chatNotif.css("transform", "scale(1)");
+>>                 }, 0);
+>>                 insideFrontInterface.chat.num = num;
+>>                 var msg = $.extend({}, ((typeof getLastMessageFromOperator == 'function' && getLastMessageFromOperato
+r()) || message || null));
+>>                 if (msg && msg.text) {
+>>                         if (msg.contentType == "text/inside.legacy" || msg.text.indexOf("&lt;") != -1) {
+>>                                 msg.text = $("<span></span>").html(msg.text).text();
+>>                         }
+>>                 }
+>>                 msg.text = htmlToPlainText(msg.text);
+>>                 _insideGraph.doEvent("chatnotification", {
+>>                         message: msg,
+>>                         unreadMessageCount: num
+>>                 });
+>>                 insideFrontInterface.chat.setOnlineChatTab();
+>>         }
+>>         function htmlToPlainText(str) {
+>>                 var p = document.createElement("p");
+>>                 p.innerHTML = str;
+>>                 return p.innerText;
+>>         }
+>> });
+>> ;var insideAPI = {};
+>> (function(window, $) {
+>>         $.xhrPool = [];
+>>         $.xhrPool.abortAll = function() {
+>>                 $(this).each(function(idx, jqXHR) {
+>>                         jqXHR.abort();
+>>                 });
+>>                 $.xhrPool = [];
+>>         }
+>>         ;
+>>         $.ajaxSetup({
+>>                 beforeSend: function(jqXHR) {
+>>                         $.xhrPool.push(jqXHR);
+>>                 },
+>>                 complete: function(jqXHR) {
+>>                         var index = $.xhrPool.indexOf(jqXHR);
+>>                         if (index > -1) {
+>>                                 $.xhrPool.splice(index, 1);
+>>                         }
+>>                 }
+>>         });
+>>         function call(callName, args, success, error, async, type, dataType, contentType) {
+>>                 if (typeof (async) == "undefined") {
+>>                         async = true;
+>>                 }
+>>                 if (typeof (type) == "undefined") {
+>>                         type = "POST";
+>>                 }
+>>                 if (typeof (dataType) == "undefined") {
+>>                         dataType = "json";
+>>                 }
+>>                 if (typeof (contentType) == "undefined") {
+>>                         contentType = "application/json";
+>>                 }
+>>                 var urlVariables = "";
+>>                 if (typeof (_insideGraph) != "undefined") {
+>>                         var accesskey = _insideGraph.current.account + ":" + _insideGraph.pid + ":" + _insideGraph.ac
+cessKey;
+>>                         var accesscheck = _insideGraph.accessCheck;
+>>                         args.accesskey = accesskey;
+>>                         args.accesscheck = accesscheck;
+>>                         var ob = {};
+>>                         ob.accesskey = accesskey;
+>>                         ob.accesscheck = accesscheck;
+>>                         urlVariables = $.param(ob);
+>>                 }
+>>                 var urlpath;
+>>                 if (typeof (_insideSocialUrl) != "undefined") {
+>>                         urlpath = _insideSocialUrl;
+>>                 } else {
+>>                         urlpath = _insideLive;
+>>                 }
+>>                 var _preIE10 = (function() {
+>>                         if (navigator.appVersion.indexOf("MSIE") != -1) {
+>>                                 var v = parseFloat(navigator.appVersion.split("MSIE")[1]);
+>>                                 if (v < 10)
+>>                                         return true;
+>>                         }
+>>                         return false;
+>>                 }
+>>                 )();
+>>                 if (_preIE10 && 'XDomainRequest'in window && window.XDomainRequest !== null) {
+>>                         var xdr = new XDomainRequest();
+>>                         xdr.open('post', urlpath + "api/api_call.aspx?call=" + callName + ((urlVariables != "") ? "&"
+ + urlVariables : ""));
+>>                         xdr.onload = function() {
+>>                                 var dom = new ActiveXObject('Microsoft.XMLDOM');
+>>                                 var response = $.parseJSON(xdr.responseText);
+>>                                 dom.async = async;
+>>                                 if (response == null || typeof (response) == 'undefined') {
+>>                                         response = $.parseJSON(data.firstChild.textContent);
+>>                                 }
+>>                                 if (typeof (success) == "function") {
+>>                                         success(response);
+>>                                 }
+>>                         }
+>>                         ;
+>>                         xdr.onerror = function() {
+>>                                 _result = false;
+>>                         }
+>>                         ;
+>>                         args = JSON.stringify(args);
+>>                         xdr.onprogress = function() {}
+>>                         ;
+>>                         xdr.ontimeout = function() {}
+>>                         ;
+>>                         setTimeout(function() {
+>>                                 xdr.send(args);
+>>                         }, 0);
+>>                         return xdr;
+>>                 } else if (navigator.userAgent.indexOf('MSIE') != -1 && parseInt(navigator.userAgent.match(/MSIE ([\d
+.]+)/)[1], 10) < 8) {
+>>                         return false;
+>>                 } else {
+>>                         if (type == "POST") {
+>>                                 args = JSON.stringify(args);
+>>                         }
+>>                         var headers = {};
+>>                         if (typeof (_insideCsrfToken) != "undefined" && _insideCsrfToken != null)
+>>                                 headers['RequestVerificationToken'] = _insideCsrfToken;
+>>                         var sessionid = getInsideSessionId() || "";
+>>                         if (sessionid !== "") {
+>>                                 headers.stoken = sessionid;
+>>                         }
+>>                         var apiCall = $.ajax({
+>>                                 type: type,
+>>                                 url: urlpath + "api/api_call.aspx?call=" + callName + ((urlVariables != "") ? "&" + u
+rlVariables : ""),
+>>                                 dataType: dataType,
+>>                                 data: args,
+>>                                 contentType: contentType,
+>>                                 async: async,
+>>                                 headers: headers,
+>>                                 success: function(response) {
+>>                                         if (!_insideIsLive) {
+>>                                                 if (typeof ($.inside) != "undefined" && $.inside.logging == true) {
+>>                                                         try {
+>>                                                                 console.info("API CALL '" + callName + "' success");
+>>                                                                 console.info("API args: ", args);
+>>                                                                 console.info(response);
+>>                                                         } catch (e) {
+>>                                                                 console.log("API CALL '" + callName + "' success");
+>>                                                                 console.log("API args: ", args);
+>>                                                                 console.log(response);
+>>                                                         }
+>>                                                 }
+>>                                         }
+>>                                         if (typeof (success) == "function") {
+>>                                                 success(response);
+>>                                         }
+>>                                 },
+>>                                 error: function(response) {
+>>                                         if (!_insideIsLive) {
+>>                                                 console.log(response);
+>>                                         }
+>>                                         if (typeof (error) == "function") {
+>>                                                 try {
+>>                                                         console.log("API CALL '" + callName + "' error");
+>>                                                         console.log("API args: ", urlVariables);
+>>                                                         error(response);
+>>                                                 } catch (e) {}
+>>                                         }
+>>                                 }
+>>                         });
+>>                         return apiCall;
+>>                 }
+>>         }
+>>         function getApiPath() {
+>>                 var path = _insideLive;
+>>                 if (typeof (_insideLive) == "boolean" && _insideSocialUrl) {
+>>                         path = _insideSocialUrl;
+>>                 }
+>>                 return path;
+>>         }
+>>         insideAPI.prepareApiUrl = prepareApiUrl;
+>>         function prepareApiUrl(call) {
+>>                 var path = getApiPath();
+>>                 if (call.indexOf("http") == 0) {
+>>                         return call;
+>>                 }
+>>                 return path + call;
+>>         }
+>>         function setRequestHeaders(request) {
+>>                 if (typeof _insideGraph !== "undefined") {
+>>                         request.setRequestHeader("accesskey", _insideGraph.current.account + ":" + _insideGraph.pid +
+ ":" + _insideGraph.accessKey);
+>>                         request.setRequestHeader("accesscheck", _insideGraph.accessCheck);
+>>                 } else if (typeof assistantData !== "undefined" && assistantData && assistantData.sessionId) {
+>>                         request.setRequestHeader("stoken", assistantData.sessionId);
+>>                 }
+>>         }
+>>         function setFetchRequestHeaders(headers) {
+>>                 if (typeof _insideGraph !== "undefined") {
+>>                         headers.append("accesskey", _insideGraph.current.account + ":" + _insideGraph.pid + ":" + _in
+sideGraph.accessKey);
+>>                         headers.append("accesscheck", _insideGraph.accessCheck);
+>>                 } else if (typeof assistantData !== "undefined" && assistantData && assistantData.sessionId) {
+>>                         headers.append("stoken", assistantData.sessionId);
+>>                 }
+>>                 return headers;
+>>         }
+>>         function parseJSONResponse(response) {
+>>                 return new Promise(resolve=>{
+>>                         response?.clone?.()?.json?.()?.then(resolve).catch(()=>{
+>>                                 if (response.ok)
+>>                                         resolve({
+>>                                                 success: true,
+>>                                                 status: 200
+>>                                         });
+>>                                 response.text().then(res=>resolve(res || "FetchError"))
+>>                         }
+>>                         );
+>>                 }
+>>                 )
+>>         }
+>>         function post(call, data, success, error, abortController, forceIgnoreFetch=false) {
+>>                 if (typeof (error) == "undefined") {
+>>                         error = null;
+>>                 }
+>>                 var url = prepareApiUrl(call);
+>>                 if (window.fetch && !forceIgnoreFetch) {
+>>                         const headers = new Headers();
+>>                         headers.append("Content-Type", "application/json");
+>>                         setFetchRequestHeaders(headers);
+>>                         const controller = abortController || new AbortController();
+>>                         const signal = controller.signal;
+>>                         const fetchOptions = {
+>>                                 method: "POST",
+>>                                 headers: headers,
+>>                                 body: JSON.stringify(data),
+>>                                 signal: signal,
+>>                         };
+>>                         const fetchPromise = fetch(url, fetchOptions).then(response=>{
+>>                                 response.requestData = data;
+>>                                 response.usingFetch = true;
+>>                                 if (response.ok) {
+>>                                         return parseJSONResponse(response).then(success)
+>>                                 } else {
+>>                                         throw response;
+>>                                 }
+>>                         }
+>>                         ).catch(async err=>{
+>>                                 let errorText = await parseJSONResponse(err)
+>>                                 var path = getApiPath();
+>>                                 if (path == _insideLive && err && err.status === 403 && (!$.connection || !$.connecti
+on.hub || $.connection.hub.state === $.signalR.connectionState.disconnected)) {
+>>                                         connected = false;
+>>                                         if (typeof (virtualStore) != "undefined" && virtualStore && typeof (virtualSt
+ore.showLoadingDialog) == "function") {
+>>                                                 virtualStore.showLoadingDialog(insideLanguage.translatePhrase("You ha
+ve been disconnected from INSIDE, redirecting to the login screen...") + "<span class='loadingIcon'></span>");
+>>                                         }
+>>                                         setTimeout("window.location.reload()", 4000);
+>>                                 } else if (error) {
+>>                                         error(err, err.statusText, errorText);
+>>                                 }
+>>                         }
+>>                         );
+>>                         return {
+>>                                 promise: fetchPromise,
+>>                                 usingFetch: true,
+>>                                 requestData: data,
+>>                                 abort: ()=>controller.abort(),
+>>                         };
+>>                 } else {
+>>                         return $.ajax({
+>>                                 type: "post",
+>>                                 url: url,
+>>                                 beforeSend: function(request) {
+>>                                         setRequestHeaders(request);
+>>                                 },
+>>                                 dataType: "json",
+>>                                 data: JSON.stringify(data),
+>>                                 contentType: "application/json",
+>>                                 async: true,
+>>                                 success: success,
+>>                                 error: function(jqXhr, textStatus, errorThrown) {
+>>                                         var path = getApiPath();
+>>                                         if (path == _insideLive && jqXhr && jqXhr.status === 403 && (!$.connection ||
+ !$.connection.hub || $.connection.hub.state === $.signalR.connectionState.disconnected)) {
+>>                                                 connected = false;
+>>                                                 if (typeof (virtualStore) != "undefined" && virtualStore && typeof (v
+irtualStore.showLoadingDialog) == "function") {
+>>                                                         virtualStore.showLoadingDialog(insideLanguage.translatePhrase
+("You have been disconnected from INSIDE, redirecting to the login screen...") + "<span class='loadingIcon'></span>");
+>>                                                 }
+>>                                                 setTimeout("window.location.reload()", 4000);
+>>                                         } else if (error) {
+>>                                                 error(jqXhr, textStatus, errorThrown);
+>>                                         }
+>>                                 },
+>>                         });
+>>                 }
+>>         }
+>>         function get(call, data, success, error) {
+>>                 if (typeof (error) == "undefined") {
+>>                         error = null;
+>>                 }
+>>                 var url = prepareApiUrl(call);
+>>                 if (window.fetch) {
+>>                         const headers = new Headers();
+>>                         headers.append("Content-Type", "application/json");
+>>                         setFetchRequestHeaders(headers);
+>>                         return fetch(url, {
+>>                                 method: "GET",
+>>                                 headers: headers,
+>>                         }).then(response=>{
+>>                                 if (response.ok) {
+>>                                         return response.json().then(success);
+>>                                 } else {
+>>                                         throw new Error(response.statusText);
+>>                                 }
+>>                         }
+>>                         ).catch(err=>{
+>>                                 var path = getApiPath();
+>>                                 if (path == _insideLive && err && err.status === 403 && (!$.connection || !$.connecti
+on.hub || $.connection.hub.state === $.signalR.connectionState.disconnected)) {
+>>                                         connected = false;
+>>                                         if (typeof (virtualStore) != "undefined" && virtualStore && typeof (virtualSt
+ore.showLoadingDialog) == "function") {
+>>                                                 virtualStore.showLoadingDialog(insideLanguage.translatePhrase("You ha
+ve been disconnected from INSIDE, redirecting to login screen...") + "<span class='loadingIcon'></span>");
+>>                                         }
+>>                                         setTimeout("window.location.reload()", 4000);
+>>                                 } else if (error) {
+>>                                         error(err, err.message, err.name);
+>>                                 }
+>>                         }
+>>                         );
+>>                 } else {
+>>                         return $.ajax({
+>>                                 type: "get",
+>>                                 url: url,
+>>                                 dataType: "json",
+>>                                 data: JSON.stringify(data),
+>>                                 contentType: "application/json",
+>>                                 async: true,
+>>                                 success: success,
+>>                                 error: function(jqXhr, textStatus, errorThrown) {
+>>                                         var path = getApiPath();
+>>                                         if (path == _insideLive && jqXhr && jqXhr.status === 403 && (!$.connection ||
+ !$.connection.hub || $.connection.hub.state === $.signalR.connectionState.disconnected)) {
+>>                                                 connected = false;
+>>                                                 if (typeof (virtualStore) != "undefined" && virtualStore && typeof (v
+irtualStore.showLoadingDialog) == "function") {
+>>                                                         virtualStore.showLoadingDialog(insideLanguage.translatePhrase
+("You have been disconnected from INSIDE, redirecting to login screen...") + "<span class='loadingIcon'></span>");
+>>                                                 }
+>>                                                 setTimeout("window.location.reload()", 4000);
+>>                                         } else if (error)
+>>                                                 error(jqXhr, textStatus, errorThrown);
+>>                                 }
+>>                         });
+>>                 }
+>>         }
+>>         insideAPI.handlePostError = handlePostError;
+>>         function handlePostError(xhr, textStatus, errorThrown, alertTitle) {
+>>                 if (textStatus === "abort") {
+>>                         return;
+>>                 }
+>>                 var errorMessage;
+>>                 if (xhr.responseJSON && xhr.responseJSON.msg && xhr.responseJSON.msg !== "") {
+>>                         errorMessage = xhr.responseJSON.msg;
+>>                 } else if (xhr.responseText && xhr.responseText !== "") {
+>>                         errorMessage = xhr.responseText;
+>>                 } else if (errorThrown) {
+>>                         errorMessage = errorThrown;
+>>                 } else if (!window.navigator.onLine || (!$.connection || !$.connection.hub || $.connection.hub.state
+=== $.signalR.connectionState.disconnected)) {
+>>                         errorMessage = insideLanguage.translatePhrase("There has been an unexpected connection issue.
+ Please try again.");
+>>                 } else {
+>>                         errorMessage = insideLanguage.translatePhrase("Invalid data provided");
+>>                 }
+>>                 if (!alertTitle) {
+>>                         alertTitle = "";
+>>                 }
+>>                 if (xhr.status === 403) {
+>>                         if (xhr.getResponseHeader("server") === "awselb/2.0") {
+>>                                 insidePopup.showAlert("This action cannot be performed as it failed to satisfy securi
+ty rules.", "ok", null, true, {
+>>                                         title: (alertTitle ? alertTitle : "Denied"),
+>>                                         anim: false
+>>                                 });
+>>                         } else {
+>>                                 insidePopup.showAlert("Access denied", "ok", null, true, {
+>>                                         title: (alertTitle ? alertTitle : "Forbidden"),
+>>                                         anim: false
+>>                                 });
+>>                                 setTimeout(location.reload.bind(location), 5000);
+>>                         }
+>>                 } else {
+>>                         insidePopup.showAlert(errorMessage, "ok", null, true, {
+>>                                 title: alertTitle,
+>>                                 anim: false
+>>                         });
+>>                 }
+>>         }
+>>         ;function ajax(ajaxData) {
+>>                 return $.ajax(ajaxData);
+>>         }
+>>         insideAPI.call = call;
+>>         insideAPI.post = post;
+>>         insideAPI.get = get;
+>>         insideAPI.ajax = ajax;
+>> }
+>> )(window, typeof (_insideGraph) != "undefined" ? _insideGraph.jQuery : $);
+>> ;if (document.location.href.indexOf("dev.powerfront.com") != -1 || document.location.href.indexOf("staging.powerfront
+.com") != -1 || document.location.href.indexOf("staging2012.powerfront.com") != -1) {
+>>         if (document.title.indexOf(" | ") == -1 && document.querySelector(".cell45, .cell34")) {
+>>                 var holder = document.createElement("div");
+>>                 document.body.appendChild(holder);
+>>                 document.querySelector(".cell45, .cell34").prepend(holder);
+>>                 holder.id = "insideStreamContainer";
+>>                 holder.style.height = "600px";
+>>                 window.insideStreamingContainerId = "insideStreamContainer";
+>>         }
+>> }
+>> var insideStreamingCheck = new function() {
+>>         var _this = this;
+>>         this.bundleLoaded = false;
+>>         this.init = init;
+>>         function init() {
+>>                 if (document.location.href.indexOf("insideshowid") != -1 || window.insideStreamingContainerId) {
+>>                         if (typeof insideStreaming == "undefined") {
+>>                                 loadStreamingBundle();
+>>                         }
+>>                 }
+>>         }
+>>         function browserSupports() {
+>>                 if (isIE() || (browserType[0] == "Chrome" && parseInt(browserType[1]) < 40) || (browserType[0] == "Fi
+refox" && parseInt(browserType[1]) < 34) || (browserType[0] == "Safari" && parseFloat(browserType[1]) < 9.1) || (browser
+Type[0] == "Opera" && parseFloat(browserType[1]) < 29) || (browserType[0] == "Edge" && parseFloat(browserType[1]) < 13))
+ {
+>>                         return false;
+>>                 }
+>>                 return true && !!window.WebSocket;
+>>         }
+>>         var browserType = (function() {
+>>                 var ua = navigator.userAgent, tem, M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\
+s*(\d+)/i) || [];
+>>                 if (/trident/i.test(M[1])) {
+>>                         tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
+>>                         return 'IE ' + (tem[1] || '');
+>>                 }
+>>                 if (M[1] === 'Chrome') {
+>>                         tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
+>>                         if (tem != null)
+>>                                 return tem.slice(1).join(' ').replace('OPR', 'Opera');
+>>                 }
+>>                 M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
+>>                 if ((tem = ua.match(/version\/(\d+)/i)) != null)
+>>                         M.splice(1, 1, tem[1]);
+>>                 return M
+>>         }
+>>         )();
+>>         function isIE() {
+>>                 var ua = navigator.userAgent;
+>>                 return ua.indexOf('MSIE') > -1 || ua.indexOf('Trident') > -1;
+>>         }
+>>         var streamingBundleLoading = false;
+>>         var bundleLoadedCallbacks = [];
+>>         this.loadStreamingBundle = loadStreamingBundle;
+>>         function loadStreamingBundle(callback) {
+>>                 if (typeof insideStreaming != "undefined") {
+>>                         if (typeof callback == "function") {
+>>                                 callback();
+>>                         }
+>>                         return;
+>>                 }
+>>                 if (typeof callback == "function") {
+>>                         bundleLoadedCallbacks.push(callback);
+>>                 }
+>>                 if (streamingBundleLoading)
+>>                         return;
+>>                 streamingBundleLoading = true;
+>>                 if (!browserSupports()) {
+>>                         alert(getAlertMessage());
+>>                         return;
+>>                 }
+>>                 var $ = _insideGraph.jQuery;
+>>                 if (location.href.indexOf("dev.powerfront") != -1 || location.href.indexOf("localhost") != -1 || loca
+tion.href.indexOf("inside-local") != -1 || (new RegExp("dev*.-live.inside-graph.com")).test(location.href)) {
+>>                         _insideGraph.loadJS($.inside.insideScript + "/streaming/inside.front.streaming.js?v=" + _insi
+deScriptVersion, function() {
+>>                                 return typeof insideStreaming != 'undefined'
+>>                         }, function() {
+>>                                 _insideGraph.loadJS($.inside.insideScript + "/streaming/inside.front.showcase.js?v="
++ _insideScriptVersion, function() {
+>>                                         return typeof insideShowcase != 'undefined'
+>>                                 }, bundleLoaded);
+>>                         });
+>>                         _insideGraph.jQuery.inside.front.loadCssFile($.inside.insideScript + "/streaming/inside.front
+.streaming.css?v=" + _insideScriptVersion, function() {
+>>                                 console.log("streaming css loaded");
+>>                         });
+>>                 } else {
+>>                         _insideGraph.loadJS($.inside.insideScript + "streaming_min.js?v=" + _insideScriptVersion, fun
+ction() {
+>>                                 return typeof insideStreaming != 'undefined'
+>>                         }, bundleLoaded);
+>>                         _insideGraph.jQuery.inside.front.loadCssFile($.inside.insideScript + "streaming_min.css?v=" +
+ _insideScriptVersion, function() {
+>>                                 console.log("streaming css loaded");
+>>                         });
+>>                         console.log('from streaming.check.js');
+>>                 }
+>>         }
+>>         function bundleLoaded() {
+>>                 insideStreaming.init(_insideGraph.jQuery);
+>>                 _this.bundleLoaded = true;
+>>                 for (var i = 0; i < bundleLoadedCallbacks.length; i++) {
+>>                         if (typeof bundleLoadedCallbacks[i] == "function") {
+>>                                 bundleLoadedCallbacks[i]();
+>>                         }
+>>                 }
+>>                 bundleLoadedCallbacks = [];
+>>         }
+>>         function getAlertMessage() {
+>>                 var iosMessage = "" + "Apologies, but the Show could not start.\n" + "Your current iOS version is not
+ supported.\n" + "Please upgrade to iOS 13 (or above) or please join on another device.";
+>>                 var macMessage = "" + "Apologies, but the Show could not start.\n" + "Your current web browser is not
+ supported.\n" + "Please try one of the following web browsers:\n" + "Chrome (version 81 or above)\n" + "Safari (version
+ 12 or above)\n" + "Firefox (version 77 or above)"
+>>                 var windowsMessage = "" + "Apologies, but the Show could not start.\n" + "Your current web browser is
+ not supported.\n" + "Please try one of the following web browsers:\n" + "Chrome (version 81 or above)\n" + "Edge (versi
+on 81 or above)\n" + "Firefox (version 77 or above)";
+>>                 var androidMessage = "" + "Apologies, but the Show could not start.\n" + "Your current web browser is
+ not supported.\n" + "Please try one of the following web browsers:\n" + "Chrome (version 81 or above)\n" + "Android Bro
+wser (version 81 or above)\n" + "Firefox (version 77 or above)\n" + "QQ Browser (version 10.4 or above)\n" + "Baidu (ver
+sion 7.12 or above)";
+>>                 var defaultMessage = windowsMessage;
+>>                 if (iOS()) {
+>>                         return iosMessage;
+>>                 } else if (navigator.appVersion.indexOf("Win") != -1) {
+>>                         return windowsMessage;
+>>                 } else if (navigator.appVersion.indexOf("Mac") != -1) {
+>>                         return macMessage;
+>>                 } else if (userAgent.indexOf("android") > -1) {
+>>                         return androidMessage;
+>>                 } else {
+>>                         return windowsMessage;
+>>                 }
+>>         }
+>>         function iOS() {
+>>                 if (navigator.platform.indexOf("iPhone") != -1 || navigator.platform.indexOf("iPod") != -1 || navigat
+or.platform.indexOf("iPhone") != -1 || navigator.platform.indexOf("iPad") != -1) {
+>>                         return true;
+>>                 }
+>>                 return false;
+>>         }
+>> }
+>> ;
+>> var insideCreditCard = new function() {
+>>         var CreditCardData = [];
+>>         insideFrontInterface.chat.checkForCreditCardNumbers = checkForCreditCardNumbers;
+>>         function checkForCreditCardNumbers(str, settings) {
+>>                 var regex = "(\\d(\\D){0,4}){13,19}";
+>>                 var ccReg = new RegExp(regex,"g");
+>>                 var matches = str.match(ccReg);
+>>                 if (matches == null || matches.length <= 0) {
+>>                         return str;
+>>                 }
+>>                 if (matchExclusions(str, settings))
+>>                         return str;
+>>                 var justNumber = str.replace(/(\D*)/g, "");
+>>                 var numbersArr = getPossibleCardNumbers(justNumber);
+>>                 numbersArr = numbersArr.sort((a,b)=>b.length - a.length);
+>>                 for (var j = 0; j < numbersArr.length; j++) {
+>>                         var val = numbersArr[j];
+>>                         if (!valid_credit_card(val) || !IsValidCard(val)) {
+>>                                 continue;
+>>                         }
+>>                         if (settings.pciCreditMasking) {
+>>                                 val = val.substring(0, val.length - 4);
+>>                         }
+>>                         var reg = new RegExp(val.split("").join("(\\D{0,4})"),"g");
+>>                         var ccmatches = str.match(reg, val);
+>>                         if (ccmatches != null && ccmatches.length > 0) {
+>>                                 mainloop: for (var i = 0; i < ccmatches.length; i++) {
+>>                                         var match = ccmatches[i];
+>>                                         if (settings.ccMaskExclusionsEnabled === true && settings.ccMaskExclusions) {
+>>                                                 for (var k = 0; k < settings.ccMaskExclusions.length; k++) {
+>>                                                         var regexExclusion = new RegExp(settings.ccMaskExclusions[k],
+"gi");
+>>                                                         if (match.match(regexExclusion)) {
+>>                                                                 continue mainloop;
+>>                                                         }
+>>                                                 }
+>>                                         }
+>>                                         str = str.replace(match, match.replace(/\d/g, "*"));
+>>                                 }
+>>                         }
+>>                 }
+>>                 return str;
+>>         }
+>>         insideFrontInterface.chat.checkForCreditCardExclusions = matchExclusions;
+>>         function matchExclusions(str, settings) {
+>>                 if (!(settings.ccMaskExclusionsEnabled === true && settings.ccMaskExclusions)) {
+>>                         return false
+>>                 }
+>>                 for (var k = 0; k < settings.ccMaskExclusions.length; k++) {
+>>                         var regexExclusion = new RegExp(settings.ccMaskExclusions[k],"gi");
+>>                         if (str.match(regexExclusion)) {
+>>                                 return true;
+>>                         }
+>>                 }
+>>                 return false
+>>         }
+>>         function getPossibleCardNumbers(number) {
+>>                 var result = [];
+>>                 if (number.length < 13)
+>>                         return result;
+>>                 for (var i = 13; i <= 19; i++) {
+>>                         for (var j = 0; j <= number.length - i; j++) {
+>>                                 result.push(number.substring(j, i + j));
+>>                         }
+>>                 }
+>>                 return result;
+>>         }
+>>         insideFrontInterface.chat.strictReplaceNumbers = strictReplaceNumbers;
+>>         function strictReplaceNumbers(str, settings) {
+>>                 if (matchExclusions(str, settings)) {
+>>                         return str;
+>>                 }
+>>                 var ccReg = /\b([0-9](.?)){4,99}\b/g;
+>>                 var matches = str.match(ccReg);
+>>                 if (matches != null && matches.length > 0) {
+>>                         for (var i = 0; i < matches.length; i++) {
+>>                                 var val = matches[i];
+>>                                 matches[i] = matches[i].replace(/[0-9]/g, "*");
+>>                                 str = str.replace(val, matches[i]);
+>>                         }
+>>                 }
+>>                 return str;
+>>         }
+>>         insideFrontInterface.chat.valid_credit_card = valid_credit_card;
+>>         function valid_credit_card(value) {
+>>                 var nCheck = 0
+>>                   , nDigit = 0
+>>                   , bEven = false;
+>>                 value = value.replace(/\D/g, "");
+>>                 for (var n = value.length - 1; n >= 0; n--) {
+>>                         var cDigit = value.charAt(n)
+>>                           , nDigit = parseInt(cDigit, 10);
+>>                         if (bEven) {
+>>                                 if ((nDigit *= 2) > 9)
+>>                                         nDigit -= 9;
+>>                         }
+>>                         nCheck += nDigit;
+>>                         bEven = !bEven;
+>>                 }
+>>                 return (nCheck % 10) == 0;
+>>         }
+>>         function IsValidCard(number) {
+>>                 var foundCardType = false;
+>>                 brandloop: for (var brandData of CreditCardData) {
+>>                         var brandInfo = brandData.BrandInfo;
+>>                         for (var rule of brandInfo.Rules) {
+>>                                 if (!rule.Lengths.includes(number.length) || typeof (rule.Prefixes.find(el=>number.st
+artsWith(el))) == "undefined")
+>>                                         continue;
+>>                                 foundCardType = true;
+>>                                 break brandloop;
+>>                         }
+>>                 }
+>>                 return foundCardType;
+>>         }
+>>         var IssuerIdentificationNumbers = ["30", "3746010", "35", "36", "37", "38", "4", "50", "51", "52", "53", "54"
+, "55", "56", "57", "58", "60"];
+>>         const CardIssuer = {
+>>                 AmericanExpress: 0,
+>>                 ChinaUnionPay: 1,
+>>                 Dankort: 2,
+>>                 DinersClub: 3,
+>>                 Discover: 4,
+>>                 Hipercard: 5,
+>>                 JCB: 6,
+>>                 Laser: 7,
+>>                 Maestro: 8,
+>>                 MasterCard: 9,
+>>                 RuPay: 10,
+>>                 Switch: 11,
+>>                 Visa: 12,
+>>                 Unknown: 13
+>>         };
+>>         var BrandInfo = function(rules, brandName, skipLuhn) {
+>>                 var _this = this;
+>>                 _this.Rules = rules;
+>>                 _this.BrandName = brandName;
+>>                 if (typeof (skipLuhn) == "undefined" || typeof (skipLuhn) != "boolean" || typeof (skipLuhn) == null)
+>>                         skipLuhn = false;
+>>                 _this.SkipLuhn = skipLuhn;
+>>         }
+>>         var Rule = function(lengths, prefixes) {
+>>                 var _this = this;
+>>                 _this.Lengths = lengths;
+>>                 _this.Prefixes = prefixes;
+>>         }
+>>         var BrandData = function(cardIssuer, brandInfo) {
+>>                 var _this = this;
+>>                 _this.CardIssuer = cardIssuer;
+>>                 _this.BrandInfo = brandInfo;
+>>         }
+>>         function generateRange(start, end) {
+>>                 var ret = [];
+>>                 for (var i = start; i <= end; i++) {
+>>                         ret.push(i.toString());
+>>                 }
+>>                 return ret;
+>>         }
+>>         this.init = init;
+>>         function init() {
+>>                 CreditCardData = [];
+>>                 CreditCardData.push(new BrandData(CardIssuer.Visa,new BrandInfo([new Rule([13, 16, 19],["4"])],"Visa"
+)));
+>>                 var prefixes = [];
+>>                 prefixes = prefixes.concat(generateRange(51, 55));
+>>                 prefixes = prefixes.concat(generateRange(2221, 2720));
+>>                 var masterCardRule1 = [new Rule([16],prefixes)];
+>>                 var masterCard = new BrandInfo(masterCardRule1,"MasterCard");
+>>                 var brandData = new BrandData(CardIssuer.MasterCard,masterCard);
+>>                 CreditCardData.push(brandData);
+>>                 CreditCardData.push(new BrandData(CardIssuer.AmericanExpress,new BrandInfo([new Rule([15],["34", "37"
+])],"American Express")));
+>>                 CreditCardData.push(new BrandData(CardIssuer.Discover,new BrandInfo([new Rule([16],["6011", "644", "6
+45", "646", "647", "648", "649", "65"])],"Discover")));
+>>                 CreditCardData.push(new BrandData(CardIssuer.DinersClub,new BrandInfo([new Rule([14, 16],["300", "301
+", "302", "303", "304", "305", "3095", "36", "38"])],"Diners Club")));
+>>                 CreditCardData.push(new BrandData(CardIssuer.JCB,new BrandInfo([new Rule([15, 16],["3528", "3529", "3
+53", "354", "355", "356", "357", "358"]), new Rule([15],["1800", "2131"]), new Rule([19],["1800", "357266"])],"JCB")));
+>>                 CreditCardData.push(new BrandData(CardIssuer.Laser,new BrandInfo([new Rule([16, 17, 18, 19],["6304"])
+],"Laser")));
+>>                 CreditCardData.push(new BrandData(CardIssuer.Switch,new BrandInfo([new Rule([16, 18, 19],["633110", "
+633312", "633304", "633303", "633301", "633300"])],"Switch")));
+>>                 var maestroPrefixes = [];
+>>                 maestroPrefixes = maestroPrefixes.concat(generateRange(56, 58));
+>>                 maestroPrefixes = maestroPrefixes.concat(generateRange(500, 500));
+>>                 maestroPrefixes = maestroPrefixes.concat(generateRange(502, 509));
+>>                 maestroPrefixes = maestroPrefixes.concat(generateRange(602, 605));
+>>                 maestroPrefixes = maestroPrefixes.concat(generateRange(670, 679));
+>>                 maestroPrefixes = maestroPrefixes.concat(generateRange(5010, 5018));
+>>                 maestroPrefixes = maestroPrefixes.concat(generateRange(6000, 6060));
+>>                  maestroPrefixes = maestroPrefixes.concat(generateRange(6760, 6769));
+>> *                var maestroRules = [new Rule([12, 13, 14, 15, 16, 17, 18, 19],maestroPrefixes)];
+>> *                var maestro = new BrandInfo(maestroRules,"MasterCard");
+>> *                brandData = new BrandData(CardIssuer.Maestro,maestro);
+>> *                CreditCardData.push(brandData);
+>> *                CreditCardData.push(new BrandData(CardIssuer.ChinaUnionPay,new BrandInfo([new Rule([16, 17, 18, 19],
+["6*2"])],"China UnionPay")));
+>> *                CreditCardData.push(new BrandData(CardIssuer.Dankort,new BrandInfo([new Rule([16],["5019"])],"Dankor
+t") ));
+>>                  CreditCardData.push(new BrandData(CardIssuer.RuPay,new BrandInfo([new Rule([16],["6061", "6062", "60
+63" , "6064", "6065", "6066", "6067", "6068", "6069", "607", "608"])],"RuPay")));
+>>                 CreditCardData.push(new BrandData(CardIssuer.Hipercard,new BrandInfo([new Rule([19],["384"])],"Hiperc
+ard")));
+>>                 CreditCardData.push(new BrandData(CardIssuer.Unknown,new BrandInfo([new Rule([15],["7", "80", "90"])]
+,"Unknown")));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Importing the entire 'math' module
+import math
+print(math.sqrt(16))  # Output: 4.0
+
+# Importing specific functions from the 'random' module
+from random import randint, choice
+print(randint(1, 10))  # Output: A random integer between 1 and 10
+print(choice(["apple", "banana", "orange"]))  # Output: A random choice from the list
+
+# Importing a module with an alias
+import numpy as np
+arr = np.array([1, 2, 3])  # Create a NumPy array
+
+
+// CommonJS style (Node.js prior to ES modules)
+const fs = require('fs');
+const data = fs.readFileSync('file.txt', 'utf8');
+console.log(data); 
+
+// ES modules style (Modern Node.js)
+import fs from 'fs';  // Requires Node.js with experimental modules flag enabled
+import { readFileSync } from 'fs'; 
+const data = readFileSync('file.txt', 'utf8');
+console.log(data); 
+
+// Assuming you have a module 'mymodule.js' in the same directory
+<script type="module">
+import { myFunction } from './mymodule.js';
+myFunction(); 
+</script>
+
+import csv
+
+with open('data.csv', newline='') as csvfile:
+    reader = csv.reader(csvfile, delimiter=',', quotechar='"')
+    for row in reader:
+        print(row) 
+fetch('data.json')
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+  });
+
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {
+  }
+}
