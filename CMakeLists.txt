@@ -8,6 +8,11 @@ project (CDMATH)
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set (CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif ()
+# The vendored MEDCoupling 7.4 headers use std::bind2nd and dynamic exception
+# specifications, both removed in C++17.
+if (NOT CMAKE_CXX_STANDARD)
+  set (CMAKE_CXX_STANDARD 14)
+endif ()
 set (CDMATH_VERSION_MAJOR 1)
 set (CDMATH_VERSION_MINOR 0)
 
