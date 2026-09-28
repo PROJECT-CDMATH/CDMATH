@@ -209,7 +209,7 @@ namespace
    */
   struct TCellByIDCompare
   {
-    bool operator () (const Cell* i1, const Cell* i2)
+    bool operator () (const Cell* i1, const Cell* i2) const
     {
       return i1->_number < i2->_number;
     }

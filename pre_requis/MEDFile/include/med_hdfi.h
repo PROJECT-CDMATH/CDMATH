@@ -166,6 +166,9 @@ extern MEDC_EXPORT
 med_idt _MEDmemFileOpen(const char * const filename, med_memfile * const memfile, const med_bool filesync, const med_access_mode accessmode);
 
 extern MEDC_EXPORT
+med_idt _MEDmemFileCreate(const char * const filename, med_memfile * const memfile, const med_bool filesync, const med_access_mode accessmode);
+
+extern MEDC_EXPORT
 med_err _MEDfichierFermer(med_idt fid);
 
 extern MEDC_EXPORT
