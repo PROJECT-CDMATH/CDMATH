@@ -31,7 +31,7 @@ med_err _MEDattributeStringWrByName(med_idt pid,
   med_access_mode MED_ACCESS_MODE;
   med_idt _attid=0,aid=0;
   med_err _ret=-1;
-  int     type_hdf=0;
+  hid_t     type_hdf=0;
   med_bool        _attmustbecreated= MED_FALSE;
   hsize_t         _attsize=0;
   med_size        _valsize=0;

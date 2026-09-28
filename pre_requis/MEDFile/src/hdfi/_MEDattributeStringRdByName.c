@@ -29,7 +29,7 @@ med_err _MEDattributeStringRdByName(med_idt pid,
 {
   med_err _ret=-1;
   med_idt _attid=0;
-  int     type_hdf=0;
+  hid_t     type_hdf=0;
 
   if ( (type_hdf = H5Tcopy(H5T_C_S1)) < 0) {
     MED_ERR_(_ret,MED_ERR_CREATE,MED_ERR_HDFTYPE, MED_ERR_NAME_MSG );

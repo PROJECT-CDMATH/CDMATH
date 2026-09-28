@@ -27,7 +27,7 @@ med_err _MEDlinkobjs(med_idt id,const char *lname, const H5L_info_t *linfo, visi
   med_err  _ret=-1;
   med_idt  _gid=0,_gid1=0,_gid2=0;
   med_idt  _attid_src=0,_attid_dst=0,_attspace=0;
-  int      _atttype=0;
+  hid_t      _atttype=0;
   char     _attname[MED_TAILLE_NOM_ENTITE+1];
   char     _attvalue[MED_COMMENT_SIZE+1]=""; /*Plus grande taille d'attributs possible*/
   char    *_attvalueptr=_attvalue;

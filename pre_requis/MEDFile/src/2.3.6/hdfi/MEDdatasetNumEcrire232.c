@@ -72,7 +72,8 @@ void  _MEDdatasetNumEcrire232(int dummy,...) {
   med_size   stride[1],count[1],pcount[1],pflsize[1];
   med_size   datasetsize[1], countncmp=0;
   med_err    ret=-1;
-  int        i=0,j=0,index=0,type_hdf=0;
+  int        i=0,j=0,index=0;
+  hid_t        type_hdf=0;
   int        dim=0, firstdim=0, dimutil=0, lastdim=0 ;
   int        datasetsizeEqualTosizespace = 0;
   med_mode_acces MED_MODE_ACCES;

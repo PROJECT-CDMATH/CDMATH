@@ -36,7 +36,7 @@ med_err _MEDattrNumEcrire(med_idt pere,med_type_champ type,char *nom,unsigned ch
 {
   med_idt aid,attr;
   med_err ret;
-  int type_hdf;
+  hid_t type_hdf;
   med_mode_acces MED_MODE_ACCES;
 
   if ( (MED_MODE_ACCES = _MEDmodeAcces(pere) ) == MED_UNDEF_MODE_ACCES ) {

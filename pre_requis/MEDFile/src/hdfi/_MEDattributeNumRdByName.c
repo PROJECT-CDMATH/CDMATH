@@ -27,7 +27,7 @@ med_err _MEDattributeNumRdByName(med_idt pid,const char * const path ,const char
 {
   med_idt _attid=0;
   med_err _ret=-1;
-  int type_hdf;
+  hid_t type_hdf;
 
   switch(type)
     {

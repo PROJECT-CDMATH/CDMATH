@@ -30,7 +30,7 @@ med_err _MEDdatasetWr(const med_idt               id,
   med_idt         _dataset=0, _dataspace=0,_datadiskspace=0;
   med_size        _datasetsize[1]={0};
   med_err         _ret=-1;
-  int             _hdftype=0;
+  hid_t             _hdftype=0;
   int             _datasetsizeEqualTosizespace = 0;
   med_access_mode _MED_ACCESS_MODE;
   med_int         _nvaluesperentity=0,_nconstituentpervalue=0;
