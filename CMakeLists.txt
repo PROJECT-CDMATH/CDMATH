@@ -46,8 +46,15 @@ set (CPACK_DEBIAN_PACKAGE_DEPENDS "libhdf5-dev")
 set (CPACK_RPM_PACKAGE_REQUIRES "hdf5-devel")
 
 if (CDMATH_WITH_PETSC)
-  find_package (PETSc 3.4 REQUIRED)
-  petsc_get_version ()
+  # PETSc is found through the PETSc.pc file it installs. PETSC_DIR, plus
+  # PETSC_ARCH for an in-place PETSc build, can point at a given installation.
+  find_package (PkgConfig REQUIRED)
+  set (PETSC_DIR "$ENV{PETSC_DIR}" CACHE PATH "PETSc installation to use (optional)")
+  set (PETSC_ARCH "$ENV{PETSC_ARCH}" CACHE STRING "PETSc architecture of an in-place build (optional)")
+  if (PETSC_DIR)
+    list (APPEND CMAKE_PREFIX_PATH "${PETSC_DIR}/${PETSC_ARCH}")
+  endif ()
+  pkg_check_modules (PETSC REQUIRED IMPORTED_TARGET "PETSc>=3.4")
   if (${PETSC_VERSION} VERSION_GREATER 3.5)
     add_definitions(-DPETSC_VERSION_GREATER_3_5)
   endif ()

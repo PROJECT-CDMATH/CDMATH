@@ -3,10 +3,10 @@ INCLUDE(${SWIG_USE_FILE})
 SET(_extra_lib_SWIG)
 if (CDMATH_WITH_PETSC)
     INCLUDE_DIRECTORIES(
-      ${PETSC_INCLUDES}
+      ${PETSC_INCLUDE_DIRS}
       ${LINEARSOLVER_DIR}/inc
     )
-    SET(_extra_lib_SWIG linearsolver ${PETSC_LIBRARIES})
+    SET(_extra_lib_SWIG linearsolver PkgConfig::PETSC)
     file(COPY cdmath_with_petsc.i DESTINATION ${CMAKE_BINARY_DIR}/swig)
     file(RENAME ${CMAKE_BINARY_DIR}/swig/cdmath_with_petsc.i ${CMAKE_BINARY_DIR}/swig/cdmath.i)
 else (CDMATH_WITH_PETSC)
