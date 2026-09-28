@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 3.10)
 
 # Project name
 project (CDMATH)
@@ -31,7 +31,7 @@ set (MACHINE PCLINUX)
 set (MED3_DEFINITIONS "-D${MACHINE}")
 set (MED_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/MEDFile)
 set (MED3_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/pre_requis/MEDFile/include ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/MEDFile/include)
-set (MED3_LIB ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/MEDFile/src/libmedC.so)
+set (MED3_LIB ${CMAKE_CURRENT_BINARY_DIR}/pre_requis/MEDFile/src/libmedC${CMAKE_SHARED_LIBRARY_SUFFIX})
 set (MED3_LIBS ${MED3_LIB})
 
 # HDF5

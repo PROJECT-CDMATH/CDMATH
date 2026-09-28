@@ -127,7 +127,7 @@ double MEDFileMeshL2::CheckMeshTimeStep(med_idt fid, const std::string& mName, i
   for(int i=0;i<nstep;i++)
     {
       MEDmeshComputationStepInfo(fid,mName.c_str(),i+1,&numdt,&numit,&dtt);
-      p[i]=std::make_pair<int,int>(numdt,numit);
+      p[i]=std::pair<int,int>((int)numdt,(int)numit);
       found=(numdt==dt) && (numit==numit);
     }
   if(!found)

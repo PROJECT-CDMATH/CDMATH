@@ -402,13 +402,25 @@ LinearSolver::solve( void )
 
     Vec X;
     VecDuplicate(_smb,&X);
+    VecSet(X, 0.0);  // VecDuplicate does not initialise: never hand back garbage.
 
     if (isSingular())
     {
+        // A singular operator (pure Neumann, for instance) has a zero pivot by
+        // construction, which makes an unshifted ILU/LU factorisation fail
+        // outright (DIVERGED_PC_FAILED since PETSc 3.8). Shifting the diagonal
+        // keeps the preconditioner usable.
+        PCFactorSetShiftType(_prec, MAT_SHIFT_NONZERO);
+
         MatNullSpace nullsp;
         MatNullSpaceCreate(PETSC_COMM_WORLD, PETSC_TRUE, 0, PETSC_NULL, &nullsp);
         #if PETSC_VERSION_GREATER_3_6
             MatSetNullSpace(_mat, nullsp);
+            // KSPSetNullSpace (<= 3.5) also projected the right-hand side onto
+            // the range of the operator. MatSetNullSpace only cleans the
+            // solution, so the transpose null space has to be declared as well
+            // for the singular system to stay consistent.
+            MatSetTransposeNullSpace(_mat, nullsp);
         #else
             KSPSetNullSpace(_ksp, nullsp);
         #endif
