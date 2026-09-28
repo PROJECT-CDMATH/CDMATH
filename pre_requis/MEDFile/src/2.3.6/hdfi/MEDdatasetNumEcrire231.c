@@ -62,7 +62,8 @@ void  _MEDdatasetNumEcrire231(int dummy,...) {
   med_size   start_mem[1],start_data[1],*pflmem,*pfldsk;
   med_size   stride[1],count[1],pcount[1],pflsize[1];
   med_err    ret;
-  int        i,j,index,type_hdf;
+  int        i,j,index;
+  hid_t        type_hdf;
   int        dim, firstdim, dimutil, lastdim ;
   med_mode_acces MED_MODE_ACCES;
 

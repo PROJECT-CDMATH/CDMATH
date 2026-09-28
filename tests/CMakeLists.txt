@@ -21,9 +21,9 @@ SET(_extra_lib_TESTS)
 if (CDMATH_WITH_PETSC)
     INCLUDE_DIRECTORIES(
       ${LINEARSOLVER_DIR}/inc
-      ${PETSC_INCLUDES}
+      ${PETSC_INCLUDE_DIRS}
       )
-    SET(_extra_lib_TESTS linearsolver ${PETSC_LIBRARIES})
+    SET(_extra_lib_TESTS linearsolver PkgConfig::PETSC)
 endif (CDMATH_WITH_PETSC)
 
 SET(MAIN_SOURCES

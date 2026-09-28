@@ -32,7 +32,7 @@ med_err _MEDattributeNumWr(med_idt pid,
 {
   med_idt _attid=0,aid=0;
   med_err _ret=-1;
-  int     type_hdf;
+  hid_t     type_hdf;
   med_access_mode MED_ACCESS_MODE;
   H5O_info_t      _oinfo;
 

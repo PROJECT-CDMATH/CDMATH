@@ -247,7 +247,7 @@ MEDjointCr(med_idt fid,char *maa_lcl, char *jn, char *desc,
 	   med_int dom,char *maa_dist);
 
 MEDC_EXPORT med_err
-MEDjointInfo(int fid,  char *maa_lcl,  int ind, char *jn, char *des,
+MEDjointInfo(med_idt fid,  char *maa_lcl,  int ind, char *jn, char *des,
              med_int *dom, char *maa_dist);
 
 MEDC_EXPORT med_int

@@ -24,7 +24,7 @@
 #include <stdlib.h>
 
 med_err
-MEDjointInfo(int fid,  char *maa_lcl,  int ind, char *jn, char *des,
+MEDjointInfo(med_idt fid,  char *maa_lcl,  int ind, char *jn, char *des,
              med_int *dom, char *maa_dist)
 {
   med_idt jntid;

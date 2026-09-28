@@ -31,7 +31,8 @@ med_err _MED21datasetNumLire(med_idt pere,char *nom,med_type_champ type,
   med_size  start_mem[1],start_data[1],*pflmem=0,*pfldsk=0;
   med_size   stride[1],count[1],pcount[1],size[1],pflsize[1];
   med_err    ret;
-  int        i,j,index,type_hdf;
+  int        i,j,index;
+  hid_t        type_hdf;
   hid_t      datatype;
   size_t     typesize;
   int        dim, firstdim, dimutil, lastdim;

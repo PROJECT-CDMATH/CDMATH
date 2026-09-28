@@ -26,7 +26,7 @@ med_err _MED21attrNumLire(med_idt pere,med_type_champ type,char *nom,
 {
   med_idt attid;
   med_err ret;
-  int type_hdf;
+  hid_t type_hdf;
 
   if ((attid = H5Aopen_name(pere,nom)) < 0)
     return -1;
