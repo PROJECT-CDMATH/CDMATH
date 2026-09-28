@@ -2,6 +2,12 @@ cmake_minimum_required (VERSION 3.10)
 
 # Project name
 project (CDMATH)
+
+# Default to an optimised build: unoptimised MEDCoupling makes the solvers
+# several times slower, and nothing here relies on assert().
+if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  set (CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+endif ()
 set (CDMATH_VERSION_MAJOR 1)
 set (CDMATH_VERSION_MINOR 0)
 
