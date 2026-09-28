@@ -372,13 +372,13 @@ void MEDCouplingCartesianAMRPatch::UpdateNeighborsOfOneWithTwoMixedLev(int ghost
   std::transform(dimsP2NotRefined.begin(),dimsP2NotRefined.end(),factors.begin(),dimsP2Refined.begin(),std::multiplies<int>());
   std::vector< std::pair<int,int> > p2RefinedAbs(MEDCouplingStructuredMesh::GetCompactFrmtFromDimensions(dimsP2NotRefined));
   std::vector<int> dimsP2RefinedGhost(dimsP2Refined.size());
-  std::transform(dimsP2Refined.begin(),dimsP2Refined.end(),dimsP2RefinedGhost.begin(),std::bind2nd(std::plus<int>(),2*ghostLev));
+  std::transform(dimsP2Refined.begin(),dimsP2Refined.end(),dimsP2RefinedGhost.begin(),std::bind(std::plus<int>(),std::placeholders::_1,2*ghostLev));
   MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> fineP2(DataArrayDouble::New()); fineP2->alloc(MEDCouplingStructuredMesh::DeduceNumberOfGivenStructure(dimsP2RefinedGhost),dataOnP2->getNumberOfComponents());
   MEDCouplingIMesh::SpreadCoarseToFineGhost(dataOnP2,dimsP2NotRefined,fineP2,p2RefinedAbs,factors,ghostLev);
   if(isConservative)
     {
       int fact(MEDCouplingStructuredMesh::DeduceNumberOfGivenStructure(factors));
-      std::transform(fineP2->begin(),fineP2->end(),fineP2->getPointer(),std::bind2nd(std::multiplies<double>(),1./((double)fact)));
+      std::transform(fineP2->begin(),fineP2->end(),fineP2->getPointer(),std::bind(std::multiplies<double>(),std::placeholders::_1,1./((double)fact)));
     }
   //
   UpdateNeighborsOfOneWithTwoInternal(ghostLev,p1->getMesh()->getFather()->getFactors(),p1pp,p2pp,dataOnP1,fineP2);
@@ -510,7 +510,7 @@ void MEDCouplingCartesianAMRPatch::UpdateNeighborsOfOneWithTwoInternal(int ghost
   int dim((int)factors.size());
   std::vector<int> dimsCoarse(MEDCouplingStructuredMesh::GetDimensionsFromCompactFrmt(p1));//[3,2]
   std::transform(dimsCoarse.begin(),dimsCoarse.end(),factors.begin(),dimsCoarse.begin(),std::multiplies<int>());//[12,8]
-  std::transform(dimsCoarse.begin(),dimsCoarse.end(),dimsCoarse.begin(),std::bind2nd(std::plus<int>(),2*ghostLev));//[14,10]
+  std::transform(dimsCoarse.begin(),dimsCoarse.end(),dimsCoarse.begin(),std::bind(std::plus<int>(),std::placeholders::_1,2*ghostLev));//[14,10]
   std::vector< std::pair<int,int> > rangeCoarse(MEDCouplingStructuredMesh::GetCompactFrmtFromDimensions(dimsCoarse));//[(0,14),(0,10)]
   std::vector<int> fakeFactors(dim,1);
   //
@@ -1215,7 +1215,7 @@ void MEDCouplingCartesianAMRMeshGen::fillCellFieldOnPatch(int patchId, const Dat
   if(isConservative)
     {
       int fact(MEDCouplingStructuredMesh::DeduceNumberOfGivenStructure(getFactors()));
-      std::transform(cellFieldOnPatch->begin(),cellFieldOnPatch->end(),cellFieldOnPatch->getPointer(),std::bind2nd(std::multiplies<double>(),1./((double)fact)));
+      std::transform(cellFieldOnPatch->begin(),cellFieldOnPatch->end(),cellFieldOnPatch->getPointer(),std::bind(std::multiplies<double>(),std::placeholders::_1,1./((double)fact)));
     }
 }
 
@@ -1239,7 +1239,7 @@ void MEDCouplingCartesianAMRMeshGen::fillCellFieldOnPatchGhost(int patchId, cons
   if(isConservative)
     {
       int fact(MEDCouplingStructuredMesh::DeduceNumberOfGivenStructure(getFactors()));
-      std::transform(cellFieldOnPatch->begin(),cellFieldOnPatch->end(),cellFieldOnPatch->getPointer(),std::bind2nd(std::multiplies<double>(),1./((double)fact)));
+      std::transform(cellFieldOnPatch->begin(),cellFieldOnPatch->end(),cellFieldOnPatch->getPointer(),std::bind(std::multiplies<double>(),std::placeholders::_1,1./((double)fact)));
     }
 }
 
@@ -1494,7 +1494,7 @@ DataArrayDouble *MEDCouplingCartesianAMRMeshGen::extractGhostFrom(int ghostSz, c
 {
   std::vector<int> st(_mesh->getCellGridStructure());
   std::vector< std::pair<int,int> > p(MEDCouplingStructuredMesh::GetCompactFrmtFromDimensions(st));
-  std::transform(st.begin(),st.end(),st.begin(),std::bind2nd(std::plus<int>(),2*ghostSz));
+  std::transform(st.begin(),st.end(),st.begin(),std::bind(std::plus<int>(),std::placeholders::_1,2*ghostSz));
   MEDCouplingStructuredMesh::ApplyGhostOnCompactFrmt(p,ghostSz);
   MEDCouplingAutoRefCountObjectPtr<DataArrayDouble> ret(MEDCouplingStructuredMesh::ExtractFieldOfDoubleFrom(st,arr,p));
   return ret.retn();

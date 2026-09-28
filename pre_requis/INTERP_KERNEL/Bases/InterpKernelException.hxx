@@ -33,8 +33,8 @@ namespace INTERP_KERNEL
   public:
     INTERPKERNEL_EXPORT Exception(const char *reason);
     INTERPKERNEL_EXPORT Exception(const char *reason, const char *file, int line);
-    INTERPKERNEL_EXPORT ~Exception() throw ();
-    INTERPKERNEL_EXPORT const char *what() const throw();
+    INTERPKERNEL_EXPORT ~Exception() noexcept;
+    INTERPKERNEL_EXPORT const char *what() const noexcept;
   protected:
     std::string _reason;
   };

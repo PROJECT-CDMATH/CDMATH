@@ -1398,7 +1398,7 @@ MEDMeshMultiLev *MEDCMeshMultiLev::prepare() const
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> nnr;
   std::vector<int> cgs,ngs(getNodeGridStructure());
   cgs.resize(ngs.size());
-  std::transform(ngs.begin(),ngs.end(),cgs.begin(),std::bind2nd(std::plus<int>(),-1));
+  std::transform(ngs.begin(),ngs.end(),cgs.begin(),std::bind(std::plus<int>(),std::placeholders::_1,-1));
   if(pfl)
     {
       std::vector< std::pair<int,int> > cellParts;
@@ -1534,7 +1534,7 @@ MEDMeshMultiLev *MEDCurveLinearMeshMultiLev::prepare() const
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> nnr;
   std::vector<int> cgs,ngs(getNodeGridStructure());
   cgs.resize(ngs.size());
-  std::transform(ngs.begin(),ngs.end(),cgs.begin(),std::bind2nd(std::plus<int>(),-1));
+  std::transform(ngs.begin(),ngs.end(),cgs.begin(),std::bind(std::plus<int>(),std::placeholders::_1,-1));
   if(pfl)
     {
       std::vector< std::pair<int,int> > cellParts,nodeParts;

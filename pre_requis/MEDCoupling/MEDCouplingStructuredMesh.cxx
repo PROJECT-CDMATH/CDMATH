@@ -1285,7 +1285,7 @@ void MEDCouplingStructuredMesh::GetPosFromId(int nodeId, int meshDim, const int 
 std::vector<int> MEDCouplingStructuredMesh::getCellGridStructure() const
 {
   std::vector<int> ret(getNodeGridStructure());
-  std::transform(ret.begin(),ret.end(),ret.begin(),std::bind2nd(std::plus<int>(),-1));
+  std::transform(ret.begin(),ret.end(),ret.begin(),std::bind(std::plus<int>(),std::placeholders::_1,-1));
   return ret;
 }
 
@@ -1951,7 +1951,7 @@ void MEDCouplingStructuredMesh::MultiplyPartOf(const std::vector<int>& st, const
                 for(int k=0;k<dims[0];k++)
                   {
                     int offset(part[0].first+k+b+a);
-                    std::transform(pt+nbCompo*offset,pt+nbCompo*(offset+1),pt+nbCompo*offset,std::bind2nd(std::multiplies<double>(),factor));
+                    std::transform(pt+nbCompo*offset,pt+nbCompo*(offset+1),pt+nbCompo*offset,std::bind(std::multiplies<double>(),std::placeholders::_1,factor));
                   }
               }
           }
@@ -1965,7 +1965,7 @@ void MEDCouplingStructuredMesh::MultiplyPartOf(const std::vector<int>& st, const
             for(int k=0;k<dims[0];k++)
               {
                 int offset(part[0].first+k+b);
-                std::transform(pt+nbCompo*offset,pt+nbCompo*(offset+1),pt+nbCompo*offset,std::bind2nd(std::multiplies<double>(),factor));
+                std::transform(pt+nbCompo*offset,pt+nbCompo*(offset+1),pt+nbCompo*offset,std::bind(std::multiplies<double>(),std::placeholders::_1,factor));
               }
           }
         break;
@@ -1975,7 +1975,7 @@ void MEDCouplingStructuredMesh::MultiplyPartOf(const std::vector<int>& st, const
         for(int k=0;k<dims[0];k++)
           {
             int offset(part[0].first+k);
-            std::transform(pt+nbCompo*offset,pt+nbCompo*(offset+1),pt+nbCompo*offset,std::bind2nd(std::multiplies<double>(),factor));
+            std::transform(pt+nbCompo*offset,pt+nbCompo*(offset+1),pt+nbCompo*offset,std::bind(std::multiplies<double>(),std::placeholders::_1,factor));
           }
         break;
       }
@@ -2025,7 +2025,7 @@ void MEDCouplingStructuredMesh::PutInGhostFormat(int ghostSize, const std::vecto
     if(part[i].first<0 || part[i].first>part[i].second || part[i].second>st[i])
       throw INTERP_KERNEL::Exception("MEDCouplingStructuredMesh::PutInGhostFormat : the specified part is invalid ! The begin must be >= 0 and <= end ! The end must be <= to the size at considered dimension !");
   stWithGhost.resize(st.size());
-  std::transform(st.begin(),st.end(),stWithGhost.begin(),std::bind2nd(std::plus<int>(),2*ghostSize));
+  std::transform(st.begin(),st.end(),stWithGhost.begin(),std::bind(std::plus<int>(),std::placeholders::_1,2*ghostSize));
   partWithGhost=part;
   ApplyGhostOnCompactFrmt(partWithGhost,ghostSize);
 }

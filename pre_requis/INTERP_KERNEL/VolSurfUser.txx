@@ -243,7 +243,7 @@ namespace INTERP_KERNEL
           std::copy(coords+SPACEDIM*OTT<ConnType,numPol>::coo2C(connec[0]),
                     coords+SPACEDIM*OTT<ConnType,numPol>::coo2C(connec[0]+1),res);
           std::transform(res,res+SPACEDIM,coords+SPACEDIM*OTT<ConnType,numPol>::coo2C(connec[1]),res,std::plus<double>());
-          std::transform(res,res+SPACEDIM,res,std::bind2nd(std::multiplies<double>(),0.5));
+          std::transform(res,res+SPACEDIM,res,std::bind(std::multiplies<double>(),std::placeholders::_1,0.5));
           break;
         }
       case NORM_SEG3:
@@ -263,7 +263,7 @@ namespace INTERP_KERNEL
               std::copy(coords+SPACEDIM*OTT<ConnType,numPol>::coo2C(connec[0]),
                         coords+SPACEDIM*OTT<ConnType,numPol>::coo2C(connec[0]+1),res);
               std::transform(res,res+SPACEDIM,coords+SPACEDIM*OTT<ConnType,numPol>::coo2C(connec[1]),res,std::plus<double>());
-              std::transform(res,res+SPACEDIM,res,std::bind2nd(std::multiplies<double>(),0.5));
+              std::transform(res,res+SPACEDIM,res,std::bind(std::multiplies<double>(),std::placeholders::_1,0.5));
             }
           else
             throw INTERP_KERNEL::Exception("computeBarycenter for SEG3 only SPACEDIM 1,2 or 3 supported !");
@@ -276,7 +276,7 @@ namespace INTERP_KERNEL
                     coords+SPACEDIM*OTT<ConnType,numPol>::coo2C(connec[0]+1),res);
           std::transform(res,res+SPACEDIM,coords+SPACEDIM*OTT<ConnType,numPol>::coo2C(connec[1]),res,std::plus<double>());
           std::transform(res,res+SPACEDIM,coords+SPACEDIM*OTT<ConnType,numPol>::coo2C(connec[2]),res,std::plus<double>());
-          std::transform(res,res+SPACEDIM,res,std::bind2nd(std::multiplies<double>(),1./3.));
+          std::transform(res,res+SPACEDIM,res,std::bind(std::multiplies<double>(),std::placeholders::_1,1./3.));
           break;
         }
       case NORM_TRI6:

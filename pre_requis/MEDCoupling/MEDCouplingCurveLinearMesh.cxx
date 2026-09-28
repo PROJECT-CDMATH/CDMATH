@@ -680,7 +680,7 @@ void MEDCouplingCurveLinearMesh::scale(const double *point, double factor)
   for(int i=0;i<nbNodes;i++)
     {
       std::transform(coords+i*dim,coords+(i+1)*dim,point,coords+i*dim,std::minus<double>());
-      std::transform(coords+i*dim,coords+(i+1)*dim,coords+i*dim,std::bind2nd(std::multiplies<double>(),factor));
+      std::transform(coords+i*dim,coords+(i+1)*dim,coords+i*dim,std::bind(std::multiplies<double>(),std::placeholders::_1,factor));
       std::transform(coords+i*dim,coords+(i+1)*dim,point,coords+i*dim,std::plus<double>());
     }
   _coords->declareAsNew();
@@ -784,7 +784,7 @@ void MEDCouplingCurveLinearMesh::getBarycenterAndOwnerMeshDim1(DataArrayDouble *
 {
   int spaceDim=getSpaceDimension();
   std::transform(_coords->begin()+spaceDim,_coords->end(),_coords->begin(),bary->getPointer(),std::plus<double>());
-  std::transform(bary->begin(),bary->end(),bary->getPointer(),std::bind2nd(std::multiplies<double>(),0.5));
+  std::transform(bary->begin(),bary->end(),bary->getPointer(),std::bind(std::multiplies<double>(),std::placeholders::_1,0.5));
 }
 
 void MEDCouplingCurveLinearMesh::renumberCells(const int *old2NewBg, bool check)

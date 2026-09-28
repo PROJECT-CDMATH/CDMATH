@@ -445,7 +445,7 @@ void MEDCouplingPointSet::renumberNodes2(const int *newNodeNumbers, int newNbOfN
       div[newNodeNumbers[i]]++;
     }
   for(int i=0;i<newNbOfNodes;i++)
-    ptToFill=std::transform(ptToFill,ptToFill+spaceDim,ptToFill,std::bind2nd(std::multiplies<double>(),1./(double)div[i]));
+    ptToFill=std::transform(ptToFill,ptToFill+spaceDim,ptToFill,std::bind(std::multiplies<double>(),std::placeholders::_1,1./(double)div[i]));
   setCoords(newCoords);
   newCoords->decrRef();
   renumberNodesInConn(newNodeNumbers);
@@ -607,7 +607,7 @@ void MEDCouplingPointSet::scale(const double *point, double factor)
   for(int i=0;i<nbNodes;i++)
     {
       std::transform(coords+i*dim,coords+(i+1)*dim,point,coords+i*dim,std::minus<double>());
-      std::transform(coords+i*dim,coords+(i+1)*dim,coords+i*dim,std::bind2nd(std::multiplies<double>(),factor));
+      std::transform(coords+i*dim,coords+(i+1)*dim,coords+i*dim,std::bind(std::multiplies<double>(),std::placeholders::_1,factor));
       std::transform(coords+i*dim,coords+(i+1)*dim,point,coords+i*dim,std::plus<double>());
     }
   _coords->declareAsNew();
@@ -1042,18 +1042,18 @@ void MEDCouplingPointSet::Rotate3DAlg(const double *center, const double *vect, 
   double norm=sqrt(vect[0]*vect[0]+vect[1]*vect[1]+vect[2]*vect[2]);
   if(norm<std::numeric_limits<double>::min())
     throw INTERP_KERNEL::Exception("MEDCouplingPointSet::Rotate3DAlg : magnitude of input vector is too close of 0. !");
-  std::transform(vect,vect+3,vectorNorm,std::bind2nd(std::multiplies<double>(),1/norm));
+  std::transform(vect,vect+3,vectorNorm,std::bind(std::multiplies<double>(),std::placeholders::_1,1/norm));
   //rotation matrix computation
   matrix[0]=cosa; matrix[1]=0.; matrix[2]=0.; matrix[3]=0.; matrix[4]=cosa; matrix[5]=0.; matrix[6]=0.; matrix[7]=0.; matrix[8]=cosa;
   matrixTmp[0]=vectorNorm[0]*vectorNorm[0]; matrixTmp[1]=vectorNorm[0]*vectorNorm[1]; matrixTmp[2]=vectorNorm[0]*vectorNorm[2];
   matrixTmp[3]=vectorNorm[1]*vectorNorm[0]; matrixTmp[4]=vectorNorm[1]*vectorNorm[1]; matrixTmp[5]=vectorNorm[1]*vectorNorm[2];
   matrixTmp[6]=vectorNorm[2]*vectorNorm[0]; matrixTmp[7]=vectorNorm[2]*vectorNorm[1]; matrixTmp[8]=vectorNorm[2]*vectorNorm[2];
-  std::transform(matrixTmp,matrixTmp+9,matrixTmp,std::bind2nd(std::multiplies<double>(),1-cosa));
+  std::transform(matrixTmp,matrixTmp+9,matrixTmp,std::bind(std::multiplies<double>(),std::placeholders::_1,1-cosa));
   std::transform(matrix,matrix+9,matrixTmp,matrix,std::plus<double>());
   matrixTmp[0]=0.; matrixTmp[1]=-vectorNorm[2]; matrixTmp[2]=vectorNorm[1];
   matrixTmp[3]=vectorNorm[2]; matrixTmp[4]=0.; matrixTmp[5]=-vectorNorm[0];
   matrixTmp[6]=-vectorNorm[1]; matrixTmp[7]=vectorNorm[0]; matrixTmp[8]=0.;
-  std::transform(matrixTmp,matrixTmp+9,matrixTmp,std::bind2nd(std::multiplies<double>(),sina));
+  std::transform(matrixTmp,matrixTmp+9,matrixTmp,std::bind(std::multiplies<double>(),std::placeholders::_1,sina));
   std::transform(matrix,matrix+9,matrixTmp,matrix,std::plus<double>());
   //rotation matrix computed.
   double tmp[3];
@@ -1278,7 +1278,7 @@ bool MEDCouplingPointSet::areCellsFrom2MeshEqual(const MEDCouplingPointSet *othe
       getCoordinatesOfNode(c1[0],n1);
       other->getCoordinatesOfNode(c2[0],n2);
       std::transform(n1.begin(),n1.end(),n2.begin(),n1.begin(),std::minus<double>());
-      std::transform(n1.begin(),n1.end(),n1.begin(),std::ptr_fun<double,double>(fabs));
+      std::transform(n1.begin(),n1.end(),n1.begin(),[](double x) -> double { return fabs(x); });
       if(*std::max_element(n1.begin(),n1.end())>prec)
         return false;
     }
@@ -1321,7 +1321,7 @@ void MEDCouplingPointSet::tryToShareSameCoordsPermute(const MEDCouplingPointSet&
       throw INTERP_KERNEL::Exception("MEDCouplingPointSet::tryToShareSameCoordsPermute fails : no nodes are mergeable with specified given epsilon !");
     }
   int maxId=*std::max_element(da->getConstPointer(),da->getConstPointer()+otherNbOfNodes);
-  const int *pt=std::find_if(da->getConstPointer()+otherNbOfNodes,da->getConstPointer()+da->getNbOfElems(),std::bind2nd(std::greater<int>(),maxId));
+  const int *pt=std::find_if(da->getConstPointer()+otherNbOfNodes,da->getConstPointer()+da->getNbOfElems(),std::bind(std::greater<int>(),std::placeholders::_1,maxId));
   if(pt!=da->getConstPointer()+da->getNbOfElems())
     {
       setCoords(oldCoords);
@@ -1462,7 +1462,7 @@ void MEDCouplingPointSet::checkDeepEquivalWith(const MEDCouplingMesh *other, int
   //mergeNodes
   if(!areNodesMerged)
     throw INTERP_KERNEL::Exception("checkDeepEquivalWith : Nodes are incompatible ! ");
-  const int *pt=std::find_if(da->getConstPointer()+oldNbOfNodes,da->getConstPointer()+da->getNbOfElems(),std::bind2nd(std::greater<int>(),oldNbOfNodes-1));
+  const int *pt=std::find_if(da->getConstPointer()+oldNbOfNodes,da->getConstPointer()+da->getNbOfElems(),std::bind(std::greater<int>(),std::placeholders::_1,oldNbOfNodes-1));
   if(pt!=da->getConstPointer()+da->getNbOfElems())
     throw INTERP_KERNEL::Exception("checkDeepEquivalWith : some nodes in other are not in this !");
   m->renumberNodes(da->getConstPointer(),newNbOfNodes);
@@ -1522,7 +1522,7 @@ void MEDCouplingPointSet::checkDeepEquivalOnSameNodesWith(const MEDCouplingMesh 
   MEDCouplingAutoRefCountObjectPtr<MEDCouplingPointSet> m=mergeMyselfWithOnSameCoords(otherC);
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> da=m->zipConnectivityTraducer(cellCompPol);
   int maxId=*std::max_element(da->getConstPointer(),da->getConstPointer()+getNumberOfCells());
-  const int *pt=std::find_if(da->getConstPointer()+getNumberOfCells(),da->getConstPointer()+da->getNbOfElems(),std::bind2nd(std::greater<int>(),maxId));
+  const int *pt=std::find_if(da->getConstPointer()+getNumberOfCells(),da->getConstPointer()+da->getNbOfElems(),std::bind(std::greater<int>(),std::placeholders::_1,maxId));
   if(pt!=da->getConstPointer()+da->getNbOfElems())
     {
       throw INTERP_KERNEL::Exception("checkDeepEquivalOnSameNodesWith : some cells in other are not in this !");

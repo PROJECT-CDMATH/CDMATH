@@ -263,6 +263,6 @@ bool ParaMEDMEM::MEDCouplingGaussLocalization::AreAlmostEqual(const std::vector<
     return false;
   std::vector<double> tmp(sz);
   std::transform(v1.begin(),v1.end(),v2.begin(),tmp.begin(),std::minus<double>());
-  std::transform(tmp.begin(),tmp.end(),tmp.begin(),std::ptr_fun<double,double>(fabs));
+  std::transform(tmp.begin(),tmp.end(),tmp.begin(),[](double x) -> double { return fabs(x); });
   return *std::max_element(tmp.begin(),tmp.end())<eps;
 }

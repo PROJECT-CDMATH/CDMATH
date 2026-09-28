@@ -52,7 +52,7 @@ namespace ParaMEDMEM
   };
 
   template<class T, class U>
-  typename ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<U> DynamicCast(typename ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<T>& autoSubPtr) throw()
+  typename ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<U> DynamicCast(typename ParaMEDMEM::MEDCouplingAutoRefCountObjectPtr<T>& autoSubPtr) noexcept
   {
     T *subPtr(autoSubPtr);
     U *ptr(dynamic_cast<U *>(subPtr));

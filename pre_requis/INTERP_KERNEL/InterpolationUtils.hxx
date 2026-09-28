@@ -147,13 +147,13 @@ namespace INTERP_KERNEL
     double tmp[SPACEDIM];
     std::transform(triIn,triIn+SPACEDIM,triIn+SPACEDIM,tmp,std::plus<double>());
     //2nd point
-    std::transform(tmp,tmp+SPACEDIM,quadOut+SPACEDIM,std::bind2nd(std::multiplies<double>(),0.5));
+    std::transform(tmp,tmp+SPACEDIM,quadOut+SPACEDIM,std::bind(std::multiplies<double>(),std::placeholders::_1,0.5));
     std::transform(tmp,tmp+SPACEDIM,triIn+2*SPACEDIM,tmp,std::plus<double>());
     //3rd point
-    std::transform(tmp,tmp+SPACEDIM,quadOut+2*SPACEDIM,std::bind2nd(std::multiplies<double>(),1/3.));
+    std::transform(tmp,tmp+SPACEDIM,quadOut+2*SPACEDIM,std::bind(std::multiplies<double>(),std::placeholders::_1,1/3.));
     //4th point
     std::transform(triIn,triIn+SPACEDIM,triIn+2*SPACEDIM,tmp,std::plus<double>());
-    std::transform(tmp,tmp+SPACEDIM,quadOut+3*SPACEDIM,std::bind2nd(std::multiplies<double>(),0.5));
+    std::transform(tmp,tmp+SPACEDIM,quadOut+3*SPACEDIM,std::bind(std::multiplies<double>(),std::placeholders::_1,0.5));
   }
 
   /*!
@@ -170,15 +170,15 @@ namespace INTERP_KERNEL
     std::copy(polygIn,polygIn+SPACEDIM,polygOut);
     std::transform(polygIn,polygIn+SPACEDIM,polygIn+SPACEDIM,polygOut+SPACEDIM,std::plus<double>());
     //2nd point
-    std::transform(polygOut+SPACEDIM,polygOut+2*SPACEDIM,polygOut+SPACEDIM,std::bind2nd(std::multiplies<double>(),0.5));
+    std::transform(polygOut+SPACEDIM,polygOut+2*SPACEDIM,polygOut+SPACEDIM,std::bind(std::multiplies<double>(),std::placeholders::_1,0.5));
     double tmp[SPACEDIM];
     //
     for(int i=0;i<nPtsPolygonIn-2;i++)
       {
         std::transform(polygIn,polygIn+SPACEDIM,polygIn+(i+2)*SPACEDIM,tmp,std::plus<double>());
-        std::transform(tmp,tmp+SPACEDIM,polygOut+(2*i+3)*SPACEDIM,std::bind2nd(std::multiplies<double>(),0.5));
+        std::transform(tmp,tmp+SPACEDIM,polygOut+(2*i+3)*SPACEDIM,std::bind(std::multiplies<double>(),std::placeholders::_1,0.5));
         std::transform(polygIn+(i+1)*SPACEDIM,polygIn+(i+2)*SPACEDIM,tmp,tmp,std::plus<double>());
-        std::transform(tmp,tmp+SPACEDIM,polygOut+(2*i+2)*SPACEDIM,std::bind2nd(std::multiplies<double>(),1./3.));
+        std::transform(tmp,tmp+SPACEDIM,polygOut+(2*i+2)*SPACEDIM,std::bind(std::multiplies<double>(),std::placeholders::_1,1./3.));
       }
   }
 
@@ -365,7 +365,7 @@ namespace INTERP_KERNEL
             while (n<(int)SZ);
           }
         s=B[np];//s is the Pivot
-        std::transform(B+k*nr,B+(k+1)*nr,B+k*nr,std::bind2nd(std::divides<double>(),s));
+        std::transform(B+k*nr,B+(k+1)*nr,B+k*nr,std::bind(std::divides<double>(),std::placeholders::_1,s));
         for(j=0;j<SZ;j++)
           {
             if(j!=k)
