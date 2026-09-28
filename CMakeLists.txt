@@ -8,10 +8,13 @@ project (CDMATH)
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set (CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif ()
-# The vendored MEDCoupling 7.4 headers use std::bind2nd and dynamic exception
-# specifications, both removed in C++17.
+# C++11, the standard SOLVERLAB requires. The code also builds as C++14 and
+# C++17: the library features C++17 removed (bind2nd, ptr_fun, unary_function,
+# auto_ptr, dynamic exception specifications) have been replaced by their C++11
+# equivalents in the vendored MEDCoupling.
 if (NOT CMAKE_CXX_STANDARD)
-  set (CMAKE_CXX_STANDARD 14)
+  set (CMAKE_CXX_STANDARD 11)
+  set (CMAKE_CXX_STANDARD_REQUIRED ON)
 endif ()
 set (CDMATH_VERSION_MAJOR 1)
 set (CDMATH_VERSION_MINOR 0)
