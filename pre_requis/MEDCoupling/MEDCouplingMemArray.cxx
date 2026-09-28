@@ -4089,7 +4089,7 @@ void DataArrayDouble::abs()
   checkAllocated();
   double *ptr(getPointer());
   std::size_t nbOfElems(getNbOfElems());
-  std::transform(ptr,ptr+nbOfElems,ptr,std::ptr_fun<double,double>(fabs));
+  std::transform(ptr,ptr+nbOfElems,ptr,[](double x) -> double { return fabs(x); });
   declareAsNew();
 }
 
@@ -4111,7 +4111,7 @@ DataArrayDouble *DataArrayDouble::computeAbs() const
   int nbOfTuples(getNumberOfTuples());
   int nbOfComp(getNumberOfComponents());
   newArr->alloc(nbOfTuples,nbOfComp);
-  std::transform(begin(),end(),newArr->getPointer(),std::ptr_fun<double,double>(fabs));
+  std::transform(begin(),end(),newArr->getPointer(),[](double x) -> double { return fabs(x); });
   newArr->copyStringInfoFrom(*this);
   return newArr;
 }
@@ -4982,7 +4982,7 @@ DataArrayDouble *DataArrayDouble::Add(const DataArrayDouble *a1, const DataArray
               const double *aMaxPtr=aMax->getConstPointer();
               double *res=ret->getPointer();
               for(int i=0;i<nbOfTuple;i++)
-                res=std::transform(aMaxPtr+i*nbOfCompMax,aMaxPtr+(i+1)*nbOfCompMax,res,std::bind2nd(std::plus<double>(),aMinPtr[i]));
+                res=std::transform(aMaxPtr+i*nbOfCompMax,aMaxPtr+(i+1)*nbOfCompMax,res,std::bind(std::plus<double>(),std::placeholders::_1,aMinPtr[i]));
               ret->copyStringInfoFrom(*aMax);
             }
           else
@@ -5051,7 +5051,7 @@ void DataArrayDouble::addEqual(const DataArrayDouble *other)
           double *ptr=getPointer();
           const double *ptrc=other->getConstPointer();
           for(int i=0;i<nbOfTuple;i++)
-            std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind2nd(std::plus<double>(),*ptrc++));
+            std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind(std::plus<double>(),std::placeholders::_1,*ptrc++));
         }
       else
         throw INTERP_KERNEL::Exception(msg);
@@ -5124,7 +5124,7 @@ DataArrayDouble *DataArrayDouble::Substract(const DataArrayDouble *a1, const Dat
           const double *a1Ptr=a1->getConstPointer();
           double *res=ret->getPointer();
           for(int i=0;i<nbOfTuple1;i++)
-            res=std::transform(a1Ptr+i*nbOfComp1,a1Ptr+(i+1)*nbOfComp1,res,std::bind2nd(std::minus<double>(),a2Ptr[i]));
+            res=std::transform(a1Ptr+i*nbOfComp1,a1Ptr+(i+1)*nbOfComp1,res,std::bind(std::minus<double>(),std::placeholders::_1,a2Ptr[i]));
           ret->copyStringInfoFrom(*a1);
           return ret.retn();
         }
@@ -5192,7 +5192,7 @@ void DataArrayDouble::substractEqual(const DataArrayDouble *other)
           double *ptr=getPointer();
           const double *ptrc=other->getConstPointer();
           for(int i=0;i<nbOfTuple;i++)
-            std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind2nd(std::minus<double>(),*ptrc++)); 
+            std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind(std::minus<double>(),std::placeholders::_1,*ptrc++)); 
         }
       else
         throw INTERP_KERNEL::Exception(msg);
@@ -5279,7 +5279,7 @@ DataArrayDouble *DataArrayDouble::Multiply(const DataArrayDouble *a1, const Data
               const double *aMaxPtr=aMax->getConstPointer();
               double *res=ret->getPointer();
               for(int i=0;i<nbOfTuple;i++)
-                res=std::transform(aMaxPtr+i*nbOfCompMax,aMaxPtr+(i+1)*nbOfCompMax,res,std::bind2nd(std::multiplies<double>(),aMinPtr[i]));
+                res=std::transform(aMaxPtr+i*nbOfCompMax,aMaxPtr+(i+1)*nbOfCompMax,res,std::bind(std::multiplies<double>(),std::placeholders::_1,aMinPtr[i]));
               ret->copyStringInfoFrom(*aMax);
             }
           else
@@ -5348,7 +5348,7 @@ void DataArrayDouble::multiplyEqual(const DataArrayDouble *other)
           double *ptr=getPointer();
           const double *ptrc=other->getConstPointer();
           for(int i=0;i<nbOfTuple;i++)
-            std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind2nd(std::multiplies<double>(),*ptrc++));
+            std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind(std::multiplies<double>(),std::placeholders::_1,*ptrc++));
         }
       else
         throw INTERP_KERNEL::Exception(msg);
@@ -5422,7 +5422,7 @@ DataArrayDouble *DataArrayDouble::Divide(const DataArrayDouble *a1, const DataAr
           const double *a1Ptr=a1->getConstPointer();
           double *res=ret->getPointer();
           for(int i=0;i<nbOfTuple1;i++)
-            res=std::transform(a1Ptr+i*nbOfComp1,a1Ptr+(i+1)*nbOfComp1,res,std::bind2nd(std::divides<double>(),a2Ptr[i]));
+            res=std::transform(a1Ptr+i*nbOfComp1,a1Ptr+(i+1)*nbOfComp1,res,std::bind(std::divides<double>(),std::placeholders::_1,a2Ptr[i]));
           ret->copyStringInfoFrom(*a1);
           return ret.retn();
         }
@@ -5491,7 +5491,7 @@ void DataArrayDouble::divideEqual(const DataArrayDouble *other)
           double *ptr=getPointer();
           const double *ptrc=other->getConstPointer();
           for(int i=0;i<nbOfTuple;i++)
-            std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind2nd(std::divides<double>(),*ptrc++));
+            std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind(std::divides<double>(),std::placeholders::_1,*ptrc++));
         }
       else
         throw INTERP_KERNEL::Exception(msg);
@@ -6351,7 +6351,7 @@ void DataArrayInt::splitByValueRange(const int *arrBg, const int *arrEnd,
   std::set<std::size_t> castsDetected;
   for(int i=0;i<nbOfTuples;i++)
     {
-      rintstart res=std::find_if(bg,end2,std::bind2nd(std::less_equal<int>(), work[i]));
+      rintstart res=std::find_if(bg,end2,std::bind(std::less_equal<int>(),std::placeholders::_1,work[i]));
       std::size_t pos=std::distance(bg,res);
       std::size_t pos2=nbOfCast-pos;
       if(pos2<nbOfCast)
@@ -9027,7 +9027,7 @@ DataArrayInt *DataArrayInt::AggregateIndexes(const std::vector<const DataArrayIn
   ret->alloc(retSz,1);
   int *pt=ret->getPointer(); *pt++=0;
   for(std::vector<const DataArrayInt *>::const_iterator it=arrs.begin();it!=arrs.end();it++)
-    pt=std::transform((*it)->begin()+1,(*it)->end(),pt,std::bind2nd(std::plus<int>(),pt[-1]));
+    pt=std::transform((*it)->begin()+1,(*it)->end(),pt,std::bind(std::plus<int>(),std::placeholders::_1,pt[-1]));
   ret->copyStringInfoFrom(*(arrs[0]));
   return ret.retn();
 }
@@ -9113,7 +9113,7 @@ void DataArrayInt::abs()
   checkAllocated();
   int *ptr(getPointer());
   std::size_t nbOfElems(getNbOfElems());
-  std::transform(ptr,ptr+nbOfElems,ptr,std::ptr_fun<int,int>(std::abs));
+  std::transform(ptr,ptr+nbOfElems,ptr,[](int x) -> int { return std::abs(x); });
   declareAsNew();
 }
 
@@ -9135,7 +9135,7 @@ DataArrayInt *DataArrayInt::computeAbs() const
   int nbOfTuples(getNumberOfTuples());
   int nbOfComp(getNumberOfComponents());
   newArr->alloc(nbOfTuples,nbOfComp);
-  std::transform(begin(),end(),newArr->getPointer(),std::ptr_fun<int,int>(std::abs));
+  std::transform(begin(),end(),newArr->getPointer(),[](int x) -> int { return std::abs(x); });
   newArr->copyStringInfoFrom(*this);
   return newArr;
 }
@@ -9242,7 +9242,7 @@ void DataArrayInt::applyDivideBy(int val)
   checkAllocated();
   int *ptr=getPointer();
   std::size_t nbOfElems=getNbOfElems();
-  std::transform(ptr,ptr+nbOfElems,ptr,std::bind2nd(std::divides<int>(),val));
+  std::transform(ptr,ptr+nbOfElems,ptr,std::bind(std::divides<int>(),std::placeholders::_1,val));
   declareAsNew();
 }
 
@@ -9260,7 +9260,7 @@ void DataArrayInt::applyModulus(int val)
   checkAllocated();
   int *ptr=getPointer();
   std::size_t nbOfElems=getNbOfElems();
-  std::transform(ptr,ptr+nbOfElems,ptr,std::bind2nd(std::modulus<int>(),val));
+  std::transform(ptr,ptr+nbOfElems,ptr,std::bind(std::modulus<int>(),std::placeholders::_1,val));
   declareAsNew();
 }
 
@@ -10480,7 +10480,7 @@ DataArrayInt *DataArrayInt::Add(const DataArrayInt *a1, const DataArrayInt *a2)
               const int *aMaxPtr=aMax->getConstPointer();
               int *res=ret->getPointer();
               for(int i=0;i<nbOfTuple;i++)
-                res=std::transform(aMaxPtr+i*nbOfCompMax,aMaxPtr+(i+1)*nbOfCompMax,res,std::bind2nd(std::plus<int>(),aMinPtr[i]));
+                res=std::transform(aMaxPtr+i*nbOfCompMax,aMaxPtr+(i+1)*nbOfCompMax,res,std::bind(std::plus<int>(),std::placeholders::_1,aMinPtr[i]));
               ret->copyStringInfoFrom(*aMax);
             }
           else
@@ -10548,7 +10548,7 @@ void DataArrayInt::addEqual(const DataArrayInt *other)
           int *ptr=getPointer();
           const int *ptrc=other->getConstPointer();
           for(int i=0;i<nbOfTuple;i++)
-            std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind2nd(std::plus<int>(),*ptrc++));
+            std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind(std::plus<int>(),std::placeholders::_1,*ptrc++));
         }
       else
         throw INTERP_KERNEL::Exception(msg);
@@ -10621,7 +10621,7 @@ DataArrayInt *DataArrayInt::Substract(const DataArrayInt *a1, const DataArrayInt
           const int *a1Ptr=a1->getConstPointer();
           int *res=ret->getPointer();
           for(int i=0;i<nbOfTuple1;i++)
-            res=std::transform(a1Ptr+i*nbOfComp1,a1Ptr+(i+1)*nbOfComp1,res,std::bind2nd(std::minus<int>(),a2Ptr[i]));
+            res=std::transform(a1Ptr+i*nbOfComp1,a1Ptr+(i+1)*nbOfComp1,res,std::bind(std::minus<int>(),std::placeholders::_1,a2Ptr[i]));
           ret->copyStringInfoFrom(*a1);
           return ret.retn();
         }
@@ -10688,7 +10688,7 @@ void DataArrayInt::substractEqual(const DataArrayInt *other)
           int *ptr=getPointer();
           const int *ptrc=other->getConstPointer();
           for(int i=0;i<nbOfTuple;i++)
-            std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind2nd(std::minus<int>(),*ptrc++));
+            std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind(std::minus<int>(),std::placeholders::_1,*ptrc++));
         }
       else
         throw INTERP_KERNEL::Exception(msg);
@@ -10770,7 +10770,7 @@ DataArrayInt *DataArrayInt::Multiply(const DataArrayInt *a1, const DataArrayInt 
               const int *aMaxPtr=aMax->getConstPointer();
               int *res=ret->getPointer();
               for(int i=0;i<nbOfTuple;i++)
-                res=std::transform(aMaxPtr+i*nbOfCompMax,aMaxPtr+(i+1)*nbOfCompMax,res,std::bind2nd(std::multiplies<int>(),aMinPtr[i]));
+                res=std::transform(aMaxPtr+i*nbOfCompMax,aMaxPtr+(i+1)*nbOfCompMax,res,std::bind(std::multiplies<int>(),std::placeholders::_1,aMinPtr[i]));
               ret->copyStringInfoFrom(*aMax);
             }
           else
@@ -10839,7 +10839,7 @@ void DataArrayInt::multiplyEqual(const DataArrayInt *other)
           int *ptr=getPointer();
           const int *ptrc=other->getConstPointer();
           for(int i=0;i<nbOfTuple;i++)
-            std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind2nd(std::multiplies<int>(),*ptrc++));    
+            std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind(std::multiplies<int>(),std::placeholders::_1,*ptrc++));    
         }
       else
         throw INTERP_KERNEL::Exception(msg);
@@ -10914,7 +10914,7 @@ DataArrayInt *DataArrayInt::Divide(const DataArrayInt *a1, const DataArrayInt *a
           const int *a1Ptr=a1->getConstPointer();
           int *res=ret->getPointer();
           for(int i=0;i<nbOfTuple1;i++)
-            res=std::transform(a1Ptr+i*nbOfComp1,a1Ptr+(i+1)*nbOfComp1,res,std::bind2nd(std::divides<int>(),a2Ptr[i]));
+            res=std::transform(a1Ptr+i*nbOfComp1,a1Ptr+(i+1)*nbOfComp1,res,std::bind(std::divides<int>(),std::placeholders::_1,a2Ptr[i]));
           ret->copyStringInfoFrom(*a1);
           return ret.retn();
         }
@@ -10982,7 +10982,7 @@ void DataArrayInt::divideEqual(const DataArrayInt *other)
           int *ptr=getPointer();
           const int *ptrc=other->getConstPointer();
           for(int i=0;i<nbOfTuple;i++)
-            std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind2nd(std::divides<int>(),*ptrc++));
+            std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind(std::divides<int>(),std::placeholders::_1,*ptrc++));
         }
       else
         throw INTERP_KERNEL::Exception(msg);
@@ -11057,7 +11057,7 @@ DataArrayInt *DataArrayInt::Modulus(const DataArrayInt *a1, const DataArrayInt *
           const int *a1Ptr=a1->getConstPointer();
           int *res=ret->getPointer();
           for(int i=0;i<nbOfTuple1;i++)
-            res=std::transform(a1Ptr+i*nbOfComp1,a1Ptr+(i+1)*nbOfComp1,res,std::bind2nd(std::modulus<int>(),a2Ptr[i]));
+            res=std::transform(a1Ptr+i*nbOfComp1,a1Ptr+(i+1)*nbOfComp1,res,std::bind(std::modulus<int>(),std::placeholders::_1,a2Ptr[i]));
           ret->copyStringInfoFrom(*a1);
           return ret.retn();
         }
@@ -11127,7 +11127,7 @@ void DataArrayInt::modulusEqual(const DataArrayInt *other)
               int *ptr=getPointer();
               const int *ptrc=other->getConstPointer();
               for(int i=0;i<nbOfTuple;i++)
-                std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind2nd(std::modulus<int>(),*ptrc++));
+                std::transform(ptr+i*nbOfComp,ptr+(i+1)*nbOfComp,ptr+i*nbOfComp,std::bind(std::modulus<int>(),std::placeholders::_1,*ptrc++));
             }
           else
             throw INTERP_KERNEL::Exception(msg);

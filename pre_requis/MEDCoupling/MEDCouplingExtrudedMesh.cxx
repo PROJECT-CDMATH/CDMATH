@@ -274,7 +274,7 @@ DataArrayInt *MEDCouplingExtrudedMesh::giveCellsWithType(INTERP_KERNEL::Normaliz
   ret->alloc(nbOfLevs*nbOfTuples,1);
   int *pt=ret->getPointer();
   for(int i=0;i<nbOfLevs;i++,pt+=nbOfTuples)
-    std::transform(tmp->begin(),tmp->end(),pt,std::bind2nd(std::plus<int>(),i*nbOfCells2D));
+    std::transform(tmp->begin(),tmp->end(),pt,std::bind(std::plus<int>(),std::placeholders::_1,i*nbOfCells2D));
   MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ret2=ret->renumberR(_mesh3D_ids->begin());
   ret2->sort();
   return ret2.retn();
@@ -333,8 +333,8 @@ void MEDCouplingExtrudedMesh::getNodeIdsOfCell(int cellId, std::vector<int>& con
   std::vector<int> tmp,tmp2;
   _mesh2D->getNodeIdsOfCell(locId,tmp);
   tmp2=tmp;
-  std::transform(tmp.begin(),tmp.end(),tmp.begin(),std::bind2nd(std::plus<int>(),nbOfNodes2D*lev));
-  std::transform(tmp2.begin(),tmp2.end(),tmp2.begin(),std::bind2nd(std::plus<int>(),nbOfNodes2D*(lev+1)));
+  std::transform(tmp.begin(),tmp.end(),tmp.begin(),std::bind(std::plus<int>(),std::placeholders::_1,nbOfNodes2D*lev));
+  std::transform(tmp2.begin(),tmp2.end(),tmp2.begin(),std::bind(std::plus<int>(),std::placeholders::_1,nbOfNodes2D*(lev+1)));
   conn.insert(conn.end(),tmp.begin(),tmp.end());
   conn.insert(conn.end(),tmp2.begin(),tmp2.end());
 }
@@ -618,7 +618,7 @@ void MEDCouplingExtrudedMesh::computeBaryCenterOfFace(const std::vector<int>& no
   const double *coords=_mesh2D->getCoords()->getConstPointer();
   for(std::vector<int>::const_iterator iter=nodalConnec.begin();iter!=nodalConnec.end();iter++)
     std::transform(zoneToUpdate,zoneToUpdate+3,coords+3*(*iter),zoneToUpdate,std::plus<double>());
-  std::transform(zoneToUpdate,zoneToUpdate+3,zoneToUpdate,std::bind2nd(std::multiplies<double>(),(double)(1./(int)nodalConnec.size())));
+  std::transform(zoneToUpdate,zoneToUpdate+3,zoneToUpdate,std::bind(std::multiplies<double>(),std::placeholders::_1,(double)(1./(int)nodalConnec.size())));
 }
 
 int MEDCouplingExtrudedMesh::FindCorrespCellByNodalConn(const std::vector<int>& nodalConnec, const int *revNodalPtr, const int *revNodalIndxPtr)
@@ -671,7 +671,7 @@ void MEDCouplingExtrudedMesh::Project1DMeshes(const MEDCouplingUMesh *m1, const 
   m1->getCoordinatesOfNode(c[1],ref2);
   std::transform(ref2.begin(),ref2.end(),ref.begin(),v,std::minus<double>());
   double n=INTERP_KERNEL::norm<3>(v);
-  std::transform(v,v+3,v,std::bind2nd(std::multiplies<double>(),1/n));
+  std::transform(v,v+3,v,std::bind(std::multiplies<double>(),std::placeholders::_1,1/n));
   m1->project1D(&ref[0],v,eps,m1r->getCoords()->getPointer());
   m2->project1D(&ref[0],v,eps,m2r->getCoords()->getPointer());
 }

@@ -296,7 +296,7 @@ bool CellSimplify::tryToArrangeOppositeFace(const int *conn, int lgth, int lgthB
  */
 INTERP_KERNEL::NormalizedCellType CellSimplify::tryToUnPolyHex8(const int *conn, int nbOfFaces, int lgth, int *retConn, int& retLgth)
 {
-  if(std::find_if(conn+lgth,conn+lgth+nbOfFaces,std::bind2nd(std::not_equal_to<int>(),(int)INTERP_KERNEL::NORM_QUAD4))==conn+lgth+nbOfFaces)
+  if(std::find_if(conn+lgth,conn+lgth+nbOfFaces,std::bind(std::not_equal_to<int>(),std::placeholders::_1,(int)INTERP_KERNEL::NORM_QUAD4))==conn+lgth+nbOfFaces)
     {//6 faces are QUAD4.
       int oppositeFace=-1;
       std::set<int> conn1(conn,conn+4);
@@ -475,7 +475,7 @@ INTERP_KERNEL::NormalizedCellType CellSimplify::tryToUnPolyPyra5(const int *conn
  */
 INTERP_KERNEL::NormalizedCellType CellSimplify::tryToUnPolyTetra4(const int *conn, int nbOfFaces, int lgth, int *retConn, int& retLgth)
 {
-  if(std::find_if(conn+lgth,conn+lgth+nbOfFaces,std::bind2nd(std::not_equal_to<int>(),(int)INTERP_KERNEL::NORM_TRI3))==conn+lgth+nbOfFaces)
+  if(std::find_if(conn+lgth,conn+lgth+nbOfFaces,std::bind(std::not_equal_to<int>(),std::placeholders::_1,(int)INTERP_KERNEL::NORM_TRI3))==conn+lgth+nbOfFaces)
     {
       std::set<int> tribase(conn,conn+3);
       int point=-1;

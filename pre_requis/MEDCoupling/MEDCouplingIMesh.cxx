@@ -411,7 +411,7 @@ void MEDCouplingIMesh::CondenseFineToCoarseGhost(const std::vector<int>& coarseS
     throw INTERP_KERNEL::Exception("MEDCouplingIMesh::CondenseFineToCoarseGhost : All input vectors (dimension) must have the same size !");
   if(!coarseDA || !coarseDA->isAllocated() || !fineDA || !fineDA->isAllocated())
     throw INTERP_KERNEL::Exception("MEDCouplingIMesh::CondenseFineToCoarseGhost : the parameters 1 or 3 are NULL or not allocated !");
-  std::vector<int> coarseStG(coarseSt.size()); std::transform(coarseSt.begin(),coarseSt.end(),coarseStG.begin(),std::bind2nd(std::plus<int>(),2*ghostSize));
+  std::vector<int> coarseStG(coarseSt.size()); std::transform(coarseSt.begin(),coarseSt.end(),coarseStG.begin(),std::bind(std::plus<int>(),std::placeholders::_1,2*ghostSize));
   int meshDim((int)coarseSt.size()),nbOfTuplesInCoarseExp(MEDCouplingStructuredMesh::DeduceNumberOfGivenStructure(coarseStG));
   int nbCompo(fineDA->getNumberOfComponents());
   if(coarseDA->getNumberOfComponents()!=nbCompo)
@@ -426,7 +426,7 @@ void MEDCouplingIMesh::CondenseFineToCoarseGhost(const std::vector<int>& coarseS
   //
   std::vector<int> fineStG(MEDCouplingStructuredMesh::GetDimensionsFromCompactFrmt(fineLocInCoarse));
   std::transform(fineStG.begin(),fineStG.end(),facts.begin(),fineStG.begin(),std::multiplies<int>());
-  std::transform(fineStG.begin(),fineStG.end(),fineStG.begin(),std::bind2nd(std::plus<int>(),2*ghostSize));
+  std::transform(fineStG.begin(),fineStG.end(),fineStG.begin(),std::bind(std::plus<int>(),std::placeholders::_1,2*ghostSize));
   int nbTuplesFine(fineDA->getNumberOfTuples()),nbTuplesFineExp(MEDCouplingStructuredMesh::DeduceNumberOfGivenStructure(fineStG));
   if(fineDA->getNumberOfTuples()!=nbTuplesFineExp)
     {
@@ -646,7 +646,7 @@ void MEDCouplingIMesh::SpreadCoarseToFineGhost(const DataArrayDouble *coarseDA, 
     throw INTERP_KERNEL::Exception("MEDCouplingIMesh::SpreadCoarseToFineGhost : All input vectors (dimension) must have the same size !");
   if(!coarseDA || !coarseDA->isAllocated() || !fineDA || !fineDA->isAllocated())
     throw INTERP_KERNEL::Exception("MEDCouplingIMesh::SpreadCoarseToFineGhost : the parameters 1 or 3 are NULL or not allocated !");
-  std::vector<int> coarseStG(coarseSt.size()); std::transform(coarseSt.begin(),coarseSt.end(),coarseStG.begin(),std::bind2nd(std::plus<int>(),2*ghostSize));
+  std::vector<int> coarseStG(coarseSt.size()); std::transform(coarseSt.begin(),coarseSt.end(),coarseStG.begin(),std::bind(std::plus<int>(),std::placeholders::_1,2*ghostSize));
   int meshDim((int)coarseSt.size()),nbOfTuplesInCoarseExp(MEDCouplingStructuredMesh::DeduceNumberOfGivenStructure(coarseStG));
   int nbCompo(fineDA->getNumberOfComponents());
   if(coarseDA->getNumberOfComponents()!=nbCompo)
@@ -661,7 +661,7 @@ void MEDCouplingIMesh::SpreadCoarseToFineGhost(const DataArrayDouble *coarseDA, 
   //
   std::vector<int> fineStG(MEDCouplingStructuredMesh::GetDimensionsFromCompactFrmt(fineLocInCoarse));
   std::transform(fineStG.begin(),fineStG.end(),facts.begin(),fineStG.begin(),std::multiplies<int>());
-  std::transform(fineStG.begin(),fineStG.end(),fineStG.begin(),std::bind2nd(std::plus<int>(),2*ghostSize));
+  std::transform(fineStG.begin(),fineStG.end(),fineStG.begin(),std::bind(std::plus<int>(),std::placeholders::_1,2*ghostSize));
   int nbTuplesFine(fineDA->getNumberOfTuples()),nbTuplesFineExp(MEDCouplingStructuredMesh::DeduceNumberOfGivenStructure(fineStG));
   if(fineDA->getNumberOfTuples()!=nbTuplesFineExp)
     {
@@ -738,7 +738,7 @@ void MEDCouplingIMesh::SpreadCoarseToFineGhostZone(const DataArrayDouble *coarse
     throw INTERP_KERNEL::Exception("MEDCouplingIMesh::SpreadCoarseToFineGhostZone : All input vectors (dimension) must have the same size !");
   if(!coarseDA || !coarseDA->isAllocated() || !fineDA || !fineDA->isAllocated())
     throw INTERP_KERNEL::Exception("MEDCouplingIMesh::SpreadCoarseToFineGhostZone : the parameters 1 or 3 are NULL or not allocated !");
-  std::vector<int> coarseStG(coarseSt.size()); std::transform(coarseSt.begin(),coarseSt.end(),coarseStG.begin(),std::bind2nd(std::plus<int>(),2*ghostSize));
+  std::vector<int> coarseStG(coarseSt.size()); std::transform(coarseSt.begin(),coarseSt.end(),coarseStG.begin(),std::bind(std::plus<int>(),std::placeholders::_1,2*ghostSize));
   int meshDim((int)coarseSt.size()),nbOfTuplesInCoarseExp(MEDCouplingStructuredMesh::DeduceNumberOfGivenStructure(coarseStG));
   int nbCompo(fineDA->getNumberOfComponents());
   if(coarseDA->getNumberOfComponents()!=nbCompo)
@@ -753,7 +753,7 @@ void MEDCouplingIMesh::SpreadCoarseToFineGhostZone(const DataArrayDouble *coarse
   //
   std::vector<int> fineStG(MEDCouplingStructuredMesh::GetDimensionsFromCompactFrmt(fineLocInCoarse));
   std::transform(fineStG.begin(),fineStG.end(),facts.begin(),fineStG.begin(),std::multiplies<int>());
-  std::transform(fineStG.begin(),fineStG.end(),fineStG.begin(),std::bind2nd(std::plus<int>(),2*ghostSize));
+  std::transform(fineStG.begin(),fineStG.end(),fineStG.begin(),std::bind(std::plus<int>(),std::placeholders::_1,2*ghostSize));
   int nbTuplesFine(fineDA->getNumberOfTuples()),nbTuplesFineExp(MEDCouplingStructuredMesh::DeduceNumberOfGivenStructure(fineStG));
   if(fineDA->getNumberOfTuples()!=nbTuplesFineExp)
     {
@@ -1153,8 +1153,8 @@ void MEDCouplingIMesh::scale(const double *point, double factor)
   checkSpaceDimension();
   int dim(getSpaceDimension());
   std::transform(_origin,_origin+dim,point,_origin,std::minus<double>());
-  std::transform(_origin,_origin+dim,_origin,std::bind2nd(std::multiplies<double>(),factor));
-  std::transform(_dxyz,_dxyz+dim,_dxyz,std::bind2nd(std::multiplies<double>(),factor));
+  std::transform(_origin,_origin+dim,_origin,std::bind(std::multiplies<double>(),std::placeholders::_1,factor));
+  std::transform(_dxyz,_dxyz+dim,_dxyz,std::bind(std::multiplies<double>(),std::placeholders::_1,factor));
   std::transform(_origin,_origin+dim,point,_origin,std::plus<double>());
   declareAsNew();
 }
@@ -1206,7 +1206,7 @@ DataArrayDouble *MEDCouplingIMesh::getBarycenterAndOwner() const
   int spaceDim(getSpaceDimension()),nbCells(getNumberOfCells()),tmp[3],tmp2[3];
   ret->alloc(nbCells,spaceDim);
   double *pt(ret->getPointer()),shiftOrigin[3];
-  std::transform(_dxyz,_dxyz+spaceDim,shiftOrigin,std::bind2nd(std::multiplies<double>(),0.5));
+  std::transform(_dxyz,_dxyz+spaceDim,shiftOrigin,std::bind(std::multiplies<double>(),std::placeholders::_1,0.5));
   std::transform(_origin,_origin+spaceDim,shiftOrigin,shiftOrigin,std::plus<double>());
   getSplitCellValues(tmp);
   ret->setInfoOnComponents(buildInfoOnComponents());

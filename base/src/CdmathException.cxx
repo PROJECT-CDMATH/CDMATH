@@ -10,11 +10,11 @@ CdmathException::CdmathException(std::string reason, std::string file, int line)
 {
 }
 
-CdmathException::~CdmathException() throw ()
+CdmathException::~CdmathException() noexcept
 {
 }
 
-const char *CdmathException::what() const throw()
+const char *CdmathException::what() const noexcept
 {
   return _reason.c_str();
 }

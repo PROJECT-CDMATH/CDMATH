@@ -233,7 +233,7 @@ void MEDCouplingFieldDiscretization::normL1(const MEDCouplingMesh *mesh, const D
         res[j]+=fabs(arrPtr[i*nbOfCompo+j])*v;
       deno+=v;
     }
-  std::transform(res,res+nbOfCompo,res,std::bind2nd(std::multiplies<double>(),1./deno));
+  std::transform(res,res+nbOfCompo,res,std::bind(std::multiplies<double>(),std::placeholders::_1,1./deno));
 }
 
 /*!
@@ -257,8 +257,8 @@ void MEDCouplingFieldDiscretization::normL2(const MEDCouplingMesh *mesh, const D
         res[j]+=arrPtr[i*nbOfCompo+j]*arrPtr[i*nbOfCompo+j]*v;
       deno+=v;
     }
-  std::transform(res,res+nbOfCompo,res,std::bind2nd(std::multiplies<double>(),1./deno));
-  std::transform(res,res+nbOfCompo,res,std::ptr_fun<double,double>(std::sqrt));
+  std::transform(res,res+nbOfCompo,res,std::bind(std::multiplies<double>(),std::placeholders::_1,1./deno));
+  std::transform(res,res+nbOfCompo,res,[](double x) -> double { return std::sqrt(x); });
 }
 
 /*!
@@ -287,7 +287,7 @@ void MEDCouplingFieldDiscretization::integral(const MEDCouplingMesh *mesh, const
   INTERP_KERNEL::AutoPtr<double> tmp=new double[nbOfCompo];
   for (int i=0;i<nbOfElems;i++)
     {
-      std::transform(arrPtr+i*nbOfCompo,arrPtr+(i+1)*nbOfCompo,(double *)tmp,std::bind2nd(std::multiplies<double>(),volPtr[i]));
+      std::transform(arrPtr+i*nbOfCompo,arrPtr+(i+1)*nbOfCompo,(double *)tmp,std::bind(std::multiplies<double>(),std::placeholders::_1,volPtr[i]));
       std::transform((double *)tmp,(double *)tmp+nbOfCompo,res,res,std::plus<double>());
     }
 }
@@ -422,13 +422,13 @@ void MEDCouplingFieldDiscretization::RenumberEntitiesFromO2NArr(double eps, cons
       int newNb=old2NewPtr[i];
       if(newNb>=0)//if newNb<0 the node is considered as out.
         {
-          if(std::find_if(ptToFill+newNb*nbOfComp,ptToFill+(newNb+1)*nbOfComp,std::bind2nd(std::not_equal_to<double>(),std::numeric_limits<double>::max()))
+          if(std::find_if(ptToFill+newNb*nbOfComp,ptToFill+(newNb+1)*nbOfComp,std::bind(std::not_equal_to<double>(),std::placeholders::_1,std::numeric_limits<double>::max()))
           ==ptToFill+(newNb+1)*nbOfComp)
             std::copy(ptSrc+i*nbOfComp,ptSrc+(i+1)*nbOfComp,ptToFill+newNb*nbOfComp);
           else
             {
               std::transform(ptSrc+i*nbOfComp,ptSrc+(i+1)*nbOfComp,ptToFill+newNb*nbOfComp,(double *)tmp,std::minus<double>());
-              std::transform((double *)tmp,((double *)tmp)+nbOfComp,(double *)tmp,std::ptr_fun<double,double>(fabs));
+              std::transform((double *)tmp,((double *)tmp)+nbOfComp,(double *)tmp,[](double x) -> double { return fabs(x); });
               //if(!std::equal(ptSrc+i*nbOfComp,ptSrc+(i+1)*nbOfComp,ptToFill+newNb*nbOfComp))
               if(*std::max_element((double *)tmp,((double *)tmp)+nbOfComp)>eps)
                 {
@@ -1027,7 +1027,7 @@ void MEDCouplingFieldDiscretizationP1::getValueInCell(const MEDCouplingMesh *mes
   for(std::size_t i=0;i<nbOfNodes;i++)
     {
       arr->getTuple(conn[i],(double *)tmp2);
-      std::transform((double *)tmp2,((double *)tmp2)+sz,(double *)tmp2,std::bind2nd(std::multiplies<double>(),tmp[i]));
+      std::transform((double *)tmp2,((double *)tmp2)+sz,(double *)tmp2,std::bind(std::multiplies<double>(),std::placeholders::_1,tmp[i]));
       std::transform(res,res+sz,(double *)tmp2,res,std::plus<double>());
     }
 }
@@ -1696,7 +1696,7 @@ MEDCouplingFieldDouble *MEDCouplingFieldDiscretizationGauss::getMeasureField(con
           int nbOfGaussPt=loc.getNumberOfGaussPt();
           INTERP_KERNEL::AutoPtr<double> weights=new double[nbOfGaussPt];
           double sum=std::accumulate(loc.getWeights().begin(),loc.getWeights().end(),0.);
-          std::transform(loc.getWeights().begin(),loc.getWeights().end(),(double *)weights,std::bind2nd(std::multiplies<double>(),1./sum));
+          std::transform(loc.getWeights().begin(),loc.getWeights().end(),(double *)weights,std::bind(std::multiplies<double>(),std::placeholders::_1,1./sum));
           for(const int *cellId=curIds->begin();cellId!=curIds->end();cellId++)
             for(int j=0;j<nbOfGaussPt;j++)
               arrPtr[offsetPtr[*cellId]+j]=weights[j]*volPtr[*cellId];
@@ -2256,7 +2256,7 @@ void MEDCouplingFieldDiscretizationGaussNE::integral(const MEDCouplingMesh *mesh
       const double *wArr=GetWeightArrayFromGeometricType(*it,wArrSz);
       INTERP_KERNEL::AutoPtr<double> wArr2=new double[wArrSz];
       double sum=std::accumulate(wArr,wArr+wArrSz,0.);
-      std::transform(wArr,wArr+wArrSz,(double *)wArr2,std::bind2nd(std::multiplies<double>(),1./sum));      
+      std::transform(wArr,wArr+wArrSz,(double *)wArr2,std::bind(std::multiplies<double>(),std::placeholders::_1,1./sum));      
       MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ids=mesh->giveCellsWithType(*it);
       MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ids2=ids->buildExplicitArrByRanges(nbOfNodesPerCell);
       const int *ptIds2=ids2->begin(),*ptIds=ids->begin();
@@ -2574,7 +2574,7 @@ MEDCouplingFieldDouble *MEDCouplingFieldDiscretizationGaussNE::getMeasureField(c
       const double *wArr=GetWeightArrayFromGeometricType(*it,wArrSz);
       INTERP_KERNEL::AutoPtr<double> wArr2=new double[wArrSz];
       double sum=std::accumulate(wArr,wArr+wArrSz,0.);
-      std::transform(wArr,wArr+wArrSz,(double *)wArr2,std::bind2nd(std::multiplies<double>(),1./sum));      
+      std::transform(wArr,wArr+wArrSz,(double *)wArr2,std::bind(std::multiplies<double>(),std::placeholders::_1,1./sum));      
       MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ids=mesh->giveCellsWithType(*it);
       MEDCouplingAutoRefCountObjectPtr<DataArrayInt> ids2=ids->buildExplicitArrByRanges(nbOfNodesPerCell);
       const int *ptIds2=ids2->begin(),*ptIds=ids->begin();

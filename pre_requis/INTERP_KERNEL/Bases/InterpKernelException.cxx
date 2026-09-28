@@ -28,11 +28,11 @@ INTERP_KERNEL::Exception::Exception(const char *reason, const char *file, int li
 {
 }
 
-INTERP_KERNEL::Exception::~Exception() throw ()
+INTERP_KERNEL::Exception::~Exception() noexcept
 {
 }
 
-const char *INTERP_KERNEL::Exception::what() const throw()
+const char *INTERP_KERNEL::Exception::what() const noexcept
 {
   return _reason.c_str();
 }

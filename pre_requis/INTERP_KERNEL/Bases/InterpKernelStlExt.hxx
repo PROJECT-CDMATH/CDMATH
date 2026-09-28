@@ -27,8 +27,11 @@ namespace INTERP_KERNEL
   namespace STLEXT
   {
     template<typename _Pair>
-    struct Select1st : public std::unary_function<_Pair, typename _Pair::first_type>
+    struct Select1st
     {
+      typedef _Pair argument_type;
+      typedef typename _Pair::first_type result_type;
+
       typename _Pair::first_type& operator()(_Pair& __x) const { return __x.first; }
       const typename _Pair::first_type&operator()(const _Pair& __x) const { return __x.first; }
     };

@@ -1814,7 +1814,7 @@ void MEDFileMesh::TranslateFamilyIds(int offset, DataArrayInt *famArr, std::vect
     {
       if(offset<0)
         std::transform((*it1).begin(),(*it1).end(),(*it1).begin(),std::negate<int>());
-      std::transform((*it1).begin(),(*it1).end(),(*it1).begin(),std::bind2nd(std::plus<int>(),offset));
+      std::transform((*it1).begin(),(*it1).end(),(*it1).begin(),std::bind(std::plus<int>(),std::placeholders::_1,offset));
     }
 }
 
